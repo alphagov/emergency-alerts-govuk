@@ -17,3 +17,6 @@ To build the HTML pages and copy the images and fonts across, run `python build.
 
 To compile any `.scss` files in `./src/assets/stylesheets/` into `.css`, run `npm build`.
 
+## Viewing the pages
+
+To view any built pages, run `python -m HTTP.server` in `./dist`.
