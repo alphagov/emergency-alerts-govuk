@@ -1,0 +1,29 @@
+{
+  "name": "notifications-govuk-alerts",
+  "version": "0.0.1",
+  "description": "Static pages for GOVUK alerts",
+  "engines": {
+    "node": "10.15.3"
+  },
+  "scripts": {
+    "build": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alphagov/notifications-govuk-alerts.git"
+  },
+  "author": "Government Digital Service",
+  "license": {
+    "type": "Open Government Licence v3.0",
+    "url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3"
+  },
+  "homepage": "https://github.com/alphagov/notifications-govuk-alerts#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "fibers": "5.0.0",
+    "govuk-frontend": "3.11.0",
+    "gulp": "4.0.2",
+    "gulp-sass": "4.1.0",
+    "sass": "1.32.7"
+  }
+}
