@@ -1,10 +1,15 @@
-import os
-from distutils.dir_util import copy_tree, mkpath, remove_tree
+from distutils.dir_util import remove_tree
+from pathlib import Path
 from jinja2 import ChoiceLoader, Environment, FileSystemLoader, PackageLoader, PrefixLoader
 
 
+root = Path('.')
+src = root / 'src'
+dist = root / 'dist'
+assets = dist / 'assets'
+
 jinja_loader = ChoiceLoader([
-    FileSystemLoader(os.path.abspath(os.path.dirname(__file__))),
+    FileSystemLoader(str(root)),
     PrefixLoader({
         'govuk_frontend_jinja': PackageLoader('govuk_frontend_jinja')
     })
@@ -13,16 +18,13 @@ env = Environment(loader=jinja_loader, autoescape=True)
 
 if __name__ == '__main__':
     # make build dir cleanly
-    if os.path.isdir('./dist'):
-        remove_tree('./dist')
+    if dist.is_dir():
+        remove_tree(dist)
 
-    mkpath('./dist/assets')
+    for page in src.glob('**/*.html'):
+        template = env.get_template(str(page))
+        target = dist / page.relative_to(src)
+        target.parent.mkdir(exist_ok=True)
+        target.open('w').write(template.render())
 
-    for page in [
-        'index.html',
-        'info.html',
-        '404.html'
-    ]:
-        template = env.get_template(f'src/{page}')
-        with open(f'dist/{page}', 'w') as file:
-            file.write(template.render())
+    assets.mkdir()
