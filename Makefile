@@ -13,5 +13,10 @@ run: build
 
 .PHONY: bootstrap
 bootstrap:
-	pip install -r requirements.txt
+	pip install -r requirements_for_test.txt
 	npm install
+
+.PHONY: test
+test:
+	isort --check-only *.py
+	flake8 .

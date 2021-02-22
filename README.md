@@ -20,3 +20,9 @@ make build
 ```
 make run
 ```
+
+## Running the tests
+
+```
+make test
+```

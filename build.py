@@ -1,8 +1,13 @@
-from pathlib import Path
-from jinja2 import ChoiceLoader, Environment, FileSystemLoader, PackageLoader, PrefixLoader
-
 import hashlib
+from pathlib import Path
 
+from jinja2 import (
+    ChoiceLoader,
+    Environment,
+    FileSystemLoader,
+    PackageLoader,
+    PrefixLoader,
+)
 
 root = Path('.')
 src = root / 'src'
