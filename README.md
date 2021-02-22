@@ -26,3 +26,9 @@ make run
 ```
 make test
 ```
+
+## Code linting
+
+### SCSS
+
+SCSS code in this repository is linted according to the [GDS Stylelint Config](https://github.com/alphagov/stylelint-config-gds) before being compiled into CSS.

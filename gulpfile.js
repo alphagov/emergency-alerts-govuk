@@ -5,6 +5,7 @@ const Fiber = require('fibers');
 
 const plugins = {}
 plugins.sass = require('gulp-sass');
+plugins.gulpStylelint = require('gulp-stylelint');
 
 const paths = {
   src: 'src/assets/',
@@ -27,22 +28,34 @@ const copy = {
   }
 };
 
-const sass = () => {
-  return src(paths.src + 'stylesheets/**/*.scss')
-    .pipe(plugins.sass(
-      {
-        fiber: Fiber,
-        includePaths: [paths.govuk_frontend]
-      })
-      .on('error', plugins.sass.logError))
-    .pipe(dest(paths.dist + 'stylesheets/'));
+const scss = {
+  lint: () => {
+    return src(paths.src + 'stylesheets/*.scss')
+      .pipe(plugins.gulpStylelint({
+        failAfterError: true,
+        reporters: [
+          {formatter: 'string', console: true}
+        ]
+      }));
+  },
+  compile: () => {
+    return src(paths.src + 'stylesheets/**/*.scss')
+      .pipe(plugins.sass(
+        {
+          fiber: Fiber,
+          includePaths: [paths.govuk_frontend]
+        })
+        .on('error', plugins.sass.logError))
+      .pipe(dest(paths.dist + 'stylesheets/'));
+  }
 };
 
 const defaultTask = parallel(
   parallel(
     copy.govuk_frontend.fonts,
     copy.govuk_frontend.images,
-    sass
+    scss.lint,
+    scss.compile
   )
 );
 
