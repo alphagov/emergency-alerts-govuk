@@ -1,5 +1,14 @@
 {% extends "govuk_frontend_jinja/template.html" %}
 
+{% block headIcons %}
+  <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="{{ '/assets/images/favicon.ico' | file_fingerprint }}" type="image/x-icon" />
+  <link rel="mask-icon" href="{{ '/assets/images/govuk-mask-icon.svg' | file_fingerprint }}" color="#0b0c0c"> {# Hardcoded value of $govuk-black #}
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ '/assets/images/govuk-apple-touch-icon-180x180.png' | file_fingerprint }}">
+  <link rel="apple-touch-icon" sizes="167x167" href="{{ '/assets/images/govuk-apple-touch-icon-167x167.png' | file_fingerprint }}">
+  <link rel="apple-touch-icon" sizes="152x152" href="{{ '/assets/images/govuk-apple-touch-icon-152x152.png' | file_fingerprint }}">
+  <link rel="apple-touch-icon" href="{{ '/assets/images/govuk-apple-touch-icon.png' | file_fingerprint }}">
+{% endblock %}
+
 {% block head %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
