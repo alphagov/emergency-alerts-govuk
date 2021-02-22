@@ -3,5 +3,5 @@
 {% block head %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
-  <link href="/assets/stylesheets/main.css" rel="stylesheet">
+  <link href={{ "/assets/stylesheets/main.css" | file_fingerprint }} rel="stylesheet">
 {% endblock %}

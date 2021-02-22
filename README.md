@@ -13,9 +13,9 @@ environment](https://docs.python.org/3/tutorial/venv.html#creating-virtual-envir
 
 ## Building the pages
 
-To build the HTML pages and copy the images and fonts across, run `python build.py`.
-
-To compile any `.scss` files in `./src/assets/stylesheets/` into `.css`, run `npm run build`.
+```
+make build
+```
 
 ## Viewing the pages
 

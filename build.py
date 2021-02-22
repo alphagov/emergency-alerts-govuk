@@ -1,6 +1,8 @@
 from pathlib import Path
 from jinja2 import ChoiceLoader, Environment, FileSystemLoader, PackageLoader, PrefixLoader
 
+import hashlib
+
 
 root = Path('.')
 src = root / 'src'
@@ -13,7 +15,15 @@ jinja_loader = ChoiceLoader([
         'govuk_frontend_jinja': PackageLoader('govuk_frontend_jinja')
     })
 ])
+
+
+def file_fingerprint(path):
+    contents = open(str(dist) + path, 'rb').read()
+    return path + '?' + hashlib.md5(contents).hexdigest()
+
+
 env = Environment(loader=jinja_loader, autoescape=True)
+env.filters['file_fingerprint'] = file_fingerprint
 
 if __name__ == '__main__':
     for page in src.glob('**/*.html'):
