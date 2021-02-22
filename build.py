@@ -1,4 +1,3 @@
-from distutils.dir_util import remove_tree
 from pathlib import Path
 from jinja2 import ChoiceLoader, Environment, FileSystemLoader, PackageLoader, PrefixLoader
 
@@ -17,14 +16,10 @@ jinja_loader = ChoiceLoader([
 env = Environment(loader=jinja_loader, autoescape=True)
 
 if __name__ == '__main__':
-    # make build dir cleanly
-    if dist.is_dir():
-        remove_tree(dist)
-
     for page in src.glob('**/*.html'):
         template = env.get_template(str(page))
         target = dist / page.relative_to(src)
         target.parent.mkdir(exist_ok=True)
         target.open('w').write(template.render())
 
-    assets.mkdir()
+    assets.mkdir(exist_ok=True)
