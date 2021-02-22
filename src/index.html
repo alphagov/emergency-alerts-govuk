@@ -1,8 +1,25 @@
 {% extends "templates/content.html" %}
 
-{% block page_title %}Hello world{% endblock %}
+{% block page_title %}
+  Local emergency alerts
+{% endblock %}
 
 {% block content %}
-  <h1>Hello world</h1>
-  <a href='info.html'>Click here for more info</a>
+  <h1>
+    Local emergency alerts
+  </h1>
+  <ul>
+    <li>
+      <a href='/when-you-get-an-alert'>What happens when you get an alert</a>
+    </li>
+    <li>
+      <a href='/how-alerts-work'>How local emergency alerts work</a>
+    </li>
+    <li>
+      <a href='/reasons-you-might-get-an-alert'>Reasons you might get an alert</a>
+    </li>
+    <li>
+      <a href='/opt-out'>Opt out of local emergency alerts</a>
+    </li>
+  </ul>
 {% endblock %}
