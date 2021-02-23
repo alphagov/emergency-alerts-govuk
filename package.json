@@ -20,10 +20,16 @@
   "homepage": "https://github.com/alphagov/notifications-govuk-alerts#readme",
   "dependencies": {},
   "devDependencies": {
-    "fibers": "5.0.0",
-    "govuk-frontend": "3.11.0",
-    "gulp": "4.0.2",
-    "gulp-sass": "4.1.0",
-    "sass": "1.32.7"
+    "fibers": "^5.0.0",
+    "govuk-frontend": "^3.11.0",
+    "gulp": "^4.0.2",
+    "gulp-sass": "^4.1.0",
+    "gulp-stylelint": "^13.0.0",
+    "sass": "^1.32.7",
+    "stylelint": "^13.11.0",
+    "stylelint-config-gds": "^0.1.0"
+  },
+  "stylelint": {
+    "extends": "stylelint-config-gds/scss"
   }
 }
