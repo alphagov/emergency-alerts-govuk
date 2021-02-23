@@ -43,7 +43,8 @@ const scss = {
       .pipe(plugins.sass(
         {
           fiber: Fiber,
-          includePaths: [paths.govuk_frontend]
+          includePaths: [paths.govuk_frontend],
+          outputStyle: 'compressed'
         })
         .on('error', plugins.sass.logError))
       .pipe(dest(paths.dist + 'stylesheets/'));
