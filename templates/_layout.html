@@ -14,3 +14,40 @@
   <meta name="viewport" content="width=device-width">
   <link href={{ "/assets/stylesheets/main.css" | file_fingerprint }} rel="stylesheet">
 {% endblock %}
+
+{% block footer %}
+  {{ govukFooter({
+    'navigation': [
+      {
+        'title': 'Local emergency alerts',
+        'columns': 2,
+        'items': [
+          {
+            'text': 'What to do when you get an alert',
+            'href': '/when-you-get-an-alert'
+          },
+          {
+            'text': 'Reasons you might get an alert',
+            'href': '/reasons-you-might-get-an-alert'
+          },
+          {
+            'text': 'How local emergency alerts work',
+            'href': '/how-alerts-work'
+          },
+          {
+            'text': 'Opt out of local emergency alerts',
+            'href': '/opt-out'
+          }
+        ]
+      }
+    ],
+    'meta': {
+      'items': [
+        {
+          'text': 'GOV.UK home page',
+          'href': 'https://www.gov.uk'
+        }
+      ]
+    }
+  }) }}
+{% endblock %}
