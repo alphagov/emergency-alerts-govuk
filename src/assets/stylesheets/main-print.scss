@@ -1,0 +1,58 @@
+// stylelint-disable declaration-no-important
+$govuk-is-ie8: true;
+
+@import "govuk_frontend";
+
+// Global print styles,
+// adapted from https://github.com/alphagov/govuk_template/blob/master/source/assets/stylesheets/govuk-template-print.scss
+html {
+  font-size: 62.5%;
+}
+
+// reset everything
+* {
+  background: transparent;
+  color: #000000;
+  text-shadow: none;
+  filter: none;
+  -ms-filter: none;
+}
+
+body {
+  @include govuk-font($size: 14);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+a,
+a:visited {
+  word-wrap: break-word;
+}
+
+a[href^="/"]:after,
+a[href^="http://"]:after,
+a[href^="https://"]:after {
+  content: " (" attr(href) ")";
+  font-size: 90%;
+}
+
+a[href="/"]:after {
+  content: "";
+}
+
+img {
+  max-width: 100% !important;
+}
+
+// hide the unnecessary page elements
+.govuk-visually-hidden,
+.govuk-skip-link,
+.govuk-footer {
+  display: none !important;
+}
+
+// hide the header's border strip
+.govuk-header__container {
+  border-bottom: none;
+}
