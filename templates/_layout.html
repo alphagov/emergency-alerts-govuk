@@ -13,6 +13,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <link href={{ "/assets/stylesheets/main.css" | file_fingerprint }} rel="stylesheet">
+
+  {# For older browsers to allow them to recognise HTML5 elements such as `<header>` #}
+  <!--[if lt IE 9]>
+    <script src="/assets/javascripts/vendor/html5shiv/html5shiv.min.js"></script>
+  <![endif]-->
 {% endblock %}
 
 {% block footer %}
