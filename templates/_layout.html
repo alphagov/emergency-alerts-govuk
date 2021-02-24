@@ -1,23 +1,23 @@
 {% extends "govuk_frontend_jinja/template.html" %}
 
 {% block headIcons %}
-  <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="{{ '/assets/images/favicon.ico' | file_fingerprint }}" type="image/x-icon" />
-  <link rel="mask-icon" href="{{ '/assets/images/govuk-mask-icon.svg' | file_fingerprint }}" color="#0b0c0c"> {# Hardcoded value of $govuk-black #}
-  <link rel="apple-touch-icon" sizes="180x180" href="{{ '/assets/images/govuk-apple-touch-icon-180x180.png' | file_fingerprint }}">
-  <link rel="apple-touch-icon" sizes="167x167" href="{{ '/assets/images/govuk-apple-touch-icon-167x167.png' | file_fingerprint }}">
-  <link rel="apple-touch-icon" sizes="152x152" href="{{ '/assets/images/govuk-apple-touch-icon-152x152.png' | file_fingerprint }}">
-  <link rel="apple-touch-icon" href="{{ '/assets/images/govuk-apple-touch-icon.png' | file_fingerprint }}">
+  <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="{{ '/alerts/assets/images/favicon.ico' | file_fingerprint }}" type="image/x-icon" />
+  <link rel="mask-icon" href="{{ '/alerts/assets/images/govuk-mask-icon.svg' | file_fingerprint }}" color="#0b0c0c"> {# Hardcoded value of $govuk-black #}
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ '/alerts/assets/images/govuk-apple-touch-icon-180x180.png' | file_fingerprint }}">
+  <link rel="apple-touch-icon" sizes="167x167" href="{{ '/alerts/assets/images/govuk-apple-touch-icon-167x167.png' | file_fingerprint }}">
+  <link rel="apple-touch-icon" sizes="152x152" href="{{ '/alerts/assets/images/govuk-apple-touch-icon-152x152.png' | file_fingerprint }}">
+  <link rel="apple-touch-icon" href="{{ '/alerts/assets/images/govuk-apple-touch-icon.png' | file_fingerprint }}">
 {% endblock %}
 
 {% block head %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
-  <link media="print" href={{ "/assets/stylesheets/main-print.css" | file_fingerprint }} rel="stylesheet">
-  <link media="screen" href={{ "/assets/stylesheets/main.css" | file_fingerprint }} rel="stylesheet">
+  <link media="print" href={{ "/alerts/assets/stylesheets/main-print.css" | file_fingerprint }} rel="stylesheet">
+  <link media="screen" href={{ "/alerts/assets/stylesheets/main.css" | file_fingerprint }} rel="stylesheet">
 
   {# For older browsers to allow them to recognise HTML5 elements such as `<header>` #}
   <!--[if lt IE 9]>
-    <script src="/assets/javascripts/vendor/html5shiv/html5shiv.min.js"></script>
+    <script src="/alerts/assets/javascripts/vendor/html5shiv/html5shiv.min.js"></script>
   <![endif]-->
 {% endblock %}
 
@@ -30,19 +30,19 @@
         'items': [
           {
             'text': 'What to do when you get an alert',
-            'href': '/when-you-get-an-alert'
+            'href': '/alerts/when-you-get-an-alert'
           },
           {
             'text': 'Reasons you might get an alert',
-            'href': '/reasons-you-might-get-an-alert'
+            'href': '/alerts/reasons-you-might-get-an-alert'
           },
           {
             'text': 'How local emergency alerts work',
-            'href': '/how-alerts-work'
+            'href': '/alerts/how-alerts-work'
           },
           {
             'text': 'Opt out of local emergency alerts',
-            'href': '/opt-out'
+            'href': '/alerts/opt-out'
           }
         ]
       }

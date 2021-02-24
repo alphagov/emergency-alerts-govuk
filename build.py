@@ -9,13 +9,14 @@ from jinja2 import (
     PrefixLoader,
 )
 
-root = Path('.')
-src = root / 'src'
-dist = root / 'dist'
-assets = dist / 'assets'
+repo = Path('.')
+src = repo / 'src'
+dist = repo / 'dist'
+root = dist / 'alerts'
+
 
 jinja_loader = ChoiceLoader([
-    FileSystemLoader(str(root)),
+    FileSystemLoader(str(repo)),
     PrefixLoader({
         'govuk_frontend_jinja': PackageLoader('govuk_frontend_jinja')
     })
@@ -31,10 +32,10 @@ env = Environment(loader=jinja_loader, autoescape=True)
 env.filters['file_fingerprint'] = file_fingerprint
 
 if __name__ == '__main__':
+    root.mkdir(exist_ok=True)
+
     for page in src.glob('**/*.html'):
         template = env.get_template(str(page))
-        target = dist / page.relative_to(src)
+        target = root / page.relative_to(src)
         target.parent.mkdir(exist_ok=True)
         target.open('w').write(template.render())
-
-    assets.mkdir(exist_ok=True)
