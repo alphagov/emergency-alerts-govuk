@@ -1,7 +1,24 @@
 {% extends "templates/content.html" %}
 
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+
 {% block page_title %}
   Reasons you might get an emergency alert
+{% endblock %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "/"
+      },
+      {
+        "text": "Local emergency alerts",
+        "href": "/alerts"
+      }
+    ]
+  }) }}
 {% endblock %}
 
 {% block content %}

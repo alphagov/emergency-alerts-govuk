@@ -1,7 +1,20 @@
 {% extends "templates/content.html" %}
 
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+
 {% block page_title %}
   Local emergency alerts
+{% endblock %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "/"
+      }
+    ]
+  }) }}
 {% endblock %}
 
 {% block content %}
