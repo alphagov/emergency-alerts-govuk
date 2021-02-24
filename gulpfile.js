@@ -13,8 +13,8 @@ plugins.postcss = require('gulp-postcss');
 
 const paths = {
   src: 'src/assets/',
-  dist: 'dist/assets/',
   node_modules: 'node_modules/',
+  dist: 'dist/alerts/assets/',
   govuk_frontend: 'node_modules/govuk-frontend/'
 };
 
