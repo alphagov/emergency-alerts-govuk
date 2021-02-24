@@ -13,10 +13,7 @@
     "url": "git+https://github.com/alphagov/notifications-govuk-alerts.git"
   },
   "author": "Government Digital Service",
-  "license": {
-    "type": "Open Government Licence v3.0",
-    "url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3"
-  },
+  "license": "MIT",
   "homepage": "https://github.com/alphagov/notifications-govuk-alerts#readme",
   "dependencies": {
     "html5shiv": "^3.7.3"
