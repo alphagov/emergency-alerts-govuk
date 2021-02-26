@@ -1,6 +1,7 @@
 {% extends "templates/content.html" %}
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "templates/components/banner.html" import banner -%}
 
 {% block page_title %}
   Local emergency alerts
@@ -22,7 +23,7 @@
     Local emergency alerts
   </h1>
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-  <!-- placeholder for alert banner -->
+  {{ banner(1, 'Updated 1 minute ago') }}
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
