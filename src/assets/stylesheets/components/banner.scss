@@ -1,17 +1,5 @@
 @import "govuk/settings/all";
 
-.alerts-notification-banner {
-  position: relative;
-  padding-left: 72px;
-  min-height: 48px;
-
-  &__icon {
-    position: absolute;
-    left: 0px;
-    top: 5px;
-  }
-
-  &__age {
-    color: $govuk-secondary-text-colour;
-  }
+.alerts-notification-banner__age {
+  color: $govuk-secondary-text-colour;
 }
