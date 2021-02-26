@@ -34,6 +34,10 @@ const copy = {
   html5shiv: () => {
     return src(paths.node_modules + 'html5shiv/dist/*.min.js')
       .pipe(dest(paths.dist + 'javascripts/vendor/html5shiv/'));
+  },
+  images: () => {
+      return src(paths.src + 'images/**/*')
+        .pipe(dest(paths.dist + 'images/'));
   }
 };
 
@@ -71,8 +75,11 @@ const defaultTask = parallel(
     copy.govuk_frontend.fonts,
     copy.govuk_frontend.images,
     copy.html5shiv,
-    scss.lint,
-    scss.compile
+    copy.images,
+    series(
+      scss.lint,
+      scss.compile
+    )
   )
 );
 
