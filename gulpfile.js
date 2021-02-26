@@ -10,6 +10,7 @@ plugins.sass = require('gulp-sass');
 plugins.gulpStylelint = require('gulp-stylelint');
 plugins.gulpif = require('gulp-if');
 plugins.postcss = require('gulp-postcss');
+plugins.webp = require('gulp-webp');
 
 const paths = {
   src: 'src/assets/',
@@ -38,6 +39,14 @@ const copy = {
   images: () => {
       return src(paths.src + 'images/**/*')
         .pipe(dest(paths.dist + 'images/'));
+  }
+};
+
+const images = {
+  optimise: () => {
+    return src(paths.src + 'images/**/*')
+      .pipe(plugins.webp())
+      .pipe(dest(paths.dist + 'images/'))
   }
 };
 
@@ -75,7 +84,10 @@ const defaultTask = parallel(
     copy.govuk_frontend.fonts,
     copy.govuk_frontend.images,
     copy.html5shiv,
-    copy.images,
+    series(
+      copy.images,
+      images.optimise
+    ),
     series(
       scss.lint,
       scss.compile

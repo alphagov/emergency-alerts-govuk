@@ -2,6 +2,7 @@
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 {%- from "templates/components/banner.html" import banner -%}
+{%- from "templates/components/image.html" import image -%}
 
 {% block page_title %}
   Local emergency alerts
@@ -42,7 +43,7 @@
       </p>
     </div>
     <div class="govuk-grid-column-one-half">
-      <img class="alerts-image" src={{ "/alerts/assets/images/example.png" | file_fingerprint }} height="436" width="306" alt="" />
+      {{ image(path="/alerts/assets/images/example.png", height="436", width="306", alt="") }}
     </div>
   </div>
   <!-- placeholder for image of an alert on a mobile phone -->
@@ -59,7 +60,7 @@
       <p class="govuk-body"><a href="/alerts/reasons-you-might-get-an-alert" class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold">Reasons you might get an alert</a></p>
     </div>
     <div class="govuk-grid-column-one-half">
-      <img class="alerts-image" src={{ "/alerts/assets/images/emergencies.png" | file_fingerprint }} height="388" width="465" alt="" />
+      {{ image(path="/alerts/assets/images/emergencies.png", height="388", width="465", alt="") }}
     </div>
   </div>
   <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-8">
