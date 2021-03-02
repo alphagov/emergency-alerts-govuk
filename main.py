@@ -15,5 +15,5 @@ Handler.extensions_map = {
 
 httpd = http.server.HTTPServer(("", PORT), Handler)
 
-print("serving at port", PORT)
+print(f"serving at http://localhost:{PORT}")
 httpd.serve_forever()
