@@ -36,7 +36,11 @@ if __name__ == '__main__':
 
     for page in src.glob('*.html'):
         template = env.get_template(str(page))
-        target = root / page.relative_to(src)
+        if 'index.html' in str(page):
+            target = dist / page.relative_to(src)
+        else:
+            target = root / page.relative_to(src)
         target.parent.mkdir(exist_ok=True)
         target.open('w').write(template.render())
-        target.replace(str(target).replace(".html", ""))
+        if 'index.html' not in str(page):
+            target.replace(str(target).replace(".html", ""))
