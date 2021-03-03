@@ -34,8 +34,13 @@ env.filters['file_fingerprint'] = file_fingerprint
 if __name__ == '__main__':
     root.mkdir(exist_ok=True)
 
-    for page in src.glob('**/*.html'):
+    for page in src.glob('*.html'):
         template = env.get_template(str(page))
-        target = root / page.relative_to(src)
+        if 'index.html' in str(page):
+            target = dist / page.relative_to(src)
+        else:
+            target = root / page.relative_to(src)
         target.parent.mkdir(exist_ok=True)
         target.open('w').write(template.render())
+        if 'index.html' not in str(page):
+            target.replace(str(target).replace(".html", ""))

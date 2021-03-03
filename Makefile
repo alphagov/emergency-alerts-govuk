@@ -9,7 +9,7 @@ clean:
 
 .PHONY: run
 run: build
-	cd dist && python -m http.server
+	python main.py
 
 .PHONY: bootstrap
 bootstrap:
