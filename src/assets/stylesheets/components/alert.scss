@@ -1,0 +1,11 @@
+.alerts-alert {
+  position: relative;
+  padding-left: 72px;
+  min-height: 48px;
+
+  &__icon {
+    position: absolute;
+    left: 0px;
+    top: 5px;
+  }
+}

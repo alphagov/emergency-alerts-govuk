@@ -1,25 +1,84 @@
 {% extends "templates/content.html" %}
 
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "templates/components/banner.html" import banner -%}
+{%- from "templates/components/image.html" import image -%}
+
 {% block page_title %}
   Local emergency alerts
 {% endblock %}
 
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "/"
+      }
+    ]
+  }) }}
+{% endblock %}
+
 {% block content %}
-  <h1>
+  <h1 class="govuk-heading-xl">
     Local emergency alerts
   </h1>
-  <ul>
-    <li>
-      <a href='/alerts/when-you-get-an-alert'>What happens when you get an alert</a>
-    </li>
-    <li>
-      <a href='/alerts/how-alerts-work'>How local emergency alerts work</a>
-    </li>
-    <li>
-      <a href='/alerts/reasons-you-might-get-an-alert'>Reasons you might get an alert</a>
-    </li>
-    <li>
-      <a href='/alerts/opt-out'>Opt out of local emergency alerts</a>
-    </li>
-  </ul>
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+  {{ banner(1, 'Updated 1 minute ago') }}
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+      <h2 class="govuk-heading-l">What are emergency alerts?</h2>
+      <p class="govuk-body">
+        Alerts are a new way for the emergency services to warn people when lives are in danger.
+      </p>
+      <p class="govuk-body">
+        They tell you what you need to do to stay safe.
+      </p>
+      <p class="govuk-body">
+        In an emergency, every mobile phone and tablet in the affected area will get an alert.
+      </p>
+      <p class="govuk-body">
+        <a href="/alerts/when-you-get-an-alert" class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold">What to do when you get an alert</a>
+      </p>
+    </div>
+    <div class="govuk-grid-column-one-half">
+      {{ image(path="/alerts/assets/images/example.png", height="436", width="306", alt="") }}
+    </div>
+  </div>
+  <!-- placeholder for image of an alert on a mobile phone -->
+  <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-8">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+      <h2 class="govuk-heading-l">When will I get an alert?</h2>
+      <p class="govuk-body">
+        If there’s an immediate and serious danger to life, health or property near you.
+      </p>
+      <p class="govuk-body">
+        Only the emergency services and government agencies that handle emergencies can send alerts.
+      </p>
+      <p class="govuk-body"><a href="/alerts/reasons-you-might-get-an-alert" class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold">Reasons you might get an alert</a></p>
+    </div>
+    <div class="govuk-grid-column-one-half">
+      {{ image(path="/alerts/assets/images/emergencies.png", height="388", width="465", alt="") }}
+    </div>
+  </div>
+  <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-8">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+      <h2 class="govuk-heading-l">How do they work?</h2>
+      <p class="govuk-body">
+        Emergency alerts are sent using mobile phone masts. You get them based on where you are, not who you are.
+      </p>
+      <p class="govuk-body">
+        Most people will get alerts automatically. You do not need to sign up.
+      </p>
+      <p class="govuk-body">
+        The emergency services do not need your phone number to send you an alert.
+      </p>
+      <p class="govuk-body">
+        <a href="/alerts/how-alerts-work" class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold">How local emergency alerts work</a>
+      </p>
+    </div>
+  </div>
 {% endblock %}

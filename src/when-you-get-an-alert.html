@@ -1,11 +1,89 @@
 {% extends "templates/content.html" %}
 
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+
 {% block page_title %}
   When you get a local emergency alert
 {% endblock %}
 
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "/"
+      },
+      {
+        "text": "Local emergency alerts",
+        "href": "/alerts"
+      }
+    ]
+  }) }}
+{% endblock %}
+
 {% block content %}
-  <h1>
-    When you get a local emergency alert
-  </h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+        When you get a local emergency alert
+      </h1>
+      <p class="govuk-body">
+        Your phone or tablet will vibrate and make a loud siren-like noise, even if it’s set on silent.
+      </p>
+      <p class="govuk-body">
+        Read the alert carefully and follow any instructions.
+      </p>
+      <p class="govuk-body">
+        Some alerts may include a phone number or a link to the GOV.UK website for more information.
+      </p>
+      <h2 class="govuk-heading-m">
+        If you’re driving when you get an alert
+      </h2>
+      <p class="govuk-body">
+        Find somewhere safe to stop before using your phone. It is illegal to use a hand-held device while driving.
+      </p>
+      <h2 class="govuk-heading-m">
+        If you want to see an alert again
+      </h2>
+      <p class="govuk-body">
+        You can find all current and past alerts at www.gov.uk/alerts.
+      </p>
+      <p class="govuk-body">
+        You can also find them on your phone or tablet.
+      </p>
+      <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+          <span class="govuk-details__summary-text">
+          Android devices
+          </span>
+        </summary>
+          <div class="govuk-details__text">
+            <p class="govuk-body">
+                Search your settings for ‘emergency alerts’ and select <b class="govuk-!-font-weight-bold">Emergency alert history</b>.
+            </p>
+            <p class="govuk-body">
+                If this does not work, check your text messages app.
+            </p>
+          </div>
+      </details>
+      <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+          <span class="govuk-details__summary-text">
+          iPhone and iPad
+          </span>
+        </summary>
+          <div class="govuk-details__text">
+            <p class="govuk-body">
+                Swipe down on the home screen to view your notifications. If you clear your notifications you’ll delete the alert.
+            </p>
+           </div>
+      </details>
+      <h2 class="govuk-heading-m">
+         If you get reminders about an alert
+      </h2>
+      <p class="govuk-body">
+         Android devices may get more than one reminder about the same emergency alert. To turn these reminders off, search your settings for ‘emergency alerts’.
+      </p>
+    </div>
+  </div>
 {% endblock %}

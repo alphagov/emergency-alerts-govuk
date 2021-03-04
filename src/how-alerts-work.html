@@ -1,11 +1,77 @@
 {% extends "templates/content.html" %}
 
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+
 {% block page_title %}
   How local emergency alerts work
 {% endblock %}
 
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "/"
+      },
+      {
+        "text": "Local emergency alerts",
+        "href": "/alerts"
+      }
+    ]
+  }) }}
+{% endblock %}
+
 {% block content %}
-  <h1>
-    How local emergency alerts work
-  </h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+        How local emergency alerts work
+      </h1>
+      <p class="govuk-body">
+        Emergency alerts work like a radio broadcast.
+      </p>
+      <p class="govuk-body">
+        The emergency services do not need to know your phone number to send you an alert.
+      </p>
+      <p class="govuk-body">
+        When lives are at risk, they broadcast an alert using mobile phone masts. Every 4G and 5G mobile phone or tablet within range of a mast will get the alert.
+      </p>
+      <p class="govuk-body">
+        Emergency alerts are free and you do not need to sign up for them or download an app.
+      </p>
+      <p class="govuk-body">
+        No one collects or shares data about you, your phone or your location when you receive an alert.
+      </p>
+      <p class="govuk-body">
+        Your phone can still receive alerts if you’re on a call.
+      </p>
+      <p class="govuk-body">
+        You will not get alerts if your phone or tablet is turned off or in aeroplane mode.
+      </p>
+      <p class="govuk-body">
+        You can <a class="govuk-link" href="/alerts/opt-out">opt out of local emergency alerts</a>, but we recommend that you keep them switched on for your own safety.
+      </p>
+      <h2 class="govuk-heading-m" id="phone-handsets-and-devices">
+        Phone handsets and devices
+      </h2>
+      <p class="govuk-body">
+        Emergency alerts work on most phones and tablets made after 2015. Always make sure your device has all the latest software updates.
+      </p>
+      <p class="govuk-body">
+        If your device was made before 2015, search your settings for ‘emergency alerts’ to check they’re turned on.
+      </p>
+      <h2 class="govuk-heading-m" id="mobile-phone-networks">
+        Mobile phone networks
+      </h2>
+      <p class="govuk-body">
+        Emergency alerts work on all UK 4G and 5G phone networks.
+      </p>
+      <p class="govuk-body">
+        Phones and tablets connected to a 2G or 3G network will not receive emergency alerts.
+      </p>
+      <p class="govuk-body">
+        Emergency alerts do not cause, and are not affected by, busy phone networks.
+      </p>
+    </div>
+  </div>
 {% endblock %}
