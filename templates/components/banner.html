@@ -15,7 +15,7 @@
       <image src={{ "/alerts/assets/images/alert.png" | file_fingerprint }} xlink:href="data:," display="none" class="alerts-notification-banner__fallback-image" width="48" height="48"></image>
     </svg>
     <h2 class="alerts-notification-banner__title govuk-heading-m govuk-!-margin-bottom-1" id="alerts-notification-banner__title">
-      <a class="govuk-link" href="/alerts/current-alerts">{{ number_of_alerts }} current {% if alerts_number == 1 %}alert{% else %}alerts{% endif %}</a>
+      <a class="govuk-link" href="/alerts/current-alerts">{{ number_of_alerts }} current {% if number_of_alerts == 1 %}alert{% else %}alerts{% endif %}</a>
     </h2>
     <p class="alerts-notification-banner__age govuk-body">
       {{ age }}
