@@ -6,3 +6,28 @@
   <h1>Content not found</h1>
   <a href="/alerts">Go back to homepage</a>
 {% endblock %}
+
+{% block footer %}
+  {{ govukFooter({
+    'meta': {
+      'items': [
+        {
+          'text': 'GOV.UK home page',
+          'href': '/'
+        },
+        {
+          'text': 'Privacy',
+          'href': '/help/privacy-notice'
+        },
+        {
+          'text': 'Accessibility statement',
+          'href': '/help/accessibility-statement'
+        },
+        {
+          'text': 'Terms and conditions',
+          'href': '/help/terms-conditions'
+        }
+      ]
+    }
+  }) }}
+{% endblock %}
