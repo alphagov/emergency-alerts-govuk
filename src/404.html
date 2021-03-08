@@ -3,6 +3,46 @@
 {% block page_title %}Content not found{% endblock %}
 
 {% block content %}
-  <h1>Content not found</h1>
-  <a href="/alerts">Go back to homepage</a>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+        Page not found
+      </h1>
+      <p class="govuk-body">
+        If you entered a web address, check it is correct.
+      </p>
+      <p class="govuk-body">
+        You can <a class="govuk-link" href="/">browse from the homepage</a>
+        to find the information you need.
+      </p>
+      <p class="govuk-body">
+        You can <a class="govuk-link" href="/coronavirus">find coronavirus information</a> on GOV.UK.
+      </p>
+    </div>
+  </div>
+{% endblock %}
+
+{% block footer %}
+  {{ govukFooter({
+    'meta': {
+      'items': [
+        {
+          'text': 'GOV.UK home page',
+          'href': '/'
+        },
+        {
+          'text': 'Privacy',
+          'href': '/help/privacy-notice'
+        },
+        {
+          'text': 'Accessibility statement',
+          'href': '/help/accessibility-statement'
+        },
+        {
+          'text': 'Terms and conditions',
+          'href': '/help/terms-conditions'
+        }
+      ]
+    }
+  }) }}
 {% endblock %}
