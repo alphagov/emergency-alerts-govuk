@@ -51,7 +51,7 @@ const javascripts = {
     // - deliver it in one bundle
     // - allow it to run in browsers without support for JS Modules
     return rollup.rollup({
-      input: paths.src + 'javascripts/govuk-frontend-details.js',
+      input: paths.src + 'javascripts/govuk-frontend-details-and-button.js',
       plugins: [
         // determine module entry points from either 'module' or 'main' fields in package.json
         rollupPluginNodeResolve.nodeResolve({
@@ -65,7 +65,7 @@ const javascripts = {
       ]
     }).then(bundle => {
       return bundle.write({
-        file: paths.dist + 'javascripts/govuk-frontend-details.js',
+        file: paths.dist + 'javascripts/govuk-frontend-details-and-button.js',
         format: 'iife',
         name: 'GOVUK',
         sourcemap: true

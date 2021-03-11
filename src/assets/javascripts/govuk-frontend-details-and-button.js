@@ -7,6 +7,7 @@
 // For example, `export { initAll }` will assign `initAll` to `window.GOVUK.initAll`
 import { nodeListForEach } from 'govuk-frontend/govuk/common'
 import Details from 'govuk-frontend/govuk/components/details/details'
+import Button from 'govuk-frontend/govuk/components/button/button'
 
 function initAll (options) {
   // Set the options to an empty object by default if no options are passed.
@@ -20,11 +21,17 @@ function initAll (options) {
   nodeListForEach($details, function ($detail) {
     new Details($detail).init()
   })
+
+  var $buttons = scope.querySelectorAll('[data-module="govuk-button"]')
+  nodeListForEach($buttons, function ($button) {
+    new Details($button).init()
+  })
 }
 
 initAll();
 
 export {
   initAll,
-  Details
+  Details,
+  Button
 }
