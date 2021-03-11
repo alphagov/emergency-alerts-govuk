@@ -28,7 +28,7 @@ function initAll (options) {
   })
 }
 
-initAll();
+initAll()
 
 export {
   initAll,
