@@ -6,6 +6,8 @@
     "node": "10.15.3"
   },
   "scripts": {
+    "lint:scss": "stylelint -i src/assets/stylesheets/_govuk_frontend.scss src/assets/stylesheets/",
+    "lint": "npm run lint:scss",
     "build": "gulp"
   },
   "repository": {

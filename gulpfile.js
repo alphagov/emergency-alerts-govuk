@@ -102,15 +102,6 @@ const javascripts = {
 };
 
 const scss = {
-  lint: () => {
-    return src(paths.src + 'stylesheets/*.scss')
-      .pipe(plugins.gulpStylelint({
-        failAfterError: true,
-        reporters: [
-          {formatter: 'string', console: true}
-        ]
-      }));
-  },
   compile: () => {
     return src(paths.src + 'stylesheets/**/*.scss')
       .pipe(plugins.sass(
@@ -131,18 +122,13 @@ const scss = {
 };
 
 const defaultTask = parallel(
-  parallel(
-    copy.govuk_frontend.fonts,
-    copy.govuk_frontend.images,
-    copy.html5shiv,
-    copy.images,
-    series(
-      scss.lint,
-      scss.compile
-    ),
-    javascripts.details,
-    javascripts.sharingButton
-  )
+  copy.govuk_frontend.fonts,
+  copy.govuk_frontend.images,
+  copy.html5shiv,
+  copy.images,
+  scss.compile,
+  javascripts.details,
+  javascripts.sharingButton
 );
 
 exports.default = defaultTask;
