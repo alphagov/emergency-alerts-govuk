@@ -1,0 +1,5 @@
+// make images scale with the viewport while retaining their aspect ratio
+img {
+  max-width: 100%;
+  height: auto;
+}
