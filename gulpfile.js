@@ -72,13 +72,13 @@ const javascripts = {
       });
     });
   },
-  copyToClipboard: () => {
+  sharingButton: () => {
     // Use Rollup to combine all JS in JS module format into a Immediately Invoked Function
     // Expression (IIFE) to:
     // - deliver it in one bundle
     // - allow it to run in browsers without support for JS Modules
     return rollup.rollup({
-      input: paths.src + 'javascripts/copy-to-clipboard.js',
+      input: paths.src + 'javascripts/sharing-button.js',
       plugins: [
         // determine module entry points from either 'module' or 'main' fields in package.json
         rollupPluginNodeResolve.nodeResolve({
@@ -92,7 +92,7 @@ const javascripts = {
       ]
     }).then(bundle => {
       return bundle.write({
-        file: paths.dist + 'javascripts/copy-to-clipboard.js',
+        file: paths.dist + 'javascripts/sharing-button.js',
         format: 'iife',
         name: 'GOVUK',
         sourcemap: true
@@ -141,7 +141,7 @@ const defaultTask = parallel(
       scss.compile
     ),
     javascripts.details,
-    javascripts.copyToClipboard
+    javascripts.sharingButton
   )
 );
 

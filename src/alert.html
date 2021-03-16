@@ -72,5 +72,6 @@
 
 {% block bodyEnd %}
   <script type="text/javascript" src="{{ '/alerts/assets/javascripts/govuk-frontend-details-and-button.js' | file_fingerprint }}"></script>
-  <script type="text/javascript" src="{{ '/alerts/assets/javascripts/copy-to-clipboard.js' | file_fingerprint }}"></script>
+  <!--[if gt IE 8]><!--><script type="text/javascript" src="{{ '/alerts/assets/javascripts/sharing-button.js' | file_fingerprint }}"></script><!--<![endif]-->
+
 {% endblock %}
