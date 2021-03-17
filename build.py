@@ -30,6 +30,12 @@ def file_fingerprint(path):
 
 env = Environment(loader=jinja_loader, autoescape=True)
 env.filters['file_fingerprint'] = file_fingerprint
+env.globals = {
+    'font_paths': [
+        item.relative_to(dist)
+        for item in root.glob('assets/fonts/*.woff2')
+    ],
+}
 
 if __name__ == '__main__':
     root.mkdir(exist_ok=True)
