@@ -3,7 +3,7 @@
   <div class="alerts-image__container">
     <picture>
       <source srcset="{{ webp_path | file_fingerprint }}" type="image/webp">
-      <img class="alerts-image__image" src="{{ path | file_fingerprint }}" height="{{ height }}" width="{{ width }}" />
+      <img class="alerts-image__image" src="{{ path | file_fingerprint }}" height="{{ height }}" width="{{ width }}" alt="{{ alt }}" />
     </picture>
   </div>
 {% endmacro %}
