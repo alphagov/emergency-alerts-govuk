@@ -1,0 +1,77 @@
+{% extends "templates/content.html" %}
+
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "govuk_frontend_jinja/components/details/macro.html" import govukDetails -%}
+{%- from "templates/components/alert.html" import alert -%}
+{%- from "templates/components/alerts_icon.html" import alerts_icon -%}
+
+{% block page_title %}
+  Emergency alert
+{% endblock %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "/"
+      },
+      {
+        "text": "Local emergency alerts",
+        "href": "/alerts"
+      },
+      {
+        "text": "Current alerts",
+        "href": "/current-alerts"
+      }
+    ]
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <h1 class="govuk-heading-xl alerts-icon__container">
+    {{ alerts_icon() }}
+    Emergency alert
+  </h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds alert-icon__container">
+      <p class="govuk-body-l govuk-!-margin-bottom-4">
+        This is a test. Next time you get an emergency alert, stop what you’re doing and follow the advice. For information, search www.gov.uk/alerts.
+      </p>
+      <p class="govuk-body govuk-!-margin-bottom-0">
+        Issued by Cabinet Office today at 12:02pm
+      </p>
+    </div>
+  </div>
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+  {% set alertAreas %}
+    <p class="govuk-body">
+      Sent to England, Northern Ireland, Scotland and Wales.
+    </p>
+    <img src={{ "/alerts/assets/images/map-of-uk-static.png" | file_fingerprint }} height="275" width="590" alt="map of the UK showing the areas the alert was sent to"/>
+    <p class="govuk-body">
+      Surrounding areas might also have received the alert.
+    </p>
+  {% endset %}
+  {{ govukDetails({
+    "summaryText": "See where this alert was sent",
+    "html": alertAreas
+  }) }}
+  {% set sharingContent %}
+    <div class="share-url">
+      <p class="govuk-body">
+        https://gov.uk/alerts/alert
+      </p>
+    </div>
+  {% endset %}
+  {{ govukDetails({
+    "summaryText": "Share this page",
+    "html": sharingContent
+  }) }}
+{% endblock %}
+
+{% block bodyEnd %}
+  <script type="text/javascript" src="{{ '/alerts/assets/javascripts/govuk-frontend-details-and-button.js' | file_fingerprint }}"></script>
+  <!--[if gt IE 8]><!--><script type="text/javascript" src="{{ '/alerts/assets/javascripts/sharing-button.js' | file_fingerprint }}"></script><!--<![endif]-->
+
+{% endblock %}

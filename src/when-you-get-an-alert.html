@@ -1,6 +1,7 @@
 {% extends "templates/content.html" %}
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "govuk_frontend_jinja/components/details/macro.html" import govukDetails -%}
 
 {% block page_title %}
   When you get a local emergency alert
@@ -51,33 +52,27 @@
       <p class="govuk-body">
         You can also find them on your phone or tablet.
       </p>
-      <details class="govuk-details" data-module="govuk-details">
-        <summary class="govuk-details__summary">
-          <span class="govuk-details__summary-text">
-          Android devices
-          </span>
-        </summary>
-          <div class="govuk-details__text">
-            <p class="govuk-body">
-                Search your settings for ‘emergency alerts’ and select <b class="govuk-!-font-weight-bold">Emergency alert history</b>.
-            </p>
-            <p class="govuk-body">
-                If this does not work, check your text messages app.
-            </p>
-          </div>
-      </details>
-      <details class="govuk-details" data-module="govuk-details">
-        <summary class="govuk-details__summary">
-          <span class="govuk-details__summary-text">
-          iPhone and iPad
-          </span>
-        </summary>
-          <div class="govuk-details__text">
-            <p class="govuk-body">
-                Swipe down on the home screen to view your notifications. If you clear your notifications you’ll delete the alert.
-            </p>
-           </div>
-      </details>
+      {% set androidAdvice %}
+        <p class="govuk-body">
+            Search your settings for ‘emergency alerts’ and select <b class="govuk-!-font-weight-bold">Emergency alert history</b>.
+        </p>
+        <p class="govuk-body">
+            If this does not work, check your text messages app.
+        </p>
+      {% endset %}
+      {{ govukDetails({
+        "summaryText": "Android devices",
+        "html": androidAdvice
+      }) }}
+      {% set iosAdvice %}
+        <p class="govuk-body">
+            Swipe down on the home screen to view your notifications. If you clear your notifications you’ll delete the alert.
+        </p>
+      {% endset %}
+      {{ govukDetails({
+        "summaryText": "iPhone and iPad",
+        "html": iosAdvice
+      }) }}
       <h2 class="govuk-heading-m">
          If you get reminders about an alert
       </h2>
@@ -89,5 +84,5 @@
 {% endblock %}
 
 {% block bodyEnd %}
-  <script type="text/javascript" src="{{ '/alerts/assets/javascripts/govuk-frontend-details.js' | file_fingerprint }}"></script>
+  <script type="text/javascript" src="{{ '/alerts/assets/javascripts/govuk-frontend-details-and-button.js' | file_fingerprint }}"></script>
 {% endblock %}

@@ -1,0 +1,19 @@
+.alerts-icon {
+  position: absolute;
+  left: 0px;
+  top: 5px;
+
+  &__container {
+    position: relative;
+    padding-left: 72px;
+    min-height: 48px;
+  }
+}
+
+.govuk-heading-xl > .alerts-icon {
+  top: -2px;
+}
+
+.govuk-heading-xl.alerts-icon__container {
+  padding-left: 62px;
+}
