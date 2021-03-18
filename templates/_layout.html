@@ -1,5 +1,7 @@
 {% extends "govuk_frontend_jinja/template.html" %}
 
+{% block pageTitle %}{% block pageTitleCurrent %}{% endblock %} - GOV.UK{% endblock %}
+
 {% block headIcons %}
   <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="{{ '/alerts/assets/images/favicon.ico' | file_fingerprint }}" type="image/x-icon" />
   <link rel="mask-icon" href="{{ '/alerts/assets/images/govuk-mask-icon.svg' | file_fingerprint }}" color="#0b0c0c"> {# Hardcoded value of $govuk-black #}

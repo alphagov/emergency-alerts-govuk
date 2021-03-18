@@ -4,9 +4,9 @@
 {%- from "templates/components/banner.html" import banner -%}
 {%- from "templates/components/image.html" import image -%}
 
-{% block page_title %}
+{% block pageTitleCurrent -%}
   Local emergency alerts
-{% endblock %}
+{%- endblock %}
 
 {% block beforeContent %}
   {{ govukBreadcrumbs({
