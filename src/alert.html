@@ -5,9 +5,9 @@
 {%- from "templates/components/alert.html" import alert -%}
 {%- from "templates/components/alerts_icon.html" import alerts_icon -%}
 
-{% block page_title %}
+{% block pageTitleCurrent -%}
   Emergency alert
-{% endblock %}
+{%- endblock %}
 
 {% block beforeContent %}
   {{ govukBreadcrumbs({

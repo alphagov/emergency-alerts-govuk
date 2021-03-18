@@ -2,9 +2,9 @@
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 
-{% block page_title %}
+{% block pageTitleCurrent -%}
   Reasons you might get an emergency alert
-{% endblock %}
+{%- endblock %}
 
 {% block beforeContent %}
   {{ govukBreadcrumbs({

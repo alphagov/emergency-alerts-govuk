@@ -2,9 +2,9 @@
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 
-{% block page_title %}
+{% block pageTitleCurrent -%}
   How local emergency alerts work
-{% endblock %}
+{%- endblock %}
 
 {% block beforeContent %}
   {{ govukBreadcrumbs({
