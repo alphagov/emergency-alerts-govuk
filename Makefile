@@ -1,5 +1,6 @@
 .PHONY: build
 build: clean
+	npm run lint
 	npm run build
 	python build.py
 

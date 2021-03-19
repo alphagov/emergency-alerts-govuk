@@ -6,6 +6,9 @@
     "node": "10.15.3"
   },
   "scripts": {
+    "lint:scss": "stylelint -i src/assets/stylesheets/_govuk_frontend.scss src/assets/stylesheets/",
+    "lint:js": "standardx src/assets/javascripts/",
+    "lint": "npm run lint:scss && npm run lint:js",
     "build": "gulp"
   },
   "repository": {
@@ -32,10 +35,16 @@
     "postcss": "^8.2.6",
     "rollup": "^2.39.1",
     "sass": "^1.32.7",
+    "standardx": "^7.0.0",
     "stylelint": "^13.11.0",
     "stylelint-config-gds": "^0.1.0"
   },
   "stylelint": {
     "extends": "stylelint-config-gds/scss"
+  },
+  "eslintConfig": {
+    "rules": {
+      "no-var": 0
+    }
   }
 }
