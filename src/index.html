@@ -3,6 +3,7 @@
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 {%- from "templates/components/banner.html" import banner -%}
 {%- from "templates/components/image.html" import image -%}
+{%- from "templates/components/example/macro.html" import example -%}
 
 {% block pageTitleCurrent -%}
   Local emergency alerts
@@ -43,13 +44,10 @@
       </p>
     </div>
     <div class="govuk-grid-column-one-half">
-      {{ image(
-        path="/alerts/assets/images/example.png",
-        height="436",
-        width="306",
-        alt="Mobile phone screen showing an emergency alert. The alert says: ‘This is an example of what a local emergency alert will look like on your phone. It will also make a loud noise.’",
-        align="centred"
-      ) }}
+      <!--[if gt IE 8]><!-->
+      {{ example(alt="Mobile phone screen showing an emergency alert. The alert says: ‘This is an example of what a local emergency alert will look like on your phone. It will also make a loud noise.’") }}
+      <!--<![endif]-->
+      <!--[if IE 8]><img src="/alerts/assets/images/example.png" height="436" width="306", alt="Mobile phone screen showing an emergency alert. The alert says: ‘This is an example of what a local emergency alert will look like on your phone. It will also make a loud noise.’" /><![endif]-->
     </div>
   </div>
   <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-8">
