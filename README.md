@@ -38,3 +38,9 @@ SCSS code in this repository is linted according to the [GDS Stylelint Config](h
 ## Browser support
 
 We aim to match the [browsers supported by GOVUK Frontend](https://github.com/alphagov/govuk-frontend#browser-and-assistive-technology-support) (includes Internet Explorer 8-10).
+
+## Image optimisation
+
+Images should be optimised manually using the following tools:
+- https://squoosh.app for converting to `.webp` and optimising the result
+- https://tinypng.com/ for optimising `.png` files

@@ -1,9 +1,9 @@
-{% macro image(path, height, width, alt="") %}
+{% macro image(path, height, width, alt="", align="") %}
   {% set webp_path = path.split('.')[0] ~ '.webp' %}
-  <div class="alerts-image__container">
+  <div class="alerts-image__container{% if align == "centred" %}--centred{% endif %}">
     <picture>
       <source srcset="{{ webp_path | file_fingerprint }}" type="image/webp">
-      <img class="alerts-image__image" src="{{ path | file_fingerprint }}" height="{{ height }}" width="{{ width }}" alt="{{ alt }}" />
+      <img class="alerts-image__image{% if align == "centred" %}--centred{% endif %}" src="{{ path | file_fingerprint }}" height="{{ height }}" width="{{ width }}" alt="{{ alt }}" />
     </picture>
   </div>
 {% endmacro %}
