@@ -7,6 +7,7 @@ const Fiber = require('fibers');
 const rollup = require('rollup');
 const rollupPluginCommonjs = require('@rollup/plugin-commonjs');
 const rollupPluginNodeResolve = require('@rollup/plugin-node-resolve');
+const rollupPluginTerser = require('rollup-plugin-terser').terser;
 
 const plugins = {}
 plugins.sass = require('gulp-sass');
@@ -18,7 +19,8 @@ const paths = {
   src: 'src/assets/',
   node_modules: 'node_modules/',
   dist: 'dist/alerts/assets/',
-  govuk_frontend: 'node_modules/govuk-frontend/'
+  govuk_frontend: 'node_modules/govuk-frontend/',
+  assetsUrl: '/alerts/assets/'
 };
 
 plugins.sass.compiler = require('sass');
@@ -61,7 +63,9 @@ const javascripts = {
         // this adds node_modules to the require path so it can find the GOVUK Frontend modules
         rollupPluginCommonjs({
           include: 'node_modules/**'
-        })
+        }),
+        // Terser is a replacement for UglifyJS
+        rollupPluginTerser()
       ]
     }).then(bundle => {
       return bundle.write({
@@ -88,7 +92,9 @@ const javascripts = {
         // this adds node_modules to the require path so it can find the GOVUK Frontend modules
         rollupPluginCommonjs({
           include: 'node_modules/**'
-        })
+        }),
+        // Terser is a replacement for UglifyJS
+        rollupPluginTerser()
       ]
     }).then(bundle => {
       return bundle.write({
