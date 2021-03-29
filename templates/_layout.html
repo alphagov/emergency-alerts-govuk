@@ -26,6 +26,12 @@
   <![endif]-->
 {% endblock %}
 
+{% block header %}
+  {{ govukHeader({
+    'assetsPath': '/alerts/assets/images'
+  }) }}
+{% endblock %}
+
 {% block footer %}
   {{ govukFooter({
     'navigation': [
