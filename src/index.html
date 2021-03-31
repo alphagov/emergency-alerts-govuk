@@ -5,6 +5,10 @@
 {%- from "templates/components/image.html" import image -%}
 {%- from "templates/components/example/macro.html" import example -%}
 
+{% block prefetch %}
+  <link rel="prefetch" href="{{ '/alerts/assets/javascripts/govuk-frontend-details-and-button.js' | file_fingerprint }}" />
+{% endblock %}
+
 {% block pageTitleCurrent -%}
   Local emergency alerts
 {%- endblock %}
