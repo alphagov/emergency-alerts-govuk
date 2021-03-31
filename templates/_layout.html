@@ -17,6 +17,7 @@
   {%- for font in font_paths %}
   <link rel="preload" href="/{{ font }}" as="font" type="font/woff2" crossorigin>
   {%- endfor %}
+  {% block prefetch %}{% endblock %}
   <link media="print" href={{ "/alerts/assets/stylesheets/main-print.css" | file_fingerprint }} rel="stylesheet">
   <link media="screen" href={{ "/alerts/assets/stylesheets/main.css" | file_fingerprint }} rel="stylesheet">
 
