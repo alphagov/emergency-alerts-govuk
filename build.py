@@ -1,6 +1,7 @@
 import hashlib
 from pathlib import Path
 
+import yaml
 from jinja2 import (
     ChoiceLoader,
     Environment,
