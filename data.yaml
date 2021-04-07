@@ -9,3 +9,8 @@ alerts:
     expires: 2021-05-07T15:03:51-00:00
     language: en-GB
     channel: severe
+    area_names:
+      - England
+      - Northern Ireland
+      - Scotland
+      - Wales

@@ -10,6 +10,7 @@ from jinja2 import (
     PackageLoader,
     PrefixLoader,
 )
+from notifications_utils.formatters import formatted_list
 
 repo = Path('.')
 src = repo / 'src'
@@ -61,6 +62,7 @@ def is_current_alert(alert):
 def convert_dates(alert):
     alert['sent'] = AlertsDate(alert['sent'])
     alert['expires'] = AlertsDate(alert['expires'])
+    return alert
 
 
 data_file = repo / 'data.yaml'
@@ -69,6 +71,7 @@ with data_file.open() as stream:
 
 env = Environment(loader=jinja_loader, autoescape=True)
 env.filters['file_fingerprint'] = file_fingerprint
+env.filters['formatted_list'] = formatted_list
 env.globals = {
     'font_paths': [
         item.relative_to(dist)

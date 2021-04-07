@@ -47,7 +47,7 @@
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
   {% set alertAreas %}
     <p class="govuk-body">
-      Sent to England, Northern Ireland, Scotland and Wales.
+      Sent to {{ alert_data.area_names | formatted_list(before_each='', after_each='') }}.
     </p>
     {{ image("/alerts/assets/images/map-of-uk-static.png", height=275, width=590, alt="map showing the area the alert was sent to: England, Northern Ireland, Scotland and Wales") }}
     <p class="govuk-body">

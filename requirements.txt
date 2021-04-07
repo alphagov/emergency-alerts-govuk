@@ -2,3 +2,4 @@ govuk-frontend-jinja==1.1.0
 Jinja2==2.11.3
 MarkupSafe==1.1.1
 PyYAML==5.4.1
+git+https://github.com/alphagov/notifications-utils.git@44.2.0#egg=notifications-utils==44.r21.0

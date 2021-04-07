@@ -33,7 +33,7 @@
   {% for current_alert in current_alerts %}
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
   {{ alert(
-    areas="England, Northern Ireland, Scotland, and Wales",
+    areas=current_alert.area_names,
     message=current_alert.description,
     identifier=current_alert.identifier) }}
   {% endfor %}
