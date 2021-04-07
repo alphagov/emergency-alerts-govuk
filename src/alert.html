@@ -32,15 +32,15 @@
 {% block content %}
   <h1 class="govuk-heading-xl alerts-icon__container alerts-icon__container--48">
     {{ alerts_icon(height=48) }}
-    Emergency alert
+    {{ alert_data.headline }}
   </h1>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds alert-icon__container">
       <p class="govuk-body-l govuk-!-margin-bottom-4">
-        This is a test. Next time you get an emergency alert, stop what you’re doing and follow the advice. For information, search www.gov.uk/alerts.
+        {{ alert_data.description }}
       </p>
       <p class="govuk-body govuk-!-margin-bottom-0">
-        Issued by Cabinet Office today at 12:02pm
+        Issued by Cabinet Office {{ alert_data.sent }}
       </p>
     </div>
   </div>
@@ -61,7 +61,7 @@
   {% set sharingContent %}
     <div class="share-url">
       <p class="govuk-body">
-        https://gov.uk/alerts/alert
+        https://gov.uk/alerts/{{ alert_data.identifier }}
       </p>
     </div>
   {% endset %}

@@ -1,6 +1,6 @@
 {%- from "templates/components/alerts_icon.html" import alerts_icon -%}
 
-{% macro alert(areas, message) %}
+{% macro alert(areas, message, identifier) %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <div class="alerts-icon__container alerts-icon__container--48">
@@ -11,7 +11,7 @@
         <p class="alerts-alert__message govuk-body-l govuk-!-margin-bottom-4">
           {{ message }}
         </p>
-        <a href="/alerts/alert" class="govuk-link govuk-body">
+        <a href="/alerts/{{ identifier }}" class="govuk-link govuk-body">
           More information about this alert 
           <span class="govuk-visually-hidden"> to {{ areas }}</span>
         </a>
