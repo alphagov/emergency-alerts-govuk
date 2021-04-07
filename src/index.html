@@ -31,7 +31,7 @@
   {% set current_alerts_len = current_alerts | length %}
   {% if current_alerts_len > 0 %}
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-  {{ banner(current_alerts_len, 'Updated ' ~ data_last_updated) }}
+  {{ banner(current_alerts_len, data_last_updated) }}
   {% endif %}
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
   <div class="govuk-grid-row">

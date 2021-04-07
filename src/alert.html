@@ -40,7 +40,7 @@
         {{ alert_data.description }}
       </p>
       <p class="govuk-body govuk-!-margin-bottom-0">
-        Issued by Cabinet Office {{ alert_data.sent }}
+        Issued by Cabinet Office on <time datetime="{{ alert_data.sent.as_iso8601 }}">{{ alert_data.sent.as_lang }}</time>
       </p>
     </div>
   </div>
