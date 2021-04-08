@@ -7,7 +7,7 @@
       <a class="govuk-link" href="/alerts/current-alerts">{{ number_of_alerts }} current {% if number_of_alerts == 1 %}alert{% else %}alerts{% endif %}</a>
     </h2>
     <p class="alerts-notification-banner__age govuk-body">
-      Updated <time datetime="{{ last_updated.as_iso8601 }}">{{ last_updated.as_lang }}</time>
+      Updated <time class="relative-date" datetime="{{ last_updated.as_iso8601 }}">{{ last_updated.as_lang }}</time>
     </p>
   </div>
 {% endmacro %}

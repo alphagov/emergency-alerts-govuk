@@ -40,7 +40,7 @@
         {{ alert_data.description }}
       </p>
       <p class="govuk-body govuk-!-margin-bottom-0">
-        Issued by Cabinet Office on <time datetime="{{ alert_data.sent.as_iso8601 }}">{{ alert_data.sent.as_lang }}</time>
+        Issued by Cabinet Office <span class="relative-date__prefix">on </span><time class="relative-date" datetime="{{ alert_data.sent.as_iso8601 }}">{{ alert_data.sent.as_lang }}</time>
       </p>
     </div>
   </div>
@@ -74,5 +74,6 @@
 {% block bodyEnd %}
   <script type="text/javascript" src="{{ '/alerts/assets/javascripts/govuk-frontend-details-and-button.js' | file_fingerprint }}"></script>
   <!--[if gt IE 8]><!--><script type="text/javascript" src="{{ '/alerts/assets/javascripts/sharing-button.js' | file_fingerprint }}"></script><!--<![endif]-->
+  <script async type="text/javascript" src="{{ '/alerts/assets/javascripts/relative-dates.js' | file_fingerprint }}"></script>
 
 {% endblock %}
