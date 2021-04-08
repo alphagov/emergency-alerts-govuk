@@ -52,6 +52,9 @@
       <p class="govuk-body">
         You can also find them on your phone or tablet.
       </p>
+      {% set androidButton %}
+        <span class="govuk-visually-hidden">Find alerts on </span>Android devices
+      {% endset %}
       {% set androidAdvice %}
         <p class="govuk-body">
             Search your settings for ‘emergency alerts’ and select <b class="govuk-!-font-weight-bold">Emergency alert history</b>.
@@ -61,16 +64,19 @@
         </p>
       {% endset %}
       {{ govukDetails({
-        "summaryText": "Android devices",
+        "summaryHtml": androidButton,
         "html": androidAdvice
       }) }}
+      {% set iosButton %}
+        <span class="govuk-visually-hidden">Find alerts on </span>iPhone and iPad
+      {% endset %}
       {% set iosAdvice %}
         <p class="govuk-body">
             Swipe down on the home screen to view your notifications. If you clear your notifications you’ll delete the alert.
         </p>
       {% endset %}
       {{ govukDetails({
-        "summaryText": "iPhone and iPad",
+        "summaryHtml": iosButton,
         "html": iosAdvice
       }) }}
       <h2 class="govuk-heading-m">
