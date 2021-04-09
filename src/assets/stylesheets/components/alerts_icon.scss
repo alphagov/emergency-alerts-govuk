@@ -1,19 +1,48 @@
+@import "govuk/settings/all";
+@import "govuk/helpers/all";
+
 .alerts-icon {
   position: absolute;
   left: 0;
-  top: 5px;
 
-  &__container {
-    position: relative;
-    padding-left: 72px;
-    min-height: 48px;
+  &--48 {
+    top: -3px;
+    width: 32px;
+
+    @include govuk-media-query($from: tablet) {
+      top: 5px;
+      width: 48px;
+    }
   }
 }
 
-.govuk-heading-xl > .alerts-icon {
-  top: -2px;
+.alerts-icon__container {
+  position: relative;
+
+  &--48 {
+    padding-left: 48px;
+    min-height: 32px;
+
+    @include govuk-media-query($from: tablet) {
+      padding-left: 72px;
+      min-height: 48px;
+    }
+  }
 }
 
-.govuk-heading-xl.alerts-icon__container {
-  padding-left: 62px;
+// Page-specific variants
+.govuk-heading-xl > .alerts-icon--48 {
+  top: -10px;
+
+  @include govuk-media-query($from: tablet) {
+    top: -2px;
+  }
+}
+
+.govuk-heading-xl.alerts-icon__container--48 {
+  padding-left: 42px;
+
+  @include govuk-media-query($from: tablet) {
+    padding-left: 62px;
+  }
 }

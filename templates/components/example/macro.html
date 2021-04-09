@@ -1,0 +1,27 @@
+{%- from "templates/components/alerts_icon.html" import alerts_icon -%}
+
+{% macro example(alt) %}
+  <style>
+  {%- include "templates/components/example/styles.html" -%}
+  </style>
+  <div class="alerts-image__container--centred">
+    <div role="img" aria-label="{{ alt }}" class="example__container">
+      <div class="example__edge">
+        <div class="example__notch"></div>
+        <div class="example__screen">
+          <div class="example__popup">
+            <h3 class="example__popup__heading alerts-icon__container">
+              {{ alerts_icon(height=28) }}Emergency alert
+            </h3>
+            <p class="example__popup__body">
+              This is an example of what a local emergency alert will look like on your phone. It will also make a loud noise.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="example__alternative" href="{{ '/alerts/assets/images/example.png' | file_fingerprint }}">
+      Local emergency alert example as an image.
+    </a>
+  </div>
+{% endmacro %}

@@ -14,9 +14,12 @@
 {% block head %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
+  {# preload fonts to save the time it takes the browser to parse the CSS to find requests for them #}
   {%- for font in font_paths %}
   <link rel="preload" href="/{{ font }}" as="font" type="font/woff2" crossorigin>
   {%- endfor %}
+  {# prefetch block for any files needed in future navigations - doesn't block resources for the current page #}
+  {% block prefetch %}{% endblock %}
   <link media="print" href={{ "/alerts/assets/stylesheets/main-print.css" | file_fingerprint }} rel="stylesheet">
   <link media="screen" href={{ "/alerts/assets/stylesheets/main.css" | file_fingerprint }} rel="stylesheet">
 
@@ -24,6 +27,12 @@
   <!--[if lt IE 9]>
     <script src="/alerts/assets/javascripts/vendor/html5shiv/html5shiv.min.js"></script>
   <![endif]-->
+{% endblock %}
+
+{% block header %}
+  {{ govukHeader({
+    'assetsPath': '/alerts/assets/images'
+  }) }}
 {% endblock %}
 
 {% block footer %}

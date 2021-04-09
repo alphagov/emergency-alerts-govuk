@@ -4,6 +4,7 @@
 {%- from "govuk_frontend_jinja/components/details/macro.html" import govukDetails -%}
 {%- from "templates/components/alert.html" import alert -%}
 {%- from "templates/components/alerts_icon.html" import alerts_icon -%}
+{%- from "templates/components/image.html" import image -%}
 
 {% block pageTitleCurrent -%}
   Emergency alert
@@ -29,8 +30,8 @@
 {% endblock %}
 
 {% block content %}
-  <h1 class="govuk-heading-xl alerts-icon__container">
-    {{ alerts_icon() }}
+  <h1 class="govuk-heading-xl alerts-icon__container alerts-icon__container--48">
+    {{ alerts_icon(height=48) }}
     Emergency alert
   </h1>
   <div class="govuk-grid-row">
@@ -48,7 +49,7 @@
     <p class="govuk-body">
       Sent to England, Northern Ireland, Scotland and Wales.
     </p>
-    <img src={{ "/alerts/assets/images/map-of-uk-static.png" | file_fingerprint }} height="275" width="590" alt="map showing the area the alert was sent to: England, Northern Ireland, Scotland and Wales"/>
+    {{ image("/alerts/assets/images/map-of-uk-static.png", height=275, width=590, alt="map showing the area the alert was sent to: England, Northern Ireland, Scotland and Wales") }}
     <p class="govuk-body">
       Surrounding areas might also have received the alert.
     </p>

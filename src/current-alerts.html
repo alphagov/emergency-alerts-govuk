@@ -3,6 +3,10 @@
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 {%- from "templates/components/alert.html" import alert -%}
 
+{% block prefetch %}
+  <link rel="prefetch" href="{{ '/alerts/assets/javascripts/govuk-frontend-details-and-button.js' | file_fingerprint }}" />
+{% endblock %}
+
 {% block pageTitleCurrent -%}
   Current alerts
 {%- endblock %}
