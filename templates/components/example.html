@@ -1,0 +1,46 @@
+{%- from "templates/components/alerts_icon.html" import alerts_icon -%}
+
+{% macro example() %}
+  {% set popup_text = [
+    'This is an example of',
+    'what a local emergency',
+    'alert will look like on your',
+    'phone. It will also make a',
+    'loud noise.'
+  ] %}
+  {% set alt = 'Mobile phone screen showing an emergency alert. The alert says: ‘' ~ popup_text | join(' ') ~ '’' %}
+  <div class="alerts-image__container--centred">
+    <!--[if gt IE 8]><!-->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 315 429" height="429" width="315" role="img" class="example alerts-image__image--centred">
+      <defs>
+        <linearGradient id="screenGradient" gradientTransform="rotate(80)">
+          <stop id="stop1" offset="0%" stop-color="#1b70b8" />
+          <stop id="stop2" offset="45%" stop-color="#094182" />
+          <stop id="stop3" offset="80%" stop-color="#094182" />
+          <stop id="stop4" offset="100%" stop-color="#1b70b8" />
+        </linearGradient>
+      </defs>
+      <title>{{ alt }}</title>
+      <g aria-hidden="true">
+        <path id="phoneOuter" fill="#000000" d="M18 0 H 297 A 18,18 0 0 1 315,18 V 429 H 0 V 18 A 18,18 0 0 1 18,0z" />
+        <path id="phoneEdge" fill="transparent" stroke="#ffffff" stroke-width="2" d="M18 5 H 297 A 14,14 0 0 1 310,18 V 429 M 5,429 V 18 A 14,14 0 0 1 18,5" />
+        <path id="phoneScreen" fill="url('#screenGradient')" d="M24 18 H 291 A 6,6 0 0 1 297,24 V 429 H 18 V 24 A 6,6 0 0 1 24,18z" />
+        <path id="phoneNotch" fill="#000000" d="M81 18 H 234 V 26 A 4,4 0 0 1 230,30 H 85 A 4,4 0 0 1 81,26z" />
+        <rect id="phonePopup" fill="#e6ecf3" x="30" y="157" height="200" width="255" rx="6" />
+        <g id="phonePopupText" transform="translate(44,157)" font-family="'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',arial,sans-serif">
+          {{ alerts_icon(height=28, y=19) }}
+          {% set top_padding = 14 + 8 %}
+          <text font-size="19" font-weight="bold" x="40" y="{{ top_padding + 19 }}">Emergency alert</text>
+          {% set line_height = 24 %}
+          {% set top_position = top_padding + 19 + 10 %}
+          {% for line in popup_text %}
+          <text font-size="21" x="0" y="{{ (loop.index * line_height) + top_position }}">{{ line }}</text>
+          {% endfor %}
+        </g>
+        <image class="alerts-icon__fallback" src="{{ '/alerts/assets/images/example.png' | file_fingerprint }}" xlink:href="data:," display="none"></image>
+      </g>
+    </svg>
+    <!--<![endif]-->
+    <!--[if IE 8]><img src="/alerts/assets/images/example.png" height="436" width="306", alt="{{ alt }}" class="example alerts-image__image--centred" /><![endif]-->
+  </div>
+{% endmacro %}
