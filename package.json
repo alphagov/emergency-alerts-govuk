@@ -19,7 +19,8 @@
   "license": "MIT",
   "homepage": "https://github.com/alphagov/notifications-govuk-alerts#readme",
   "dependencies": {
-    "html5shiv": "^3.7.3"
+    "html5shiv": "^3.7.3",
+    "timeago.js": "^4.0.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.1.0",
