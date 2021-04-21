@@ -1,3 +1,13 @@
+import hashlib
+from pathlib import Path
+
+
+REPO = Path('.')
+SRC = REPO / 'src'
+DIST = REPO / 'dist'
+ROOT = DIST / 'alerts'
+
+
 class AlertsDate(object):
     """Makes a datetime available in different formats"""
 
@@ -15,3 +25,8 @@ class AlertsDate(object):
     @property
     def as_datetime(self):
         return self._datetime
+
+
+def file_fingerprint(path, root=DIST):
+    contents = open(str(root) + path, 'rb').read()
+    return path + '?' + hashlib.md5(contents).hexdigest()

@@ -1,6 +1,4 @@
-import hashlib
 from datetime import datetime, timezone
-from pathlib import Path
 
 import yaml
 from jinja2 import (
@@ -11,26 +9,22 @@ from jinja2 import (
     PrefixLoader,
 )
 from notifications_utils.formatters import formatted_list
-from lib.utils import AlertsDate
 
-repo = Path('.')
-src = repo / 'src'
-dist = repo / 'dist'
-root = dist / 'alerts'
+from lib.utils import (
+    DIST, REPO, ROOT, SRC,
+    AlertsDate, file_fingerprint
+)
+
+
 now = datetime.now(timezone.utc)  # TODO: test this works with British Summer Time (BST)
 
 
 jinja_loader = ChoiceLoader([
-    FileSystemLoader(str(repo)),
+    FileSystemLoader(str(REPO)),
     PrefixLoader({
         'govuk_frontend_jinja': PackageLoader('govuk_frontend_jinja')
     })
 ])
-
-
-def file_fingerprint(path):
-    contents = open(str(dist) + path, 'rb').read()
-    return path + '?' + hashlib.md5(contents).hexdigest()
 
 
 def is_current_alert(alert):
@@ -47,7 +41,7 @@ def convert_dates(alert):
     return alert
 
 
-data_file = repo / 'data.yaml'
+data_file = REPO / 'data.yaml'
 with data_file.open() as stream:
     data = yaml.load(stream, Loader=yaml.CLoader)
 
@@ -56,29 +50,29 @@ env.filters['file_fingerprint'] = file_fingerprint
 env.filters['formatted_list'] = formatted_list
 env.globals = {
     'font_paths': [
-        item.relative_to(dist)
-        for item in root.glob('assets/fonts/*.woff2')
+        item.relative_to(DIST)
+        for item in ROOT.glob('assets/fonts/*.woff2')
     ],
     'data_last_updated': AlertsDate(data['last_updated']),
     'current_alerts': [convert_dates(alert) for alert in data['alerts'] if is_current_alert(alert)]
 }
 
 if __name__ == '__main__':
-    root.mkdir(exist_ok=True)
+    ROOT.mkdir(exist_ok=True)
 
-    for page in src.glob('*.html'):
+    for page in SRC.glob('*.html'):
         template = env.get_template(str(page))
 
         if str(page) == 'src/alert.html':
             for alert in data['alerts']:
-                target = root / alert['identifier']
+                target = ROOT / alert['identifier']
                 target.open('w').write(template.render({'alert_data': alert}))
             continue
 
         if 'index.html' in str(page):
-            target = dist / page.relative_to(src)
+            target = DIST / page.relative_to(SRC)
         else:
-            target = root / page.relative_to(src)
+            target = ROOT / page.relative_to(SRC)
 
         target.parent.mkdir(exist_ok=True)
         target.open('w').write(template.render())
