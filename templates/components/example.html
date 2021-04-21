@@ -2,11 +2,10 @@
 
 {% macro example() %}
   {% set popup_text = [
-    'This is an example of',
-    'what a local emergency',
-    'alert will look like on your',
-    'phone. It will also make a',
-    'loud noise.'
+    'This is an example of what',
+    'an emergency alert will look',
+    'like on your phone. It will',
+    'also make a loud noise.'
   ] %}
   {% set alt = 'Mobile phone screen showing an emergency alert. The alert says: ‘' ~ popup_text | join(' ') ~ '’' %}
   <div class="alerts-image__container--centred">
@@ -26,14 +25,14 @@
         <path id="phoneEdge" fill="transparent" stroke="#d6d6d6" stroke-width="2" d="M18 5 H 297 A 14,14 0 0 1 310,18 V 429 M 5,429 V 18 A 14,14 0 0 1 18,5" />
         <path id="phoneScreen" fill="url('#screenGradient')" d="M24 18 H 291 A 6,6 0 0 1 297,24 V 429 H 18 V 24 A 6,6 0 0 1 24,18z" />
         <path id="phoneNotch" fill="#0b0c0c" d="M81 18 H 234 V 26 A 4,4 0 0 1 230,30 H 85 A 4,4 0 0 1 81,26z" />
-        <rect id="phonePopup" fill="#e6ecf3" x="30" y="157" height="200" width="255" rx="6" />
+        {% set font_size = 19 %}
+        {% set line_height = 25 %}
+        {% set top_padding = 14 + 8 %}
+        {% set top_position = top_padding + font_size + 10 %}
+        <rect id="phonePopup" fill="#e6ecf3" x="30" y="157" height="{{ top_position + (popup_text|length * line_height) + line_height }}" width="255" rx="6" />
         <g id="phonePopupText" transform="translate(44,157)" font-family="-apple-system,BlinkMacSystemFont,arial,sans-serif">
           {{ alerts_icon(height=28, y=19) }}
-          {% set top_padding = 14 + 8 %}
           <text font-size="19" font-weight="bold" x="40" y="{{ top_padding + 19 }}">Emergency alert</text>
-          {% set font_size = 20 %}
-          {% set line_height = 24 %}
-          {% set top_position = top_padding + 19 + 10 %}
           {% for line in popup_text %}
           <text font-size="{{ font_size }}" x="0" y="{{ (loop.index * line_height) + top_position }}">{{ line }}</text>
           {% endfor %}
