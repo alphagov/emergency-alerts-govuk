@@ -87,7 +87,7 @@ if __name__ == '__main__':
     for page in src.glob('*.html'):
         template = env.get_template(str(page))
 
-        if 'alert.html' in str(page):
+        if str(page) == 'src/alert.html':
             for alert in data['alerts']:
                 target = root / alert['identifier']
                 target.open('w').write(template.render({'alert_data': alert}))
