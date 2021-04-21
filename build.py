@@ -16,7 +16,7 @@ repo = Path('.')
 src = repo / 'src'
 dist = repo / 'dist'
 root = dist / 'alerts'
-now = datetime.now(timezone.utc)
+now = datetime.now(timezone.utc)  # TODO: test this works with British Summer Time (BST)
 
 
 jinja_loader = ChoiceLoader([
