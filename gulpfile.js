@@ -104,6 +104,33 @@ const javascripts = {
         sourcemap: true
       });
     });
+  },
+  relativeDates: () => {
+    // Use Rollup to combine all JS in JS module format into a Immediately Invoked Function
+    // Expression (IIFE) to:
+    // - deliver it in one bundle
+    // - allow it to run in browsers without support for JS Modules
+    return rollup.rollup({
+      input: paths.src + 'javascripts/relative-dates.js',
+      plugins: [
+        // determine module entry points from either 'module' or 'main' fields in package.json
+        rollupPluginNodeResolve.nodeResolve({
+          mainFields: ['module', 'main']
+        }),
+        // gulp rollup runs on nodeJS so reads modules in commonJS format
+        // this adds node_modules to the require path so it can find the GOVUK Frontend modules
+        rollupPluginCommonjs({
+          include: 'node_modules/**'
+        })
+      ]
+    }).then(bundle => {
+      return bundle.write({
+        file: paths.dist + 'javascripts/relative-dates.js',
+        format: 'iife',
+        name: 'GOVUK',
+        sourcemap: true
+      });
+    });
   }
 };
 
@@ -134,7 +161,8 @@ const defaultTask = parallel(
   copy.images,
   scss.compile,
   javascripts.details,
-  javascripts.sharingButton
+  javascripts.sharingButton,
+  javascripts.relativeDates
 );
 
 exports.default = defaultTask;
