@@ -21,7 +21,12 @@
   {# prefetch block for any files needed in future navigations - doesn't block resources for the current page #}
   {% block prefetch %}{% endblock %}
   <link media="print" href={{ "/alerts/assets/stylesheets/main-print.css" | file_fingerprint }} rel="stylesheet">
+  <!--[if !IE 8]><!-->
   <link media="screen" href={{ "/alerts/assets/stylesheets/main.css" | file_fingerprint }} rel="stylesheet">
+  <!--<![endif]-->
+  <!--[if IE 8]>
+  <link media="screen" href={{ "/alerts/assets/stylesheets/main-ie8.css" | file_fingerprint }} rel="stylesheet">
+  <![endif]-->
 
   {# For older browsers to allow them to recognise HTML5 elements such as `<header>` #}
   <!--[if lt IE 9]>
