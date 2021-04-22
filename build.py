@@ -12,11 +12,8 @@ from notifications_utils.formatters import formatted_list
 
 from lib.utils import (
     DIST, REPO, ROOT, SRC,
-    AlertsDate, file_fingerprint
+    AlertsDate, file_fingerprint, is_current_alert
 )
-
-
-now = datetime.now(timezone.utc)  # TODO: test this works with British Summer Time (BST)
 
 
 jinja_loader = ChoiceLoader([
@@ -25,14 +22,6 @@ jinja_loader = ChoiceLoader([
         'govuk_frontend_jinja': PackageLoader('govuk_frontend_jinja')
     })
 ])
-
-
-def is_current_alert(alert):
-    if alert['message_type'] == 'cancel':
-        return False
-    if alert['expires'] <= now:  # pyyaml converts ISO 8601 dates to datetime.datetime instances
-        return False
-    return True
 
 
 def convert_dates(alert):

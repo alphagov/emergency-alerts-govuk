@@ -1,4 +1,5 @@
 import hashlib
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -30,3 +31,13 @@ class AlertsDate(object):
 def file_fingerprint(path, root=DIST):
     contents = open(str(root) + path, 'rb').read()
     return path + '?' + hashlib.md5(contents).hexdigest()
+
+
+def is_current_alert(alert):
+    now = datetime.now(timezone.utc)  # TODO: test this works with British Summer Time (BST)
+
+    if alert['message_type'] == 'cancel':
+        return False
+    if alert['expires'] <= now:  # pyyaml converts ISO 8601 dates to datetime.datetime instances
+        return False
+    return True
