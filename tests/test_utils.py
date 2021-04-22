@@ -2,7 +2,7 @@ import pytest
 
 from datetime import datetime, timezone
 from freezegun import freeze_time
-from lib.utils import AlertsDate, file_fingerprint, is_current_alert
+from lib.utils import AlertsDate, convert_dates, file_fingerprint, is_current_alert
 from pathlib import Path
 
 
@@ -32,3 +32,18 @@ def test_is_current_alert_checks_if_alert_is_current(expiry_date, is_current):
         'expires': expiry_date
     }
     assert is_current_alert(alert) == is_current
+
+
+def test_convert_dates_converts_alert_sent_and_expiry_dates_to_AlertsDate_class():
+    alert = {
+        'message_type': 'alert',
+        'expires': datetime(2021, 4, 21, 9, 30, tzinfo=timezone.utc),
+        'sent': datetime(2021, 4, 20, 9, 30, tzinfo=timezone.utc),
+    }
+    assert not isinstance(alert['sent'], AlertsDate)
+    assert not isinstance(alert['expires'], AlertsDate)
+
+    converted_alert = convert_dates(alert)
+
+    assert isinstance(converted_alert['sent'], AlertsDate)
+    assert isinstance(converted_alert['expires'], AlertsDate)

@@ -12,7 +12,7 @@ from notifications_utils.formatters import formatted_list
 
 from lib.utils import (
     DIST, REPO, ROOT, SRC,
-    AlertsDate, file_fingerprint, is_current_alert
+    AlertsDate, convert_dates, file_fingerprint, is_current_alert
 )
 
 
@@ -22,12 +22,6 @@ jinja_loader = ChoiceLoader([
         'govuk_frontend_jinja': PackageLoader('govuk_frontend_jinja')
     })
 ])
-
-
-def convert_dates(alert):
-    alert['sent'] = AlertsDate(alert['sent'])
-    alert['expires'] = AlertsDate(alert['expires'])
-    return alert
 
 
 data_file = REPO / 'data.yaml'

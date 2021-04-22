@@ -41,3 +41,9 @@ def is_current_alert(alert):
     if alert['expires'] <= now:  # pyyaml converts ISO 8601 dates to datetime.datetime instances
         return False
     return True
+
+
+def convert_dates(alert):
+    alert['sent'] = AlertsDate(alert['sent'])
+    alert['expires'] = AlertsDate(alert['expires'])
+    return alert
