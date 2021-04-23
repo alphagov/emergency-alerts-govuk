@@ -19,16 +19,17 @@ def test_file_fingerprint_adds_hash_to_file_path():
     assert new_path == '/tests/test_files/example.txt?4d93d51945b88325c213640ef59fc50b'
 
 
-@pytest.mark.parametrize('expiry_date,is_current', [
-    [datetime(2021, 4, 21, 11, 30, tzinfo=timezone.utc), True],
-    [datetime(2021, 4, 21, 9, 30, tzinfo=timezone.utc), False]
+@pytest.mark.parametrize('expiry_date,message_type,is_current', [
+    [datetime(2021, 4, 21, 11, 30, tzinfo=timezone.utc), 'alert', True],
+    [datetime(2021, 4, 21, 9, 30, tzinfo=timezone.utc), 'alert', False],
+    [datetime(2021, 4, 21, 11, 30, tzinfo=timezone.utc), 'cancel', False]
 ])
 @freeze_time(datetime(
     2021, 4, 21, 10, 30, tzinfo=timezone.utc
 ))
-def test_is_current_alert_checks_if_alert_is_current(expiry_date, is_current):
+def test_is_current_alert_checks_if_alert_is_current(expiry_date, message_type, is_current):
     alert = {
-        'message_type': 'alert',
+        'message_type': message_type,
         'expires': expiry_date
     }
     assert is_current_alert(alert) == is_current
