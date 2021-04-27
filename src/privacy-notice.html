@@ -1,0 +1,45 @@
+{% extends "templates/content.html" %}
+
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+
+{% block pageTitleCurrent -%}
+  Privacy notice
+{%- endblock %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "/"
+      },
+    ]
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+        Privacy notice
+      </h1>
+      <p class="govuk-body">
+        This privacy policy relates to:
+        <ul class="govuk-list govuk-list--bullet">
+          <li><a class="govuk-link" href="/">gov.uk/alerts</a></li>
+          <li><a class="govuk-link" href="#may-2021-emergency-alerts-test-survey">the May 2021 emergency alerts test survey</a></li>
+          <li><a class="govuk-link" href="#emergency-alerts">emergency alerts</a></li>
+        </ul>
+      </p>
+      <h2 class="govuk-heading-m">
+        gov.uk/alerts
+      </h2>
+      <h2 class="govuk-heading-m" id="may-2021-emergency-alerts-test-survey">
+        May 2021 Emergency alerts test survey
+      </h2>
+      <h2 class="govuk-heading-m" id="emergency-alerts">
+        Emergency alerts
+      </h2>
+    </div>
+  </div>
+{% endblock %}
