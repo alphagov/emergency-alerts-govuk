@@ -31,7 +31,7 @@
         {% set top_padding = 14 + 7 %}
         {% set top_position = top_padding + icon_height + 3 %}
         <rect id="phonePopup" fill="#e6ecf3" x="30" y="157" height="{{ top_position + (popup_text|length * line_height) + line_height }}" width="255" rx="6" />
-        <g id="phonePopupText" transform="translate(44,157)" font-family="arial,sans-serif">
+        <g id="phonePopupText" transform="translate(44,157)" font-family="arial,sans-serif" fill="#0b0c0c">
           {{ alerts_icon(height=icon_height, y=font_size) }}
           <text font-size="{{ font_size }}" font-weight="bold" x="40" y="{{ top_padding +  font_size }}">Emergency alert</text>
           {% for line in popup_text %}
