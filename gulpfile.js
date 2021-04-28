@@ -53,7 +53,7 @@ const javascripts = {
     // - deliver it in one bundle
     // - allow it to run in browsers without support for JS Modules
     return rollup.rollup({
-      input: paths.src + 'javascripts/govuk-frontend-details-and-button.js',
+      input: paths.src + 'javascripts/govuk-frontend-details-and-button.mjs',
       plugins: [
         // determine module entry points from either 'module' or 'main' fields in package.json
         rollupPluginNodeResolve.nodeResolve({
@@ -82,7 +82,7 @@ const javascripts = {
     // - deliver it in one bundle
     // - allow it to run in browsers without support for JS Modules
     return rollup.rollup({
-      input: paths.src + 'javascripts/sharing-button.js',
+      input: paths.src + 'javascripts/sharing-button-init.mjs',
       plugins: [
         // determine module entry points from either 'module' or 'main' fields in package.json
         rollupPluginNodeResolve.nodeResolve({
@@ -111,7 +111,7 @@ const javascripts = {
     // - deliver it in one bundle
     // - allow it to run in browsers without support for JS Modules
     return rollup.rollup({
-      input: paths.src + 'javascripts/relative-dates.js',
+      input: paths.src + 'javascripts/relative-dates-init.mjs',
       plugins: [
         // determine module entry points from either 'module' or 'main' fields in package.json
         rollupPluginNodeResolve.nodeResolve({
