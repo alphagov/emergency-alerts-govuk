@@ -7,6 +7,8 @@ function relativeDates () {
   var parentNode
   var prefix
 
+  if (nodes.length === 0) return
+
   render(nodes)
 
   for (i = 0; i < nodesLength; i++) {
