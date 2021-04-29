@@ -4,7 +4,7 @@
   <div class="alerts-notification-banner alerts-icon__container alerts-icon__container--48" role="region" aria-labelledby="alerts-notification-banner__title">
     {{ alerts_icon(height=48) }}
     <h2 class="alerts-notification-banner__title govuk-heading-m govuk-!-margin-bottom-1" id="alerts-notification-banner__title">
-      <a class="govuk-link" href="/alerts/current-alerts">{{ number_of_alerts }} current {% if number_of_alerts == 1 %}alert{% else %}alerts{% endif %}</a>
+      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/current-alerts">{{ number_of_alerts }} current {% if number_of_alerts == 1 %}alert{% else %}alerts{% endif %}</a>
     </h2>
     <p class="alerts-notification-banner__age govuk-body">
       Updated <time class="relative-date" datetime="{{ last_updated.as_iso8601 }}">{{ last_updated.as_lang }}</time>
