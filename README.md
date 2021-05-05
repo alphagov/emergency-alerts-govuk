@@ -55,3 +55,14 @@ Inline SVGs should be optimised using https://jakearchibald.github.io/svgomg/
 Raster images should be optimised using the following tools:
 - https://squoosh.app for converting to `.webp` and optimising the result
 - https://tinypng.com/ for optimising `.png` files
+
+## Updating dependencies
+
+### Node modules
+
+Updates to Node modules should put any resulting changes to `package-lock.json` into a separate
+commit. This makes it easier to merge any differences, if any arise.
+
+For example:
+
+https://github.com/alphagov/notifications-govuk-alerts/pull/23/commits/cc6dc62db58993169461d6b9c6a18d37bfef90a5
