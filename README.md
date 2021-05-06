@@ -7,9 +7,11 @@ Make sure you have:
 - NodeJS (LTS)
 
 1. create a [python virtual environment](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
-2. run `make bootstrap-ci`
+2. run `make bootstrap`
 
-For any further updates to dependencies, use `make bootstrap` for step 2.
+For any further updates to dependencies, use the commands for each language:
+- `npm install` for NodeJS
+- `pip install -r requirements_for_test.txt` for Python
 
 ## Building the pages
 
