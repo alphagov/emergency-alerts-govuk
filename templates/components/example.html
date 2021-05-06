@@ -32,16 +32,15 @@
         {% set top_position = top_padding + icon_height + 3 %}
         <rect id="phonePopup" fill="#e6ecf3" x="30" y="157" height="{{ top_position + (popup_text|length * line_height) + line_height }}" width="255" rx="6" />
         <g id="phonePopupText" transform="translate(44,157)" font-family="arial,sans-serif" fill="#0b0c0c">
-          {{ alerts_icon(height=icon_height, y=font_size) }}
+          {{ alerts_icon(height=icon_height, y=font_size, degrade=False) }}
           <text font-size="{{ font_size }}" font-weight="bold" x="40" y="{{ top_padding +  font_size }}">Emergency alert</text>
           {% for line in popup_text %}
           <text font-size="{{ font_size }}" x="0" y="{{ (loop.index * line_height) + top_position }}">{{ line }}</text>
           {% endfor %}
         </g>
-        <image class="alerts-icon__fallback" src="{{ '/alerts/assets/images/example.png' | file_fingerprint }}" xlink:href="data:," display="none"></image>
       </g>
     </svg>
     <!--<![endif]-->
-    <!--[if IE 8]><img src="/alerts/assets/images/example.png" height="436" width="306", alt="{{ alt }}" class="example alerts-image__image--centred" /><![endif]-->
+    <!--[if IE 8]><img src="/alerts/assets/images/example.png" height="436" width="306", alt="{{ alt }}" class="example alerts-image__image--centred alerts-icon__fallback" /><![endif]-->
   </div>
 {% endmacro %}
