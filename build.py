@@ -1,5 +1,3 @@
-from datetime import datetime, timezone
-
 import yaml
 from jinja2 import (
     ChoiceLoader,
@@ -11,10 +9,15 @@ from jinja2 import (
 from notifications_utils.formatters import formatted_list
 
 from lib.utils import (
-    DIST, REPO, ROOT, SRC,
-    AlertsDate, convert_dates, file_fingerprint, is_current_alert
+    DIST,
+    REPO,
+    ROOT,
+    SRC,
+    AlertsDate,
+    convert_dates,
+    file_fingerprint,
+    is_current_alert,
 )
-
 
 jinja_loader = ChoiceLoader([
     FileSystemLoader(str(REPO)),
