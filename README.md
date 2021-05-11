@@ -9,7 +9,7 @@ Make sure you have:
 1. create a [python virtual environment](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
 2. run `make bootstrap`
 
-For any further updates to dependencies, use the commands for each language:
+To install new versions of dependencies later on, use the commands for each language:
 - `npm install` for NodeJS
 - `pip install -r requirements_for_test.txt` for Python
 
@@ -57,14 +57,3 @@ Inline SVGs should be optimised using https://jakearchibald.github.io/svgomg/
 Raster images should be optimised using the following tools:
 - https://squoosh.app for converting to `.webp` and optimising the result
 - https://tinypng.com/ for optimising `.png` files
-
-## Updating dependencies
-
-### Node modules
-
-Updates to Node modules should put any resulting changes to `package-lock.json` into a separate
-commit. This makes it easier to merge any differences, if any arise.
-
-For example:
-
-https://github.com/alphagov/notifications-govuk-alerts/pull/23/commits/cc6dc62db58993169461d6b9c6a18d37bfef90a5
