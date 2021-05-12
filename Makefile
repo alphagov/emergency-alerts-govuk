@@ -15,7 +15,7 @@ run: build
 .PHONY: bootstrap
 bootstrap:
 	pip install -r requirements_for_test.txt
-	npm install
+	npm ci
 
 .PHONY: test
 test:
