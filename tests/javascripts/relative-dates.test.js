@@ -5,17 +5,7 @@ afterEach(() => {
 })
 
 test('It can handle a page with no datetimes in', () => {
-  let error = false
-
-  // import module for side effects
-  try {
-    relativeDates()
-  } catch (e) {
-    error = true
-  }
-
-  expect(error).toBe(false)
-
+  expect(relativeDates).not.toThrow()
 })
 
 describe('If there are datetimes in the page', () => {
