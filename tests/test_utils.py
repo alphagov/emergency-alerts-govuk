@@ -7,11 +7,11 @@ from pathlib import Path
 
 
 def test_AlertsDate_properties():
-    _datetime = datetime(2021, 4, 21, 10, 30)
-    alerts_date = AlertsDate(_datetime)
+    sample_datetime = datetime(2021, 4, 21, 10, 30)
+    alerts_date = AlertsDate(sample_datetime)
     assert alerts_date.as_lang == '21 April 2021 at 10:30'
     assert alerts_date.as_iso8601 == '2021-04-21T10:30:00'
-    assert alerts_date.as_datetime == _datetime
+    assert alerts_date.as_datetime == sample_datetime
 
 
 def test_file_fingerprint_adds_hash_to_file_path():
@@ -41,9 +41,6 @@ def test_convert_dates_converts_alert_sent_and_expiry_dates_to_AlertsDate_class(
         'expires': datetime(2021, 4, 21, 9, 30, tzinfo=timezone.utc),
         'sent': datetime(2021, 4, 20, 9, 30, tzinfo=timezone.utc),
     }
-    assert not isinstance(alert['sent'], AlertsDate)
-    assert not isinstance(alert['expires'], AlertsDate)
-
     converted_alert = convert_dates(alert)
 
     assert isinstance(converted_alert['sent'], AlertsDate)

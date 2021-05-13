@@ -22,4 +22,4 @@ test:
 	isort --check-only *.py
 	flake8 .
 	npm test
-	pytest --maxfail=10 tests/
+	pytest tests/
