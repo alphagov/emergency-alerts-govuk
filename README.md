@@ -9,6 +9,10 @@ Make sure you have:
 1. create a [python virtual environment](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
 2. run `make bootstrap`
 
+To install new versions of dependencies later on, use the commands for each language:
+- `npm install` for NodeJS
+- `pip install -r requirements_for_test.txt` for Python
+
 ## Building the pages
 
 ```
