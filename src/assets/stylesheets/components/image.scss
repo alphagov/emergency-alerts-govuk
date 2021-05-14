@@ -1,6 +1,12 @@
+@import "govuk/settings/all";
+@import "govuk/helpers/all";
+
 .alerts-image {
   &__container--centred {
     text-align: center;
+    @include govuk-media-query($until: tablet) {
+      margin-top: govuk-spacing(5);
+    }
   }
 
   &__image--centred {
