@@ -5,9 +5,20 @@
 {%- from "templates/components/alert.html" import alert -%}
 {%- from "templates/components/alerts_icon.html" import alerts_icon -%}
 {%- from "templates/components/image.html" import image -%}
+{%- from "templates/components/meta_tags.html" import metaTags -%}
+
+{% set pageTitle = "Emergency alert" %}
+
+{% block metaTags %}
+  {{ metaTags(
+    description=alert_data.description,
+    title=pageTitle,
+    url="https://www.gov.uk/alerts/" ~ alert_data.identifier
+  ) }}
+{% endblock %}
 
 {% block pageTitleCurrent -%}
-  Emergency alert
+  {{ pageTitle }}
 {%- endblock %}
 
 {% block beforeContent %}
@@ -61,7 +72,7 @@
   {% set sharingContent %}
     <div class="share-url">
       <p class="govuk-body">
-        https://gov.uk/alerts/{{ alert_data.identifier }}
+        https://www.gov.uk/alerts/{{ alert_data.identifier }}
       </p>
     </div>
   {% endset %}

@@ -4,13 +4,24 @@
 {%- from "templates/components/banner.html" import banner -%}
 {%- from "templates/components/image.html" import image -%}
 {%- from "templates/components/example.html" import example -%}
+{%- from "templates/components/meta_tags.html" import metaTags -%}
+
+{% set pageTitle = "Emergency Alerts" %}
+
+{% block metaTags %}
+  {{ metaTags(
+    description="A new service that sends a warning to your mobile phone or tablet if there’s a danger to life nearby",
+    title=pageTitle,
+    url="https://www.gov.uk/alerts"
+  ) }}
+{% endblock %}
 
 {% block prefetch %}
   <link rel="prefetch" href="{{ '/alerts/assets/javascripts/govuk-frontend-details-and-button.js' | file_fingerprint }}" />
 {% endblock %}
 
 {% block pageTitleCurrent -%}
-  Emergency Alerts
+  {{ pageTitle }}
 {%- endblock %}
 
 {% block beforeContent %}
