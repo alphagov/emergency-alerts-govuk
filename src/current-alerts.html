@@ -2,13 +2,24 @@
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 {%- from "templates/components/alert.html" import alert -%}
+{%- from "templates/components/meta_tags.html" import metaTags -%}
+
+{% set pageTitle = "Current alerts" %}
+
+{% block metaTags %}
+  {{ metaTags(
+    description="Emergency alerts currently being sent",
+    title=pageTitle,
+    url="https://www.gov.uk/alerts/current-alerts"
+  ) }}
+{% endblock %}
 
 {% block prefetch %}
   <link rel="prefetch" href="{{ '/alerts/assets/javascripts/govuk-frontend-details-and-button.js' | file_fingerprint }}" />
 {% endblock %}
 
 {% block pageTitleCurrent -%}
-  Current alerts
+  {{ pageTitle }}
 {%- endblock %}
 
 {% block beforeContent %}

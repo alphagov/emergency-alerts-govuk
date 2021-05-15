@@ -2,9 +2,20 @@
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 {%- from "govuk_frontend_jinja/components/details/macro.html" import govukDetails -%}
+{%- from "templates/components/meta_tags.html" import metaTags -%}
+
+{% set pageTitle = "When you get an emergency alert" %}
+
+{% block metaTags %}
+  {{ metaTags(
+    description="What to expect and what you should do if you receive an emergency alert on your mobile phone or tablet",
+    title=pageTitle,
+    url="https://www.gov.uk/alerts/when-you-get-an-alert"
+  ) }}
+{% endblock %}
 
 {% block pageTitleCurrent -%}
-  When you get an emergency alert
+  {{ pageTitle }}
 {%- endblock %}
 
 {% block beforeContent %}
