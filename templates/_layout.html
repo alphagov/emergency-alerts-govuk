@@ -12,8 +12,7 @@
 {% endblock %}
 
 {% block head %}
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
+  {% block metaTags %}{% endblock %}
   {# preload fonts to save the time it takes the browser to parse the CSS to find requests for them #}
   {%- for font in font_paths %}
   <link rel="preload" href="/{{ font }}" as="font" type="font/woff2" crossorigin>
