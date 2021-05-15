@@ -1,3 +1,10 @@
+@import "govuk/settings/all";
+@import "govuk/helpers/all";
+
 .example {
   display: block;
+  max-width: 315px;
+  @include govuk-media-query($until: tablet) {
+    max-width: 270px;
+  }
 }
