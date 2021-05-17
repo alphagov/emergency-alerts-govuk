@@ -9,6 +9,18 @@
     }
   }
 
+  &__container--extra-margin {
+    margin-bottom: govuk-spacing(5);
+    @include govuk-media-query($from: tablet) {
+      margin-top: govuk-spacing(2);
+    }
+    @include govuk-media-query($from: desktop) {
+      margin-top: 0;
+      margin-right: govuk-spacing(6);
+      margin-left: govuk-spacing(6);
+    }
+  }
+
   &__image--centred {
     display: block;
     margin: 0 auto;
