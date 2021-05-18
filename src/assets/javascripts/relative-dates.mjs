@@ -1,6 +1,6 @@
 import { render } from 'timeago.js'
 
-function relativeDates () {
+export default function relativeDates () {
   var nodes = document.querySelectorAll('.relative-date')
   var nodesLength = nodes.length
   var i
@@ -19,5 +19,3 @@ function relativeDates () {
     }
   }
 }
-
-relativeDates()

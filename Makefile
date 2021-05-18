@@ -21,3 +21,5 @@ bootstrap:
 test:
 	isort --check-only *.py
 	flake8 .
+	npm test
+	pytest tests/

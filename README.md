@@ -33,6 +33,8 @@ Then visit [localhost:8000/alerts](http://localhost:8000/alerts).
 make test
 ```
 
+To run a specific JavaScript test, you'll need to copy the full command from `package.json`.
+
 ## Code linting
 
 ### SCSS

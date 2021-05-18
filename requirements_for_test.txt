@@ -1,4 +1,6 @@
 -r requirements.txt
 
-isort
-flake8
+isort==5.8.0
+flake8==3.9.1
+freezegun==1.1.0
+pytest==6.2.3
