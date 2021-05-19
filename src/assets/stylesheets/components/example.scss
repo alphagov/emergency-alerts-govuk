@@ -3,8 +3,11 @@
 
 .example {
   display: block;
-  max-width: 315px;
-  @include govuk-media-query($until: tablet) {
-    max-width: 270px;
+
+  // instead of swapping at the $tablet breakpoint keep it small until
+  // 720px, when its column is wide enough to contain the larger size
+  @include govuk-media-query($until: 720px) {
+    width: 270px;
+    height: 368px;
   }
 }
