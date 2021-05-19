@@ -5,6 +5,7 @@
 {%- from "templates/components/image.html" import image -%}
 {%- from "templates/components/example.html" import example -%}
 {%- from "templates/components/meta_tags.html" import metaTags -%}
+{%- from "templates/components/survey.html" import survey -%}
 
 {% set pageTitle = "Emergency Alerts" %}
 
@@ -106,6 +107,7 @@
       </p>
     </div>
   </div>
+  {{ survey() }}
 {% endblock %}
 
 {% block bodyEnd %}
