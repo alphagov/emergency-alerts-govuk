@@ -15,6 +15,7 @@ class Alert(SerialisedModel):
         'expires',
         'headline',
         'description',
+        'static_map_png',
         'area_names',
     }
 
