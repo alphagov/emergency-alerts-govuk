@@ -1,14 +1,14 @@
-{% macro alerts_icon(height, x=0, y=0, degrade=True) %}
+{% macro alerts_icon(height, x=0, y=0, degrade=True, fill="#de1924", fallback="alert.png") %}
   {% set width = (height / 100 * 106)|round(0, 'floor') %}
   {% if degrade %}
     <!--[if gt IE 8]><!-->
   {% endif %}
-  <svg class="alerts-icon alerts-icon--{{ height }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50.9 48" aria-hidden="true" focusable="false" x="{{ x }}" y="{{ y }}" height="{{ height }}" width="{{ width }}"><path fill="#de1924" d="M25.5 5.5l-20 35.9h39.9z"></path><path fill="#de1924" d="M25.5 0c-2 0-3.9 1.1-4.8 2.9L.7 38.8c-1 1.7-.9 3.8.1 5.5C1.8 46 3.6 47 5.6 47h39.8c2 0 3.8-1 4.8-2.7 1-1.7 1-3.8.1-5.5l-20-35.9c-1-1.8-2.8-2.9-4.8-2.9z"></path><path d="M21.7 37.7c0-.5.1-1 .3-1.4.2-.4.5-.8.8-1.2.3-.3.7-.6 1.2-.8s1-.3 1.5-.3 1 .1 1.4.3c.4.2.8.5 1.2.8.3.3.6.7.8 1.2.2.4.3.9.3 1.4 0 .5-.1 1-.3 1.5-.2.5-.5.9-.8 1.2-.3.3-.7.6-1.2.8-.4.2-.9.3-1.4.3-.5 0-1-.1-1.5-.3s-.9-.5-1.2-.8c-.3-.3-.6-.7-.8-1.2-.2-.5-.3-1-.3-1.5zm0-24.6s-.8-3.9 3.7-3.9c4.7 0 3.7 3.9 3.7 3.9l-2.7 17.5h-2l-2.7-17.5z" fill="#fff"></path>
+  <svg class="alerts-icon alerts-icon--{{ height }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50.9 48" aria-hidden="true" focusable="false" x="{{ x }}" y="{{ y }}" height="{{ height }}" width="{{ width }}"><path fill="{{ fill }}" d="M25.5 5.5l-20 35.9h39.9z"></path><path fill="{{ fill }}" d="M25.5 0c-2 0-3.9 1.1-4.8 2.9L.7 38.8c-1 1.7-.9 3.8.1 5.5C1.8 46 3.6 47 5.6 47h39.8c2 0 3.8-1 4.8-2.7 1-1.7 1-3.8.1-5.5l-20-35.9c-1-1.8-2.8-2.9-4.8-2.9z"></path><path d="M21.7 37.7c0-.5.1-1 .3-1.4.2-.4.5-.8.8-1.2.3-.3.7-.6 1.2-.8s1-.3 1.5-.3 1 .1 1.4.3c.4.2.8.5 1.2.8.3.3.6.7.8 1.2.2.4.3.9.3 1.4 0 .5-.1 1-.3 1.5-.2.5-.5.9-.8 1.2-.3.3-.7.6-1.2.8-.4.2-.9.3-1.4.3-.5 0-1-.1-1.5-.3s-.9-.5-1.2-.8c-.3-.3-.6-.7-.8-1.2-.2-.5-.3-1-.3-1.5zm0-24.6s-.8-3.9 3.7-3.9c4.7 0 3.7 3.9 3.7 3.9l-2.7 17.5h-2l-2.7-17.5z" fill="#fff"></path>
   </svg>
   {% if degrade %}
     <!--<![endif]-->
     <!--[if IE 8]>
-      <img src="/alerts/assets/images/alert.png" height="{{ height }}" width="{{ width }}", alt="{{ alt }}" class="example alerts-image__image--centred" />
+      <img src="/alerts/assets/images/{{ fallback }}" height="{{ height }}" width="{{ width }}", alt="{{ alt }}" class="example alerts-image__image--centred" />
     <![endif]-->
   {% endif %}
 {% endmacro %}

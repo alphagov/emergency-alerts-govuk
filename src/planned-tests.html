@@ -1,0 +1,56 @@
+{% extends "templates/content.html" %}
+
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "templates/components/meta_tags.html" import metaTags -%}
+
+{% set pageTitle = "Planned tests" %}
+
+{% block metaTags %}
+  {{ metaTags(
+    description="Planned tests of the Emergency Alerts service",
+    title=pageTitle,
+    url="https://www.gov.uk/alerts/opt-out"
+  ) }}
+{% endblock %}
+
+{% block pageTitleCurrent -%}
+  {{ pageTitle }}
+{%- endblock %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "/"
+      },
+      {
+        "text": "Emergency Alerts",
+        "href": "/alerts"
+      }
+    ]
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+        {{ pageTitle }}
+      </h1>
+      <h1 class="govuk-heading-m">
+        Thursday 20 May 2021
+      </h1>
+      <p class="govuk-body">
+        Some UK mobile phone networks will send a test alert between midday and 2pm.
+      </p>
+      <p class="govuk-body">
+        If you get an alert, your phone or tablet may make a loud siren-like sound. You do not need to take any action.
+      </p>
+      <p class="govuk-body">
+        You may get up to 3 alerts.
+      </p>
+      <p class="govuk-body">You will only get these test alerts if you use an Android phone or tablet.</p>
+    </div>
+  </div>
+{% endblock %}
