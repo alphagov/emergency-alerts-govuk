@@ -24,13 +24,21 @@
 
   &__prompt-question {
     margin: govuk-spacing(2) govuk-spacing(4);
+    color: govuk-colour("white");
 
     @include govuk-media-query($from: tablet) {
       margin-left: 0;
     }
+  }
+}
 
-    &, & > .govuk-link {
-      color: govuk-colour("white");
-    }
+.alerts-feedback__prompt-question > .govuk-link {
+  &,
+  &:active {
+    color: govuk-colour("white");
+  }
+
+  &:focus {
+    color: $govuk-focus-text-colour;
   }
 }
