@@ -1,19 +1,19 @@
 {%- from "templates/components/alerts_icon.html" import alerts_icon -%}
 
-{% macro alert(areas, message, identifier) %}
+{% macro alert(alert) %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <div class="alerts-icon__container alerts-icon__container--48">
         {{ alerts_icon(height=48) }}
         <h2 class="alerts-alert__title govuk-heading-s govuk-!-margin-bottom-1">
-          <span class="govuk-visually-hidden">Emergency alert sent to </span>{{ areas | formatted_list(before_each='', after_each='') }}
+          <span class="govuk-visually-hidden">Emergency alert sent to </span>{{ alert.area_names | formatted_list(before_each='', after_each='') }}
         </h2>
         <p class="alerts-alert__message govuk-body-l govuk-!-margin-bottom-4">
-          {{ message }}
+          {{ alert.description }}
         </p>
-        <a href="/alerts/{{ identifier }}" class="govuk-link govuk-body">
-          More information about this alert 
-          <span class="govuk-visually-hidden">to {{ areas | formatted_list(before_each='', after_each='') }}</span>
+        <a href="/alerts/{{ alert.identifier }}" class="govuk-link govuk-body">
+          More information about this alert
+          <span class="govuk-visually-hidden">to {{ alert.area_names | formatted_list(before_each='', after_each='') }}</span>
         </a>
       </div>
     </div>
