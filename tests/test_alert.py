@@ -8,10 +8,10 @@ from lib.alert import Alert
 from lib.alert_date import AlertDate
 
 
-def test_init_converts_alert_sent_and_expiry_dates_to_AlertDate_class(alert_dict):
+def test_alert_sent_and_expiry_properties_are_AlertDates(alert_dict):
     alert = Alert(alert_dict)
-    assert isinstance(alert.sent, AlertDate)
-    assert isinstance(alert.expires, AlertDate)
+    assert isinstance(alert.sent_date, AlertDate)
+    assert isinstance(alert.expires_date, AlertDate)
 
 
 @pytest.mark.parametrize('expiry_date,is_current', [
