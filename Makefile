@@ -1,6 +1,5 @@
 .PHONY: build
 build: clean
-	npm run lint
 	npm run build
 	python build.py
 
@@ -21,5 +20,6 @@ bootstrap:
 test:
 	isort --check-only *.py
 	flake8 .
+	npm run lint
 	npm test
 	pytest tests/
