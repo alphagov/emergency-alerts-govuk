@@ -41,11 +41,11 @@
   <h1 class="govuk-heading-xl">
     Current alerts
   </h1>
-  {% for current_alert in current_alerts %}
+  {% for current_alert in alerts.current %}
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
   {{ alert(alert=current_alert) }}
   {% endfor %}
-  {% if current_alerts %}
+  {% if alerts.current %}
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
   {% else %}
   <p class="govuk-body">There are no alerts currently being sent.</p>
