@@ -3,8 +3,8 @@ import pytz
 
 from datetime import datetime
 from freezegun import freeze_time
-from lib.utils import convert_dates, file_fingerprint, is_current_alert
-from lib.alert_date import AlertDate
+from lib.utils import file_fingerprint, is_current_alert
+from lib.alert import Alert
 from pathlib import Path
 
 
@@ -20,18 +20,6 @@ def test_file_fingerprint_adds_hash_to_file_path():
 @freeze_time(datetime(
     2021, 4, 21, 10, 30, tzinfo=pytz.utc
 ))
-def test_is_current_alert_checks_if_alert_is_current(expiry_date, is_current):
-    alert = {'expires': expiry_date}
-    assert is_current_alert(alert) == is_current
-
-
-def test_convert_dates_converts_alert_sent_and_expiry_dates_to_AlertDate_class():
-    alert = {
-        'message_type': 'alert',
-        'expires': datetime(2021, 4, 21, 9, 30, tzinfo=pytz.utc),
-        'sent': datetime(2021, 4, 20, 9, 30, tzinfo=pytz.utc),
-    }
-    converted_alert = convert_dates(alert)
-
-    assert isinstance(converted_alert['sent'], AlertDate)
-    assert isinstance(converted_alert['expires'], AlertDate)
+def test_is_current_alert_checks_if_alert_is_current(expiry_date, is_current, alert_dict):
+    alert_dict['expires'] = expiry_date
+    assert is_current_alert(Alert(alert_dict)) == is_current

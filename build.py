@@ -9,12 +9,12 @@ from jinja2 import (
 from notifications_utils.formatters import formatted_list
 
 from lib.alert_date import AlertDate
+from lib.alert import Alert
 from lib.utils import (
     DIST,
     REPO,
     ROOT,
     SRC,
-    convert_dates,
     file_fingerprint,
     is_current_alert,
 )
@@ -31,8 +31,9 @@ data_file = REPO / 'data.yaml'
 with data_file.open() as stream:
     data = yaml.load(stream, Loader=yaml.CLoader)
 
-for alert in data['alerts']:
-    convert_dates(alert)
+alerts = []
+for alert_dict in data['alerts']:
+    alerts += [Alert(alert_dict)]
 
 env = Environment(loader=jinja_loader, autoescape=True)
 env.filters['file_fingerprint'] = file_fingerprint
@@ -43,7 +44,7 @@ env.globals = {
         for item in ROOT.glob('assets/fonts/*.woff2')
     ],
     'data_last_updated': AlertDate(data['last_updated']),
-    'current_alerts': [alert for alert in data['alerts'] if is_current_alert(alert)]
+    'current_alerts': [alert for alert in alerts if is_current_alert(alert)]
 }
 
 if __name__ == '__main__':
@@ -53,8 +54,8 @@ if __name__ == '__main__':
         template = env.get_template(str(page))
 
         if str(page) == 'src/alert.html':
-            for alert in data['alerts']:
-                target = ROOT / alert['identifier']
+            for alert in alerts:
+                target = ROOT / alert.identifier
                 target.open('w').write(template.render({'alert_data': alert}))
             continue
 
