@@ -1,3 +1,4 @@
+import pytz
 from pytz import timezone
 
 
@@ -17,8 +18,8 @@ class AlertDate(object):
         return self._local_datetime.isoformat()
 
     @property
-    def as_datetime(self):
-        return self._datetime
+    def as_utc_datetime(self):
+        return self._datetime.astimezone(pytz.utc)
 
     @property
     def as_local_datetime(self):

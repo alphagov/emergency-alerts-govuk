@@ -19,7 +19,7 @@ def file_fingerprint(path, root=DIST):
 def is_current_alert(alert):
     now = datetime.now(pytz.utc)
 
-    if alert['expires'].astimezone(pytz.utc) <= now:  # pyyaml converts ISO 8601 dates to datetime.datetime instances
+    if alert['expires'].as_utc_datetime <= now:
         return False
     return True
 

@@ -31,6 +31,9 @@ data_file = REPO / 'data.yaml'
 with data_file.open() as stream:
     data = yaml.load(stream, Loader=yaml.CLoader)
 
+for alert in data['alerts']:
+    convert_dates(alert)
+
 env = Environment(loader=jinja_loader, autoescape=True)
 env.filters['file_fingerprint'] = file_fingerprint
 env.filters['formatted_list'] = formatted_list
@@ -40,7 +43,7 @@ env.globals = {
         for item in ROOT.glob('assets/fonts/*.woff2')
     ],
     'data_last_updated': AlertDate(data['last_updated']),
-    'current_alerts': [convert_dates(alert) for alert in data['alerts'] if is_current_alert(alert)]
+    'current_alerts': [alert for alert in data['alerts'] if is_current_alert(alert)]
 }
 
 if __name__ == '__main__':
