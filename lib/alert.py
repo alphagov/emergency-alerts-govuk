@@ -29,6 +29,7 @@ class Alert(SerialisedModel):
     def is_current(self):
         now = datetime.now(pytz.utc)
 
-        if self.expires_date.as_utc_datetime <= now:
-            return False
-        return True
+        return (
+            self.expires_date.as_utc_datetime >= now and
+            self.sent_date.as_utc_datetime <= now
+        )
