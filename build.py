@@ -29,7 +29,7 @@ env.globals = {
         for item in ROOT.glob('assets/fonts/*.woff2')
     ],
     'data_last_updated': alerts.last_updated_date,
-    'current_alerts': [alert for alert in alerts if alert.is_current]
+    'current_alerts': alerts.current,
 }
 
 if __name__ == '__main__':

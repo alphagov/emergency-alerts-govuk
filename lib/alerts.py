@@ -13,6 +13,10 @@ class Alerts(SerialisedModelCollection):
         super().__init__(data['alerts'])
 
     @property
+    def current(self):
+        return [alert for alert in self if alert.is_current]
+
+    @property
     def last_updated_date(self):
         return AlertDate(self.last_updated)
 
