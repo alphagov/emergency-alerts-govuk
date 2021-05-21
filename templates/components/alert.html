@@ -9,7 +9,7 @@
           <span class="govuk-visually-hidden">Emergency alert sent to </span>{{ alert.area_names | formatted_list(before_each='', after_each='') }}
         </h2>
         <p class="alerts-alert__message govuk-body-l govuk-!-margin-bottom-4">
-          {{ alert.description }}
+          {{ alert.description | paragraphize }}
         </p>
         <a href="/alerts/{{ alert.identifier }}" class="govuk-link govuk-body">
           More information about this alert

@@ -51,9 +51,8 @@
   </h1>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds alert-icon__container">
-      <p class="govuk-body-l govuk-!-margin-bottom-4">
-        {{ alert_data.description }}
-      </p>
+      {{ alert_data.description | paragraphize }}
+
       <p class="govuk-body govuk-!-margin-bottom-0">
         Issued by Cabinet Office <span class="relative-date__prefix">on </span><time class="relative-date" datetime="{{ alert_data.starts_date.as_iso8601 }}">{{ alert_data.starts_date.as_lang }}</time>
       </p>

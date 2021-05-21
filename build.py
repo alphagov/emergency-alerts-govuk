@@ -8,7 +8,7 @@ from jinja2 import (
 from notifications_utils.formatters import formatted_list
 
 from lib.alerts import Alerts
-from lib.utils import DIST, REPO, ROOT, SRC, file_fingerprint
+from lib.utils import DIST, REPO, ROOT, SRC, file_fingerprint, paragraphize
 
 jinja_loader = ChoiceLoader([
     FileSystemLoader(str(REPO)),
@@ -23,6 +23,7 @@ alerts = Alerts.from_yaml(REPO / 'data.yaml')
 env = Environment(loader=jinja_loader, autoescape=True)
 env.filters['file_fingerprint'] = file_fingerprint
 env.filters['formatted_list'] = formatted_list
+env.filters['paragraphize'] = paragraphize
 env.globals = {
     'font_paths': [
         item.relative_to(DIST)
