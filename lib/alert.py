@@ -1,6 +1,8 @@
-from lib.alert_date import AlertDate
-import pytz
 from datetime import datetime
+
+import pytz
+
+from lib.alert_date import AlertDate
 
 
 class Alert:

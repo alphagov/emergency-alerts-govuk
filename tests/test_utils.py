@@ -1,5 +1,6 @@
-from lib.utils import file_fingerprint
 from pathlib import Path
+
+from lib.utils import file_fingerprint
 
 
 def test_file_fingerprint_adds_hash_to_file_path():

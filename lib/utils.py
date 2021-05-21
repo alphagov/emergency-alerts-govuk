@@ -1,7 +1,6 @@
 import hashlib
 from pathlib import Path
 
-
 REPO = Path('.')
 SRC = REPO / 'src'
 DIST = REPO / 'dist'

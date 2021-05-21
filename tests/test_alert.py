@@ -1,10 +1,10 @@
-from lib.alert import Alert
-import pytz
-import pytest
-
 from datetime import datetime
+
+import pytest
+import pytz
 from freezegun import freeze_time
 
+from lib.alert import Alert
 from lib.alert_date import AlertDate
 
 

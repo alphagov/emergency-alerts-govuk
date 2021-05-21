@@ -1,7 +1,9 @@
 from datetime import datetime
-from lib.alert_date import AlertDate
-from pytz import timezone
+
 import pytz
+from pytz import timezone
+
+from lib.alert_date import AlertDate
 
 
 def test_AlertDate_properties():

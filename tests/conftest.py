@@ -1,6 +1,7 @@
-import pytz
 from datetime import datetime
+
 import pytest
+import pytz
 
 
 @pytest.fixture()
