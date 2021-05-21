@@ -15,7 +15,7 @@
 
 {% macro planned_tests_banner(number_of_alerts, subtitle) %}
   <div class="alerts-notification-banner alerts-icon__container alerts-icon__container--48" role="region" aria-labelledby="alerts-notification-banner__title">
-    {{ alerts_icon(height=48, fill="#b1b4b6", fallback="alert-grey.png") }}
+    {{ alerts_icon(height=48, alert_active=False) }}
     <h2 class="alerts-notification-banner__title govuk-heading-m govuk-!-margin-bottom-1" id="alerts-notification-banner__title">
       <a class="govuk-link govuk-link--no-visited-state" href="/alerts/planned-tests">{{ number_of_alerts }} planned {% if number_of_alerts == 1 %}test{% else %}tests{% endif %}</a>
     </h2>

@@ -4,7 +4,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <div class="alerts-icon__container alerts-icon__container--48">
-        {{ alerts_icon(height=48) }}
+        {{ alerts_icon(height=48, alert_active=alert.is_current) }}
         <h2 class="alerts-alert__title govuk-heading-s govuk-!-margin-bottom-1">
           <span class="govuk-visually-hidden">Emergency alert sent to </span>{{ alert.area_names | formatted_list(before_each='', after_each='') }}
         </h2>
