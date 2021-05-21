@@ -8,12 +8,12 @@ from jinja2 import (
 )
 from notifications_utils.formatters import formatted_list
 
+from lib.alert_date import AlertDate
 from lib.utils import (
     DIST,
     REPO,
     ROOT,
     SRC,
-    AlertsDate,
     convert_dates,
     file_fingerprint,
     is_current_alert,
@@ -39,7 +39,7 @@ env.globals = {
         item.relative_to(DIST)
         for item in ROOT.glob('assets/fonts/*.woff2')
     ],
-    'data_last_updated': AlertsDate(data['last_updated']),
+    'data_last_updated': AlertDate(data['last_updated']),
     'current_alerts': [convert_dates(alert) for alert in data['alerts'] if is_current_alert(alert)]
 }
 
