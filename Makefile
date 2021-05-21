@@ -19,7 +19,7 @@ bootstrap:
 
 .PHONY: test
 test:
-	isort --check-only *.py
+	isort --check-only *.py lib tests
 	flake8 .
 	npm test
 	pytest tests/
