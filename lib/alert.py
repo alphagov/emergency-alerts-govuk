@@ -1,4 +1,6 @@
 from lib.alert_date import AlertDate
+import pytz
+from datetime import datetime
 
 
 class Alert:
@@ -8,3 +10,11 @@ class Alert:
 
         self.sent = AlertDate(self.sent)
         self.expires = AlertDate(self.expires)
+
+    @property
+    def is_current(self):
+        now = datetime.now(pytz.utc)
+
+        if self.expires.as_utc_datetime <= now:
+            return False
+        return True

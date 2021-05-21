@@ -8,16 +8,9 @@ from jinja2 import (
 )
 from notifications_utils.formatters import formatted_list
 
-from lib.alert_date import AlertDate
 from lib.alert import Alert
-from lib.utils import (
-    DIST,
-    REPO,
-    ROOT,
-    SRC,
-    file_fingerprint,
-    is_current_alert,
-)
+from lib.alert_date import AlertDate
+from lib.utils import DIST, REPO, ROOT, SRC, file_fingerprint
 
 jinja_loader = ChoiceLoader([
     FileSystemLoader(str(REPO)),
@@ -44,7 +37,7 @@ env.globals = {
         for item in ROOT.glob('assets/fonts/*.woff2')
     ],
     'data_last_updated': AlertDate(data['last_updated']),
-    'current_alerts': [alert for alert in alerts if is_current_alert(alert)]
+    'current_alerts': [alert for alert in alerts if alert.is_current]
 }
 
 if __name__ == '__main__':
