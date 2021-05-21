@@ -1,4 +1,3 @@
-import yaml
 from jinja2 import (
     ChoiceLoader,
     Environment,
@@ -8,8 +7,7 @@ from jinja2 import (
 )
 from notifications_utils.formatters import formatted_list
 
-from lib.alert import Alert
-from lib.alert_date import AlertDate
+from lib.alerts import Alerts
 from lib.utils import DIST, REPO, ROOT, SRC, file_fingerprint
 
 jinja_loader = ChoiceLoader([
@@ -20,13 +18,7 @@ jinja_loader = ChoiceLoader([
 ])
 
 
-data_file = REPO / 'data.yaml'
-with data_file.open() as stream:
-    data = yaml.load(stream, Loader=yaml.CLoader)
-
-alerts = []
-for alert_dict in data['alerts']:
-    alerts += [Alert(alert_dict)]
+alerts = Alerts.from_yaml(REPO / 'data.yaml')
 
 env = Environment(loader=jinja_loader, autoescape=True)
 env.filters['file_fingerprint'] = file_fingerprint
@@ -36,7 +28,7 @@ env.globals = {
         item.relative_to(DIST)
         for item in ROOT.glob('assets/fonts/*.woff2')
     ],
-    'data_last_updated': AlertDate(data['last_updated']),
+    'data_last_updated': alerts.last_updated_date,
     'current_alerts': [alert for alert in alerts if alert.is_current]
 }
 
