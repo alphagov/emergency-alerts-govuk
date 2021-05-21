@@ -26,6 +26,11 @@ class Alert(SerialisedModel):
         return AlertDate(self.expires)
 
     @property
+    def is_expired(self):
+        now = datetime.now(pytz.utc)
+        return self.expires_date.as_utc_datetime < now
+
+    @property
     def is_current(self):
         now = datetime.now(pytz.utc)
 

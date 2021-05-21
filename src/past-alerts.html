@@ -1,0 +1,53 @@
+{% extends "templates/content.html" %}
+
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "templates/components/alert.html" import alert -%}
+{%- from "templates/components/meta_tags.html" import metaTags -%}
+
+{% set pageTitle = "Past alerts" %}
+
+{% block metaTags %}
+  {{ metaTags(
+    description="Emergency alerts that were previously sent",
+    title=pageTitle,
+    url="https://www.gov.uk/alerts/past-alerts"
+  ) }}
+{% endblock %}
+
+{% block prefetch %}
+  <link rel="prefetch" href="{{ '/alerts/assets/javascripts/govuk-frontend-details-and-button.js' | file_fingerprint }}" />
+{% endblock %}
+
+{% block pageTitleCurrent -%}
+  {{ pageTitle }}
+{%- endblock %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "/"
+      },
+      {
+        "text": "Emergency alerts",
+        "href": "/alerts"
+      }
+    ]
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <h1 class="govuk-heading-xl">
+    {{ pageTitle }}
+  </h1>
+  {% for previous_alert in alerts.expired %}
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+  {{ alert(alert=previous_alert) }}
+  {% endfor %}
+  {% if alerts.expired %}
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
+  {% else %}
+  <p class="govuk-body">There are no previous alerts.</p>
+  {% endif %}
+{% endblock %}

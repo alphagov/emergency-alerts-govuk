@@ -21,6 +21,12 @@
   {{ pageTitle }}
 {%- endblock %}
 
+{% if alert_data.is_expired %}
+  {% set parentBreadcrumb = {"text": "Past alerts", "href": "/alerts/past-alerts"} %}
+{% else %}
+  {% set parentBreadcrumb = {"text": "Current alerts", "href": "/alerts/current-alerts"} %}
+{% endif %}
+
 {% block beforeContent %}
   {{ govukBreadcrumbs({
     "items": [
@@ -32,17 +38,14 @@
         "text": "Emergency alerts",
         "href": "/alerts"
       },
-      {
-        "text": "Current alerts",
-        "href": "/alerts/current-alerts"
-      }
+      parentBreadcrumb,
     ]
   }) }}
 {% endblock %}
 
 {% block content %}
   <h1 class="govuk-heading-xl alerts-icon__container alerts-icon__container--48">
-    {{ alerts_icon(height=48) }}
+    {{ alerts_icon(height=48, alert_active=alert_data.is_current) }}
     {{ alert_data.headline }}
   </h1>
   <div class="govuk-grid-row">
