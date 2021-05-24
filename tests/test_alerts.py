@@ -51,6 +51,11 @@ def test_last_updated(alert_dict):
     assert alerts.last_updated == alert_dict_3['starts']
 
 
+def test_last_updated_exception_for_no_current_alerts(alert_dict):
+    with pytest.raises(ValueError):
+        Alerts([alert_dict]).last_updated
+
+
 @pytest.mark.parametrize('expiry_date,expected_len', [
     [datetime(2021, 4, 21, 9, 30, tzinfo=pytz.utc), 1],
     [datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc), 0],
