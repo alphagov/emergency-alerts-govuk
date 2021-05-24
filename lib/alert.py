@@ -41,5 +41,5 @@ class Alert(SerialisedModel):
 
         return (
             self.expires_date.as_utc_datetime >= now and
-            self.starts_date.as_utc_datetime <= now
+            self.sent_date.as_utc_datetime <= now
         )

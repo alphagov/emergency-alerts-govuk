@@ -31,7 +31,7 @@ def test_is_expired_alert_checks_if_alert_is_expired(
     assert Alert(alert_dict).is_expired == is_expired
 
 
-@pytest.mark.parametrize('starts_date,expiry_date,is_current', [
+@pytest.mark.parametrize('sent_date,expiry_date,is_current', [
     [
         datetime(2021, 4, 21, 9, 30, tzinfo=pytz.utc),
         datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
@@ -52,11 +52,11 @@ def test_is_expired_alert_checks_if_alert_is_expired(
     2021, 4, 21, 10, 30, tzinfo=pytz.utc
 ))
 def test_is_current_alert_checks_if_alert_is_current(
-    starts_date,
+    sent_date,
     expiry_date,
     is_current,
     alert_dict
 ):
-    alert_dict['starts'] = starts_date
+    alert_dict['sent'] = sent_date
     alert_dict['expires'] = expiry_date
     assert Alert(alert_dict).is_current == is_current
