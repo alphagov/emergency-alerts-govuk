@@ -28,8 +28,7 @@ env.globals = {
         item.relative_to(DIST)
         for item in ROOT.glob('assets/fonts/*.woff2')
     ],
-    'data_last_updated': alerts.last_updated_date,
-    'current_alerts': alerts.current,
+    'alerts': alerts,
 }
 
 if __name__ == '__main__':

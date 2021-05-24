@@ -26,13 +26,45 @@ def test_from_yaml_loads_data(tmp_path, alert_dict):
 
 
 @pytest.mark.parametrize('expiry_date,expected_len', [
-    [datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc), 1],
-    [datetime(2021, 4, 21, 9, 30, tzinfo=pytz.utc), 0],
+    [datetime(2021, 4, 21, 9, 30, tzinfo=pytz.utc), 1],
+    [datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc), 0],
 ])
 @freeze_time(datetime(
     2021, 4, 21, 10, 30, tzinfo=pytz.utc
 ))
-def test_current_alerts_are_current(expiry_date, expected_len, alert_dict):
+def test_expired_alerts_are_expired(expiry_date, expected_len, alert_dict):
+    alert_dict['expires'] = expiry_date
+
+    alerts = Alerts({
+        'last_updated': datetime(2020, 1, 1, 10, 00),
+        'alerts': [alert_dict]
+    })
+
+    assert len(alerts.expired) == expected_len
+
+
+@pytest.mark.parametrize('sent_date,expiry_date,expected_len', [
+    [
+        datetime(2021, 4, 21, 9, 30, tzinfo=pytz.utc),
+        datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
+        1
+    ],
+    [
+        datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc),
+        datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
+        0
+    ],
+    [
+        datetime(2021, 4, 21, 9, 0, tzinfo=pytz.utc),
+        datetime(2021, 4, 21, 10, 0, tzinfo=pytz.utc),
+        0
+    ],
+])
+@freeze_time(datetime(
+    2021, 4, 21, 10, 30, tzinfo=pytz.utc
+))
+def test_current_alerts_are_current(sent_date, expiry_date, expected_len, alert_dict):
+    alert_dict['sent'] = sent_date
     alert_dict['expires'] = expiry_date
 
     alerts = Alerts({
