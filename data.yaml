@@ -1,2 +1,17 @@
-last_updated: 2021-04-27T13:30:01-00:00
-alerts: []
+last_updated: 2021-05-25T13:00:00+01:00
+alerts:
+  - identifier: 3-may-2021
+    message_type: alert
+    sent: 2021-05-25T12:55:00+01:00
+    starts: 2021-05-25T13:00:00+01:00
+    expires: 2021-05-25T14:00:00+01:00
+    headline: Test Emergency Alert
+    description: |
+      The UK government is testing Emergency Alerts in East Suffolk.
+
+      Emergency alerts tell you what to do if there’s a life-threatening event nearby.
+
+      To find out more, call 0808 1697692 or search for gov.uk/alerts
+    static_map_png: map-sizewell-demo-static.png
+    area_names:
+      - Leiston in East Suffolk
