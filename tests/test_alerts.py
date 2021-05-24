@@ -31,24 +31,19 @@ def test_from_yaml_loads_data(tmp_path, alert_dict):
     2021, 4, 21, 11, 30, tzinfo=pytz.utc
 ))
 def test_last_updated(alert_dict):
-    alert_dict_1 = alert_dict.copy()
-    alert_dict_1['starts'] = datetime(
+    alert_dict['starts'] = datetime(
         2021, 4, 21, 11, 10, tzinfo=pytz.utc
     )
     alert_dict_2 = alert_dict.copy()
     alert_dict_2['starts'] = datetime(
         2021, 4, 21, 11, 20, tzinfo=pytz.utc
     )
-    alert_dict_3 = alert_dict.copy()
-    alert_dict_3['starts'] = datetime(
-        2021, 4, 21, 11, 30, tzinfo=pytz.utc
-    )
 
-    alerts = Alerts([alert_dict_1, alert_dict_2, alert_dict_3])
+    alerts = Alerts([alert_dict, alert_dict_2])
 
-    assert len(alerts) == 3
+    assert len(alerts) == len(alerts.current) == 2
     assert isinstance(alerts.last_updated_date, AlertDate)
-    assert alerts.last_updated == alert_dict_3['starts']
+    assert alerts.last_updated == alert_dict_2['starts']
 
 
 def test_last_updated_exception_for_no_current_alerts(alert_dict):
