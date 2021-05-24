@@ -43,7 +43,7 @@ def test_expired_alerts_are_expired(expiry_date, expected_len, alert_dict):
     assert len(alerts.expired) == expected_len
 
 
-@pytest.mark.parametrize('sent_date,expiry_date,expected_len', [
+@pytest.mark.parametrize('starts_date,expiry_date,expected_len', [
     [
         datetime(2021, 4, 21, 9, 30, tzinfo=pytz.utc),
         datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
@@ -63,8 +63,8 @@ def test_expired_alerts_are_expired(expiry_date, expected_len, alert_dict):
 @freeze_time(datetime(
     2021, 4, 21, 10, 30, tzinfo=pytz.utc
 ))
-def test_current_alerts_are_current(sent_date, expiry_date, expected_len, alert_dict):
-    alert_dict['sent'] = sent_date
+def test_current_alerts_are_current(starts_date, expiry_date, expected_len, alert_dict):
+    alert_dict['starts'] = starts_date
     alert_dict['expires'] = expiry_date
 
     alerts = Alerts({
