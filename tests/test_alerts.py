@@ -10,10 +10,12 @@ from lib.alert_date import AlertDate
 from lib.alerts import Alerts
 
 
+@freeze_time(datetime(
+    2021, 4, 21, 11, 30, tzinfo=pytz.utc
+))
 def test_from_yaml_loads_data(tmp_path, alert_dict):
     sample_yaml = yaml.dump({
-        'last_updated': datetime(2020, 1, 1, 10, 00),
-        'alerts': [alert_dict]
+        'alerts': [alert_dict],
     })
 
     data_file = tmp_path / 'data.yaml'
@@ -23,6 +25,30 @@ def test_from_yaml_loads_data(tmp_path, alert_dict):
     assert len(alerts) == 1
     assert isinstance(alerts[0], Alert)
     assert isinstance(alerts.last_updated_date, AlertDate)
+
+
+@freeze_time(datetime(
+    2021, 4, 21, 11, 30, tzinfo=pytz.utc
+))
+def test_last_updated(alert_dict):
+    alert_dict_1 = alert_dict.copy()
+    alert_dict_1['starts'] = datetime(
+        2021, 4, 21, 11, 10, tzinfo=pytz.utc
+    )
+    alert_dict_2 = alert_dict.copy()
+    alert_dict_2['starts'] = datetime(
+        2021, 4, 21, 11, 20, tzinfo=pytz.utc
+    )
+    alert_dict_3 = alert_dict.copy()
+    alert_dict_3['starts'] = datetime(
+        2021, 4, 21, 11, 30, tzinfo=pytz.utc
+    )
+
+    alerts = Alerts([alert_dict_1, alert_dict_2, alert_dict_3])
+
+    assert len(alerts) == 3
+    assert isinstance(alerts.last_updated_date, AlertDate)
+    assert alerts.last_updated == alert_dict_3['starts']
 
 
 @pytest.mark.parametrize('expiry_date,expected_len', [
@@ -35,10 +61,7 @@ def test_from_yaml_loads_data(tmp_path, alert_dict):
 def test_expired_alerts_are_expired(expiry_date, expected_len, alert_dict):
     alert_dict['expires'] = expiry_date
 
-    alerts = Alerts({
-        'last_updated': datetime(2020, 1, 1, 10, 00),
-        'alerts': [alert_dict]
-    })
+    alerts = Alerts([alert_dict])
 
     assert len(alerts.expired) == expected_len
 
@@ -67,9 +90,6 @@ def test_current_alerts_are_current(sent_date, expiry_date, expected_len, alert_
     alert_dict['sent'] = sent_date
     alert_dict['expires'] = expiry_date
 
-    alerts = Alerts({
-        'last_updated': datetime(2020, 1, 1, 10, 00),
-        'alerts': [alert_dict]
-    })
+    alerts = Alerts([alert_dict])
 
     assert len(alerts.current) == expected_len
