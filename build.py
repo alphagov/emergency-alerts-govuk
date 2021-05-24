@@ -1,4 +1,3 @@
-import yaml
 from jinja2 import (
     ChoiceLoader,
     Environment,
@@ -8,16 +7,8 @@ from jinja2 import (
 )
 from notifications_utils.formatters import formatted_list
 
-from lib.utils import (
-    DIST,
-    REPO,
-    ROOT,
-    SRC,
-    AlertsDate,
-    convert_dates,
-    file_fingerprint,
-    is_current_alert,
-)
+from lib.alerts import Alerts
+from lib.utils import DIST, REPO, ROOT, SRC, file_fingerprint
 
 jinja_loader = ChoiceLoader([
     FileSystemLoader(str(REPO)),
@@ -27,9 +18,7 @@ jinja_loader = ChoiceLoader([
 ])
 
 
-data_file = REPO / 'data.yaml'
-with data_file.open() as stream:
-    data = yaml.load(stream, Loader=yaml.CLoader)
+alerts = Alerts.from_yaml(REPO / 'data.yaml')
 
 env = Environment(loader=jinja_loader, autoescape=True)
 env.filters['file_fingerprint'] = file_fingerprint
@@ -39,8 +28,8 @@ env.globals = {
         item.relative_to(DIST)
         for item in ROOT.glob('assets/fonts/*.woff2')
     ],
-    'data_last_updated': AlertsDate(data['last_updated']),
-    'current_alerts': [convert_dates(alert) for alert in data['alerts'] if is_current_alert(alert)]
+    'data_last_updated': alerts.last_updated_date,
+    'current_alerts': alerts.current,
 }
 
 if __name__ == '__main__':
@@ -50,8 +39,8 @@ if __name__ == '__main__':
         template = env.get_template(str(page))
 
         if str(page) == 'src/alert.html':
-            for alert in data['alerts']:
-                target = ROOT / alert['identifier']
+            for alert in alerts:
+                target = ROOT / alert.identifier
                 target.open('w').write(template.render({'alert_data': alert}))
             continue
 
