@@ -8,13 +8,14 @@ from lib.alert import Alert
 from lib.alert_date import AlertDate
 
 
-def test_alert_sent_and_expiry_properties_are_AlertDates(alert_dict):
+def test_alert_timestamps_properties_are_AlertDates(alert_dict):
     alert = Alert(alert_dict)
     assert isinstance(alert.sent_date, AlertDate)
     assert isinstance(alert.expires_date, AlertDate)
+    assert isinstance(alert.starts_date, AlertDate)
 
 
-@pytest.mark.parametrize('expiry_date,is_current', [
+@pytest.mark.parametrize('expiry_date,is_expired', [
     [datetime(2021, 4, 21, 9, 30, tzinfo=pytz.utc), True],
     [datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc), False],
 ])
@@ -23,11 +24,11 @@ def test_alert_sent_and_expiry_properties_are_AlertDates(alert_dict):
 ))
 def test_is_expired_alert_checks_if_alert_is_expired(
     expiry_date,
-    is_current,
+    is_expired,
     alert_dict
 ):
     alert_dict['expires'] = expiry_date
-    assert Alert(alert_dict).is_expired == is_current
+    assert Alert(alert_dict).is_expired == is_expired
 
 
 @pytest.mark.parametrize('sent_date,expiry_date,is_current', [

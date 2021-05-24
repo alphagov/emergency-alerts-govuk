@@ -10,12 +10,17 @@ class Alert(SerialisedModel):
     ALLOWED_PROPERTIES = {
         'identifier',
         'message_type',
+        'starts',
         'sent',
         'expires',
         'headline',
         'description',
         'area_names',
     }
+
+    @property
+    def starts_date(self):
+        return AlertDate(self.starts)
 
     @property
     def sent_date(self):
