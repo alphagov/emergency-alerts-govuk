@@ -17,6 +17,10 @@ class Alerts(SerialisedModelCollection):
         return [alert for alert in self if alert.is_current]
 
     @property
+    def expired(self):
+        return [alert for alert in self if alert.is_expired]
+
+    @property
     def last_updated_date(self):
         return AlertDate(self.last_updated)
 

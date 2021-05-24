@@ -1,4 +1,12 @@
-{% macro alerts_icon(height, x=0, y=0, degrade=True, fill="#de1924", fallback="alert.png") %}
+{% macro alerts_icon(height, x=0, y=0, degrade=True, alert_active=True) %}
+  {% if alert_active %}
+    {% set fill = "#de1924" %}
+    {% set fallback = "alert.png" %}
+  {% else %}
+    {% set fill = "#b1b4b6" %}
+    {% set fallback = "alert-grey.png" %}
+  {% endif %}
+
   {% set width = (height / 100 * 106)|round(0, 'floor') %}
   {% if degrade %}
     <!--[if gt IE 8]><!-->
