@@ -1,0 +1,47 @@
+@import "govuk/settings/all";
+@import "govuk/helpers/all";
+
+.alerts-feedback {
+  margin-top: govuk-spacing(6);
+  margin-bottom: govuk-spacing(4) * -1;
+  border-bottom: 1px solid govuk-colour("white");
+
+  @include govuk-media-query($from: tablet) {
+    margin-top: govuk-spacing(9);
+    margin-bottom: govuk-spacing(7) * -1;
+  }
+
+  &__prompt {
+    text-align: center;
+    background-color: govuk-colour("blue");
+    padding: govuk-spacing(5) govuk-spacing(5) govuk-spacing(5) govuk-spacing(5);
+    outline: 0;
+
+    @include govuk-media-query($from: tablet) {
+      text-align: left;
+    }
+  }
+
+  &__prompt-question {
+    margin: govuk-spacing(2) govuk-spacing(4);
+    color: govuk-colour("white");
+
+    @include govuk-media-query($from: tablet) {
+      margin-left: 0;
+    }
+  }
+}
+
+.alerts-feedback__prompt-question > .govuk-link {
+
+  //white-space: nowrap;
+
+  &,
+  &:active {
+    color: govuk-colour("white");
+  }
+
+  &:focus {
+    color: $govuk-focus-text-colour;
+  }
+}

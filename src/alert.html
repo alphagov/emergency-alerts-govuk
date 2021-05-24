@@ -44,7 +44,7 @@
   }) }}
 {% endblock %}
 
-{% block content %}
+{% block mainContent %}
   <h1 class="govuk-heading-xl alerts-icon__container alerts-icon__container--48">
     {{ alerts_icon(height=48, alert_active=alert_data.is_current) }}
     {{ alert_data.headline }}
@@ -54,7 +54,7 @@
       {{ alert_data.description | paragraphize }}
 
       <p class="govuk-body govuk-!-margin-bottom-0">
-        Issued by Cabinet Office <span class="relative-date__prefix">on </span><time class="relative-date" datetime="{{ alert_data.starts_date.as_iso8601 }}">{{ alert_data.starts_date.as_lang }}</time>
+        Sent by the UK government <span class="relative-date__prefix">on </span><time class="relative-date" datetime="{{ alert_data.starts_date.as_iso8601 }}">{{ alert_data.starts_date.as_lang }}</time>
       </p>
     </div>
   </div>
