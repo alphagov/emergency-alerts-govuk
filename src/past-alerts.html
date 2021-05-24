@@ -8,7 +8,7 @@
 
 {% block metaTags %}
   {{ metaTags(
-    description="Emergency alerts that were previously sent",
+    description="A list of past emergency alerts that were sent in the UK",
     title=pageTitle,
     url="https://www.gov.uk/alerts/past-alerts"
   ) }}
@@ -48,6 +48,6 @@
   {% if alerts.expired %}
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
   {% else %}
-  <p class="govuk-body">There are no previous alerts.</p>
+  <p class="govuk-body">There are no past alerts.</p>
   {% endif %}
 {% endblock %}
