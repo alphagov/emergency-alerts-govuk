@@ -2,7 +2,7 @@ last_updated: 2021-05-25T13:00:00+01:00
 alerts:
   - identifier: 3-may-2021
     message_type: alert
-    sent: 2021-05-25T12:55:00+01:00
+    sent: 2021-05-25T12:50:00+01:00
     starts: 2021-05-25T13:00:00+01:00
     expires: 2021-05-25T14:00:00+01:00
     headline: Test Emergency Alert
