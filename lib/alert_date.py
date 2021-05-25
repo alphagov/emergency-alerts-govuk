@@ -11,7 +11,9 @@ class AlertDate(object):
 
     @property
     def as_lang(self, lang='en-GB'):
-        return '{dt.day} {dt:%B} {dt:%Y} at {dt:%H}:{dt:%M}'.format(dt=self._local_datetime)
+        dt = self._local_datetime
+        am_pm = f'{dt:%p}'.lower()
+        return f'at {dt:%-I}:{dt:%M}{am_pm} on {dt.day} {dt:%B} {dt:%Y}'
 
     @property
     def as_iso8601(self):
