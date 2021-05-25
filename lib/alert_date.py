@@ -10,10 +10,19 @@ class AlertDate(object):
         self._local_datetime = _datetime.astimezone(timezone('Europe/London'))
 
     @property
+    def time_as_lang(self):
+        return {
+            '12:00AM': 'Midnight',
+            '12:00PM': 'Midday'
+        }.get(
+            f'{self._local_datetime:%-I:%M%p}',
+            f'{self._local_datetime:%-I:%M%p}',
+        ).lower()
+
+    @property
     def as_lang(self, lang='en-GB'):
         dt = self._local_datetime
-        am_pm = f'{dt:%p}'.lower()
-        return f'at {dt:%-I}:{dt:%M}{am_pm} on {dt.day} {dt:%B} {dt:%Y}'
+        return f'at {self.time_as_lang} on {dt.day} {dt:%B} {dt:%Y}'
 
     @property
     def as_iso8601(self):
