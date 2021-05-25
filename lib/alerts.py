@@ -8,10 +8,6 @@ from lib.alert_date import AlertDate
 class Alerts(SerialisedModelCollection):
     model = Alert
 
-    def __init__(self, data):
-        self.last_updated = data['last_updated']
-        super().__init__(data['alerts'])
-
     @property
     def current(self):
         return [alert for alert in self if alert.is_current]
@@ -19,6 +15,10 @@ class Alerts(SerialisedModelCollection):
     @property
     def expired(self):
         return [alert for alert in self if alert.is_expired]
+
+    @property
+    def last_updated(self):
+        return max(alert.starts for alert in self if alert.is_current)
 
     @property
     def last_updated_date(self):
@@ -29,4 +29,4 @@ class Alerts(SerialisedModelCollection):
         with path.open() as stream:
             data = yaml.load(stream, Loader=yaml.CLoader)
 
-        return cls(data)
+        return cls(data['alerts'])

@@ -8,7 +8,7 @@
 
 {% block metaTags %}
   {{ metaTags(
-    description="Emergency alerts currently being sent",
+    description="A list of the emergency alerts currently being sent in the UK",
     title=pageTitle,
     url="https://www.gov.uk/alerts/current-alerts"
   ) }}
@@ -37,7 +37,7 @@
   }) }}
 {% endblock %}
 
-{% block content %}
+{% block mainContent %}
   <h1 class="govuk-heading-xl">
     Current alerts
   </h1>
@@ -48,6 +48,6 @@
   {% if alerts.current %}
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
   {% else %}
-  <p class="govuk-body">There are no alerts currently being sent.</p>
+  <p class="govuk-body">There are no current emergency alerts.</p>
   {% endif %}
 {% endblock %}

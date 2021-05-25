@@ -44,17 +44,22 @@
   }) }}
 {% endblock %}
 
-{% block content %}
+{% block mainContent %}
   <h1 class="govuk-heading-xl alerts-icon__container alerts-icon__container--48">
     {{ alerts_icon(height=48, alert_active=alert_data.is_current) }}
     {{ alert_data.headline }}
   </h1>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds alert-icon__container">
+      {% if alert_data.is_expired %}
+      <h2 class="govuk-heading-s">
+        Stopped sending <time datetime="{{ alert_data.expires_date.as_iso8601 }}">{{ alert_data.expires_date.as_lang }}</time>
+      </h2>
+      {% endif %}
       {{ alert_data.description | paragraphize }}
 
       <p class="govuk-body govuk-!-margin-bottom-0">
-        Issued by Cabinet Office <span class="relative-date__prefix">on </span><time class="relative-date" datetime="{{ alert_data.starts_date.as_iso8601 }}">{{ alert_data.starts_date.as_lang }}</time>
+        Sent by the UK government <time datetime="{{ alert_data.starts_date.as_iso8601 }}">{{ alert_data.starts_date.as_lang }}</time>
       </p>
     </div>
   </div>
@@ -70,7 +75,8 @@
   {% endset %}
   {{ govukDetails({
     "summaryText": "See where this alert was sent",
-    "html": alertAreas
+    "html": alertAreas,
+    "classes": "govuk-!-margin-bottom-3"
   }) }}
   {% set sharingContent %}
     <div class="share-url">

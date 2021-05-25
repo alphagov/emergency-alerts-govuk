@@ -1,5 +1,7 @@
 {% extends "govuk_frontend_jinja/template.html" %}
 
+{%- from "templates/components/survey.html" import survey -%}
+
 {% block pageTitle %}{% block pageTitleCurrent %}{% endblock %} - GOV.UK{% endblock %}
 
 {% block headIcons %}
@@ -37,6 +39,11 @@
   {{ govukHeader({
     'assetsPath': '/alerts/assets/images'
   }) }}
+{% endblock %}
+
+{% block content %}
+  {% block mainContent %}{% endblock %}
+  {{ survey() }}
 {% endblock %}
 
 {% block footer %}
