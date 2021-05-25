@@ -51,6 +51,11 @@
   </h1>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds alert-icon__container">
+      {% if alert_data.is_expired %}
+      <h2 class="govuk-heading-s">
+        Stopped sending <time datetime="{{ alert_data.expires_date.as_iso8601 }}">{{ alert_data.expires_date.as_lang }}</time>
+      </h2>
+      {% endif %}
       {{ alert_data.description | paragraphize }}
 
       <p class="govuk-body govuk-!-margin-bottom-0">
