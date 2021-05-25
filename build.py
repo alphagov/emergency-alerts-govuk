@@ -10,27 +10,33 @@ from notifications_utils.formatters import formatted_list
 from lib.alerts import Alerts
 from lib.utils import DIST, REPO, ROOT, SRC, file_fingerprint, paragraphize
 
-jinja_loader = ChoiceLoader([
-    FileSystemLoader(str(REPO)),
-    PrefixLoader({
-        'govuk_frontend_jinja': PackageLoader('govuk_frontend_jinja')
-    })
-])
+
+def setup_jinja_environment(alerts):
+    jinja_loader = ChoiceLoader([
+        FileSystemLoader(str(REPO)),
+        PrefixLoader({
+            'govuk_frontend_jinja': PackageLoader('govuk_frontend_jinja')
+        })
+    ])
+
+    env = Environment(loader=jinja_loader, autoescape=True)
+    env.filters['file_fingerprint'] = file_fingerprint
+    env.filters['formatted_list'] = formatted_list
+    env.filters['paragraphize'] = paragraphize
+    env.globals = {
+        'font_paths': [
+            item.relative_to(DIST)
+            for item in ROOT.glob('assets/fonts/*.woff2')
+        ],
+        'alerts': alerts,
+    }
+
+    return env
 
 
 alerts = Alerts.from_yaml(REPO / 'data.yaml')
+env = setup_jinja_environment(alerts)
 
-env = Environment(loader=jinja_loader, autoescape=True)
-env.filters['file_fingerprint'] = file_fingerprint
-env.filters['formatted_list'] = formatted_list
-env.filters['paragraphize'] = paragraphize
-env.globals = {
-    'font_paths': [
-        item.relative_to(DIST)
-        for item in ROOT.glob('assets/fonts/*.woff2')
-    ],
-    'alerts': alerts,
-}
 
 if __name__ == '__main__':
     ROOT.mkdir(exist_ok=True)
