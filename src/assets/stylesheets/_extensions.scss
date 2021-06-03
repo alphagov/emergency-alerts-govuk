@@ -4,5 +4,5 @@
 
 .extra-letter-spacing {
   @include govuk-font($size: false, $tabular: true);
-  letter-spacing: 0.06em;
+  letter-spacing: .06em;
 }
