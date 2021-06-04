@@ -1,3 +1,8 @@
 .govuk-footer {
   border-top: govuk-spacing(2) solid govuk-colour('blue');
 }
+
+.govuk-\!-font-numeric {
+  @include govuk-font($size: false, $tabular: true);
+  letter-spacing: .06em;
+}
