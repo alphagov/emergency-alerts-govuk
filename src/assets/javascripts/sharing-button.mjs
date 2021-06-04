@@ -7,11 +7,14 @@ export default function sharingButton () {
   var urlString
   var onClick
 
+  // return early if no of the required APIs are available
+  if (!navigator.share && !document.queryCommandSupported('copy')) return
+
   btn.className = 'govuk-button govuk-button--secondary'
   btn.setAttribute('data-module', 'govuk-button')
   if (navigator.share) {
     btn.innerHTML = 'Share link'
-  } else {
+  } else if (document.queryCommandSupported('copy')) {
     btn.innerHTML = 'Copy link'
   }
 
