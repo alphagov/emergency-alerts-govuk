@@ -1,6 +1,7 @@
 {% extends "templates/content.html" %}
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "govuk_frontend_jinja/components/details/macro.html" import govukDetails -%}
 {%- from "templates/components/meta_tags.html" import metaTags -%}
 
 {% set pageTitle = "How to opt out of emergency alerts" %}
@@ -65,23 +66,32 @@
       <p class="govuk-body">
         A small number of Android phones and tablets may receive these test alerts.
       </p>
-      <p class="govuk-body">
-        If you receive a test alert and want to opt out:
-      </p>
-      <ul class="govuk-list govuk-list--number">
-        <li>
-          Open your phone calling app.
-        </li>
-        <li>
-          Use the keypad to enter <span class="extra-letter-spacing govuk-!-font-weight-bold">*#*#2627#*#*</span>
-        </li>
-        <li>
-          Search your settings for ‘emergency alerts’.
-        </li>
-        <li>
-          Turn off <b class="govuk-!-font-weight-bold">Test alerts</b>.
-        </li>
-      </ul>
+      {% set testAlertButton %}
+        If you receive a mobile network operator test and want to opt out
+      {% endset %}
+      {% set testAlertAdvice %}
+        <p class="govuk-body">
+          Search your settings for ‘emergency alerts’ and turn off <b class="govuk-!-font-weight-bold">Test alerts</b>.
+        </p>
+        <p class="govuk-body">
+          If you can’t see <b class="govuk-!-font-weight-bold">Test alerts</b>:
+        </p>
+        <ul class="govuk-list govuk-list--number">
+          <li>
+            Open your phone calling app.
+          </li>
+          <li>
+            Use the keypad to enter <span class="extra-letter-spacing govuk-!-font-weight-bold">*#*#2627#*#*</span>
+          </li>
+          <li>
+            Search your settings for ‘emergency alerts’ again
+          </li>
+        </ul>
+      {% endset %}
+      {{ govukDetails({
+        "summaryHtml": testAlertButton,
+        "html": testAlertAdvice
+      }) }}
       <h2 class="govuk-heading-m">
         iPhone
       </h2>
