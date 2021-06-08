@@ -1,3 +1,5 @@
+import Button from 'govuk-frontend/govuk/components/button/button'
+
 export default function sharingButton () {
   var container = document.querySelector('.share-url')
   var btn = document.createElement('button')
@@ -38,5 +40,6 @@ export default function sharingButton () {
   }
 
   btn.addEventListener('click', onClick, false)
+  new Button(btn).init()
   container.appendChild(btn)
 }

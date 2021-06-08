@@ -53,7 +53,7 @@ const javascripts = {
     // - deliver it in one bundle
     // - allow it to run in browsers without support for JS Modules
     return rollup.rollup({
-      input: paths.src + 'javascripts/govuk-frontend-details.mjs',
+      input: paths.src + 'javascripts/govuk-frontend-details-init.mjs',
       plugins: [
         // determine module entry points from either 'module' or 'main' fields in package.json
         rollupPluginNodeResolve.nodeResolve({
