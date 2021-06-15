@@ -2,22 +2,27 @@ import helpers from './support/helpers.js'
 import sharingButton from '../../src/assets/javascripts/sharing-button.mjs'
 
 const URL = 'https://www.gov.uk/alerts/3-may-2021'
-const htmlFixture = `
-      <div class="share-url">
-        <p class="govuk-body">
-          ${URL}
-        </p>
-      </div>`
 
-afterAll(() => {
-  // clear up methods in the global space
-  document.queryCommandSupported = undefined
+beforeEach(() => {
+
+  document.body.innerHTML = `
+    <div class="share-url">
+      <p class="govuk-body">
+        ${URL}
+      </p>
+    </div>`
+
 })
 
 afterEach(() => {
+
+  // clear up methods in the global space
+  delete document.queryCommandSupported
+
   document.body.innerHTML = ''
 
   jest.restoreAllMocks()
+
 })
 
 describe('If the Web Share API is supported', () => {
@@ -28,8 +33,6 @@ describe('If the Web Share API is supported', () => {
 
     // copy command would be supported if navigator.share is
     document.queryCommandSupported = jest.fn(command => command === 'copy')
-
-    document.body.innerHTML = htmlFixture
 
     sharingButton()
 
@@ -45,10 +48,10 @@ describe('If the Web Share API is supported', () => {
 
     test('A button should be added below the URL to be shared', () => {
 
-      const URLParagraph = document.querySelector('.share-url > .govuk-body')
+      const urlParagraph = document.querySelector('.share-url > .govuk-body')
 
-      expect(URLParagraph.nextElementSibling).not.toBe(null)
-      expect(URLParagraph.nextElementSibling.classList.contains('govuk-button')).toBe(true)
+      expect(urlParagraph.nextElementSibling).not.toBe(null)
+      expect(urlParagraph.nextElementSibling.classList.contains('govuk-button')).toBe(true)
 
     })
 
@@ -110,7 +113,6 @@ describe('If the Web Share API is not supported but the copy command is', () => 
     // plug JSDOM not having execCommand
     document.execCommand = jest.fn(() => {})
 
-    document.body.innerHTML = htmlFixture
     sharingButton()
 
   })
@@ -128,10 +130,10 @@ describe('If the Web Share API is not supported but the copy command is', () => 
 
     test('A button should be added below the URL to be shared', () => {
 
-      const URLParagraph = document.querySelector('.share-url > .govuk-body')
+      const urlParagraph = document.querySelector('.share-url > .govuk-body')
 
-      expect(URLParagraph.nextElementSibling).not.toBe(null)
-      expect(URLParagraph.nextElementSibling.classList.contains('govuk-button')).toBe(true)
+      expect(urlParagraph.nextElementSibling).not.toBe(null)
+      expect(urlParagraph.nextElementSibling.classList.contains('govuk-button')).toBe(true)
 
     })
 
@@ -180,8 +182,6 @@ describe('If the Web Share API is not supported but the copy command is', () => 
 describe('If neither the Web Share API or the copy command is supported', () => {
 
   test('On page load, the button should not be added', () => {
-
-    document.body.innerHTML = htmlFixture
 
     // fake support for the copy command not being available
     document.queryCommandSupported = jest.fn(command => false)
