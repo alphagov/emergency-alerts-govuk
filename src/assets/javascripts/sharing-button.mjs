@@ -19,7 +19,8 @@ export default function sharingButton () {
   }
 
   if (navigator.share) {
-    urlString = url.innerHTML.replace(/^[\s]+$/, '')
+    // Regexp taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/trim#polyfill
+    urlString = url.innerHTML.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '')
 
     onClick = function (evt) {
       try {
