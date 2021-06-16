@@ -7,16 +7,20 @@ export default function sharingButton () {
   var urlString
   var onClick
 
+  // return early if no of the required APIs are available
+  if (!navigator.share && !document.queryCommandSupported('copy')) return
+
   btn.className = 'govuk-button govuk-button--secondary'
   btn.setAttribute('data-module', 'govuk-button')
   if (navigator.share) {
     btn.innerHTML = 'Share link'
-  } else {
+  } else if (document.queryCommandSupported('copy')) {
     btn.innerHTML = 'Copy link'
   }
 
   if (navigator.share) {
-    urlString = url.innerHTML.replace(/^[\s]+$/, '')
+    // Regexp taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/trim#polyfill
+    urlString = url.innerHTML.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '')
 
     onClick = function (evt) {
       try {
