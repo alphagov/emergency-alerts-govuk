@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from tests.src import env
 
 
-def test_csp_sha():
+def test_content_security_policy_sha():
     script_sha256_base64_encoded = b"+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU="
     env.filters['file_fingerprint'] = lambda path: path  # stub out filters
 
