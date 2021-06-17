@@ -28,7 +28,7 @@
     "@rollup/plugin-commonjs": "^17.1.0",
     "@rollup/plugin-node-resolve": "^11.2.0",
     "fibers": "^5.0.0",
-    "govuk-frontend": "^3.11.0",
+    "govuk-frontend": "^3.12.0",
     "gulp": "^4.0.2",
     "gulp-if": "^3.0.0",
     "gulp-postcss": "^9.0.0",
