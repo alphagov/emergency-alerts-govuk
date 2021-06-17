@@ -3,6 +3,13 @@ from datetime import datetime
 import pytest
 import pytz
 
+from build import setup_jinja_environment
+
+
+@pytest.fixture()
+def env():
+    return setup_jinja_environment([])
+
 
 @pytest.fixture()
 def alert_dict():
