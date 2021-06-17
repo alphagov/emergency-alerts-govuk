@@ -36,11 +36,12 @@ local_routes_except_alerts = [
     for template_path in all_templates]
 
 
-def test_local_links_in_pages_with_no_alerts(env):
+def test_local_links_lead_to_existing_routes_in_pages_with_no_alerts(env):
     for template_path in all_templates_except_alerts:
         html = get_page_html(env, re.sub(r'^\./{1}', '', template_path))
         local_links = html.select("a[href^='/alerts']")
 
+        # return early if no local links found
         if len(local_links) == 0:
             assert True
             return
@@ -63,7 +64,7 @@ def test_local_links_in_pages_with_no_alerts(env):
     }
 ])
 @freeze_time(datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc))
-def test_local_links_in_pages_with_alerts(env, alert_dict, alert_timings):
+def test_local_links_lead_to_existing_routes_in_pages_with_alerts(env, alert_dict, alert_timings):
     alert_dict.update(alert_timings)
     alerts_data = Alerts([alert_dict])
 
@@ -78,6 +79,7 @@ def test_local_links_in_pages_with_alerts(env, alert_dict, alert_timings):
         html = get_page_html(env, re.sub(r'^\./{1}', '', template_path), alerts_data[0])
         local_links = html.select("a[href^='/alerts']")
 
+        # return early if no local links found
         if len(local_links) == 0:
             assert True
             return
