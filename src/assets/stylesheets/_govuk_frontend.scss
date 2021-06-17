@@ -6,6 +6,7 @@
 
 // set asset URL root to match that of application
 $govuk-assets-path: "/alerts/assets/";
+$govuk-new-link-styles: true;
 
 @import "govuk/base";
 
