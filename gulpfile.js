@@ -15,6 +15,8 @@ plugins.gulpStylelint = require('gulp-stylelint');
 plugins.gulpif = require('gulp-if');
 plugins.postcss = require('gulp-postcss');
 plugins.hash = require('gulp-hash-filename');
+plugins.rename = require('gulp-rename');
+plugins.clean = require('gulp-clean');
 
 
 const paths = {
@@ -144,9 +146,25 @@ const javascripts = {
   }
 };
 
-const hashJavascriptFilenames = () => src(paths.dist + 'javascripts/*.js')
+const hashJavascriptFilenames = () => src([
+  paths.dist + 'javascripts/*.js',
+  paths.dist + 'javascripts/*.js.map'
+])
   .pipe(plugins.hash())
   .pipe(dest(paths.dist + 'javascripts/'));
+
+const fixSourcemapFilenames = () => src(paths.dist + 'javascripts/*.js-*.map')
+  .pipe(plugins.rename(path => {
+    return {
+      dirname: path.dirname,
+      basename: path.basename.replace(/(.*)\.js-([a-f0-9]{32})/i, '$1-$2.js'),
+      extname: path.extname
+    }
+  }))
+  .pipe(dest(paths.dist + 'javascripts/'));
+
+const deleteIncorrectlyNamedSourcemaps = () => src(paths.dist + 'javascripts/*.js-*.map')
+  .pipe(plugins.clean())
 
 const scss = {
   compile: () => {
@@ -182,7 +200,9 @@ const defaultTask = parallel(
       javascripts.sharingButton,
       javascripts.relativeDates
     ),
-    hashJavascriptFilenames
+    hashJavascriptFilenames,
+    fixSourcemapFilenames,
+    deleteIncorrectlyNamedSourcemaps
   )
 );
 
