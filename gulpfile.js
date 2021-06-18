@@ -14,6 +14,8 @@ plugins.sass = require('gulp-sass');
 plugins.gulpStylelint = require('gulp-stylelint');
 plugins.gulpif = require('gulp-if');
 plugins.postcss = require('gulp-postcss');
+plugins.hash = require('gulp-hash-filename');
+
 
 const paths = {
   src: 'src/assets/',
@@ -30,18 +32,26 @@ const copy = {
     fonts: () => {
       return src(paths.govuk_frontend + 'govuk/assets/fonts/**/*')
         .pipe(dest(paths.dist + 'fonts/'));
+        // Fonts have their own filename hash so we don’t need to add
+        // our own
     },
     images: () => {
       return src(paths.govuk_frontend + 'govuk/assets/images/**/*')
+        .pipe(dest(paths.dist + 'images/'))
+        .pipe(plugins.hash())
         .pipe(dest(paths.dist + 'images/'));
     }
   },
   html5shiv: () => {
     return src(paths.node_modules + 'html5shiv/dist/*.min.js')
+      .pipe(dest(paths.dist + 'javascripts/vendor/html5shiv/'))
+      .pipe(plugins.hash())
       .pipe(dest(paths.dist + 'javascripts/vendor/html5shiv/'));
   },
   images: () => {
       return src(paths.src + 'images/**/*')
+        .pipe(dest(paths.dist + 'images/'))
+        .pipe(plugins.hash())
         .pipe(dest(paths.dist + 'images/'));
   }
 };
@@ -134,6 +144,10 @@ const javascripts = {
   }
 };
 
+const hashJavascriptFilenames = () => src(paths.dist + 'javascripts/*.js')
+  .pipe(plugins.hash())
+  .pipe(dest(paths.dist + 'javascripts/'));
+
 const scss = {
   compile: () => {
     return src(paths.src + 'stylesheets/**/*.scss')
@@ -150,6 +164,8 @@ const scss = {
           },
           plugins.postcss([require('oldie')()])
         ))
+      .pipe(dest(paths.dist + 'stylesheets/'))
+      .pipe(plugins.hash())
       .pipe(dest(paths.dist + 'stylesheets/'));
   }
 };
@@ -160,9 +176,14 @@ const defaultTask = parallel(
   copy.html5shiv,
   copy.images,
   scss.compile,
-  javascripts.details,
-  javascripts.sharingButton,
-  javascripts.relativeDates
+  series(
+    parallel(
+      javascripts.details,
+      javascripts.sharingButton,
+      javascripts.relativeDates
+    ),
+    hashJavascriptFilenames
+  )
 );
 
 exports.default = defaultTask;

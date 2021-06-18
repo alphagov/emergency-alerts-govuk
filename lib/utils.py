@@ -1,4 +1,5 @@
 import hashlib
+import os
 from pathlib import Path
 
 from jinja2 import Markup, escape
@@ -20,4 +21,6 @@ def paragraphize(value, classes="govuk-body-l govuk-!-margin-bottom-4"):
 
 def file_fingerprint(path, root=DIST):
     contents = open(str(root) + path, 'rb').read()
-    return path + '?' + hashlib.md5(contents).hexdigest()
+    hash = hashlib.md5(contents).hexdigest()
+    filename, extension = os.path.splitext(path)
+    return f'{filename}-{hash}{extension}'
