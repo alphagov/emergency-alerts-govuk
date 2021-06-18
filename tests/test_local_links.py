@@ -87,3 +87,13 @@ def test_local_links_lead_to_existing_routes_in_pages_with_alerts(env, alert_dic
         for link in local_links:
             path = urlparse(link['href']).path
             assert path in local_routes
+
+
+@pytest.mark.parametrize('template_path', all_templates_except_alerts)
+def test_links_have_correct_class_attribute(env, alert_dict, template_path):
+    html = get_page_html(
+        env,
+        re.sub(r'^\./{1}', '', template_path),
+    )
+    for link in html.select('main a'):
+        assert 'govuk-link' in link['class']
