@@ -34,28 +34,33 @@ def setup_jinja_environment(alerts):
     return env
 
 
-alerts = Alerts.from_yaml(REPO / 'data.yaml')
-env = setup_jinja_environment(alerts)
+def alerts_from_yaml():
+    alerts = Alerts.from_yaml(REPO / 'data.yaml')
+    return alerts
 
 
-if __name__ == '__main__':
-    ROOT.mkdir(exist_ok=True)
+def alerts_from_api():
+    raise NotImplementedError("This has not been implemented yet")
 
+
+def get_rendered_pages(alerts):
+    env = setup_jinja_environment(alerts)
+
+    rendered = {}
     for page in SRC.glob('*.html'):
         template = env.get_template(str(page))
 
+        # render each individual alert's page
         if str(page) == 'src/alert.html':
             for alert in alerts.public:
-                target = ROOT / alert.identifier
-                target.open('w').write(template.render({'alert_data': alert}))
+                rendered["alerts/" + alert.identifier] = template.render({'alert_data': alert})
             continue
 
         if 'index.html' in str(page):
-            target = DIST / page.relative_to(SRC)
+            rendered['alerts'] = template.render()
         else:
-            target = ROOT / page.relative_to(SRC)
+            target = str(page.relative_to(SRC))
+            target = target.replace(".html", "")
+            rendered["alerts/" + target] = template.render()
 
-        target.parent.mkdir(exist_ok=True)
-        target.open('w').write(template.render())
-        if 'index.html' not in str(page):
-            target.replace(str(target).replace(".html", ""))
+    return rendered
