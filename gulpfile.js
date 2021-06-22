@@ -151,12 +151,14 @@ const javascripts = {
   }
 };
 
-const restoreOriginalJavascriptFiles = () => src(paths.dist + 'javascripts/**/*.js')
+const restoreOriginalJavascriptFiles = () => src(
+  paths.dist + 'javascripts/*.js*'
+)
   .pipe(
     plugins.rename(path => {
       return {
         dirname: path.dirname,
-        basename: path.basename.replace(/(.*)-([a-f0-9]{8})\.js$/i, '$1.js'),
+        basename: path.basename.replace(/(.*)-([a-f0-9]{8})([\.js]?)$/i, '$1$3'),
         extname: path.extname
       }
     })

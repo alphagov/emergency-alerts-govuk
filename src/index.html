@@ -17,7 +17,7 @@
 {% endblock %}
 
 {% block prefetch %}
-  <link rel="prefetch" href="{{ '/alerts/assets/javascripts/govuk-frontend-details.js' | file_fingerprint }}" />
+  <link rel="prefetch" href="{{ '/alerts/assets/javascripts/govuk-frontend-details-init.js' | file_fingerprint }}" />
 {% endblock %}
 
 {% block pageTitleCurrent -%}
@@ -109,5 +109,5 @@
 {% endblock %}
 
 {% block bodyEnd %}
-  <script async type="text/javascript" src="{{ '/alerts/assets/javascripts/relative-dates.js' | file_fingerprint }}"></script>
+  <script async type="text/javascript" src="{{ '/alerts/assets/javascripts/relative-dates-init.js' | file_fingerprint }}"></script>
 {% endblock %}
