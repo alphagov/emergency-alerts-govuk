@@ -151,6 +151,18 @@ const javascripts = {
   }
 };
 
+const restoreOriginalJavascriptFiles = () => src(paths.dist + 'javascripts/**/*.js')
+  .pipe(
+    plugins.rename(path => {
+      return {
+        dirname: path.dirname,
+        basename: path.basename.replace(/(.*)-([a-f0-9]{8})\.js$/i, '$1.js'),
+        extname: path.extname
+      }
+    })
+  )
+  .pipe(dest(paths.dist + 'javascripts/'));
+
 const scss = {
   compile: () => {
     return src(paths.src + 'stylesheets/**/*.scss')
@@ -179,9 +191,14 @@ const defaultTask = parallel(
   copy.html5shiv,
   copy.images,
   scss.compile,
-  javascripts.details,
-  javascripts.sharingButton,
-  javascripts.relativeDates,
+  series(
+    parallel(
+      javascripts.details,
+      javascripts.sharingButton,
+      javascripts.relativeDates
+    ),
+    restoreOriginalJavascriptFiles,
+  )
 );
 
 exports.default = defaultTask;
