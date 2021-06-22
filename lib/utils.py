@@ -21,6 +21,6 @@ def paragraphize(value, classes="govuk-body-l govuk-!-margin-bottom-4"):
 
 def file_fingerprint(path, root=DIST):
     contents = open(str(root) + path, 'rb').read()
-    hash = hashlib.md5(contents).hexdigest()
+    hash = hashlib.sha256(contents).hexdigest()[:8]
     filename, extension = os.path.splitext(path)
     return f'{filename}-{hash}{extension}'

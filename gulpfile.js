@@ -14,7 +14,7 @@ plugins.sass = require('gulp-sass');
 plugins.gulpStylelint = require('gulp-stylelint');
 plugins.gulpif = require('gulp-if');
 plugins.postcss = require('gulp-postcss');
-plugins.hash = require('gulp-hash-filename');
+plugins.hash = require('gulp-sha256-filename');
 plugins.rename = require('gulp-rename');
 plugins.clean = require('gulp-clean');
 
@@ -26,6 +26,8 @@ const paths = {
   govuk_frontend: 'node_modules/govuk-frontend/',
   assetsUrl: '/alerts/assets/'
 };
+
+const filenameFormat = '{name}-{hash:8}{ext}'
 
 plugins.sass.compiler = require('sass');
 
@@ -40,20 +42,20 @@ const copy = {
     images: () => {
       return src(paths.govuk_frontend + 'govuk/assets/images/**/*')
         .pipe(dest(paths.dist + 'images/'))
-        .pipe(plugins.hash())
+        .pipe(plugins.hash(filenameFormat))
         .pipe(dest(paths.dist + 'images/'));
     }
   },
   html5shiv: () => {
     return src(paths.node_modules + 'html5shiv/dist/*.min.js')
       .pipe(dest(paths.dist + 'javascripts/vendor/html5shiv/'))
-      .pipe(plugins.hash())
+      .pipe(plugins.hash(filenameFormat))
       .pipe(dest(paths.dist + 'javascripts/vendor/html5shiv/'));
   },
   images: () => {
       return src(paths.src + 'images/**/*')
         .pipe(dest(paths.dist + 'images/'))
-        .pipe(plugins.hash())
+        .pipe(plugins.hash(filenameFormat))
         .pipe(dest(paths.dist + 'images/'));
   }
 };
@@ -81,7 +83,8 @@ const javascripts = {
       ]
     }).then(bundle => {
       return bundle.write({
-        file: paths.dist + 'javascripts/govuk-frontend-details.js',
+        dir: paths.dist + 'javascripts/',
+        entryFileNames: '[name]-[hash].js',
         format: 'iife',
         name: 'GOVUK',
         sourcemap: true
@@ -110,7 +113,8 @@ const javascripts = {
       ]
     }).then(bundle => {
       return bundle.write({
-        file: paths.dist + 'javascripts/sharing-button.js',
+        dir: paths.dist + 'javascripts/',
+        entryFileNames: '[name]-[hash].js',
         format: 'iife',
         name: 'GOVUK',
         sourcemap: true
@@ -137,7 +141,8 @@ const javascripts = {
       ]
     }).then(bundle => {
       return bundle.write({
-        file: paths.dist + 'javascripts/relative-dates.js',
+        dir: paths.dist + 'javascripts/',
+        entryFileNames: '[name]-[hash].js',
         format: 'iife',
         name: 'GOVUK',
         sourcemap: true
@@ -146,25 +151,19 @@ const javascripts = {
   }
 };
 
-const hashJavascriptFilenames = () => src([
-  paths.dist + 'javascripts/*.js',
-  paths.dist + 'javascripts/*.js.map'
-])
-  .pipe(plugins.hash())
+const restoreOriginalJavascriptFiles = () => src(
+  paths.dist + 'javascripts/*.js*'
+)
+  .pipe(
+    plugins.rename(path => {
+      return {
+        dirname: path.dirname,
+        basename: path.basename.replace(/(.*)-([a-f0-9]{8})([\.js]?)$/i, '$1$3'),
+        extname: path.extname
+      }
+    })
+  )
   .pipe(dest(paths.dist + 'javascripts/'));
-
-const fixSourcemapFilenames = () => src(paths.dist + 'javascripts/*.js-*.map')
-  .pipe(plugins.rename(path => {
-    return {
-      dirname: path.dirname,
-      basename: path.basename.replace(/(.*)\.js-([a-f0-9]{32})/i, '$1-$2.js'),
-      extname: path.extname
-    }
-  }))
-  .pipe(dest(paths.dist + 'javascripts/'));
-
-const deleteIncorrectlyNamedSourcemaps = () => src(paths.dist + 'javascripts/*.js-*.map')
-  .pipe(plugins.clean())
 
 const scss = {
   compile: () => {
@@ -200,9 +199,7 @@ const defaultTask = parallel(
       javascripts.sharingButton,
       javascripts.relativeDates
     ),
-    hashJavascriptFilenames,
-    fixSourcemapFilenames,
-    deleteIncorrectlyNamedSourcemaps
+    restoreOriginalJavascriptFiles,
   )
 );
 
