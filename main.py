@@ -6,7 +6,7 @@ from flask import Blueprint, Flask, current_app, jsonify
 from flask_httpauth import HTTPBasicAuth
 
 from build import alerts_from_yaml, get_rendered_pages
-from lib.utils import upload_to_s3, purge_cache
+from lib.utils import purge_cache, upload_to_s3
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
