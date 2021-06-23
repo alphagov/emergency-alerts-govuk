@@ -1,10 +1,11 @@
 {% macro metaTags(description, title, url) %}
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.gov.uk{{ '/alerts/assets/images/opengraph-image.png' | file_fingerprint }}">
 <meta property="og:description" content="{{ description }}">
 <meta property="og:title" content="{{ title }}">
 <meta property="og:url" content="{{ url }}">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="GOV.UK">
 <meta property="og:image" content="https://www.gov.uk{{ '/alerts/assets/images/opengraph-image.png' | file_fingerprint }}">
-<meta name="twitter:card" content="summary">
 <meta name="description" content="{{ description }}">
 {% endmacro %}
