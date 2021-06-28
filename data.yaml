@@ -16,9 +16,9 @@ alerts:
       - Leiston in East Suffolk
   - identifier: 29-june-2021
     message_type: alert
-    sent: 2021-06-29T12:50:00+01:00
-    starts: 2021-06-29T13:00:00+01:00
-    expires: 2021-06-29T14:00:00+01:00
+    sent: 2021-06-28T10:45:00+01:00
+    starts: 2021-06-28T10:55:00+01:00
+    expires: 2021-06-28T11:05:00+01:00
     headline: Emergency alert
     description: |
       The UK government is testing Emergency Alerts in Reading, Berkshire.
