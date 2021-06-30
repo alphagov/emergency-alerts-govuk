@@ -39,7 +39,18 @@ const copy = {
     },
     images: () => {
       return src(paths.govuk_frontend + 'govuk/assets/images/**/*')
-        .pipe(plugins.hash(hashOptions))
+        // A few images used by GOVUK Frontend components can't have hashes added to their
+        // URLs so we can't change their filenames
+        .pipe(plugins.gulpif(
+          (file) => {
+            return [
+              'govuk-crest-2x.png',
+              'govuk-crest.png',
+              'govuk-logotype-crown.png'
+            ].includes(path.basename(file.path)) === false;
+          },
+          plugins.hash(hashOptions)
+        ))
         .pipe(dest(paths.dist + 'images/'));
     }
   },
