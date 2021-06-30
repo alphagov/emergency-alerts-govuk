@@ -15,8 +15,6 @@ plugins.gulpStylelint = require('gulp-stylelint');
 plugins.gulpif = require('gulp-if');
 plugins.postcss = require('gulp-postcss');
 plugins.hash = require('gulp-sha256-filename');
-plugins.rename = require('gulp-rename');
-plugins.clean = require('gulp-clean');
 
 
 const paths = {
@@ -27,7 +25,7 @@ const paths = {
   assetsUrl: '/alerts/assets/'
 };
 
-const filenameFormat = '{name}-{hash:8}{ext}'
+const hashOptions = { format: '{name}-{hash:8}{ext}' }
 
 plugins.sass.compiler = require('sass');
 
@@ -41,21 +39,18 @@ const copy = {
     },
     images: () => {
       return src(paths.govuk_frontend + 'govuk/assets/images/**/*')
-        .pipe(dest(paths.dist + 'images/'))
-        .pipe(plugins.hash(filenameFormat))
+        .pipe(plugins.hash(hashOptions))
         .pipe(dest(paths.dist + 'images/'));
     }
   },
   html5shiv: () => {
     return src(paths.node_modules + 'html5shiv/dist/*.min.js')
-      .pipe(dest(paths.dist + 'javascripts/vendor/html5shiv/'))
-      .pipe(plugins.hash(filenameFormat))
+      .pipe(plugins.hash(hashOptions))
       .pipe(dest(paths.dist + 'javascripts/vendor/html5shiv/'));
   },
   images: () => {
       return src(paths.src + 'images/**/*')
-        .pipe(dest(paths.dist + 'images/'))
-        .pipe(plugins.hash(filenameFormat))
+        .pipe(plugins.hash(hashOptions))
         .pipe(dest(paths.dist + 'images/'));
   }
 };
@@ -143,7 +138,9 @@ const javascripts = {
         // this adds node_modules to the require path so it can find the GOVUK Frontend modules
         rollupPluginCommonjs({
           include: 'node_modules/**'
-        })
+        }),
+        // Terser is a replacement for UglifyJS
+        rollupPluginTerser()
       ]
     }).then(bundle => {
       return bundle.write({
@@ -156,20 +153,6 @@ const javascripts = {
     });
   }
 };
-
-const restoreOriginalJavascriptFiles = () => src(
-  paths.dist + 'javascripts/*.js*'
-)
-  .pipe(
-    plugins.rename(path => {
-      return {
-        dirname: path.dirname,
-        basename: path.basename.replace(/(.*)-([a-f0-9]{8})([\.js]?)$/i, '$1$3'),
-        extname: path.extname
-      }
-    })
-  )
-  .pipe(dest(paths.dist + 'javascripts/'));
 
 const scss = {
   compile: () => {
@@ -187,8 +170,7 @@ const scss = {
           },
           plugins.postcss([require('oldie')()])
         ))
-      .pipe(dest(paths.dist + 'stylesheets/'))
-      .pipe(plugins.hash())
+      .pipe(plugins.hash(hashOptions))
       .pipe(dest(paths.dist + 'stylesheets/'));
   }
 };
