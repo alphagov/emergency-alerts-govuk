@@ -199,14 +199,9 @@ const defaultTask = parallel(
   copy.html5shiv,
   copy.images,
   scss.compile,
-  series(
-    parallel(
-      javascripts.details,
-      javascripts.sharingButton,
-      javascripts.relativeDates
-    ),
-    restoreOriginalJavascriptFiles,
-  )
+  javascripts.details,
+  javascripts.sharingButton,
+  javascripts.relativeDates
 );
 
 exports.default = defaultTask;
