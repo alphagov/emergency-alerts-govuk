@@ -30,3 +30,8 @@ class Alerts(SerialisedModelCollection):
             data = yaml.load(stream, Loader=yaml.CLoader)
 
         return cls(data['alerts'])
+
+    def by_message_type(self, message_type):
+        return [
+            alert for alert in self if alert.message_type == message_type
+        ]

@@ -42,11 +42,14 @@
     {{ pageTitle }}
   </h1>
   {% for previous_alert in alerts.expired %}
+  <h2 class="govuk-heading-m {% if not loop.first %}govuk-!-margin-top-9{% endif %}">
+    {{ previous_alert.sent_date.date_as_lang }}
+  </h2>
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
   {{ alert(alert=previous_alert) }}
   {% endfor %}
   {% if alerts.expired %}
-  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
   {% else %}
   <p class="govuk-body">There are no past emergency alerts.</p>
   {% endif %}
