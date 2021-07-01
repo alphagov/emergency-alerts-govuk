@@ -14,6 +14,26 @@ alerts:
     static_map_png: map-reading-demo-static.png
     area_names:
       - Reading, Berkshire
+  - identifier:
+    message_type: operator
+    sent: 2021-06-22T12:00:00+01:00
+    starts:
+    expires:
+    headline:
+    description: |
+      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
+    static_map_png:
+    area_names:
+  - identifier:
+    message_type: operator
+    sent: 2021-06-18T12:00:00+01:00
+    starts:
+    expires:
+    headline:
+    description: |
+      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
+    static_map_png:
+    area_names:
   - identifier: 3-may-2021
     message_type: alert
     sent: 2021-05-25T12:50:00+01:00

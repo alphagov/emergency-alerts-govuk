@@ -33,6 +33,8 @@ class Alert(SerialisedModel):
 
     @property
     def is_expired(self):
+        if self.message_type == 'operator':
+            return True
         now = datetime.now(pytz.utc)
         return self.expires_date.as_utc_datetime < now
 
