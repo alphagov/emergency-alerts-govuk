@@ -20,9 +20,14 @@ class AlertDate(object):
         ).lower()
 
     @property
+    def date_as_lang(self):
+        dt = self._local_datetime
+        return f'{dt:%A} {dt.day} {dt:%B} {dt:%Y}'
+
+    @property
     def as_lang(self, lang='en-GB'):
         dt = self._local_datetime
-        return f'at {self.time_as_lang} on {dt:%A} {dt.day} {dt:%B} {dt:%Y}'
+        return f'at {self.time_as_lang} on {self.date_as_lang}'
 
     @property
     def as_iso8601(self):
