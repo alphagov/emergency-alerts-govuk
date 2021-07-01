@@ -26,7 +26,6 @@ class AlertDate(object):
 
     @property
     def as_lang(self, lang='en-GB'):
-        dt = self._local_datetime
         return f'at {self.time_as_lang} on {self.date_as_lang}'
 
     @property
