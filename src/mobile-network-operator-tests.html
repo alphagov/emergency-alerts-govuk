@@ -1,0 +1,47 @@
+{% extends "templates/content.html" %}
+
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "templates/components/alert.html" import alert -%}
+{%- from "templates/components/meta_tags.html" import metaTags -%}
+
+{% set pageTitle = "Mobile network operator tests" %}
+
+{% block metaTags %}
+  {{ metaTags(
+    description="About mobile network operator tests of Emergency Alerts",
+    title=pageTitle,
+    url="https://www.gov.uk/alerts/mobile-network-operator-tests"
+  ) }}
+{% endblock %}
+
+{% block prefetch %}
+  <link rel="prefetch" href="{{ '/alerts/assets/javascripts/govuk-frontend-details.js' | file_fingerprint }}" />
+{% endblock %}
+
+{% block pageTitleCurrent -%}
+  {{ pageTitle }}
+{%- endblock %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "/"
+      },
+      {
+        "text": "Emergency alerts",
+        "href": "/alerts"
+      }
+    ]
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <h1 class="govuk-heading-xl">
+    {{ pageTitle }}
+  </h1>
+  <p class="govuk-body">
+    TBC
+  </p>
+{% endblock %}
