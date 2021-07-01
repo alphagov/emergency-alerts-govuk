@@ -16,9 +16,9 @@ alerts:
       - Reading, Berkshire
   - identifier:
     message_type: operator
-    sent: 2021-06-22T12:00:00+01:00
-    starts:
-    expires:
+    sent: 2021-06-22T00:00:00+01:00
+    starts: 2021-06-22T00:00:00+01:00
+    expires: 2021-06-22T23:59:59+01:00
     headline:
     description: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
@@ -26,9 +26,9 @@ alerts:
     area_names:
   - identifier:
     message_type: operator
-    sent: 2021-06-18T12:00:00+01:00
-    starts:
-    expires:
+    sent: 2021-06-18T00:00:00+01:00
+    starts: 2021-06-18T00:00:00+01:00
+    expires: 2021-06-18T23:59:59+01:00
     headline:
     description: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
