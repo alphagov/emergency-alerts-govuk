@@ -1,0 +1,6 @@
+__pycache__
+.envrc
+.git
+.pytest_cache
+node_modules
+venv
