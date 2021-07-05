@@ -39,6 +39,10 @@ def alerts_from_yaml():
     return alerts
 
 
+def alerts_from_api():
+    raise NotImplementedError("This has not been implemented yet")
+
+
 def get_rendered_pages(alerts):
     env = setup_jinja_environment(alerts)
 

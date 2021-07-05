@@ -5,7 +5,7 @@ import os
 from flask import Blueprint, Flask, current_app, jsonify
 from flask_httpauth import HTTPBasicAuth
 
-from build import alerts_from_yaml, get_rendered_pages
+from build import alerts_from_api, get_rendered_pages
 from lib.utils import purge_cache, upload_to_s3
 
 logger = logging.getLogger()
@@ -25,15 +25,11 @@ def verify_password(username, password):
         return username
 
 
-def _get_current_alerts():
-    return alerts_from_yaml()
-
-
 @main.route('/refresh-alerts', methods=['POST'])
 @auth.login_required
-def new_alert():
-    current_alerts = _get_current_alerts()
-    rendered_pages = get_rendered_pages(current_alerts)
+def refresh_alerts():
+    alerts = alerts_from_api()
+    rendered_pages = get_rendered_pages(alerts)
 
     upload_to_s3(rendered_pages)
 
