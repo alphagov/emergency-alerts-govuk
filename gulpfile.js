@@ -91,6 +91,11 @@ const rollupTask = (fileName) => () => {
   }).then(bundle => {
     return bundle.write({
       dir: paths.dist + 'javascripts/',
+      // [hash] here is the first 8 characters of a SHA256 sum of the
+      // file’s contents, as per
+      // https://github.com/rollup/rollup/blob/72125168ec6798b919a931742d2def5f4e69093b/src/utils/FileEmitter.ts#L52
+      // and
+      // https://github.com/rollup/rollup/blob/ce2592df6b369b68d61f58c2ef8bf4695421146a/browser/crypto.ts#L3-L6
       entryFileNames: '[name]-[hash].js',
       format: 'iife',
       name: 'GOVUK',
