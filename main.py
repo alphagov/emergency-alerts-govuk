@@ -30,7 +30,7 @@ def _get_current_alerts():
 
 
 @main.route('/refresh-alerts', methods=['POST'])
-# @auth.login_required
+@auth.login_required
 def new_alert():
     current_alerts = _get_current_alerts()
     rendered_pages = get_rendered_pages(current_alerts)
