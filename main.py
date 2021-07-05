@@ -14,7 +14,7 @@ main = Blueprint('main', __name__)
 auth = HTTPBasicAuth()
 
 credentials = {
-    "notify-api": os.getenv('NOTIFY_API_PASSWORD', 'TestPass')
+    "notify-api": os.getenv('NOTIFY_API_SHARED_KEY', 'TestPass')
 }
 
 
