@@ -66,103 +66,37 @@ const copy = {
   }
 };
 
-const javascripts = {
-  details: () => {
-    // Use Rollup to combine all JS in JS module format into a Immediately Invoked Function
-    // Expression (IIFE) to:
-    // - deliver it in one bundle
-    // - allow it to run in browsers without support for JS Modules
-    return rollup.rollup({
-      input: {
-        'govuk-frontend-details': paths.src + 'javascripts/govuk-frontend-details-init.mjs'
-      },
-      plugins: [
-        // determine module entry points from either 'module' or 'main' fields in package.json
-        rollupPluginNodeResolve.nodeResolve({
-          mainFields: ['module', 'main']
-        }),
-        // gulp rollup runs on nodeJS so reads modules in commonJS format
-        // this adds node_modules to the require path so it can find the GOVUK Frontend modules
-        rollupPluginCommonjs({
-          include: 'node_modules/**'
-        }),
-        // Terser is a replacement for UglifyJS
-        rollupPluginTerser()
-      ]
-    }).then(bundle => {
-      return bundle.write({
-        dir: paths.dist + 'javascripts/',
-        entryFileNames: '[name]-[hash].js',
-        format: 'iife',
-        name: 'GOVUK',
-        sourcemap: true
-      });
+const rollupTask = (fileName) => () => {
+  return rollup.rollup({
+  // Use Rollup to combine all JS in JS module format into a Immediately Invoked Function
+  // Expression (IIFE) to:
+  // - deliver it in one bundle
+  // - allow it to run in browsers without support for JS Modules
+    input: {
+      [fileName]: paths.src + 'javascripts/' + fileName + '-init.mjs'
+    },
+    plugins: [
+      // determine module entry points from either 'module' or 'main' fields in package.json
+      rollupPluginNodeResolve.nodeResolve({
+        mainFields: ['module', 'main']
+      }),
+      // gulp rollup runs on nodeJS so reads modules in commonJS format
+      // this adds node_modules to the require path so it can find the GOVUK Frontend modules
+      rollupPluginCommonjs({
+        include: 'node_modules/**'
+      }),
+      // Terser is a replacement for UglifyJS
+      rollupPluginTerser()
+    ]
+  }).then(bundle => {
+    return bundle.write({
+      dir: paths.dist + 'javascripts/',
+      entryFileNames: '[name]-[hash].js',
+      format: 'iife',
+      name: 'GOVUK',
+      sourcemap: true
     });
-  },
-  sharingButton: () => {
-    // Use Rollup to combine all JS in JS module format into a Immediately Invoked Function
-    // Expression (IIFE) to:
-    // - deliver it in one bundle
-    // - allow it to run in browsers without support for JS Modules
-    return rollup.rollup({
-      input: {
-        'sharing-button': paths.src + 'javascripts/sharing-button-init.mjs'
-      },
-      plugins: [
-        // determine module entry points from either 'module' or 'main' fields in package.json
-        rollupPluginNodeResolve.nodeResolve({
-          mainFields: ['module', 'main']
-        }),
-        // gulp rollup runs on nodeJS so reads modules in commonJS format
-        // this adds node_modules to the require path so it can find the GOVUK Frontend modules
-        rollupPluginCommonjs({
-          include: 'node_modules/**'
-        }),
-        // Terser is a replacement for UglifyJS
-        rollupPluginTerser()
-      ]
-    }).then(bundle => {
-      return bundle.write({
-        dir: paths.dist + 'javascripts/',
-        entryFileNames: '[name]-[hash].js',
-        format: 'iife',
-        name: 'GOVUK',
-        sourcemap: true
-      });
-    });
-  },
-  relativeDates: () => {
-    // Use Rollup to combine all JS in JS module format into a Immediately Invoked Function
-    // Expression (IIFE) to:
-    // - deliver it in one bundle
-    // - allow it to run in browsers without support for JS Modules
-    return rollup.rollup({
-      input: {
-        'relative-dates': paths.src + 'javascripts/relative-dates-init.mjs'
-      },
-      plugins: [
-        // determine module entry points from either 'module' or 'main' fields in package.json
-        rollupPluginNodeResolve.nodeResolve({
-          mainFields: ['module', 'main']
-        }),
-        // gulp rollup runs on nodeJS so reads modules in commonJS format
-        // this adds node_modules to the require path so it can find the GOVUK Frontend modules
-        rollupPluginCommonjs({
-          include: 'node_modules/**'
-        }),
-        // Terser is a replacement for UglifyJS
-        rollupPluginTerser()
-      ]
-    }).then(bundle => {
-      return bundle.write({
-        dir: paths.dist + 'javascripts/',
-        entryFileNames: '[name]-[hash].js',
-        format: 'iife',
-        name: 'GOVUK',
-        sourcemap: true
-      });
-    });
-  }
+  });
 };
 
 const scss = {
@@ -192,9 +126,9 @@ const defaultTask = parallel(
   copy.html5shiv,
   copy.images,
   scss.compile,
-  javascripts.details,
-  javascripts.sharingButton,
-  javascripts.relativeDates
+  rollupTask('govuk-frontend-details'),
+  rollupTask('sharing-button'),
+  rollupTask('relative-dates')
 );
 
 exports.default = defaultTask;
