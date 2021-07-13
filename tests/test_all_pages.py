@@ -130,4 +130,4 @@ def test_all_pages_with_details_in_have_the_js_for_it(env, alert_dict, template_
         assert True
         return
 
-    assert html.select_one('script[src^="/alerts/assets/javascripts/govuk-frontend-details.js"]') is not None
+    assert html.select_one('script[src^="/alerts/assets/javascripts/govuk-frontend-details"]') is not None
