@@ -14,6 +14,10 @@ from lib.alerts import Alerts
 
 def get_page_html(env, template_path, alert_data=None):
     template = env.get_template(template_path)
+
+    # The file_fingerprint filter accesses the filesystem so mock
+    env.filters['file_fingerprint'] = lambda path: path
+
     if alert_data is not None:
         content = template.render({'alert_data': alert_data})
     else:
@@ -68,8 +72,6 @@ def test_local_links_lead_to_existing_routes_in_pages_with_alerts(env, alert_dic
     alert_dict.update(alert_timings)
     alerts_data = Alerts([alert_dict])
 
-    # The file_fingerprint filter accesses the filesystem so mock
-    env.filters['file_fingerprint'] = lambda path: path
     env.globals['alerts'] = [alerts_data]
 
     # add route for an alert
@@ -97,3 +99,35 @@ def test_links_have_correct_class_attribute(env, alert_dict, template_path):
     )
     for link in html.select('main a'):
         assert 'govuk-link' in link['class']
+
+
+@pytest.mark.parametrize('template_path', all_templates)
+@freeze_time(datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc))
+def test_all_pages_with_details_in_have_the_js_for_it(env, alert_dict, template_path):
+    current_and_past_alert_timings = [
+        {  # current alert
+            "start": datetime(2021, 4, 21, 11, 25, tzinfo=pytz.utc),
+            "sent": datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
+            "expires": datetime(2021, 4, 21, 12, 30, tzinfo=pytz.utc)
+        },
+        {  # past alert
+            "start": datetime(2021, 4, 20, 11, 25, tzinfo=pytz.utc),
+            "sent": datetime(2021, 4, 20, 11, 30, tzinfo=pytz.utc),
+            "expires": datetime(2021, 4, 20, 12, 30, tzinfo=pytz.utc)
+        }
+    ]
+
+    # add current and past alerts to ensure all pages exist and have content
+    for alert_timings in current_and_past_alert_timings:
+        alert_dict.update(alert_timings)
+
+    alerts_data = Alerts([alert_dict])
+    env.globals['alerts'] = [alerts_data]
+    html = get_page_html(env, re.sub(r'^\./{1}', '', template_path), alerts_data[0])
+    details = html.select('.govuk-details')
+
+    if len(details) == 0:
+        assert True
+        return
+
+    assert html.select_one('script[src^="/alerts/assets/javascripts/govuk-frontend-details"]') is not None
