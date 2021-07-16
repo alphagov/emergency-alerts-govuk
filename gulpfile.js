@@ -3,14 +3,13 @@
 const path = require('path');
 
 const { src, pipe, dest, series, parallel, watch } = require('gulp');
-const Fiber = require('fibers');
 const rollup = require('rollup');
 const rollupPluginCommonjs = require('@rollup/plugin-commonjs');
 const rollupPluginNodeResolve = require('@rollup/plugin-node-resolve');
 const rollupPluginTerser = require('rollup-plugin-terser').terser;
 
 const plugins = {}
-plugins.sass = require('gulp-sass');
+plugins.sass = require('gulp-sass')(require('sass'));
 plugins.gulpStylelint = require('gulp-stylelint');
 plugins.gulpif = require('gulp-if');
 plugins.postcss = require('gulp-postcss');
@@ -26,8 +25,6 @@ const paths = {
 };
 
 const hashOptions = { format: '{name}-{hash:8}{ext}' }
-
-plugins.sass.compiler = require('sass');
 
 const copy = {
   govuk_frontend: {
@@ -109,7 +106,6 @@ const scss = {
     return src(paths.src + 'stylesheets/**/*.scss')
       .pipe(plugins.sass(
         {
-          fiber: Fiber,
           includePaths: [paths.govuk_frontend],
           outputStyle: 'compressed'
         })
