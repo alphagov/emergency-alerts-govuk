@@ -1,6 +1,16 @@
 alerts:
   - identifier:
     message_type: operator
+    sent: 2021-07-16T00:00:00+01:00
+    starts: 2021-07-16T13:00:00+01:00
+    expires: 2021-07-16T14:00:00+01:00
+    headline:
+    description: |
+      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
+    static_map_png:
+    area_names:
+  - identifier:
+    message_type: operator
     sent: 2021-07-14T00:00:00+01:00
     starts: 2021-07-14T13:00:00+01:00
     expires: 2021-07-14T14:00:00+01:00
