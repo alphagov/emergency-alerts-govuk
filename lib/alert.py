@@ -13,7 +13,6 @@ class Alert(SerialisedModel):
         'starts',
         'sent',
         'expires',
-        'headline',
         'description',
         'static_map_png',
         'area_names',
