@@ -41,7 +41,7 @@ def test_last_updated(alert_dict):
 
     alerts = Alerts([alert_dict, alert_dict_2])
 
-    assert len(alerts) == len(alerts.current) == 2
+    assert len(alerts) == len(alerts.current_and_public) == 2
     assert isinstance(alerts.last_updated_date, AlertDate)
     assert alerts.last_updated == alert_dict_2['starts']
 
@@ -51,45 +51,17 @@ def test_last_updated_exception_for_no_current_alerts(alert_dict):
         Alerts([alert_dict]).last_updated
 
 
-@pytest.mark.parametrize('expiry_date,expected_len', [
-    [datetime(2021, 4, 21, 9, 30, tzinfo=pytz.utc), 1],
-    [datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc), 0],
-])
-@freeze_time(datetime(
-    2021, 4, 21, 10, 30, tzinfo=pytz.utc
-))
-def test_expired_alerts_are_expired(expiry_date, expected_len, alert_dict):
-    alert_dict['expires'] = expiry_date
+def test_current_and_public_alerts(alert_dict, mocker):
+    mocker.patch(__name__ + '.Alert.is_current_and_public', True)
+    assert len(Alerts([alert_dict]).current_and_public) == 1
 
-    alerts = Alerts([alert_dict])
-
-    assert len(alerts.expired) == expected_len
+    mocker.patch(__name__ + '.Alert.is_current_and_public', False)
+    assert len(Alerts([alert_dict]).current_and_public) == 0
 
 
-@pytest.mark.parametrize('sent_date,expiry_date,expected_len', [
-    [
-        datetime(2021, 4, 21, 9, 30, tzinfo=pytz.utc),
-        datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
-        1
-    ],
-    [
-        datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc),
-        datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
-        0
-    ],
-    [
-        datetime(2021, 4, 21, 9, 0, tzinfo=pytz.utc),
-        datetime(2021, 4, 21, 10, 0, tzinfo=pytz.utc),
-        0
-    ],
-])
-@freeze_time(datetime(
-    2021, 4, 21, 10, 30, tzinfo=pytz.utc
-))
-def test_current_alerts_are_current(sent_date, expiry_date, expected_len, alert_dict):
-    alert_dict['sent'] = sent_date
-    alert_dict['expires'] = expiry_date
+def test_expired_or_test_alerts(alert_dict, mocker):
+    mocker.patch(__name__ + '.Alert.is_expired_or_test', True)
+    assert len(Alerts([alert_dict]).expired_or_test) == 1
 
-    alerts = Alerts([alert_dict])
-
-    assert len(alerts.current) == expected_len
+    mocker.patch(__name__ + '.Alert.is_expired_or_test', False)
+    assert len(Alerts([alert_dict]).expired_or_test) == 0

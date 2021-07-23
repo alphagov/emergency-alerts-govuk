@@ -9,16 +9,16 @@ class Alerts(SerialisedModelCollection):
     model = Alert
 
     @property
-    def current(self):
-        return [alert for alert in self if alert.is_current]
+    def current_and_public(self):
+        return [alert for alert in self if alert.is_current_and_public]
 
     @property
-    def expired(self):
-        return [alert for alert in self if alert.is_expired]
+    def expired_or_test(self):
+        return [alert for alert in self if alert.is_expired_or_test]
 
     @property
     def last_updated(self):
-        return max(alert.starts for alert in self if alert.is_current)
+        return max(alert.starts for alert in self.current_and_public)
 
     @property
     def last_updated_date(self):

@@ -31,9 +31,19 @@ class Alert(SerialisedModel):
         return AlertDate(self.expires)
 
     @property
+    def is_current_and_public(self):
+        return self.is_current and self.is_public
+
+    @property
+    def is_expired_or_test(self):
+        return self.is_expired or not self.is_public
+
+    @property
+    def is_public(self):
+        return self.message_type == 'alert'
+
+    @property
     def is_expired(self):
-        if self.message_type == 'operator':
-            return True
         now = datetime.now(pytz.utc)
         return self.expires_date.as_utc_datetime < now
 
