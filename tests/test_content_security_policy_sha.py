@@ -1,18 +1,13 @@
 import base64
 import hashlib
 
-from bs4 import BeautifulSoup
-
-from tests.src import env
+from tests.conftest import render_template
 
 
-def test_content_security_policy_sha():
+def test_content_security_policy_sha(env):
     script_sha256_base64_encoded = b"+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU="
-    env.filters['file_fingerprint'] = lambda path: path  # stub out filters
 
-    template = env.get_template('src/index.html')
-    content = template.render()
-    html = BeautifulSoup(content, 'html.parser')
+    html = render_template(env, 'src/index.html')
     inline_script = html.select_one('body > script')
 
     assert inline_script is not None

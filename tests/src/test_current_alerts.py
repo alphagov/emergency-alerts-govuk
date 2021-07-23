@@ -1,12 +1,9 @@
-from bs4 import BeautifulSoup
-
 from lib.alert import Alert
+from tests.conftest import render_template
 
 
 def test_current_alerts_page(env):
-    template = env.get_template("src/current-alerts.html")
-    content = template.render()
-    html = BeautifulSoup(content, 'html.parser')
+    html = render_template(env, "src/current-alerts.html")
     assert html.select_one('h1').text.strip() == "Current alerts"
 
 
@@ -16,7 +13,5 @@ def test_current_alerts_page_shows_alerts(
     mocker,
 ):
     mocker.patch('lib.alerts.Alerts.current_public', [Alert(alert_dict)])
-    template = env.get_template("src/current-alerts.html")
-    content = template.render()
-    html = BeautifulSoup(content, 'html.parser')
+    html = render_template(env, "src/current-alerts.html")
     assert len(html.select('h2.alerts-alert__title')) == 1
