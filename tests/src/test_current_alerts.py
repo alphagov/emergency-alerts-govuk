@@ -12,6 +12,13 @@ def test_current_alerts_page_shows_alerts(
     env,
     mocker,
 ):
-    mocker.patch('lib.alerts.Alerts.current_public', [Alert(alert_dict)])
+    alert_dict['area_names'] = ['foo']
+    mocker.patch('lib.alerts.Alerts.current_and_public', [Alert(alert_dict)])
+
     html = render_template(env, "src/current-alerts.html")
-    assert len(html.select('h2.alerts-alert__title')) == 1
+    titles = html.select('h2.alerts-alert__title')
+    link = html.select_one('a.govuk-body')
+
+    assert len(titles) == 1
+    assert titles[0].text.strip() == 'Emergency alert sent to foo'
+    assert 'More information about this alert' in link.text
