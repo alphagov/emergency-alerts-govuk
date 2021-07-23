@@ -86,10 +86,11 @@ def test_is_current_and_public(is_current, is_public, is_current_and_public, moc
     assert Alert(alert_dict).is_current_and_public == is_current_and_public
 
 
-@pytest.mark.parametrize('message_type,is_public', [
-    ['alert', True],
+@pytest.mark.parametrize('channel,is_public', [
+    ['severe', True],
+    ['government', True],
     ['operator', False]
 ])
-def test_is_public(message_type, is_public, alert_dict):
-    alert_dict['message_type'] = message_type
+def test_is_public(channel, is_public, alert_dict):
+    alert_dict['channel'] = channel
     assert Alert(alert_dict).is_public == is_public

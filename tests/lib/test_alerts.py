@@ -65,3 +65,11 @@ def test_expired_or_test_alerts(alert_dict, mocker):
 
     mocker.patch(__name__ + '.Alert.is_expired_or_test', False)
     assert len(Alerts([alert_dict]).expired_or_test) == 0
+
+
+def test_public_alerts(alert_dict, mocker):
+    mocker.patch(__name__ + '.Alert.is_public', True)
+    assert len(Alerts([alert_dict]).public) == 1
+
+    mocker.patch(__name__ + '.Alert.is_public', False)
+    assert len(Alerts([alert_dict]).public) == 0

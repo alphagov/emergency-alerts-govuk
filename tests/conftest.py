@@ -21,7 +21,7 @@ def alert_dict():
         'headline': 'Emergency alert',
         'description': 'Something',
         'area_names': [],
-        'message_type': 'alert',
+        'channel': 'severe',
         'identifier': '1234',
         'static_map_png': 'a-file.png',
         'starts': datetime(2021, 4, 21, 11, 25, tzinfo=pytz.utc),

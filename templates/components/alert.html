@@ -6,14 +6,14 @@
       <div class="alerts-icon__container alerts-icon__container--48">
         {{ alerts_icon(height=48, alert_active=alert.is_current) }}
         <h2 class="alerts-alert__title govuk-heading-s govuk-!-margin-bottom-3">
-          {% if alert.message_type == 'operator' %}
+          {% if alert.channel == 'operator' %}
             Mobile network operator test
           {% else %}
             <span class="govuk-visually-hidden">Emergency alert sent to </span>{{ alert.area_names | formatted_list(before_each='', after_each='') }}
           {% endif %}
         </h2>
         {{ alert.description | paragraphize }}
-        {% if alert.message_type == 'operator' %}
+        {% if alert.channel == 'operator' %}
           <a href="/alerts/mobile-network-operator-tests" class="govuk-link govuk-body">
             More information about mobile network operator tests
           </a>

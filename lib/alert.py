@@ -9,7 +9,7 @@ from lib.alert_date import AlertDate
 class Alert(SerialisedModel):
     ALLOWED_PROPERTIES = {
         'identifier',
-        'message_type',
+        'channel',
         'starts',
         'sent',
         'expires',
@@ -40,7 +40,7 @@ class Alert(SerialisedModel):
 
     @property
     def is_public(self):
-        return self.message_type == 'alert'
+        return self.channel in ['government', 'severe']
 
     @property
     def is_expired(self):

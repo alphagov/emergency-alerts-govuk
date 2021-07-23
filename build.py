@@ -45,7 +45,7 @@ if __name__ == '__main__':
         template = env.get_template(str(page))
 
         if str(page) == 'src/alert.html':
-            for alert in alerts.by_message_type('alert'):
+            for alert in alerts.public:
                 target = ROOT / alert.identifier
                 target.open('w').write(template.render({'alert_data': alert}))
             continue
