@@ -13,8 +13,8 @@ class Alerts(SerialisedModelCollection):
         return [alert for alert in self if alert.is_current_and_public]
 
     @property
-    def expired_or_test(self):
-        return [alert for alert in self if alert.is_expired_or_test]
+    def expired(self):
+        return [alert for alert in self if alert.is_expired]
 
     @property
     def public(self):

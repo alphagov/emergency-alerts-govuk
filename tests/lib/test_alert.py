@@ -62,18 +62,6 @@ def test_is_current_alert_checks_if_alert_is_current(
     assert Alert(alert_dict).is_current == is_current
 
 
-@pytest.mark.parametrize('is_expired,is_public,is_expired_or_test', [
-    [True, True, True],
-    [False, True, False],
-    [True, False, True],
-    [False, False, True]
-])
-def test_is_expired_or_test(is_expired, is_public, is_expired_or_test, mocker, alert_dict):
-    mocker.patch(__name__ + '.Alert.is_expired', is_expired)
-    mocker.patch(__name__ + '.Alert.is_public', is_public)
-    assert Alert(alert_dict).is_expired_or_test == is_expired_or_test
-
-
 @pytest.mark.parametrize('is_current,is_public,is_current_and_public', [
     [True, True, True],
     [False, True, False],

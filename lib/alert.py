@@ -35,10 +35,6 @@ class Alert(SerialisedModel):
         return self.is_current and self.is_public
 
     @property
-    def is_expired_or_test(self):
-        return self.is_expired or not self.is_public
-
-    @property
     def is_public(self):
         return self.channel in ['government', 'severe']
 

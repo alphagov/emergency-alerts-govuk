@@ -31,7 +31,7 @@ def test_past_alerts_page_shows_alerts(
 ):
     alert_dict['area_names'] = ['foo']
     mocker.patch('lib.alert.Alert.is_public', is_public)
-    mocker.patch('lib.alerts.Alerts.expired_or_test', [Alert(alert_dict)])
+    mocker.patch('lib.alerts.Alerts.expired', [Alert(alert_dict)])
 
     html = render_template(env, "src/past-alerts.html")
     titles = html.select('h2.alerts-alert__title')
