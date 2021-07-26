@@ -9,28 +9,28 @@ def test_past_alerts_page(env):
     assert html.select_one('h1').text.strip() == "Past alerts"
 
 
-@pytest.mark.parametrize('channel,expected_title,expected_link_text', [
+@pytest.mark.parametrize('is_public,expected_title,expected_link_text', [
     [
-        'operator',
+        False,
         'Mobile network operator test',
         'More information about mobile network operator tests',
     ],
     [
-        'severe',
+        True,
         'Emergency alert sent to foo',
         'More information about this alert',
     ]
 ])
 def test_past_alerts_page_shows_alerts(
-    channel,
+    is_public,
     expected_title,
     expected_link_text,
     mocker,
     alert_dict,
     env
 ):
-    alert_dict['channel'] = channel
     alert_dict['area_names'] = ['foo']
+    mocker.patch('lib.alert.Alert.is_public', is_public)
     mocker.patch('lib.alerts.Alerts.expired_or_test', [Alert(alert_dict)])
 
     html = render_template(env, "src/past-alerts.html")
