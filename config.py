@@ -14,6 +14,10 @@ class Config():
     AWS_REGION = os.getenv('AWS_REGION', 'eu-west-1')
     NOTIFY_LOG_PATH = os.getenv('NOTIFY_LOG_PATH', '/var/log/notify/application.log')
 
+    BROADCASTS_AWS_ACCESS_KEY_ID = os.getenv("BROADCASTS_AWS_ACCESS_KEY_ID")
+    BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
+    BROADCASTS_AWS_DEFAULT_REGION = os.getenv("BROADCASTS_AWS_DEFAULT_REGION")
+
     CELERY = {
         'broker_url': 'sqs://',
         'broker_transport_options': {
