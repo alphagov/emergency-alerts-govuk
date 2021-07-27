@@ -1,0 +1,50 @@
+---
+applications:
+  - name: notify-govuk-alerts-publisher
+    buildpacks:
+    - python_buildpack
+
+    routes:
+      - route: notify-govuk-alerts-publisher-{{ NOTIFY_ENVIRONMENT }}.cloudapps.digital
+    services:
+      - logit-ssl-syslog-drain
+
+    processes:
+    - type: web
+      command: celery -A run_celery.main worker --loglevel=INFO --concurrency=1 2> /dev/null
+      health-check-type: process
+      memory: 2G
+
+    sidecars:
+      - name: aws-logs
+        process_types:
+          - web
+        command: >
+          touch /home/vcap/logs/app.log.json &&
+          aws configure set plugins.cwlogs cwlogs &&
+          aws logs push --region eu-west-1 --config-file awslogs.conf
+        memory: 64M
+
+    env:
+      NOTIFY_APP_NAME: notify-govuk-alerts-publisher
+      LOGGING_STDOUT_JSON: '1'
+
+      # Credentials variables
+      NOTIFICATION_QUEUE_PREFIX: '{{ NOTIFICATION_QUEUE_PREFIX }}'
+      NOTIFY_ENVIRONMENT: '{{ NOTIFY_ENVIRONMENT }}'
+      NOTIFY_LOG_PATH: '/home/vcap/logs/app.log'
+
+      STATSD_HOST: "notify-statsd-exporter-{{ environment }}.apps.internal"
+
+      # SQS
+      AWS_ACCESS_KEY_ID: '{{ AWS_ACCESS_KEY_ID }}'
+      AWS_SECRET_ACCESS_KEY: '{{ AWS_SECRET_ACCESS_KEY }}'
+
+      # S3
+      BROADCASTS_AWS_ACCESS_KEY_ID: '{{ BROADCASTS_AWS_ACCESS_KEY_ID }}'
+      BROADCASTS_AWS_SECRET_ACCESS_KEY: '{{ BROADCASTS_AWS_SECRET_ACCESS_KEY }}'
+      BROADCASTS_AWS_DEFAULT_REGION: '{{ BROADCASTS_AWS_DEFAULT_REGION }}'
+
+      # fastly
+      FASTLY_SERVICE_ID: '{{ FASTLY_SERVICE_ID }}'
+      FASTLY_API_KEY: '{{ FASTLY_API_KEY }}'
