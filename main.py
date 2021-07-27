@@ -1,11 +1,10 @@
 from flask import Flask
-
 from notifications_utils import logging
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
 
+import notify_celery
 from build import alerts_from_yaml, get_rendered_pages
 from lib.utils import purge_cache, upload_to_s3
-import notify_celery
 
 notify_celery = notify_celery.NotifyCelery()
 statsd_client = StatsdClient()
