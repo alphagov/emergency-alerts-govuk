@@ -1,10 +1,10 @@
-import os
-
 from flask import Flask
 
 from notifications_utils import logging
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
 
+from build import alerts_from_yaml, get_rendered_pages
+from lib.utils import purge_cache, upload_to_s3
 import config
 import notify_celery
 
@@ -21,9 +21,15 @@ def create_app(application):
 
     return application
 
+
 @notify_celery.task(bind=True, name="publish-govuk-alerts", max_retries=5, default_retry_delay=300)
 def publish_govuk_alerts(self):
-    pass
+    alerts = alerts_from_yaml()
+    rendered_pages = get_rendered_pages(alerts)
+
+    upload_to_s3(rendered_pages)
+
+    purge_cache()
 
 
 application = Flask('notify-govuk-alerts-publisher')
