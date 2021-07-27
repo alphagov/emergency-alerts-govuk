@@ -2,6 +2,7 @@ import os
 
 from kombu import Exchange, Queue
 
+
 class Config():
     NOTIFICATION_QUEUE_PREFIX = os.getenv('NOTIFICATION_QUEUE_PREFIX')
 
@@ -22,7 +23,7 @@ class Config():
             'wait_time_seconds': 20,  # enable long polling, with a wait time of 20 seconds
         },
         'timezone': 'Europe/London',
-        'imports': ['celery.tasks'],
+        'imports': ['main'],
         'task_queues': [
             Queue('publish-govuk-alerts', Exchange('default'), routing_key='publish-govuk-alerts')
         ],

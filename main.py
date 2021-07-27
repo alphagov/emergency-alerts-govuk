@@ -5,7 +5,6 @@ from notifications_utils.clients.statsd.statsd_client import StatsdClient
 
 from build import alerts_from_yaml, get_rendered_pages
 from lib.utils import purge_cache, upload_to_s3
-import config
 import notify_celery
 
 notify_celery = notify_celery.NotifyCelery()
@@ -13,6 +12,7 @@ statsd_client = StatsdClient()
 
 
 def create_app(application):
+    import config
     application.config.from_object(config.Config)
 
     statsd_client.init_app(application)
