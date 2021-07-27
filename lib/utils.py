@@ -54,8 +54,14 @@ def is_in_uk(simple_polygons):
         first_coordinate[1] < uk_north_east[1]
     )
 
-def upload_to_s3(rendered_pages):
-    s3 = boto3.resource('s3')
+def upload_to_s3(config, rendered_pages):
+    session = boto3.session.Session(
+        aws_access_key_id=config["BROADCASTS_AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
+        region_name=config["BROADCASTS_AWS_DEFAULT_REGION"],
+    )
+
+    s3 = session.resource('s3')
     bucket_name = os.environ['GOVUK_ALERTS_BUCKET_NAME']
 
     for path, content in rendered_pages.items():

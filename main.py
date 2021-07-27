@@ -24,10 +24,12 @@ def create_app(application):
 
 @notify_celery.task(bind=True, name="publish-govuk-alerts", max_retries=5, default_retry_delay=300)
 def publish_govuk_alerts(self):
+    from flask import current_app
+
     alerts = alerts_from_yaml()
     rendered_pages = get_rendered_pages(alerts)
 
-    upload_to_s3(rendered_pages)
+    upload_to_s3(current_app.config, rendered_pages)
 
     purge_cache()
 
