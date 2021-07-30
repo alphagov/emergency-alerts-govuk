@@ -39,9 +39,9 @@
   <h1 class="govuk-heading-xl">
     Emergency Alerts
   </h1>
-  {% if alerts.current %}
+  {% if alerts.current_and_public %}
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-  {{ banner(alerts.current | length, alerts.last_updated_date) }}
+  {{ banner(alerts.current_and_public | length, alerts.last_updated_date) }}
   {% endif %}
 
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
