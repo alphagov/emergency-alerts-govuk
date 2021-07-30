@@ -6,23 +6,10 @@ from urllib.parse import urlparse
 
 import pytest
 import pytz
-from bs4 import BeautifulSoup
 from freezegun import freeze_time
 
 from lib.alerts import Alerts
-
-
-def get_page_html(env, template_path, alert_data=None):
-    template = env.get_template(template_path)
-
-    # The file_fingerprint filter accesses the filesystem so mock
-    env.filters['file_fingerprint'] = lambda path: path
-
-    if alert_data is not None:
-        content = template.render({'alert_data': alert_data})
-    else:
-        content = template.render()
-    return BeautifulSoup(content, 'html.parser')
+from tests.conftest import render_template
 
 
 def get_local_route_from_template_path(template_path):
@@ -42,7 +29,7 @@ local_routes_except_alerts = [
 
 def test_local_links_lead_to_existing_routes_in_pages_with_no_alerts(env):
     for template_path in all_templates_except_alerts:
-        html = get_page_html(env, re.sub(r'^\./{1}', '', template_path))
+        html = render_template(env, re.sub(r'^\./{1}', '', template_path))
         local_links = html.select("a[href^='/alerts']")
 
         # return early if no local links found
@@ -78,7 +65,11 @@ def test_local_links_lead_to_existing_routes_in_pages_with_alerts(env, alert_dic
     local_routes = local_routes_except_alerts + ['/alerts/21-Apr-2021']
 
     for template_path in all_templates:
-        html = get_page_html(env, re.sub(r'^\./{1}', '', template_path), alerts_data[0])
+        html = render_template(
+            env,
+            re.sub(r'^\./{1}', '', template_path),
+            {'alert_data': alerts_data[0]}
+        )
         local_links = html.select("a[href^='/alerts']")
 
         # return early if no local links found
@@ -93,7 +84,7 @@ def test_local_links_lead_to_existing_routes_in_pages_with_alerts(env, alert_dic
 
 @pytest.mark.parametrize('template_path', all_templates_except_alerts)
 def test_links_have_correct_class_attribute(env, alert_dict, template_path):
-    html = get_page_html(
+    html = render_template(
         env,
         re.sub(r'^\./{1}', '', template_path),
     )
@@ -123,7 +114,11 @@ def test_all_pages_with_details_in_have_the_js_for_it(env, alert_dict, template_
 
     alerts_data = Alerts([alert_dict])
     env.globals['alerts'] = [alerts_data]
-    html = get_page_html(env, re.sub(r'^\./{1}', '', template_path), alerts_data[0])
+    html = render_template(
+        env,
+        re.sub(r'^\./{1}', '', template_path),
+        {'alert_data': alerts_data[0]}
+    )
     details = html.select('.govuk-details')
 
     if len(details) == 0:

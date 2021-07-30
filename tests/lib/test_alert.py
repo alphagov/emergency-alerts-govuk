@@ -60,3 +60,25 @@ def test_is_current_alert_checks_if_alert_is_current(
     alert_dict['sent'] = sent_date
     alert_dict['expires'] = expiry_date
     assert Alert(alert_dict).is_current == is_current
+
+
+@pytest.mark.parametrize('is_current,is_public,is_current_and_public', [
+    [True, True, True],
+    [False, True, False],
+    [True, False, False],
+    [False, False, False]
+])
+def test_is_current_and_public(is_current, is_public, is_current_and_public, mocker, alert_dict):
+    mocker.patch(__name__ + '.Alert.is_current', is_current)
+    mocker.patch(__name__ + '.Alert.is_public', is_public)
+    assert Alert(alert_dict).is_current_and_public == is_current_and_public
+
+
+@pytest.mark.parametrize('channel,is_public', [
+    ['severe', True],
+    ['government', True],
+    ['operator', False]
+])
+def test_is_public(channel, is_public, alert_dict):
+    alert_dict['channel'] = channel
+    assert Alert(alert_dict).is_public == is_public

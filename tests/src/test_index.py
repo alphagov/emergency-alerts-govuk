@@ -1,8 +1,6 @@
-from bs4 import BeautifulSoup
+from tests.conftest import render_template
 
 
 def test_index_page(env):
-    template = env.get_template("src/index.html")
-    content = template.render()
-    html = BeautifulSoup(content, 'html.parser')
+    html = render_template(env, "src/index.html")
     assert html.select_one('h1').text.strip() == "Emergency Alerts"

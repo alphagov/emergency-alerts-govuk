@@ -9,16 +9,20 @@ class Alerts(SerialisedModelCollection):
     model = Alert
 
     @property
-    def current(self):
-        return [alert for alert in self if alert.is_current]
+    def current_and_public(self):
+        return [alert for alert in self if alert.is_current_and_public]
 
     @property
     def expired(self):
         return [alert for alert in self if alert.is_expired]
 
     @property
+    def public(self):
+        return [alert for alert in self if alert.is_public]
+
+    @property
     def last_updated(self):
-        return max(alert.starts for alert in self if alert.is_current)
+        return max(alert.starts for alert in self.current_and_public)
 
     @property
     def last_updated_date(self):
@@ -30,8 +34,3 @@ class Alerts(SerialisedModelCollection):
             data = yaml.load(stream, Loader=yaml.CLoader)
 
         return cls(data['alerts'])
-
-    def by_message_type(self, message_type):
-        return [
-            alert for alert in self if alert.message_type == message_type
-        ]

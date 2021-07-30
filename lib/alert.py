@@ -9,7 +9,7 @@ from lib.alert_date import AlertDate
 class Alert(SerialisedModel):
     ALLOWED_PROPERTIES = {
         'identifier',
-        'message_type',
+        'channel',
         'starts',
         'sent',
         'expires',
@@ -31,9 +31,15 @@ class Alert(SerialisedModel):
         return AlertDate(self.expires)
 
     @property
+    def is_current_and_public(self):
+        return self.is_current and self.is_public
+
+    @property
+    def is_public(self):
+        return self.channel in ['government', 'severe']
+
+    @property
     def is_expired(self):
-        if self.message_type == 'operator':
-            return True
         now = datetime.now(pytz.utc)
         return self.expires_date.as_utc_datetime < now
 
