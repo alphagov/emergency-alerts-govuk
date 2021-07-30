@@ -25,7 +25,7 @@ def alert_dict():
         'identifier': '1234',
         'static_map_png': 'a-file.png',
         'starts_at': datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
-        'sent': datetime(2021, 4, 21, 11, 25, tzinfo=pytz.utc),
+        'approved_at': datetime(2021, 4, 21, 11, 25, tzinfo=pytz.utc),
         'expires': datetime(2021, 4, 21, 12, 30, tzinfo=pytz.utc)
     }
 

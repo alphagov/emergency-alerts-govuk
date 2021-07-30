@@ -11,7 +11,7 @@ class Alert(SerialisedModel):
         'identifier',
         'channel',
         'starts_at',
-        'sent',
+        'approved_at',
         'expires',
         'description',
         'static_map_png',
@@ -23,8 +23,8 @@ class Alert(SerialisedModel):
         return AlertDate(self.starts_at)
 
     @property
-    def sent_date(self):
-        return AlertDate(self.sent)
+    def approved_at_date(self):
+        return AlertDate(self.approved_at)
 
     @property
     def expires_date(self):
@@ -49,5 +49,5 @@ class Alert(SerialisedModel):
 
         return (
             self.expires_date.as_utc_datetime >= now and
-            self.sent_date.as_utc_datetime <= now
+            self.approved_at_date.as_utc_datetime <= now
         )

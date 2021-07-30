@@ -45,12 +45,12 @@ def test_local_links_lead_to_existing_routes_in_pages_with_no_alerts(env):
 @pytest.mark.parametrize("alert_timings", [
     {  # current alert
         "starts_at": datetime(2021, 4, 21, 11, 25, tzinfo=pytz.utc),
-        "sent": datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
+        "approved_at": datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
         "expires": datetime(2021, 4, 21, 12, 30, tzinfo=pytz.utc)
     },
     {  # past alert
         "starts_at": datetime(2021, 4, 20, 11, 25, tzinfo=pytz.utc),
-        "sent": datetime(2021, 4, 20, 11, 30, tzinfo=pytz.utc),
+        "approved_at": datetime(2021, 4, 20, 11, 30, tzinfo=pytz.utc),
         "expires": datetime(2021, 4, 20, 12, 30, tzinfo=pytz.utc)
     }
 ])
@@ -98,12 +98,12 @@ def test_all_pages_with_details_in_have_the_js_for_it(env, alert_dict, template_
     current_and_past_alert_timings = [
         {  # current alert
             "starts_at": datetime(2021, 4, 21, 11, 25, tzinfo=pytz.utc),
-            "sent": datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
+            "approved_at": datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
             "expires": datetime(2021, 4, 21, 12, 30, tzinfo=pytz.utc)
         },
         {  # past alert
             "starts_at": datetime(2021, 4, 20, 11, 25, tzinfo=pytz.utc),
-            "sent": datetime(2021, 4, 20, 11, 30, tzinfo=pytz.utc),
+            "approved_at": datetime(2021, 4, 20, 11, 30, tzinfo=pytz.utc),
             "expires": datetime(2021, 4, 20, 12, 30, tzinfo=pytz.utc)
         }
     ]
