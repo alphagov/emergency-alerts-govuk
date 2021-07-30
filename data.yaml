@@ -36,6 +36,7 @@ alerts:
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     static_map_png:
     area_names:
+### vvv DO NOT DELETE: NOT IN DB vvv ###
   - identifier:
     channel: operator
     sent: 2021-07-02T00:00:00+01:00
@@ -45,6 +46,7 @@ alerts:
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     static_map_png:
     area_names:
+### ^^^ DO NOT DELETE: NOT IN DB ^^^ ###
   - identifier: 29-june-2021
     channel: severe
     sent: 2021-06-29T12:45:00+01:00
@@ -59,6 +61,7 @@ alerts:
     static_map_png: map-reading-demo-static.png
     area_names:
       - Reading, Berkshire
+### vvv DO NOT DELETE: NOT IN DB vvv ###
   - identifier:
     channel: operator
     sent: 2021-06-22T00:00:00+01:00
@@ -77,6 +80,7 @@ alerts:
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     static_map_png:
     area_names:
+### ^^^ DO NOT DELETE: NOT IN DB ^^^ ###
   - identifier: 3-may-2021
     channel: severe
     sent: 2021-05-25T12:50:00+01:00
