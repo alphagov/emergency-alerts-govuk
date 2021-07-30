@@ -9,7 +9,6 @@ alerts:
     static_map_png:
     area_names:
   - identifier:
-    message_type: operator
     channel: operator
     sent: 2021-07-16T00:00:00+01:00
     starts: 2021-07-16T13:00:00+01:00
