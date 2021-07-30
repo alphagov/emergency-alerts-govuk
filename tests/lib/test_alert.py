@@ -12,7 +12,7 @@ def test_alert_timestamps_properties_are_AlertDates(alert_dict):
     alert = Alert(alert_dict)
     assert isinstance(alert.sent_date, AlertDate)
     assert isinstance(alert.expires_date, AlertDate)
-    assert isinstance(alert.starts_date, AlertDate)
+    assert isinstance(alert.starts_at_date, AlertDate)
 
 
 @pytest.mark.parametrize('expiry_date,is_expired', [

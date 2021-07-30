@@ -59,7 +59,7 @@
       {{ alert_data.description | paragraphize }}
 
       <p class="govuk-body govuk-!-margin-bottom-0">
-        Sent by the UK government <time datetime="{{ alert_data.starts_date.as_iso8601 }}">{{ alert_data.starts_date.as_lang }}</time>
+        Sent by the UK government <time datetime="{{ alert_data.starts_at_date.as_iso8601 }}">{{ alert_data.starts_at_date.as_lang }}</time>
       </p>
     </div>
   </div>

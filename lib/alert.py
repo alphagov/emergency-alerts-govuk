@@ -10,7 +10,7 @@ class Alert(SerialisedModel):
     ALLOWED_PROPERTIES = {
         'identifier',
         'channel',
-        'starts',
+        'starts_at',
         'sent',
         'expires',
         'description',
@@ -19,8 +19,8 @@ class Alert(SerialisedModel):
     }
 
     @property
-    def starts_date(self):
-        return AlertDate(self.starts)
+    def starts_at_date(self):
+        return AlertDate(self.starts_at)
 
     @property
     def sent_date(self):
