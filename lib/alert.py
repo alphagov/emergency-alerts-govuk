@@ -13,6 +13,7 @@ class Alert(SerialisedModel):
         'starts_at',
         'approved_at',
         'cancelled_at',
+        'finishes_at',
         'description',
         'static_map_png',
         'area_names',
@@ -28,11 +29,16 @@ class Alert(SerialisedModel):
 
     @property
     def expires_date(self):
-        return self.cancelled_at_date
+        return self.cancelled_at_date or self.finishes_at_date
+
+    @property
+    def finishes_at_date(self):
+        return AlertDate(self.finishes_at)
 
     @property
     def cancelled_at_date(self):
-        return AlertDate(self.cancelled_at)
+        if self.cancelled_at:
+            return AlertDate(self.cancelled_at)
 
     @property
     def is_current_and_public(self):

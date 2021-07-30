@@ -26,7 +26,8 @@ def alert_dict():
         'static_map_png': 'a-file.png',
         'starts_at': datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
         'approved_at': datetime(2021, 4, 21, 11, 25, tzinfo=pytz.utc),
-        'cancelled_at': datetime(2021, 4, 21, 12, 30, tzinfo=pytz.utc)
+        'cancelled_at': datetime(2021, 4, 21, 12, 30, tzinfo=pytz.utc),
+        'finishes_at': datetime(2021, 4, 21, 15, 30, tzinfo=pytz.utc)
     }
 
 
