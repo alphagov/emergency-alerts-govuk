@@ -14,7 +14,7 @@ class Alert(SerialisedModel):
         'approved_at',
         'cancelled_at',
         'finishes_at',
-        'description',
+        'content',
         'static_map_png',
         'area_names',
     }

@@ -19,7 +19,7 @@ def env():
 def alert_dict():
     return {
         'headline': 'Emergency alert',
-        'description': 'Something',
+        'content': 'Something',
         'area_names': [],
         'channel': 'severe',
         'identifier': '1234',

@@ -12,7 +12,7 @@
             Mobile network operator test
           {% endif %}
         </h2>
-        {{ alert.description | paragraphize }}
+        {{ alert.content | paragraphize }}
         {% if alert.is_public %}
           <a href="/alerts/{{ alert.identifier }}" class="govuk-link govuk-body">
             More information about this alert
