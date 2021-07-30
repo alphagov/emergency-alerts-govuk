@@ -23,7 +23,6 @@ def alert_dict():
         'area_names': [],
         'channel': 'severe',
         'identifier': '1234',
-        'static_map_png': 'a-file.png',
         'starts_at': datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
         'approved_at': datetime(2021, 4, 21, 11, 25, tzinfo=pytz.utc),
         'cancelled_at': datetime(2021, 4, 21, 12, 30, tzinfo=pytz.utc),
