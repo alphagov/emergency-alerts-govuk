@@ -11,8 +11,13 @@ from lib.alert_date import AlertDate
 def test_alert_timestamps_properties_are_AlertDates(alert_dict):
     alert = Alert(alert_dict)
     assert isinstance(alert.approved_at_date, AlertDate)
-    assert isinstance(alert.expires_date, AlertDate)
+    assert isinstance(alert.cancelled_at_date, AlertDate)
     assert isinstance(alert.starts_at_date, AlertDate)
+
+
+def test_expires_date_returns_earliest_expiry_time(alert_dict):
+    alert = Alert(alert_dict)
+    assert alert.expires_date.as_iso8601 == alert.cancelled_at_date.as_iso8601
 
 
 @pytest.mark.parametrize('expiry_date,is_expired', [
@@ -27,7 +32,7 @@ def test_is_expired_alert_checks_if_alert_is_expired(
     is_expired,
     alert_dict
 ):
-    alert_dict['expires'] = expiry_date
+    alert_dict['cancelled_at'] = expiry_date
     assert Alert(alert_dict).is_expired == is_expired
 
 
@@ -58,7 +63,7 @@ def test_is_current_alert_checks_if_alert_is_current(
     alert_dict
 ):
     alert_dict['approved_at'] = approved_at_date
-    alert_dict['expires'] = expiry_date
+    alert_dict['cancelled_at'] = expiry_date
     assert Alert(alert_dict).is_current == is_current
 
 

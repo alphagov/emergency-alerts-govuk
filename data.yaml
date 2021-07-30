@@ -3,7 +3,7 @@ alerts:
     channel: operator
     approved_at: 2021-07-28T13:04:38+01:00
     starts_at: 2021-07-28T13:04:38+01:00
-    expires: 2021-07-28T14:00:00+01:00
+    cancelled_at: 2021-07-28T13:17:43+01:00
     description: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     static_map_png:
@@ -12,7 +12,7 @@ alerts:
     channel: operator
     approved_at: 2021-07-16T13:00:27+01:00
     starts_at: 2021-07-16T13:00:27+01:00
-    expires: 2021-07-16T14:00:00+01:00
+    cancelled_at: 2021-07-16T13:03:07+01:00
     description: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     static_map_png:
@@ -21,7 +21,7 @@ alerts:
     channel: operator
     approved_at: 2021-07-14T13:00:18+01:00
     starts_at: 2021-07-14T13:00:18+01:00
-    expires: 2021-07-14T14:00:00+01:00
+    cancelled_at: 2021-07-14T13:05:34+01:00
     description: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     static_map_png:
@@ -30,7 +30,7 @@ alerts:
     channel: operator
     approved_at: 2021-07-09T12:58:58+01:00
     starts_at: 2021-07-09T12:58:58+01:00
-    expires: 2021-07-09T14:00:00+01:00
+    cancelled_at: 2021-07-09T13:08:37+01:00
     description: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     static_map_png:
@@ -40,7 +40,7 @@ alerts:
     channel: operator
     approved_at: 2021-07-02T00:00:00+01:00
     starts_at: 2021-07-02T10:00:00+01:00
-    expires: 2021-07-02T12:00:00+01:00
+    cancelled_at: 2021-07-02T12:00:00+01:00
     description: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     static_map_png:
@@ -50,7 +50,7 @@ alerts:
     channel: severe
     approved_at: 2021-06-29T13:00:12+01:00
     starts_at: 2021-06-29T13:00:12+01:00
-    expires: 2021-06-29T14:00:00+01:00
+    cancelled_at: 2021-06-29T14:01:19+01:00
     description: |
       The UK government is testing Emergency Alerts in Reading, Berkshire.
 
@@ -65,7 +65,7 @@ alerts:
     channel: operator
     approved_at: 2021-06-22T00:00:00+01:00
     starts_at: 2021-06-22T00:00:00+01:00
-    expires: 2021-06-22T23:59:59+01:00
+    cancelled_at: 2021-06-22T23:59:59+01:00
     description: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     static_map_png:
@@ -74,7 +74,7 @@ alerts:
     channel: operator
     approved_at: 2021-06-18T00:00:00+01:00
     starts_at: 2021-06-18T00:00:00+01:00
-    expires: 2021-06-18T23:59:59+01:00
+    cancelled_at: 2021-06-18T23:59:59+01:00
     description: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     static_map_png:
@@ -84,7 +84,7 @@ alerts:
     channel: severe
     approved_at: 2021-05-25T13:00:14+01:00
     starts_at: 2021-05-25T13:00:14+01:00
-    expires: 2021-05-25T14:00:00+01:00
+    cancelled_at: 2021-05-25T13:20:05+01:00
     description: |
       The UK government is testing Emergency Alerts in East Suffolk.
 

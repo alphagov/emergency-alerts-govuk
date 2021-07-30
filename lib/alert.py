@@ -12,7 +12,7 @@ class Alert(SerialisedModel):
         'channel',
         'starts_at',
         'approved_at',
-        'expires',
+        'cancelled_at',
         'description',
         'static_map_png',
         'area_names',
@@ -28,7 +28,11 @@ class Alert(SerialisedModel):
 
     @property
     def expires_date(self):
-        return AlertDate(self.expires)
+        return self.cancelled_at_date
+
+    @property
+    def cancelled_at_date(self):
+        return AlertDate(self.cancelled_at)
 
     @property
     def is_current_and_public(self):
