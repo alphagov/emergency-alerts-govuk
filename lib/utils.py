@@ -31,3 +31,18 @@ def file_fingerprint(path, root=DIST):
         raise OSError(f'{str(root / path.parent / path.stem)}-[hash]{path.suffix} referenced but not available')
 
     return f'/{path.parent}/{matches[0]}'
+
+
+def is_in_uk(simple_polygons):
+    uk_south_west = [49.240, -9.279]  # random map point
+    uk_north_east = [61.456, 3.007]  # random map point
+
+    first_polygon = simple_polygons[0]
+    first_coordinate = first_polygon[0]
+
+    return (
+        first_coordinate[0] > uk_south_west[0] and
+        first_coordinate[0] < uk_north_east[0] and
+        first_coordinate[1] > uk_south_west[1] and
+        first_coordinate[1] < uk_north_east[1]
+    )

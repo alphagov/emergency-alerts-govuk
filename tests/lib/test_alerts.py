@@ -27,6 +27,20 @@ def test_from_yaml_loads_data(tmp_path, alert_dict):
     assert isinstance(alerts.last_updated_date, AlertDate)
 
 
+def test_from_yaml_filters_areas(tmp_path, alert_dict, mocker):
+    alert_dict['areas']['simple_polygons'] = 'polygons'
+    sample_yaml = yaml.dump({'alerts': [alert_dict]})
+
+    data_file = tmp_path / 'data.yaml'
+    data_file.write_text(sample_yaml)
+
+    mocker.patch('lib.alerts.is_in_uk', return_value=False)
+    assert len(Alerts.from_yaml(data_file)) == 0
+
+    mocker.patch('lib.alerts.is_in_uk', return_value=True)
+    assert len(Alerts.from_yaml(data_file)) == 1
+
+
 @freeze_time(datetime(
     2021, 4, 21, 11, 30, tzinfo=pytz.utc
 ))

@@ -15,6 +15,7 @@ class Alert(SerialisedModel):
         'cancelled_at',
         'finishes_at',
         'content',
+        'areas',
         'general_area_names',
     }
 
