@@ -93,7 +93,7 @@ alerts:
 
       To find out more, call 0808 1697692 or search for gov.uk/alerts
     area_names:
-      - Leiston in East Suffolk
+      - East Suffolk
   - identifier: 3-may-2021
     channel: severe
     approved_at: 2021-05-25T13:00:14+01:00
@@ -107,4 +107,4 @@ alerts:
 
       To find out more, call 0808 1697692 or search for gov.uk/alerts
     area_names:
-      - Leiston in East Suffolk
+      - East Suffolk
