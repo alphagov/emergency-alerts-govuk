@@ -18,6 +18,9 @@ class Alert(SerialisedModel):
         'area_names',
     }
 
+    def __lt__(self, other):
+        return self.starts_at < other.starts_at
+
     @property
     def starts_at_date(self):
         return AlertDate(self.starts_at)

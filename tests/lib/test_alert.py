@@ -16,6 +16,16 @@ def test_alert_timestamps_properties_are_AlertDates(alert_dict):
     assert isinstance(alert.starts_at_date, AlertDate)
 
 
+def test_lt_compares_alerts_based_on_start_date(alert_dict):
+    alert_dict_1 = {**alert_dict}
+    alert_dict_2 = {**alert_dict}
+
+    alert_dict_1['starts_at'] = datetime(2021, 4, 21, 11, 30)
+    alert_dict_2['starts_at'] = datetime(2021, 4, 21, 12, 30)
+
+    assert Alert(alert_dict_1) < Alert(alert_dict_2)
+
+
 def test_expires_date_returns_earliest_expiry_time(alert_dict):
     alert = Alert(alert_dict)
     assert alert.expires_date.as_iso8601 == alert.cancelled_at_date.as_iso8601
