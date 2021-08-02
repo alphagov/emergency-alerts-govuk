@@ -10,25 +10,37 @@ class Alert(SerialisedModel):
     ALLOWED_PROPERTIES = {
         'identifier',
         'channel',
-        'starts',
-        'sent',
-        'expires',
-        'description',
-        'static_map_png',
+        'starts_at',
+        'approved_at',
+        'cancelled_at',
+        'finishes_at',
+        'content',
         'area_names',
     }
 
-    @property
-    def starts_date(self):
-        return AlertDate(self.starts)
+    def __lt__(self, other):
+        return self.starts_at < other.starts_at
 
     @property
-    def sent_date(self):
-        return AlertDate(self.sent)
+    def starts_at_date(self):
+        return AlertDate(self.starts_at)
+
+    @property
+    def approved_at_date(self):
+        return AlertDate(self.approved_at)
 
     @property
     def expires_date(self):
-        return AlertDate(self.expires)
+        return self.cancelled_at_date or self.finishes_at_date
+
+    @property
+    def finishes_at_date(self):
+        return AlertDate(self.finishes_at)
+
+    @property
+    def cancelled_at_date(self):
+        if self.cancelled_at:
+            return AlertDate(self.cancelled_at)
 
     @property
     def is_current_and_public(self):
@@ -49,5 +61,5 @@ class Alert(SerialisedModel):
 
         return (
             self.expires_date.as_utc_datetime >= now and
-            self.sent_date.as_utc_datetime <= now
+            self.approved_at_date.as_utc_datetime <= now
         )

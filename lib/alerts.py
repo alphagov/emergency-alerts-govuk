@@ -22,7 +22,7 @@ class Alerts(SerialisedModelCollection):
 
     @property
     def last_updated(self):
-        return max(alert.starts for alert in self.current_and_public)
+        return max(alert.starts_at for alert in self.current_and_public)
 
     @property
     def last_updated_date(self):

@@ -41,9 +41,9 @@
   <h1 class="govuk-heading-xl">
     {{ pageTitle }}
   </h1>
-  {% for past_alert in alerts.expired %}
+  {% for past_alert in alerts.expired | sort(reverse=True) %}
   <h2 class="govuk-heading-m {% if not loop.first %}govuk-!-margin-top-9{% endif %}">
-    {{ past_alert.sent_date.date_as_lang }}
+    {{ past_alert.starts_at_date.date_as_lang }}
   </h2>
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
   {{ alert(alert=past_alert) }}

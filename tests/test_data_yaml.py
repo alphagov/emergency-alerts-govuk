@@ -14,8 +14,14 @@ def alerts():
 
 def test_alert_sent_before_starts_before_expires(alerts):
     for alert in alerts:
-        assert alert.sent_date.as_utc_datetime <= alert.starts_date.as_utc_datetime
-        assert alert.starts_date.as_utc_datetime < alert.expires_date.as_utc_datetime
+        assert alert.approved_at_date.as_utc_datetime <= alert.starts_at_date.as_utc_datetime
+        assert alert.starts_at_date.as_utc_datetime < alert.expires_date.as_utc_datetime
+
+
+def test_alert_cancelled_before_finishes(alerts):
+    for alert in alerts:
+        if alert.cancelled_at:
+            assert alert.cancelled_at_date.as_utc_datetime <= alert.finishes_at_date.as_utc_datetime
 
 
 def is_date_in_london_timezone_including_summertime(date):
@@ -28,6 +34,9 @@ def is_date_in_london_timezone_including_summertime(date):
 
 def test_dates_in_alerts_data_include_explicit_timezone_offset(alerts):
     for alert in alerts:
-        assert is_date_in_london_timezone_including_summertime(alert.sent)
-        assert is_date_in_london_timezone_including_summertime(alert.starts)
-        assert is_date_in_london_timezone_including_summertime(alert.expires)
+        assert is_date_in_london_timezone_including_summertime(alert.approved_at)
+        assert is_date_in_london_timezone_including_summertime(alert.starts_at)
+        assert is_date_in_london_timezone_including_summertime(alert.finishes_at)
+
+        if alert.cancelled_at:
+            assert is_date_in_london_timezone_including_summertime(alert.cancelled_at)

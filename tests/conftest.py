@@ -19,14 +19,14 @@ def env():
 def alert_dict():
     return {
         'headline': 'Emergency alert',
-        'description': 'Something',
+        'content': 'Something',
         'area_names': [],
         'channel': 'severe',
         'identifier': '1234',
-        'static_map_png': 'a-file.png',
-        'starts': datetime(2021, 4, 21, 11, 25, tzinfo=pytz.utc),
-        'sent': datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
-        'expires': datetime(2021, 4, 21, 12, 30, tzinfo=pytz.utc)
+        'starts_at': datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
+        'approved_at': datetime(2021, 4, 21, 11, 25, tzinfo=pytz.utc),
+        'cancelled_at': datetime(2021, 4, 21, 12, 30, tzinfo=pytz.utc),
+        'finishes_at': datetime(2021, 4, 21, 15, 30, tzinfo=pytz.utc)
     }
 
 

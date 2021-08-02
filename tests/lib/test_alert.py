@@ -10,9 +10,29 @@ from lib.alert_date import AlertDate
 
 def test_alert_timestamps_properties_are_AlertDates(alert_dict):
     alert = Alert(alert_dict)
-    assert isinstance(alert.sent_date, AlertDate)
-    assert isinstance(alert.expires_date, AlertDate)
-    assert isinstance(alert.starts_date, AlertDate)
+    assert isinstance(alert.approved_at_date, AlertDate)
+    assert isinstance(alert.cancelled_at_date, AlertDate)
+    assert isinstance(alert.finishes_at_date, AlertDate)
+    assert isinstance(alert.starts_at_date, AlertDate)
+
+
+def test_lt_compares_alerts_based_on_start_date(alert_dict):
+    alert_dict_1 = {**alert_dict}
+    alert_dict_2 = {**alert_dict}
+
+    alert_dict_1['starts_at'] = datetime(2021, 4, 21, 11, 30)
+    alert_dict_2['starts_at'] = datetime(2021, 4, 21, 12, 30)
+
+    assert Alert(alert_dict_1) < Alert(alert_dict_2)
+
+
+def test_expires_date_returns_earliest_expiry_time(alert_dict):
+    alert = Alert(alert_dict)
+    assert alert.expires_date.as_iso8601 == alert.cancelled_at_date.as_iso8601
+
+    alert_dict['cancelled_at'] = None
+    alert = Alert(alert_dict)
+    assert alert.expires_date.as_iso8601 == alert.finishes_at_date.as_iso8601
 
 
 @pytest.mark.parametrize('expiry_date,is_expired', [
@@ -27,11 +47,11 @@ def test_is_expired_alert_checks_if_alert_is_expired(
     is_expired,
     alert_dict
 ):
-    alert_dict['expires'] = expiry_date
+    alert_dict['cancelled_at'] = expiry_date
     assert Alert(alert_dict).is_expired == is_expired
 
 
-@pytest.mark.parametrize('sent_date,expiry_date,is_current', [
+@pytest.mark.parametrize('approved_at_date,expiry_date,is_current', [
     [
         datetime(2021, 4, 21, 9, 30, tzinfo=pytz.utc),
         datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
@@ -52,13 +72,13 @@ def test_is_expired_alert_checks_if_alert_is_expired(
     2021, 4, 21, 10, 30, tzinfo=pytz.utc
 ))
 def test_is_current_alert_checks_if_alert_is_current(
-    sent_date,
+    approved_at_date,
     expiry_date,
     is_current,
     alert_dict
 ):
-    alert_dict['sent'] = sent_date
-    alert_dict['expires'] = expiry_date
+    alert_dict['approved_at'] = approved_at_date
+    alert_dict['cancelled_at'] = expiry_date
     assert Alert(alert_dict).is_current == is_current
 
 

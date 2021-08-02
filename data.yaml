@@ -1,93 +1,110 @@
 alerts:
   - identifier:
     channel: operator
-    sent: 2021-07-28T00:00:00+01:00
-    starts: 2021-07-28T13:00:00+01:00
-    expires: 2021-07-28T14:00:00+01:00
-    description: |
+    approved_at: 2021-07-28T13:04:38+01:00
+    starts_at: 2021-07-28T13:04:38+01:00
+    cancelled_at: 2021-07-28T13:17:43+01:00
+    finishes_at: 2021-07-28T17:04:38+01:00
+    content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    static_map_png:
-    area_names:
-  - identifier:
-    message_type: operator
-    channel: operator
-    sent: 2021-07-16T00:00:00+01:00
-    starts: 2021-07-16T13:00:00+01:00
-    expires: 2021-07-16T14:00:00+01:00
-    description: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    static_map_png:
     area_names:
   - identifier:
     channel: operator
-    sent: 2021-07-14T00:00:00+01:00
-    starts: 2021-07-14T13:00:00+01:00
-    expires: 2021-07-14T14:00:00+01:00
-    description: |
+    approved_at: 2021-07-16T13:00:27+01:00
+    starts_at: 2021-07-16T13:00:27+01:00
+    cancelled_at: 2021-07-16T13:03:07+01:00
+    finishes_at: 2021-07-16T17:00:27+01:00
+    content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    static_map_png:
     area_names:
   - identifier:
     channel: operator
-    sent: 2021-07-09T00:00:00+01:00
-    starts: 2021-07-09T13:00:00+01:00
-    expires: 2021-07-09T14:00:00+01:00
-    description: |
+    approved_at: 2021-07-14T13:00:18+01:00
+    starts_at: 2021-07-14T13:00:18+01:00
+    cancelled_at: 2021-07-14T13:05:34+01:00
+    finishes_at: 2021-07-14T17:00:18+01:00
+    content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    static_map_png:
     area_names:
   - identifier:
     channel: operator
-    sent: 2021-07-02T00:00:00+01:00
-    starts: 2021-07-02T10:00:00+01:00
-    expires: 2021-07-02T12:00:00+01:00
-    description: |
+    approved_at: 2021-07-09T12:58:58+01:00
+    starts_at: 2021-07-09T12:58:58+01:00
+    cancelled_at: 2021-07-09T13:08:37+01:00
+    finishes_at: 2021-07-09T16:58:58+01:00
+    content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    static_map_png:
     area_names:
+### vvv DO NOT DELETE: NOT IN DB vvv ###
+  - identifier:
+    channel: operator
+    approved_at: 2021-07-02T00:00:00+01:00
+    starts_at: 2021-07-02T10:00:00+01:00
+    cancelled_at:
+    finishes_at: 2021-07-02T12:00:00+01:00
+    content: |
+      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
+    area_names:
+### ^^^ DO NOT DELETE: NOT IN DB ^^^ ###
   - identifier: 29-june-2021
     channel: severe
-    sent: 2021-06-29T12:45:00+01:00
-    starts: 2021-06-29T13:00:00+01:00
-    expires: 2021-06-29T14:00:00+01:00
-    description: |
+    approved_at: 2021-06-29T13:00:12+01:00
+    starts_at: 2021-06-29T13:00:12+01:00
+    cancelled_at: 2021-06-29T14:01:19+01:00
+    finishes_at: 2021-06-29T17:00:12+01:00
+    content: |
       The UK government is testing Emergency Alerts in Reading, Berkshire.
 
       Emergency alerts tell you what to do if there’s a life-threatening event nearby.
 
       To find out more, call 0808 1697692 or search for gov.uk/alerts
-    static_map_png: map-reading-demo-static.png
     area_names:
       - Reading, Berkshire
+### vvv DO NOT DELETE: NOT IN DB vvv ###
   - identifier:
     channel: operator
-    sent: 2021-06-22T00:00:00+01:00
-    starts: 2021-06-22T00:00:00+01:00
-    expires: 2021-06-22T23:59:59+01:00
-    description: |
+    approved_at: 2021-06-22T00:00:00+01:00
+    starts_at: 2021-06-22T00:00:00+01:00
+    cancelled_at:
+    finishes_at: 2021-06-22T23:59:59+01:00
+    content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    static_map_png:
     area_names:
   - identifier:
     channel: operator
-    sent: 2021-06-18T00:00:00+01:00
-    starts: 2021-06-18T00:00:00+01:00
-    expires: 2021-06-18T23:59:59+01:00
-    description: |
+    approved_at: 2021-06-18T00:00:00+01:00
+    starts_at: 2021-06-18T00:00:00+01:00
+    cancelled_at:
+    finishes_at: 2021-06-18T23:59:59+01:00
+    content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    static_map_png:
     area_names:
-  - identifier: 3-may-2021
-    channel: severe
-    sent: 2021-05-25T12:50:00+01:00
-    starts: 2021-05-25T13:00:00+01:00
-    expires: 2021-05-25T14:00:00+01:00
-    description: |
+### ^^^ DO NOT DELETE: NOT IN DB ^^^ ###
+  - identifier: 25-may-2021-2
+    channel: government
+    approved_at: 2021-05-25T13:30:16+01:00
+    starts_at: 2021-05-25T13:30:16+01:00
+    cancelled_at: 2021-05-25T13:46:07+01:00
+    finishes_at: 2021-05-25T17:30:16+01:00
+    content: |
       The UK government is testing Emergency Alerts in East Suffolk.
 
       Emergency alerts tell you what to do if there’s a life-threatening event nearby.
 
       To find out more, call 0808 1697692 or search for gov.uk/alerts
-    static_map_png: map-sizewell-demo-static.png
+    area_names:
+      - Leiston in East Suffolk
+  - identifier: 3-may-2021
+    channel: severe
+    approved_at: 2021-05-25T13:00:14+01:00
+    starts_at: 2021-05-25T13:00:14+01:00
+    cancelled_at: 2021-05-25T13:20:05+01:00
+    finishes_at: 2021-05-25T17:00:14+01:00
+    content: |
+      The UK government is testing Emergency Alerts in East Suffolk.
+
+      Emergency alerts tell you what to do if there’s a life-threatening event nearby.
+
+      To find out more, call 0808 1697692 or search for gov.uk/alerts
     area_names:
       - Leiston in East Suffolk
