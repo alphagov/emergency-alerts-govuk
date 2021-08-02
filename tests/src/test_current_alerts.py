@@ -12,7 +12,7 @@ def test_current_alerts_page_shows_alerts(
     env,
     mocker,
 ):
-    alert_dict['area_names'] = ['foo']
+    alert_dict['general_area_names'] = ['foo']
     mocker.patch('lib.alerts.Alerts.current_and_public', [Alert(alert_dict)])
 
     html = render_template(env, "src/current-alerts.html")
