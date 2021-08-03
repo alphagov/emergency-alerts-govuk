@@ -15,7 +15,8 @@ class Alert(SerialisedModel):
         'cancelled_at',
         'finishes_at',
         'content',
-        'area_names',
+        'areas',
+        'general_area_names',
     }
 
     def __lt__(self, other):

@@ -3,6 +3,7 @@ from notifications_utils.serialised_model import SerialisedModelCollection
 
 from lib.alert import Alert
 from lib.alert_date import AlertDate
+from lib.utils import is_in_uk
 
 
 class Alerts(SerialisedModelCollection):
@@ -33,4 +34,8 @@ class Alerts(SerialisedModelCollection):
         with path.open() as stream:
             data = yaml.load(stream, Loader=yaml.CLoader)
 
-        return cls(data['alerts'])
+        return cls([
+            alert_dict for alert_dict in data['alerts']
+            if 'simple_polygons' not in alert_dict['areas'] or
+            is_in_uk(alert_dict['areas']['simple_polygons'])
+        ])

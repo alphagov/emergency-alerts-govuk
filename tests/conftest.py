@@ -20,7 +20,8 @@ def alert_dict():
     return {
         'headline': 'Emergency alert',
         'content': 'Something',
-        'area_names': [],
+        'general_area_names': [],
+        'areas': dict(),
         'channel': 'severe',
         'identifier': '1234',
         'starts_at': datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
