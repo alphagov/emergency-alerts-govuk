@@ -1,9 +1,10 @@
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 from jinja2 import Markup
 
-from lib.utils import file_fingerprint, is_in_uk, paragraphize
+from lib.utils import file_fingerprint, is_in_uk, paragraphize, upload_to_s3
 
 
 def test_file_fingerprint_gets_variant_of_path_with_hash_in():
@@ -33,3 +34,34 @@ def test_paragraphize_converts_newlines_to_paragraphs():
 def test_is_in_uk_returns_polygons_in_uk_bounding_box(alert_dict, lat, lon, in_uk):
     simple_polygons = [[[lat, lon]]]
     assert is_in_uk(simple_polygons) == in_uk
+
+
+@patch('lib.utils.boto3')
+def test_upload_to_s3(mock_boto3):
+    config = {
+        "BROADCASTS_AWS_ACCESS_KEY_ID": "test-key-id",
+        "BROADCASTS_AWS_SECRET_ACCESS_KEY": "test-secret-key",
+        "BROADCASTS_AWS_REGION": "test-region-1",
+        "GOVUK_ALERTS_BUCKET_NAME": "test-bucket-name"
+    }
+
+    pages = {
+        "alerts": "<p>this is some test content</p>"
+    }
+
+    upload_to_s3(config, pages)
+
+    mock_boto3.session.Session.assert_called_once_with(
+        aws_access_key_id=config["BROADCASTS_AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
+        region_name=config["BROADCASTS_AWS_REGION"],
+    )
+    mock_session = mock_boto3.session.Session.return_value
+
+    mock_session.resource.assert_called_once_with('s3')
+    mock_s3 = mock_session.resource.return_value
+
+    mock_s3.Object.assert_called_once_with(config['GOVUK_ALERTS_BUCKET_NAME'], 'alerts')
+    mock_object = mock_s3.Object.return_value
+
+    mock_object.put.assert_called_once_with(Body=pages['alerts'], ContentType="text/html")
