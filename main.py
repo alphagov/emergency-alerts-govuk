@@ -30,7 +30,7 @@ def publish_govuk_alerts(self):
 
     upload_to_s3(current_app.config, rendered_pages)
 
-    purge_cache()
+    purge_cache(current_app.config)
 
 
 application = Flask('notify-govuk-alerts-publisher')
