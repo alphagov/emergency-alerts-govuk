@@ -1,7 +1,5 @@
 {% extends "govuk_frontend_jinja/template.html" %}
 
-{%- from "templates/components/survey.html" import survey -%}
-
 {% block pageTitle %}{% block pageTitleCurrent %}{% endblock %} - GOV.UK{% endblock %}
 
 {% block headIcons %}
@@ -43,7 +41,6 @@
 
 {% block content %}
   {% block mainContent %}{% endblock %}
-  {{ survey() }}
 {% endblock %}
 
 {% block footer %}
@@ -81,10 +78,6 @@
             'text': 'Planned tests',
             'href': '/alerts/planned-tests'
           },
-          {
-            'text': 'Give feedback about emergency alerts',
-            'href': 'https://surveys.publishing.service.gov.uk/s/emergencyalertsurvey/'
-          },    
         ]
       }
     ],
