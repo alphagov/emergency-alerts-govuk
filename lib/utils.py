@@ -54,6 +54,7 @@ def is_in_uk(simple_polygons):
         first_coordinate[1] < uk_north_east[1]
     )
 
+
 def upload_to_s3(config, rendered_pages):
     session = boto3.session.Session(
         aws_access_key_id=config["BROADCASTS_AWS_ACCESS_KEY_ID"],
