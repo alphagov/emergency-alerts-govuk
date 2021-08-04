@@ -59,7 +59,7 @@ def upload_to_s3(config, rendered_pages):
     session = boto3.session.Session(
         aws_access_key_id=config["BROADCASTS_AWS_ACCESS_KEY_ID"],
         aws_secret_access_key=config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
-        region_name=config["BROADCASTS_AWS_DEFAULT_REGION"],
+        region_name=config["BROADCASTS_AWS_REGION"],
     )
 
     s3 = session.resource('s3')

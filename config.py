@@ -11,17 +11,17 @@ class Config():
     LOGGING_STDOUT_JSON = os.getenv('LOGGING_STDOUT_JSON') == '1'
 
     NOTIFY_APP_NAME = 'govuk-alerts-publisher'
-    AWS_REGION = os.getenv('AWS_REGION', 'eu-west-1')
+    NOTIFY_AWS_REGION = 'eu-west-1'
     NOTIFY_LOG_PATH = os.getenv('NOTIFY_LOG_PATH', '/var/log/notify/application.log')
 
     BROADCASTS_AWS_ACCESS_KEY_ID = os.getenv("BROADCASTS_AWS_ACCESS_KEY_ID")
     BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
-    BROADCASTS_AWS_DEFAULT_REGION = os.getenv("BROADCASTS_AWS_DEFAULT_REGION")
+    BROADCASTS_AWS_REGION = 'eu-west-2'
 
     CELERY = {
         'broker_url': 'sqs://',
         'broker_transport_options': {
-            'region': AWS_REGION,
+            'region': NOTIFY_AWS_REGION,
             'visibility_timeout': 310,
             'queue_name_prefix': NOTIFICATION_QUEUE_PREFIX,
             'wait_time_seconds': 20,  # enable long polling, with a wait time of 20 seconds
