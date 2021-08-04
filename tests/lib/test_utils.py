@@ -4,7 +4,7 @@ from unittest.mock import patch
 import pytest
 from jinja2 import Markup
 
-from lib.utils import file_fingerprint, is_in_uk, paragraphize, upload_to_s3
+from lib.utils import file_fingerprint, is_in_uk, paragraphize, upload_to_s3, purge_cache
 
 
 def test_file_fingerprint_gets_variant_of_path_with_hash_in():
@@ -65,3 +65,23 @@ def test_upload_to_s3(mock_boto3):
     mock_object = mock_s3.Object.return_value
 
     mock_object.put.assert_called_once_with(Body=pages['alerts'], ContentType="text/html")
+
+
+@patch('lib.utils.requests')
+def test_purge_cache(mock_requests):
+    config = {
+        "FASTLY_SERVICE_ID": "test-service-id",
+        "FASTLY_API_KEY": "test-api-key",
+        "GOVUK_ALERTS_FASTLY_SURROGATE_KEY": "test-surrogate-key",
+    }
+
+    headers = {
+        "Accept": "application/json",
+        "Fastly-Key": "test-api-key"
+    }
+
+    purge_cache(config)
+
+    fastly_url = "https://api.fastly.com/test-service-id/purge/test-surrogate-key"
+    mock_requests.post.assert_called_once_with(fastly_url, headers=headers)
+    mock_requests.post.return_value.raise_for_status.assert_called_once()
