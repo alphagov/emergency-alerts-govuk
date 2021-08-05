@@ -42,6 +42,9 @@
   {% if alerts.current_and_public %}
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
   {{ banner(alerts.current_and_public | length, alerts.last_updated_date) }}
+  {% else %}
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+  {{ planned_tests_banner(1, 'Thursday 5 August 2021') }}
   {% endif %}
 
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
