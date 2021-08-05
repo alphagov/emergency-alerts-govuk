@@ -4,7 +4,13 @@ from unittest.mock import patch
 import pytest
 from jinja2 import Markup
 
-from lib.utils import file_fingerprint, is_in_uk, paragraphize, upload_to_s3, purge_cache
+from lib.utils import (
+    file_fingerprint,
+    is_in_uk,
+    paragraphize,
+    purge_cache,
+    upload_to_s3,
+)
 
 
 def test_file_fingerprint_gets_variant_of_path_with_hash_in():
