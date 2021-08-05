@@ -33,6 +33,19 @@ def publish_govuk_alerts(self):
     purge_cache(current_app.config)
 
 
-application = Flask('notify-govuk-alerts-publisher')
+application = Flask(
+    'notify-govuk-alerts-publisher',
+    static_folder='dist/',
+)
+
+@application.route('/<path:path>')
+def router(path):
+    alerts = alerts_from_yaml()
+    rendered_pages = get_rendered_pages(alerts)
+
+    if path in rendered_pages:
+        return rendered_pages[path]
+
+    return application.send_static_file(path)
+
 create_app(application)
-application.app_context().push()
