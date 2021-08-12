@@ -1,19 +1,29 @@
-import http.server
 import os
 
-PORT = 8000
+from flask import Flask
 
-web_dir = os.path.join(os.path.dirname(__file__), 'dist')
-os.chdir(web_dir)
+from app import create_app, notify_celery  # noqa
+from app.render import alerts_from_yaml, get_rendered_pages
 
-Handler = http.server.SimpleHTTPRequestHandler
+application = Flask(
+    'notify-govuk-alerts',
+    static_folder='dist/',
+)
 
-Handler.extensions_map = {
-    '': 'text/html',
-    '.css': 'text/css'
-}
 
-httpd = http.server.HTTPServer(("", PORT), Handler)
+@application.route('/<path:key>', methods=['GET'])
+def show_page(key):
+    if os.getenv("FLASK_ENV") != "development":
+        return "not found", 404
 
-print(f"serving at http://localhost:{PORT}")
-httpd.serve_forever()
+    alerts = alerts_from_yaml()
+    rendered_pages = get_rendered_pages(alerts)
+
+    if key in rendered_pages:
+        return rendered_pages[key]
+
+    return application.send_static_file(key)
+
+
+create_app(application)
+application.app_context().push()
