@@ -94,35 +94,11 @@ def test_links_have_correct_class_attribute(env, alert_dict, template_path):
         assert 'govuk-link' in link['class']
 
 
-@pytest.mark.parametrize("alert_timings", [
-    {  # current alert
-        "starts_at": datetime(2021, 4, 21, 11, 25, tzinfo=pytz.utc),
-        "approved_at": datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
-        "cancelled_at": datetime(2021, 4, 21, 12, 30, tzinfo=pytz.utc)
-    },
-    {  # past alert
-        "starts_at": datetime(2021, 4, 20, 11, 25, tzinfo=pytz.utc),
-        "approved_at": datetime(2021, 4, 20, 11, 30, tzinfo=pytz.utc),
-        "cancelled_at": datetime(2021, 4, 20, 12, 30, tzinfo=pytz.utc)
-    }
-])
-@pytest.mark.parametrize('template_path', all_templates)
-@freeze_time(datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc))
-def test_all_pages_with_details_in_have_the_js_for_it(env, alert_dict, alert_timings, template_path):
-    alert_dict.update(alert_timings)
-    alerts_data = Alerts([alert_dict])
+def test_all_pages_with_details_in_have_the_js_for_it():
+    detailsImport = 'from "govuk_frontend_jinja/components/details/macro.html" import govukDetails'
 
-    env.globals['alerts'] = [alerts_data]
-
-    html = render_template(
-        env,
-        re.sub(r'^\./{1}', '', template_path),
-        {'alert_data': alerts_data[0]}
-    )
-    details = html.select('.govuk-details')
-
-    if len(details) == 0:
-        assert True
-        return
-
-    assert html.select_one('script[src^="/alerts/assets/javascripts/govuk-frontend-details"]') is not None
+    for template_path in all_templates:
+        with open(template_path) as template:
+            template_str = template.read()
+            if detailsImport in template_str:
+                assert '/alerts/assets/javascripts/govuk-frontend-details' in template_str
