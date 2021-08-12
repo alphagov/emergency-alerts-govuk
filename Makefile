@@ -13,7 +13,7 @@ $(eval export CF_HOME)
 .PHONY: build
 build: clean
 	npm run build
-	python build.py
+	python write_to_disk.py
 
 .PHONY: clean
 clean:
