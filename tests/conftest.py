@@ -3,8 +3,10 @@ from datetime import datetime
 import pytest
 import pytz
 from bs4 import BeautifulSoup
+from flask import Flask
 
-from build import setup_jinja_environment
+from app import create_app
+from app.render import setup_jinja_environment
 from lib.alerts import Alerts
 
 
@@ -29,6 +31,19 @@ def alert_dict():
         'cancelled_at': datetime(2021, 4, 21, 12, 30, tzinfo=pytz.utc),
         'finishes_at': datetime(2021, 4, 21, 15, 30, tzinfo=pytz.utc)
     }
+
+
+@pytest.fixture(scope='session')
+def govuk_alerts():
+    app = Flask('test')
+    app = create_app(app)
+
+    ctx = app.app_context()
+    ctx.push()
+
+    yield app
+
+    ctx.pop()
 
 
 def render_template(env, template_path, template_vars={}):
