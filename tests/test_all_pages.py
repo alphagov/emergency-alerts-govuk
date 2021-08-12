@@ -92,13 +92,3 @@ def test_links_have_correct_class_attribute(env, alert_dict, template_path):
     )
     for link in html.select('main a'):
         assert 'govuk-link' in link['class']
-
-
-def test_all_pages_with_details_in_have_the_js_for_it():
-    detailsImport = 'from "govuk_frontend_jinja/components/details/macro.html" import govukDetails'
-
-    for template_path in all_templates:
-        with open(template_path) as template:
-            template_str = template.read()
-            if detailsImport in template_str:
-                assert '/alerts/assets/javascripts/govuk-frontend-details' in template_str
