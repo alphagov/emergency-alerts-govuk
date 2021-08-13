@@ -35,7 +35,7 @@ class Config():
         'timezone': 'Europe/London',
         'imports': ['main'],
         'task_queues': [
-            Queue(QUEUE_NAME, Exchange('default'), routing_key='publish-govuk-alerts')
+            Queue(QUEUE_NAME, Exchange('default'), routing_key=QUEUE_NAME)
         ],
         # restart workers after each task is executed - this will help prevent any memory leaks (not that we should be
         # encouraging sloppy memory management). Since we only run a handful of tasks per day, and none are time
