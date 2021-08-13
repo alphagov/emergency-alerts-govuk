@@ -8,7 +8,6 @@ class Config():
     QUEUE_NAME = 'govuk-alerts'
 
     # Logging
-    DEBUG = False
     LOGGING_STDOUT_JSON = os.getenv('LOGGING_STDOUT_JSON') == '1'
 
     NOTIFY_APP_NAME = 'govuk-alerts'

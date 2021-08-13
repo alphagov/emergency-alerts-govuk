@@ -21,7 +21,7 @@ clean:
 
 .PHONY: run
 run: build
-	flask run
+	FLASK_ENV=development flask run
 
 .PHONY: bootstrap
 bootstrap:
