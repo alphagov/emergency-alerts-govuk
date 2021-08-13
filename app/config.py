@@ -36,9 +36,9 @@ class Config():
         'task_queues': [
             Queue(QUEUE_NAME, Exchange('default'), routing_key=QUEUE_NAME)
         ],
-        # restart workers after each task is executed - this will help prevent any memory leaks (not that we should be
-        # encouraging sloppy memory management). Since we only run a handful of tasks per day, and none are time
-        # sensitive, the extra couple of seconds overhead isn't seen to be a huge issue.
+        # Restart workers after a few tasks have been executed - this will help prevent any memory leaks
+        # (not that we should be encouraging sloppy memory management). Although the tasks are time-critical,
+        # we don't expect to get them in quick succession, so a small restart delay is acceptable.
         'worker_max_tasks_per_child': 20
     }
 
