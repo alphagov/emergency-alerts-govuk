@@ -25,7 +25,7 @@ make build
 make run
 ```
 
-Then visit [localhost:8000/alerts](http://localhost:8000/alerts).
+Then visit [localhost:5000/alerts](http://localhost:5000/alerts).
 
 ## Running the tests
 
