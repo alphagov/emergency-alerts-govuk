@@ -19,8 +19,8 @@ build: clean
 clean:
 	rm -rf dist/*
 
-.PHONY: run
-run:
+.PHONY: run-flask
+run-flask:
 	FLASK_ENV=development flask run
 
 .PHONY: bootstrap
