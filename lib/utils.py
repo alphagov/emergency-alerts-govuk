@@ -63,7 +63,7 @@ def upload_to_s3(config, rendered_pages):
     )
 
     s3 = session.resource('s3')
-    bucket_name = config['GOVUK_ALERTS_BUCKET_NAME']
+    bucket_name = config['GOVUK_ALERTS_S3_BUCKET_NAME']
 
     for path, content in rendered_pages.items():
         logger.info("Uploading " + path)
