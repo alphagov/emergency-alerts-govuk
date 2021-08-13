@@ -75,7 +75,7 @@ def purge_cache(config):
     fastly_service_id = config['FASTLY_SERVICE_ID']
     fastly_api_key = config['FASTLY_API_KEY']
     surrogate_key = config['FASTLY_SURROGATE_KEY']
-    fastly_url = f"https://api.fastly.com/{fastly_service_id}/purge/{surrogate_key}"
+    fastly_url = f"https://api.fastly.com/service/{fastly_service_id}/purge/{surrogate_key}"
 
     headers = {
         "Accept": "application/json",

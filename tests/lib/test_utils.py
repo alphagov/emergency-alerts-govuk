@@ -88,6 +88,6 @@ def test_purge_cache(mock_requests):
 
     purge_cache(config)
 
-    fastly_url = "https://api.fastly.com/test-service-id/purge/test-surrogate-key"
+    fastly_url = "https://api.fastly.com/service/test-service-id/purge/test-surrogate-key"
     mock_requests.post.assert_called_once_with(fastly_url, headers=headers)
     mock_requests.post.return_value.raise_for_status.assert_called_once()
