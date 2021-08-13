@@ -3,7 +3,6 @@ from datetime import datetime
 import pytest
 import pytz
 from bs4 import BeautifulSoup
-from flask import Flask
 
 from app import create_app
 from app.render import setup_jinja_environment
@@ -35,8 +34,7 @@ def alert_dict():
 
 @pytest.fixture(scope='session')
 def govuk_alerts():
-    app = Flask('test')
-    app = create_app(app)
+    app = create_app()
 
     ctx = app.app_context()
     ctx.push()
