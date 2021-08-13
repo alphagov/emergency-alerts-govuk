@@ -7,9 +7,6 @@ class Config():
     NOTIFICATION_QUEUE_PREFIX = os.getenv('NOTIFICATION_QUEUE_PREFIX')
     QUEUE_NAME = 'govuk-alerts'
 
-    # Logging
-    LOGGING_STDOUT_JSON = os.getenv('LOGGING_STDOUT_JSON') == '1'
-
     NOTIFY_APP_NAME = 'govuk-alerts'
     NOTIFY_AWS_REGION = 'eu-west-1'
     NOTIFY_LOG_PATH = os.getenv('NOTIFY_LOG_PATH', 'application.log')
