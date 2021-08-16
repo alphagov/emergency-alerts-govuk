@@ -29,7 +29,7 @@ class Config():
             'wait_time_seconds': 20,  # enable long polling, with a wait time of 20 seconds
         },
         'timezone': 'Europe/London',
-        'imports': ['main'],
+        'imports': ['app.celery.tasks'],
         'task_queues': [
             Queue(QUEUE_NAME, Exchange('default'), routing_key=QUEUE_NAME)
         ],
