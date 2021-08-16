@@ -30,6 +30,8 @@ make run-flask
 
 Then visit [localhost:5000/alerts](http://localhost:5000/alerts).
 
+We aim to match the [browsers supported by GOVUK Frontend](https://github.com/alphagov/govuk-frontend#browser-and-assistive-technology-support) (includes Internet Explorer 8-10).
+
 Any Python code changes you make should be picked up automatically in development. If you're developing JavaScript code, run `npm run watch` to achieve the same.
 
 ## To test the application
@@ -46,10 +48,6 @@ npm run test-watch
 ```
 
 To run a specific JavaScript test, you'll need to copy the full command from `package.json`.o run a specific JavaScript test, you'll need to copy the full command from `package.json`.
-
-## Browser support
-
-We aim to match the [browsers supported by GOVUK Frontend](https://github.com/alphagov/govuk-frontend#browser-and-assistive-technology-support) (includes Internet Explorer 8-10).
 
 ## Further documentation
 
