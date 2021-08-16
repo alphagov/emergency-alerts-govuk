@@ -11,7 +11,7 @@ applications:
 
     processes:
     - type: web
-      command: celery -A main.notify_celery worker --loglevel=INFO --concurrency=1 2> /dev/null
+      command: celery -A run_celery.notify_celery worker --loglevel=INFO --concurrency=1 2> /dev/null
 
       health-check-type: process
       memory: 2G
