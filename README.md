@@ -1,61 +1,63 @@
 # notifications-govuk-alerts
 
-## Installation
+Static AWS S3 website for Emergency Alerts:
 
-Make sure you have:
-- Python 3
-- NodeJS (LTS)
+- [Preview (in GOV.UK Integration)](https://www.integration.publishing.service.gov.uk/alerts)
+- [Live (gov.uk/alerts)](https://www.gov.uk/alerts)
 
-1. create a [python virtual environment](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
-2. run `make bootstrap`
+Note that [GOV.UK Staging](https://www.staging.publishing.service.gov.uk/alerts) also points at the Preview version, but this doesn't seem to work reliably.
 
-To install new versions of dependencies later on, use the commands for each language:
-- `npm install` for NodeJS
-- `pip install -r requirements_for_test.txt` for Python
+## Setting up
 
-## Building the pages
+### Python version
 
+At the moment we run Python 3.6 in production.
+
+### NPM packages
+
+```shell
+brew install node
 ```
-make build
-```
 
-## Viewing the pages
+[NPM](npmjs.org) is Node's package management tool. `n` is a tool for managing different versions of Node. The following installs `n` and uses the long term support (LTS) version of Node.
 
+```shell
+npm install -g n
+n lts
 ```
+## To run the application
+
+```shell
+# install dependencies, etc.
+make bootstrap
+
+# run the web app
 make run-flask
 ```
 
 Then visit [localhost:5000/alerts](http://localhost:5000/alerts).
 
-## Running the tests
-
-```
-make test
-```
-
-To run a specific JavaScript test, you'll need to copy the full command from `package.json`.
-
-## Code linting
-
-### SCSS
-
-SCSS code in this repository is linted according to the [GDS Stylelint Config](https://github.com/alphagov/stylelint-config-gds) before being compiled into CSS.
-
-## Browser support
-
 We aim to match the [browsers supported by GOVUK Frontend](https://github.com/alphagov/govuk-frontend#browser-and-assistive-technology-support) (includes Internet Explorer 8-10).
 
-## Image optimisation
+Any Python code changes you make should be picked up automatically in development. If you're developing JavaScript code, run `npm run watch` to achieve the same.
 
-All image optimisation should be done manually to remove the need for various libraries in our build
-environments.
+## To test the application
 
-### Inline SVGs
+```
+# install dependencies, etc.
+make bootstrap
 
-Inline SVGs should be optimised using https://jakearchibald.github.io/svgomg/
+# run all the tests
+make test
 
-### Raster images
+# continuously run js tests
+npm run test-watch
+```
 
-Raster images should be optimised using the following tools:
-- https://squoosh.app for converting to `.webp` and optimising the result
-- https://tinypng.com/ for optimising `.png` files
+To run a specific JavaScript test, you'll need to copy the full command from `package.json`.o run a specific JavaScript test, you'll need to copy the full command from `package.json`.
+
+## Further documentation
+
+- [Image optimisation](docs/image-optimisation.md)
+- [GOV.UK Fastly CDN configuration](https://docs.publishing.service.gov.uk/manual/notify-emergency-alerts.html)
+- [Terraform for AWS S3, CloudFront, etc.](https://github.com/alphagov/notifications-broadcasts-infra/tree/main/terraform/modules/govuk-alerts-website)
