@@ -51,17 +51,6 @@ To run a specific JavaScript test, you'll need to copy the full command from `pa
 
 We aim to match the [browsers supported by GOVUK Frontend](https://github.com/alphagov/govuk-frontend#browser-and-assistive-technology-support) (includes Internet Explorer 8-10).
 
-## Image optimisation
+## Further documentation
 
-All image optimisation should be done manually to remove the need for various libraries in our build
-environments.
-
-### Inline SVGs
-
-Inline SVGs should be optimised using https://jakearchibald.github.io/svgomg/
-
-### Raster images
-
-Raster images should be optimised using the following tools:
-- https://squoosh.app for converting to `.webp` and optimising the result
-- https://tinypng.com/ for optimising `.png` files
+- [Image optimisation](docs/image-optimisation.md)
