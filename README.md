@@ -1,5 +1,12 @@
 # notifications-govuk-alerts
 
+Static AWS S3 website for Emergency Alerts:
+
+- [Preview (in GOV.UK Integration)](https://www.integration.publishing.service.gov.uk/alerts)
+- [Live (gov.uk/alerts)](https://www.gov.uk/alerts)
+
+Note that [GOV.UK Staging](https://www.staging.publishing.service.gov.uk/alerts) also points at the Preview version, but this doesn't seem to work reliably.
+
 ## Setting up
 
 ### Python version
@@ -52,3 +59,5 @@ To run a specific JavaScript test, you'll need to copy the full command from `pa
 ## Further documentation
 
 - [Image optimisation](docs/image-optimisation.md)
+- [GOV.UK Fastly CDN configuration](https://docs.publishing.service.gov.uk/manual/notify-emergency-alerts.html)
+- [Terraform for AWS S3, CloudFront, etc.](https://github.com/alphagov/notifications-broadcasts-infra/tree/main/terraform/modules/govuk-alerts-website)
