@@ -52,7 +52,7 @@
 
 // Modifier class for 16:9 aspect ratio
 .responsive-embed--16by9 {
-  .responsive-embed__wrapper {
+  .responsive-embed__content {
     padding-bottom: 56.25%;
   }
 }
@@ -60,7 +60,7 @@
 // Modifier class for 4:3 aspect ratio – uncomment if needed
 //
 //.responsive-embed--4by3 {
-//  .responsive-embed__wrapper {
+//  .responsive-embed__content {
 //    padding-bottom: 75%;
 //  }
 //}
