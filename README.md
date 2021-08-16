@@ -1,45 +1,51 @@
 # notifications-govuk-alerts
 
-## Installation
+## Setting up
 
-Make sure you have:
-- Python 3
-- NodeJS (LTS)
+### Python version
 
-1. create a [python virtual environment](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
-2. run `make bootstrap`
+At the moment we run Python 3.6 in production.
 
-To install new versions of dependencies later on, use the commands for each language:
-- `npm install` for NodeJS
-- `pip install -r requirements_for_test.txt` for Python
+### NPM packages
 
-## Building the pages
-
-```
-make build
+```shell
+brew install node
 ```
 
-## Viewing the pages
+[NPM](npmjs.org) is Node's package management tool. `n` is a tool for managing different versions of Node. The following installs `n` and uses the long term support (LTS) version of Node.
 
+```shell
+npm install -g n
+n lts
 ```
+## To run the application
+
+```shell
+# install dependencies, etc.
+make bootstrap
+
+# run the web app
 make run-flask
 ```
 
 Then visit [localhost:5000/alerts](http://localhost:5000/alerts).
 
-## Running the tests
+Any Python code changes you make should be picked up automatically in development. If you're developing JavaScript code, run `npm run watch` to achieve the same.
+
+## To test the application
 
 ```
+# install dependencies, etc.
+make bootstrap
+
+# run all the tests
 make test
+
+# continuously run js tests
+npm run test-watch
 ```
 
-To run a specific JavaScript test, you'll need to copy the full command from `package.json`.
-
-## Code linting
-
-### SCSS
-
-SCSS code in this repository is linted according to the [GDS Stylelint Config](https://github.com/alphagov/stylelint-config-gds) before being compiled into CSS.
+To run a specific JavaScript test, you'll need to copy the full command from `package.json`.o run a specific JavaScript test, you'll need to copy the full command from `package.json`.
 
 ## Browser support
 
