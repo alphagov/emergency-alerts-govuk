@@ -22,7 +22,7 @@ make build
 ## Viewing the pages
 
 ```
-make run
+make run-flask
 ```
 
 Then visit [localhost:5000/alerts](http://localhost:5000/alerts).

@@ -7,10 +7,6 @@ class Config():
     NOTIFICATION_QUEUE_PREFIX = os.getenv('NOTIFICATION_QUEUE_PREFIX')
     QUEUE_NAME = 'govuk-alerts'
 
-    # Logging
-    DEBUG = False
-    LOGGING_STDOUT_JSON = os.getenv('LOGGING_STDOUT_JSON') == '1'
-
     NOTIFY_APP_NAME = 'govuk-alerts'
     NOTIFY_AWS_REGION = 'eu-west-1'
     NOTIFY_LOG_PATH = os.getenv('NOTIFY_LOG_PATH', 'application.log')
@@ -18,7 +14,7 @@ class Config():
     BROADCASTS_AWS_ACCESS_KEY_ID = os.getenv("BROADCASTS_AWS_ACCESS_KEY_ID")
     BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
     BROADCASTS_AWS_REGION = 'eu-west-2'
-    GOVUK_ALERTS_BUCKET_NAME = os.getenv("GOVUK_ALERTS_BUCKET_NAME")
+    GOVUK_ALERTS_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_S3_BUCKET_NAME")
 
     FASTLY_SERVICE_ID = os.getenv("FASTLY_SERVICE_ID")
     FASTLY_API_KEY = os.getenv("FASTLY_API_KEY")
@@ -35,11 +31,11 @@ class Config():
         'timezone': 'Europe/London',
         'imports': ['main'],
         'task_queues': [
-            Queue(QUEUE_NAME, Exchange('default'), routing_key='publish-govuk-alerts')
+            Queue(QUEUE_NAME, Exchange('default'), routing_key=QUEUE_NAME)
         ],
-        # restart workers after each task is executed - this will help prevent any memory leaks (not that we should be
-        # encouraging sloppy memory management). Since we only run a handful of tasks per day, and none are time
-        # sensitive, the extra couple of seconds overhead isn't seen to be a huge issue.
+        # Restart workers after a few tasks have been executed - this will help prevent any memory leaks
+        # (not that we should be encouraging sloppy memory management). Although the tasks are time-critical,
+        # we don't expect to get them in quick succession, so a small restart delay is acceptable.
         'worker_max_tasks_per_child': 20
     }
 

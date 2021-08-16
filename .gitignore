@@ -135,3 +135,6 @@ dist
 .idea/
 .DS_Store
 .vscode
+
+# Mac
+environment.sh

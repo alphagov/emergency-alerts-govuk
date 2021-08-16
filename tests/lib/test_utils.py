@@ -48,7 +48,7 @@ def test_upload_to_s3(mock_boto3):
         "BROADCASTS_AWS_ACCESS_KEY_ID": "test-key-id",
         "BROADCASTS_AWS_SECRET_ACCESS_KEY": "test-secret-key",
         "BROADCASTS_AWS_REGION": "test-region-1",
-        "GOVUK_ALERTS_BUCKET_NAME": "test-bucket-name"
+        "GOVUK_ALERTS_S3_BUCKET_NAME": "test-bucket-name"
     }
 
     pages = {
@@ -67,7 +67,7 @@ def test_upload_to_s3(mock_boto3):
     mock_session.resource.assert_called_once_with('s3')
     mock_s3 = mock_session.resource.return_value
 
-    mock_s3.Object.assert_called_once_with(config['GOVUK_ALERTS_BUCKET_NAME'], 'alerts')
+    mock_s3.Object.assert_called_once_with(config['GOVUK_ALERTS_S3_BUCKET_NAME'], 'alerts')
     mock_object = mock_s3.Object.return_value
 
     mock_object.put.assert_called_once_with(Body=pages['alerts'], ContentType="text/html")
@@ -88,6 +88,6 @@ def test_purge_cache(mock_requests):
 
     purge_cache(config)
 
-    fastly_url = "https://api.fastly.com/test-service-id/purge/test-surrogate-key"
+    fastly_url = "https://api.fastly.com/service/test-service-id/purge/test-surrogate-key"
     mock_requests.post.assert_called_once_with(fastly_url, headers=headers)
     mock_requests.post.return_value.raise_for_status.assert_called_once()

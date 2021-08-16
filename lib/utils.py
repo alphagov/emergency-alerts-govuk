@@ -63,7 +63,7 @@ def upload_to_s3(config, rendered_pages):
     )
 
     s3 = session.resource('s3')
-    bucket_name = config['GOVUK_ALERTS_BUCKET_NAME']
+    bucket_name = config['GOVUK_ALERTS_S3_BUCKET_NAME']
 
     for path, content in rendered_pages.items():
         logger.info("Uploading " + path)
@@ -75,7 +75,7 @@ def purge_cache(config):
     fastly_service_id = config['FASTLY_SERVICE_ID']
     fastly_api_key = config['FASTLY_API_KEY']
     surrogate_key = config['FASTLY_SURROGATE_KEY']
-    fastly_url = f"https://api.fastly.com/{fastly_service_id}/purge/{surrogate_key}"
+    fastly_url = f"https://api.fastly.com/service/{fastly_service_id}/purge/{surrogate_key}"
 
     headers = {
         "Accept": "application/json",
