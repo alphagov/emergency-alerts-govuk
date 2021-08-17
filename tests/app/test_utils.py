@@ -49,7 +49,7 @@ def test_upload_to_s3(mock_boto3, govuk_alerts):
         "alerts": "<p>this is some test content</p>"
     }
 
-    upload_to_s3(current_app.config, pages)
+    upload_to_s3(pages)
 
     mock_boto3.session.Session.assert_called_once_with(
         aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
@@ -74,7 +74,7 @@ def test_purge_cache(mock_requests, govuk_alerts):
         "Fastly-Key": "test-api-key"
     }
 
-    purge_cache(current_app.config)
+    purge_cache()
 
     fastly_url = "https://api.fastly.com/service/test-service-id/purge/test-surrogate-key"
     mock_requests.post.assert_called_once_with(fastly_url, headers=headers)

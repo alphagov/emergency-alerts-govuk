@@ -12,9 +12,8 @@ def publish_govuk_alerts(self):
         alerts = alerts_from_yaml()
         rendered_pages = get_rendered_pages(alerts)
 
-        upload_to_s3(current_app.config, rendered_pages)
-
-        purge_cache(current_app.config)
+        upload_to_s3(rendered_pages)
+        purge_cache()
     except Exception:
         current_app.logger.exception("Failed to publish content to gov.uk/alerts: " + Exception)
         self.retry(queue=current_app.config['QUEUE_NAME'])
