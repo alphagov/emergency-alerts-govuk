@@ -14,7 +14,7 @@ statsd_client = StatsdClient()
 def create_app():
     application = Flask(
         __name__,
-        static_folder='dist/',
+        static_folder='../dist/',
     )
 
     from app import config
