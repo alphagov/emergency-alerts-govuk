@@ -3,7 +3,7 @@ from notifications_utils.serialised_model import SerialisedModelCollection
 
 from app.models.alert import Alert
 from app.models.alert_date import AlertDate
-from app.utils import is_in_uk
+from app.utils import REPO, is_in_uk
 
 
 class Alerts(SerialisedModelCollection):
@@ -29,8 +29,15 @@ class Alerts(SerialisedModelCollection):
     def last_updated_date(self):
         return AlertDate(self.last_updated)
 
+    # We'll have multiple datasources in future. Having this
+    # method now gives a clean abstraction so we don't have to
+    # change too much when we add them (and remove this comment!)
     @classmethod
-    def from_yaml(cls, path):
+    def load(cls):
+        return cls.from_yaml()
+
+    @classmethod
+    def from_yaml(cls, path=REPO / 'data.yaml'):
         with path.open() as stream:
             data = yaml.load(stream, Loader=yaml.CLoader)
 

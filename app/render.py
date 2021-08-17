@@ -7,7 +7,6 @@ from jinja2 import (
 )
 from notifications_utils.formatters import formatted_list
 
-from app.models.alerts import Alerts
 from app.utils import DIST, REPO, ROOT, SRC, file_fingerprint, paragraphize
 
 
@@ -32,11 +31,6 @@ def setup_jinja_environment(alerts):
     }
 
     return env
-
-
-def alerts_from_yaml():
-    alerts = Alerts.from_yaml(REPO / 'data.yaml')
-    return alerts
 
 
 def get_rendered_pages(alerts):

@@ -60,7 +60,7 @@ def test_local_links_lead_to_existing_routes_in_pages_with_alerts(
     alert_dict.update(alert_timings)
     alerts_data = Alerts([alert_dict])
 
-    mocker.patch('app.models.alerts.Alerts.from_yaml', return_value=alerts_data)
+    mocker.patch('app.models.alerts.Alerts.load', return_value=alerts_data)
 
     for route in local_routes:
         html = client_get(route)

@@ -36,7 +36,7 @@ def govuk_alerts():
 
 @pytest.fixture()
 def client_get(govuk_alerts, mocker):
-    mocker.patch('app.models.alerts.Alerts.from_yaml', return_value=Alerts([]))
+    mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([]))
     mocker.patch('app.render.file_fingerprint', return_value='1234')
 
     def _do_get(path):

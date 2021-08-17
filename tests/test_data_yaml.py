@@ -4,12 +4,11 @@ import pytest
 import pytz
 
 from app.models.alerts import Alerts
-from app.utils import REPO
 
 
 @pytest.fixture()
 def alerts():
-    return Alerts.from_yaml(REPO / 'data.yaml')
+    return Alerts.from_yaml()
 
 
 def test_alert_sent_before_starts_before_expires(alerts):
