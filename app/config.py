@@ -45,6 +45,8 @@ class Config():
 
 
 class Test(Config):
+    DEBUG = True
+
     FASTLY_SERVICE_ID = "test-service-id"
     FASTLY_API_KEY = "test-api-key"
     FASTLY_SURROGATE_KEY = "test-surrogate-key"
