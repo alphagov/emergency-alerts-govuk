@@ -20,6 +20,9 @@ def create_app():
     from app import config
     application.config.from_object(config.Config)
 
+    from app.commands import setup_commands
+    setup_commands(application)
+
     statsd_client.init_app(application)
     logging.init_app(application, statsd_client)
     notify_celery.init_app(application)
