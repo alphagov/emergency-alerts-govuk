@@ -2,6 +2,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+from flask import current_app
 from jinja2 import Markup
 
 from app.utils import (
@@ -43,50 +44,37 @@ def test_is_in_uk_returns_polygons_in_uk_bounding_box(alert_dict, lat, lon, in_u
 
 
 @patch('app.utils.boto3')
-def test_upload_to_s3(mock_boto3):
-    config = {
-        "BROADCASTS_AWS_ACCESS_KEY_ID": "test-key-id",
-        "BROADCASTS_AWS_SECRET_ACCESS_KEY": "test-secret-key",
-        "BROADCASTS_AWS_REGION": "test-region-1",
-        "GOVUK_ALERTS_S3_BUCKET_NAME": "test-bucket-name"
-    }
-
+def test_upload_to_s3(mock_boto3, govuk_alerts):
     pages = {
         "alerts": "<p>this is some test content</p>"
     }
 
-    upload_to_s3(config, pages)
+    upload_to_s3(current_app.config, pages)
 
     mock_boto3.session.Session.assert_called_once_with(
-        aws_access_key_id=config["BROADCASTS_AWS_ACCESS_KEY_ID"],
-        aws_secret_access_key=config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
-        region_name=config["BROADCASTS_AWS_REGION"],
+        aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
+        region_name=current_app.config["BROADCASTS_AWS_REGION"],
     )
     mock_session = mock_boto3.session.Session.return_value
 
     mock_session.resource.assert_called_once_with('s3')
     mock_s3 = mock_session.resource.return_value
 
-    mock_s3.Object.assert_called_once_with(config['GOVUK_ALERTS_S3_BUCKET_NAME'], 'alerts')
+    mock_s3.Object.assert_called_once_with(current_app.config['GOVUK_ALERTS_S3_BUCKET_NAME'], 'alerts')
     mock_object = mock_s3.Object.return_value
 
     mock_object.put.assert_called_once_with(Body=pages['alerts'], ContentType="text/html")
 
 
 @patch('app.utils.requests')
-def test_purge_cache(mock_requests):
-    config = {
-        "FASTLY_SERVICE_ID": "test-service-id",
-        "FASTLY_API_KEY": "test-api-key",
-        "FASTLY_SURROGATE_KEY": "test-surrogate-key",
-    }
-
+def test_purge_cache(mock_requests, govuk_alerts):
     headers = {
         "Accept": "application/json",
         "Fastly-Key": "test-api-key"
     }
 
-    purge_cache(config)
+    purge_cache(current_app.config)
 
     fastly_url = "https://api.fastly.com/service/test-service-id/purge/test-surrogate-key"
     mock_requests.post.assert_called_once_with(fastly_url, headers=headers)

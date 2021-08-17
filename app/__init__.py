@@ -17,8 +17,9 @@ def create_app():
         static_folder='../dist/',
     )
 
-    from app import config
-    application.config.from_object(config.Config)
+    from app.config import configs
+    environment = os.getenv('NOTIFY_ENVIRONMENT', 'development')
+    application.config.from_object(configs[environment])
 
     from app.commands import setup_commands
     setup_commands(application)
