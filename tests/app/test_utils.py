@@ -1,9 +1,10 @@
 from pathlib import Path
 from unittest.mock import patch
 
+import boto3
 import pytest
-from flask import current_app
 from jinja2 import Markup
+from moto import mock_s3
 
 from app.utils import (
     file_fingerprint,
@@ -43,28 +44,24 @@ def test_is_in_uk_returns_polygons_in_uk_bounding_box(alert_dict, lat, lon, in_u
     assert is_in_uk(simple_polygons) == in_uk
 
 
-@patch('app.utils.boto3')
-def test_upload_to_s3(mock_boto3, govuk_alerts):
-    pages = {
-        "alerts": "<p>this is some test content</p>"
-    }
+@mock_s3
+def test_upload_to_s3(govuk_alerts):
+    client = boto3.client('s3')
+    client.create_bucket(Bucket='test-bucket-name')
 
+    pages = {"alerts": "<p>this is some test content</p>"}
     upload_to_s3(pages)
 
-    mock_boto3.session.Session.assert_called_once_with(
-        aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
-        aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
-        region_name=current_app.config["BROADCASTS_AWS_REGION"],
-    )
-    mock_session = mock_boto3.session.Session.return_value
+    object_keys = [
+        obj['Key'] for obj in
+        client.list_objects(Bucket='test-bucket-name')['Contents']
+    ]
 
-    mock_session.resource.assert_called_once_with('s3')
-    mock_s3 = mock_session.resource.return_value
+    assert object_keys == ['alerts']
 
-    mock_s3.Object.assert_called_once_with(current_app.config['GOVUK_ALERTS_S3_BUCKET_NAME'], 'alerts')
-    mock_object = mock_s3.Object.return_value
-
-    mock_object.put.assert_called_once_with(Body=pages['alerts'], ContentType="text/html")
+    alerts_object = client.get_object(Bucket='test-bucket-name', Key='alerts')
+    assert alerts_object['Body'].read().decode('utf-8') == pages['alerts']
+    assert alerts_object['ContentType'] == 'text/html'
 
 
 @patch('app.utils.requests')

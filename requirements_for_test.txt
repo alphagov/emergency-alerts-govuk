@@ -8,3 +8,4 @@ pytest-mock==3.6.1
 beautifulsoup4==4.9.3
 jinja2-cli[yaml]==0.7.0
 pytest-env==0.6.2
+moto==2.2.3
