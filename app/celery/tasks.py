@@ -14,7 +14,6 @@ def publish_govuk_alerts(self):
 
         upload_to_s3(rendered_pages)
         purge_cache()
-    except Exception:
-        current_app.logger.exception("Failed to publish content to gov.uk/alerts: " + Exception)
+    except Exception as e:
+        current_app.logger.exception("Failed to publish content to gov.uk/alerts: " + str(e))
         self.retry(queue=current_app.config['QUEUE_NAME'])
-        return
