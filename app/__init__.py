@@ -30,9 +30,6 @@ def create_app():
 
     @application.route('/<path:key>', methods=['GET'])
     def show_page(key):
-        if os.getenv("FLASK_ENV") != "development":
-            return "not found", 404
-
         alerts = alerts_from_yaml()
         rendered_pages = get_rendered_pages(alerts)
 
