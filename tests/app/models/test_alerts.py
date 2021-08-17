@@ -5,9 +5,9 @@ import pytz
 import yaml
 from freezegun import freeze_time
 
-from lib.alert import Alert
-from lib.alert_date import AlertDate
-from lib.alerts import Alerts
+from app.models.alert import Alert
+from app.models.alert_date import AlertDate
+from app.models.alerts import Alerts
 
 
 @freeze_time(datetime(
@@ -34,10 +34,10 @@ def test_from_yaml_filters_areas(tmp_path, alert_dict, mocker):
     data_file = tmp_path / 'data.yaml'
     data_file.write_text(sample_yaml)
 
-    mocker.patch('lib.alerts.is_in_uk', return_value=False)
+    mocker.patch('app.models.alerts.is_in_uk', return_value=False)
     assert len(Alerts.from_yaml(data_file)) == 0
 
-    mocker.patch('lib.alerts.is_in_uk', return_value=True)
+    mocker.patch('app.models.alerts.is_in_uk', return_value=True)
     assert len(Alerts.from_yaml(data_file)) == 1
 
 

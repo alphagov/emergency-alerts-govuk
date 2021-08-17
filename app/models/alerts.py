@@ -1,9 +1,9 @@
 import yaml
 from notifications_utils.serialised_model import SerialisedModelCollection
 
-from lib.alert import Alert
-from lib.alert_date import AlertDate
-from lib.utils import is_in_uk
+from app.models.alert import Alert
+from app.models.alert_date import AlertDate
+from app.utils import is_in_uk
 
 
 class Alerts(SerialisedModelCollection):

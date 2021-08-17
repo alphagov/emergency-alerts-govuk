@@ -2,7 +2,7 @@ from flask import current_app
 
 from app import notify_celery
 from app.render import alerts_from_yaml, get_rendered_pages
-from lib.utils import purge_cache, upload_to_s3
+from app.utils import purge_cache, upload_to_s3
 
 
 @notify_celery.task(bind=True, name="publish-govuk-alerts", max_retries=20, retry_backoff=True, retry_backoff_max=300)

@@ -8,7 +8,7 @@ import pytest
 import pytz
 from freezegun import freeze_time
 
-from lib.alerts import Alerts
+from app.models.alerts import Alerts
 from tests.conftest import render_template
 
 

@@ -1,6 +1,6 @@
 import pytest
 
-from lib.alert import Alert
+from app.models.alert import Alert
 from tests.conftest import render_template
 
 
@@ -30,8 +30,8 @@ def test_past_alerts_page_shows_alerts(
     env
 ):
     alert_dict['areas']['aggregate_names'] = ['foo']
-    mocker.patch('lib.alert.Alert.is_public', is_public)
-    mocker.patch('lib.alerts.Alerts.expired', [Alert(alert_dict)])
+    mocker.patch('app.models.alert.Alert.is_public', is_public)
+    mocker.patch('app.models.alerts.Alerts.expired', [Alert(alert_dict)])
 
     html = render_template(env, "src/past-alerts.html")
     titles = html.select('h2.alerts-alert__title')

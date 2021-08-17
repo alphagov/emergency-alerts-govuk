@@ -1,6 +1,6 @@
 import pytest
 
-from lib.alert import Alert
+from app.models.alert import Alert
 from tests.conftest import render_template
 
 

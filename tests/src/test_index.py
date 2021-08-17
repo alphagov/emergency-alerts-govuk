@@ -8,7 +8,7 @@ def test_index_page(env):
 
 
 def test_index_page_shows_current_alerts(env, mocker, alert_dict):
-    mocker.patch('lib.alerts.Alerts.current_and_public', ['alert'])
-    mocker.patch('lib.alerts.Alerts.last_updated_date')
+    mocker.patch('app.models.alerts.Alerts.current_and_public', ['alert'])
+    mocker.patch('app.models.alerts.Alerts.last_updated_date')
     html = render_template(env, "src/index.html")
     assert '1 current alert' in html.text

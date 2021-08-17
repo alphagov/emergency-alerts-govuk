@@ -4,7 +4,7 @@ import pytest
 import pytz
 from pytz import timezone
 
-from lib.alert_date import AlertDate
+from app.models.alert_date import AlertDate
 
 
 def test_AlertDate_properties():

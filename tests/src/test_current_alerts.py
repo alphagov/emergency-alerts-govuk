@@ -1,4 +1,4 @@
-from lib.alert import Alert
+from app.models.alert import Alert
 from tests.conftest import render_template
 
 
@@ -13,7 +13,7 @@ def test_current_alerts_page_shows_alerts(
     mocker,
 ):
     alert_dict['areas']['aggregate_names'] = ['foo']
-    mocker.patch('lib.alerts.Alerts.current_and_public', [Alert(alert_dict)])
+    mocker.patch('app.models.alerts.Alerts.current_and_public', [Alert(alert_dict)])
 
     html = render_template(env, "src/current-alerts.html")
     titles = html.select('h2.alerts-alert__title')

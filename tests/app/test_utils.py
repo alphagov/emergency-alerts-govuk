@@ -4,7 +4,7 @@ from unittest.mock import patch
 import pytest
 from jinja2 import Markup
 
-from lib.utils import (
+from app.utils import (
     file_fingerprint,
     is_in_uk,
     paragraphize,
@@ -42,7 +42,7 @@ def test_is_in_uk_returns_polygons_in_uk_bounding_box(alert_dict, lat, lon, in_u
     assert is_in_uk(simple_polygons) == in_uk
 
 
-@patch('lib.utils.boto3')
+@patch('app.utils.boto3')
 def test_upload_to_s3(mock_boto3):
     config = {
         "BROADCASTS_AWS_ACCESS_KEY_ID": "test-key-id",
@@ -73,7 +73,7 @@ def test_upload_to_s3(mock_boto3):
     mock_object.put.assert_called_once_with(Body=pages['alerts'], ContentType="text/html")
 
 
-@patch('lib.utils.requests')
+@patch('app.utils.requests')
 def test_purge_cache(mock_requests):
     config = {
         "FASTLY_SERVICE_ID": "test-service-id",

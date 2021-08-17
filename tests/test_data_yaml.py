@@ -3,8 +3,8 @@ from datetime import datetime
 import pytest
 import pytz
 
-from lib.alerts import Alerts
-from lib.utils import REPO
+from app.models.alerts import Alerts
+from app.utils import REPO
 
 
 @pytest.fixture()

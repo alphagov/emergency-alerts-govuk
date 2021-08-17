@@ -5,8 +5,8 @@ import pytz
 from bs4 import BeautifulSoup
 
 from app import create_app
+from app.models.alerts import Alerts
 from app.render import setup_jinja_environment
-from lib.alerts import Alerts
 
 
 @pytest.fixture()

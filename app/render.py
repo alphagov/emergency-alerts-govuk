@@ -7,8 +7,8 @@ from jinja2 import (
 )
 from notifications_utils.formatters import formatted_list
 
-from lib.alerts import Alerts
-from lib.utils import DIST, REPO, ROOT, SRC, file_fingerprint, paragraphize
+from app.models.alerts import Alerts
+from app.utils import DIST, REPO, ROOT, SRC, file_fingerprint, paragraphize
 
 
 def setup_jinja_environment(alerts):

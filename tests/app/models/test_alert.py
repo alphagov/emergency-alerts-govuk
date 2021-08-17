@@ -4,8 +4,8 @@ import pytest
 import pytz
 from freezegun import freeze_time
 
-from lib.alert import Alert
-from lib.alert_date import AlertDate
+from app.models.alert import Alert
+from app.models.alert_date import AlertDate
 
 
 def test_alert_timestamps_properties_are_AlertDates(alert_dict):
