@@ -1,6 +1,6 @@
 # notifications-govuk-alerts
 
-Static AWS S3 website for Emergency Alerts:
+Website for emergency alerts, hosted under /alerts on GOV.UK.
 
 - [Preview (in GOV.UK Integration)](https://www.integration.publishing.service.gov.uk/alerts)
 - [Live (gov.uk/alerts)](https://www.gov.uk/alerts)
@@ -59,5 +59,4 @@ To run a specific JavaScript test, you'll need to copy the full command from `pa
 ## Further documentation
 
 - [Image optimisation](docs/image-optimisation.md)
-- [GOV.UK Fastly CDN configuration](https://docs.publishing.service.gov.uk/manual/notify-emergency-alerts.html)
-- [Terraform for AWS S3, CloudFront, etc.](https://github.com/alphagov/notifications-broadcasts-infra/tree/main/terraform/modules/govuk-alerts-website)
+- [Architecture](docs/architecture.md)
