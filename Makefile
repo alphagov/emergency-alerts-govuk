@@ -27,6 +27,7 @@ run-flask:
 bootstrap:
 	pip install -r requirements_for_test.txt
 	npm ci
+	npm run build
 
 .PHONY: test
 test:
