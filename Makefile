@@ -10,11 +10,6 @@ CF_MANIFEST_PATH ?= /tmp/manifest.yml
 NOTIFY_CREDENTIALS ?= ~/.notify-credentials
 $(eval export CF_HOME)
 
-.PHONY: build
-build: clean
-	npm run build
-	python write_to_disk.py
-
 .PHONY: clean
 clean:
 	rm -rf dist/*
