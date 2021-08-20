@@ -7,7 +7,7 @@
         {{ alerts_icon(height=48, alert_active=alert.is_current) }}
         <h2 class="alerts-alert__title govuk-heading-s govuk-!-margin-bottom-3">
           {% if alert.is_public %}
-            <span class="govuk-visually-hidden">Emergency alert sent to </span>{{ alert.general_area_names | formatted_list(before_each='', after_each='') }}
+            <span class="govuk-visually-hidden">Emergency alert sent to </span>{{ alert.areas.aggregate_names | formatted_list(before_each='', after_each='') }}
           {% else %}
             Mobile network operator test
           {% endif %}
@@ -16,7 +16,7 @@
         {% if alert.is_public %}
           <a href="/alerts/{{ alert.identifier }}" class="govuk-link govuk-body">
             More information about this alert
-            <span class="govuk-visually-hidden">to {{ alert.general_area_names | formatted_list(before_each='', after_each='') }}</span>
+            <span class="govuk-visually-hidden">to {{ alert.areas.aggregate_names | formatted_list(before_each='', after_each='') }}</span>
           </a>
         {% else %}
           <a href="/alerts/mobile-network-operator-tests" class="govuk-link govuk-body">

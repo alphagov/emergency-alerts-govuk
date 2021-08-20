@@ -8,7 +8,7 @@
 {%- from "templates/components/meta_tags.html" import metaTags -%}
 
 {% set pageTitle = "Emergency alert" %}
-{% set alertAreaNames = alert_data.general_area_names | formatted_list(before_each='', after_each='') %}
+{% set alertAreaNames = alert_data.areas.aggregate_names | formatted_list(before_each='', after_each='') %}
 
 {% block metaTags %}
   {{ metaTags(

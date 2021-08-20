@@ -21,7 +21,6 @@ def alert_dict():
     return {
         'headline': 'Emergency alert',
         'content': 'Something',
-        'general_area_names': [],
         'areas': dict(),
         'channel': 'severe',
         'identifier': '1234',

@@ -8,7 +8,6 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-    general_area_names:
   - identifier:
     channel: operator
     approved_at: 2021-07-16T13:00:27+01:00
@@ -18,7 +17,6 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-    general_area_names:
   - identifier:
     channel: operator
     approved_at: 2021-07-14T13:00:18+01:00
@@ -28,7 +26,6 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-    general_area_names:
   - identifier:
     channel: operator
     approved_at: 2021-07-09T12:58:58+01:00
@@ -38,7 +35,6 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-    general_area_names:
 ### vvv DO NOT DELETE: NOT IN DB vvv ###
   - identifier:
     channel: operator
@@ -49,7 +45,6 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-    general_area_names:
 ### ^^^ DO NOT DELETE: NOT IN DB ^^^ ###
   - identifier: 29-june-2021
     channel: severe
@@ -63,9 +58,9 @@ alerts:
       Emergency alerts tell you what to do if there’s a life-threatening event nearby.
 
       To find out more, call 0808 1697692 or search for gov.uk/alerts
-    areas: {}
-    general_area_names:
-      - Reading, Berkshire
+    areas:
+      aggregate_names:
+        - Reading, Berkshire
 ### vvv DO NOT DELETE: NOT IN DB vvv ###
   - identifier:
     channel: operator
@@ -86,7 +81,6 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-    general_area_names:
 ### ^^^ DO NOT DELETE: NOT IN DB ^^^ ###
   - identifier: 25-may-2021-2
     channel: government
@@ -100,9 +94,9 @@ alerts:
       Emergency alerts tell you what to do if there’s a life-threatening event nearby.
 
       To find out more, call 0808 1697692 or search for gov.uk/alerts
-    areas: {}
-    general_area_names:
-      - East Suffolk
+    areas:
+      aggregate_names:
+        - East Suffolk
   - identifier: 3-may-2021
     channel: severe
     approved_at: 2021-05-25T13:00:14+01:00
@@ -117,5 +111,5 @@ alerts:
       To find out more, call 0808 1697692 or search for gov.uk/alerts
     areas:
       simple_polygons: [[[52.22035, 1.58242], [52.19521, 1.58491], [52.19325, 1.59971], [52.19372, 1.62352], [52.21901, 1.62599], [52.22035, 1.58242]]]
-    general_area_names:
-      - East Suffolk
+      aggregate_names:
+        - East Suffolk

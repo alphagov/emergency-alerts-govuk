@@ -29,7 +29,7 @@ def test_past_alerts_page_shows_alerts(
     alert_dict,
     env
 ):
-    alert_dict['general_area_names'] = ['foo']
+    alert_dict['areas']['aggregate_names'] = ['foo']
     mocker.patch('lib.alert.Alert.is_public', is_public)
     mocker.patch('lib.alerts.Alerts.expired', [Alert(alert_dict)])
 

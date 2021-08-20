@@ -16,7 +16,6 @@ class Alert(SerialisedModel):
         'finishes_at',
         'content',
         'areas',
-        'general_area_names',
     }
 
     def __lt__(self, other):
