@@ -7,7 +7,7 @@ from jinja2 import (
 )
 from notifications_utils.formatters import formatted_list
 
-from app.utils import DIST, REPO, ROOT, SRC, file_fingerprint, paragraphize
+from app.utils import DIST, REPO, SRC, file_fingerprint, paragraphize
 
 
 def setup_jinja_environment(alerts):
@@ -25,7 +25,7 @@ def setup_jinja_environment(alerts):
     env.globals = {
         'font_paths': [
             item.relative_to(DIST)
-            for item in ROOT.glob('assets/fonts/*.woff2')
+            for item in DIST.glob('alerts/assets/fonts/*.woff2')
         ],
         'alerts': alerts,
     }

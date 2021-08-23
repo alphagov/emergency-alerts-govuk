@@ -10,7 +10,6 @@ from jinja2 import Markup, escape
 REPO = Path('.')
 SRC = REPO / 'src'
 DIST = REPO / 'dist'
-ROOT = DIST / 'alerts'
 
 
 def paragraphize(value, classes="govuk-body-l govuk-!-margin-bottom-4"):
