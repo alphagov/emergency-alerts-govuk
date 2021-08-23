@@ -9,7 +9,7 @@ from notifications_utils.formatters import formatted_list
 
 from app.utils import DIST, REPO, file_fingerprint, paragraphize
 
-TEMPLATES = REPO / 'templates'
+TEMPLATES = REPO / 'app' / 'templates'
 VIEWS = REPO / 'src'
 
 all_view_paths = [
