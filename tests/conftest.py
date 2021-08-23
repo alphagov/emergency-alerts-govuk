@@ -5,15 +5,7 @@ import pytz
 from bs4 import BeautifulSoup
 
 from app import create_app
-from app.render import setup_jinja_environment
-from lib.alerts import Alerts
-
-
-@pytest.fixture()
-def env():
-    test_env = setup_jinja_environment(Alerts([]))
-    test_env.filters['file_fingerprint'] = lambda path: path
-    return test_env
+from app.models.alerts import Alerts
 
 
 @pytest.fixture()
@@ -39,11 +31,18 @@ def govuk_alerts():
     ctx.push()
 
     yield app
-
     ctx.pop()
 
 
-def render_template(env, template_path, template_vars={}):
-    template = env.get_template(template_path)
-    content = template.render(template_vars)
-    return BeautifulSoup(content, 'html.parser')
+@pytest.fixture()
+def client_get(govuk_alerts, mocker):
+    mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([]))
+    mocker.patch('app.render.file_fingerprint', return_value='1234')
+
+    def _do_get(path):
+        with govuk_alerts.test_client() as client:
+            response = client.get(path)
+            html_text = response.data.decode('utf-8')
+            return BeautifulSoup(html_text, 'html.parser')
+
+    return _do_get

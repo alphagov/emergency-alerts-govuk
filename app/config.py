@@ -42,3 +42,24 @@ class Config():
     STATSD_HOST = os.getenv('STATSD_HOST')
     STATSD_PORT = 8125
     STATSD_ENABLED = bool(STATSD_HOST)
+
+
+class Test(Config):
+    DEBUG = True
+
+    FASTLY_SERVICE_ID = "test-service-id"
+    FASTLY_API_KEY = "test-api-key"
+    FASTLY_SURROGATE_KEY = "test-surrogate-key"
+
+    BROADCASTS_AWS_ACCESS_KEY_ID = "test-key-id"
+    BROADCASTS_AWS_SECRET_ACCESS_KEY = "test-secret-key"
+    GOVUK_ALERTS_S3_BUCKET_NAME = "test-bucket-name"
+
+
+configs = {
+    'development': Config,
+    'test': Test,
+    'production': Config,
+    'staging': Config,
+    'preview': Config,
+}

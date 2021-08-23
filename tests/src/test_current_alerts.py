@@ -1,21 +1,20 @@
-from lib.alert import Alert
-from tests.conftest import render_template
+from app.models.alert import Alert
 
 
-def test_current_alerts_page(env):
-    html = render_template(env, "src/current-alerts.html")
+def test_current_alerts_page(client_get):
+    html = client_get("alerts/current-alerts")
     assert html.select_one('h1').text.strip() == "Current alerts"
 
 
 def test_current_alerts_page_shows_alerts(
     alert_dict,
-    env,
+    client_get,
     mocker,
 ):
     alert_dict['areas']['aggregate_names'] = ['foo']
-    mocker.patch('lib.alerts.Alerts.current_and_public', [Alert(alert_dict)])
+    mocker.patch('app.models.alerts.Alerts.current_and_public', [Alert(alert_dict)])
 
-    html = render_template(env, "src/current-alerts.html")
+    html = client_get("alerts/current-alerts")
     titles = html.select('h2.alerts-alert__title')
     link = html.select_one('a.govuk-body')
 

@@ -1,11 +1,10 @@
 import pytest
 
-from lib.alert import Alert
-from tests.conftest import render_template
+from app.models.alert import Alert
 
 
-def test_past_alerts_page(env):
-    html = render_template(env, "src/past-alerts.html")
+def test_past_alerts_page(client_get):
+    html = client_get("alerts/past-alerts")
     assert html.select_one('h1').text.strip() == "Past alerts"
 
 
@@ -27,13 +26,13 @@ def test_past_alerts_page_shows_alerts(
     expected_link_text,
     mocker,
     alert_dict,
-    env
+    client_get
 ):
     alert_dict['areas']['aggregate_names'] = ['foo']
-    mocker.patch('lib.alert.Alert.is_public', is_public)
-    mocker.patch('lib.alerts.Alerts.expired', [Alert(alert_dict)])
+    mocker.patch('app.models.alert.Alert.is_public', is_public)
+    mocker.patch('app.models.alerts.Alerts.expired', [Alert(alert_dict)])
 
-    html = render_template(env, "src/past-alerts.html")
+    html = client_get("alerts/past-alerts")
     titles = html.select('h2.alerts-alert__title')
     link = html.select_one('a.govuk-body')
 

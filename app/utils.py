@@ -1,20 +1,16 @@
-import logging
 import os
 import re
 from pathlib import Path
 
 import boto3
 import requests
+from flask import current_app
 from jinja2 import Markup, escape
 
 REPO = Path('.')
 SRC = REPO / 'src'
 DIST = REPO / 'dist'
 ROOT = DIST / 'alerts'
-
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
 
 
 def paragraphize(value, classes="govuk-body-l govuk-!-margin-bottom-4"):
@@ -55,33 +51,33 @@ def is_in_uk(simple_polygons):
     )
 
 
-def upload_to_s3(config, rendered_pages):
+def upload_to_s3(rendered_pages):
     session = boto3.session.Session(
-        aws_access_key_id=config["BROADCASTS_AWS_ACCESS_KEY_ID"],
-        aws_secret_access_key=config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
-        region_name=config["BROADCASTS_AWS_REGION"],
+        aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
+        region_name=current_app.config["BROADCASTS_AWS_REGION"],
     )
 
     s3 = session.resource('s3')
-    bucket_name = config['GOVUK_ALERTS_S3_BUCKET_NAME']
+    bucket_name = current_app.config['GOVUK_ALERTS_S3_BUCKET_NAME']
 
     for path, content in rendered_pages.items():
-        logger.info("Uploading " + path)
+        current_app.logger.info("Uploading " + path)
         item = s3.Object(bucket_name, path)
         item.put(Body=content, ContentType="text/html")
 
 
-def purge_cache(config):
-    fastly_service_id = config['FASTLY_SERVICE_ID']
-    fastly_api_key = config['FASTLY_API_KEY']
-    surrogate_key = config['FASTLY_SURROGATE_KEY']
+def purge_cache():
+    fastly_service_id = current_app.config['FASTLY_SERVICE_ID']
+    fastly_api_key = current_app.config['FASTLY_API_KEY']
+    surrogate_key = current_app.config['FASTLY_SURROGATE_KEY']
     fastly_url = f"https://api.fastly.com/service/{fastly_service_id}/purge/{surrogate_key}"
 
     headers = {
         "Accept": "application/json",
         "Fastly-Key": f"{fastly_api_key}"
     }
-    logger.info("Purging cache")
+    current_app.logger.info("Purging cache")
 
     resp = requests.post(fastly_url, headers=headers)
     resp.raise_for_status()

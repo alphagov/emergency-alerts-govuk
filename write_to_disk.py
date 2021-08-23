@@ -1,6 +1,7 @@
-from app.render import alerts_from_yaml, get_rendered_pages
+from app.models.alerts import Alerts
+from app.render import get_rendered_pages
 
-alerts = alerts_from_yaml()
+alerts = Alerts.load()
 rendered_pages = get_rendered_pages(alerts)
 
 for filename, content in rendered_pages.items():

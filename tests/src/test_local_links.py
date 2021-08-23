@@ -1,4 +1,3 @@
-import re
 from datetime import datetime
 from glob import glob
 from pathlib import Path
@@ -8,8 +7,7 @@ import pytest
 import pytz
 from freezegun import freeze_time
 
-from lib.alerts import Alerts
-from tests.conftest import render_template
+from app.models.alerts import Alerts
 
 
 def get_local_route_from_template_path(template_path):
@@ -21,21 +19,15 @@ def get_local_route_from_template_path(template_path):
 
 
 all_templates = glob('./src/*.html')
-all_templates_except_alerts = filter(lambda template: template != './src/alert.html', all_templates)
 local_routes_except_alerts = [
     get_local_route_from_template_path(template_path)
     for template_path in all_templates]
 
 
-def test_local_links_lead_to_existing_routes_in_pages_with_no_alerts(env):
-    for template_path in all_templates_except_alerts:
-        html = render_template(env, re.sub(r'^\./{1}', '', template_path))
+def test_local_links_lead_to_existing_routes_in_pages_with_no_alerts(client_get):
+    for route in local_routes_except_alerts:
+        html = client_get(route)
         local_links = html.select("a[href^='/alerts']")
-
-        # return early if no local links found
-        if len(local_links) == 0:
-            assert True
-            return
 
         for link in local_links:
             path = urlparse(link['href']).path
@@ -55,8 +47,12 @@ def test_local_links_lead_to_existing_routes_in_pages_with_no_alerts(env):
     }
 ])
 @freeze_time(datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc))
-def test_local_links_lead_to_existing_routes_in_pages_with_alerts(env, alert_dict, alert_timings):
-
+def test_local_links_lead_to_existing_routes_in_pages_with_alerts(
+    client_get,
+    alert_dict,
+    alert_timings,
+    mocker
+):
     # fake an alert existing in the routes and data
     local_routes = local_routes_except_alerts + ['/alerts/21-Apr-2021']
     alert_dict['identifier'] = '21-Apr-2021'
@@ -64,31 +60,20 @@ def test_local_links_lead_to_existing_routes_in_pages_with_alerts(env, alert_dic
     alert_dict.update(alert_timings)
     alerts_data = Alerts([alert_dict])
 
-    env.globals['alerts'] = alerts_data
+    mocker.patch('app.models.alerts.Alerts.load', return_value=alerts_data)
 
-    for template_path in all_templates:
-        html = render_template(
-            env,
-            re.sub(r'^\./{1}', '', template_path),
-            {'alert_data': alerts_data[0]}
-        )
+    for route in local_routes:
+        html = client_get(route)
         local_links = html.select("a[href^='/alerts']")
-
-        # return early if no local links found
-        if len(local_links) == 0:
-            assert True
-            return
 
         for link in local_links:
             path = urlparse(link['href']).path
             assert path in local_routes
 
 
-@pytest.mark.parametrize('template_path', all_templates_except_alerts)
-def test_links_have_correct_class_attribute(env, alert_dict, template_path):
-    html = render_template(
-        env,
-        re.sub(r'^\./{1}', '', template_path),
-    )
+@pytest.mark.parametrize('route', local_routes_except_alerts)
+def test_links_have_correct_class_attribute(client_get, alert_dict, route):
+    html = client_get(route)
+
     for link in html.select('main a'):
         assert 'govuk-link' in link['class']

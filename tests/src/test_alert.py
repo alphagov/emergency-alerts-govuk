@@ -1,7 +1,6 @@
 import pytest
 
-from lib.alert import Alert
-from tests.conftest import render_template
+from app.models.alert import Alert
 
 
 @pytest.mark.parametrize('is_expired,breadcrumb', [
@@ -11,10 +10,12 @@ from tests.conftest import render_template
 def test_alert_breadcrumbs(
     is_expired,
     breadcrumb,
-    env,
+    client_get,
     alert_dict,
     mocker,
 ):
+    mocker.patch('app.models.alerts.Alerts.public', [Alert(alert_dict)])
     mocker.patch(__name__ + '.Alert.is_expired', is_expired)
-    html = render_template(env, 'src/alert.html', {'alert_data': Alert(alert_dict)})
+
+    html = client_get('alerts/1234')
     assert html.select('.govuk-breadcrumbs__link')[2].text == breadcrumb

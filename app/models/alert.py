@@ -3,7 +3,7 @@ from datetime import datetime
 import pytz
 from notifications_utils.serialised_model import SerialisedModel
 
-from lib.alert_date import AlertDate
+from app.models.alert_date import AlertDate
 
 
 class Alert(SerialisedModel):
