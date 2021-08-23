@@ -1,5 +1,5 @@
 import helpers from './support/helpers.js'
-import sharingButton from '../../src/assets/javascripts/sharing-button.mjs'
+import sharingButton from '../../app/assets/javascripts/sharing-button.mjs'
 
 const URL = 'https://www.gov.uk/alerts/3-may-2021'
 

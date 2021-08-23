@@ -17,7 +17,7 @@ plugins.hash = require('gulp-sha256-filename');
 
 
 const paths = {
-  src: 'src/assets/',
+  src: 'app/assets/',
   node_modules: 'node_modules/',
   dist: 'dist/alerts/assets/',
   govuk_frontend: 'node_modules/govuk-frontend/',
