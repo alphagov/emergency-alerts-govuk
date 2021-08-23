@@ -7,8 +7,7 @@ import requests
 from flask import current_app
 from jinja2 import Markup, escape
 
-REPO = Path('.')
-SRC = REPO / 'src'
+REPO = Path(__file__).parent.parent
 DIST = REPO / 'dist'
 
 

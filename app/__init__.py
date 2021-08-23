@@ -5,6 +5,7 @@ from notifications_utils import logging
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
 
 from app.celery.celery import NotifyCelery
+from app.utils import DIST
 
 notify_celery = NotifyCelery()
 statsd_client = StatsdClient()
@@ -13,7 +14,7 @@ statsd_client = StatsdClient()
 def create_app():
     application = Flask(
         __name__,
-        static_folder='../dist/',
+        static_folder=str(DIST),
     )
 
     from app.config import configs
