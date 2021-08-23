@@ -9,6 +9,7 @@ from notifications_utils.formatters import formatted_list
 
 from app.utils import DIST, REPO, file_fingerprint, paragraphize
 
+TEMPLATES = REPO / 'templates'
 VIEWS = REPO / 'src'
 
 all_view_paths = [
@@ -18,7 +19,7 @@ all_view_paths = [
 
 def setup_jinja_environment(alerts):
     jinja_loader = ChoiceLoader([
-        FileSystemLoader(str(REPO)),
+        FileSystemLoader(str(TEMPLATES)),
         FileSystemLoader(str(VIEWS)),
         PrefixLoader({
             'govuk_frontend_jinja': PackageLoader('govuk_frontend_jinja')
