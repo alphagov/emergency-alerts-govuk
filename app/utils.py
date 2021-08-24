@@ -7,10 +7,8 @@ import requests
 from flask import current_app
 from jinja2 import Markup, escape
 
-REPO = Path('.')
-SRC = REPO / 'src'
+REPO = Path(__file__).parent.parent
 DIST = REPO / 'dist'
-ROOT = DIST / 'alerts'
 
 
 def paragraphize(value, classes="govuk-body-l govuk-!-margin-bottom-4"):

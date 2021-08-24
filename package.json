@@ -7,8 +7,8 @@
     "npm": "<7.0.0"
   },
   "scripts": {
-    "lint:scss": "stylelint -i src/assets/stylesheets/_govuk_frontend.scss src/assets/stylesheets/",
-    "lint:js": "standardx src/assets/javascripts/",
+    "lint:scss": "stylelint -i app/assets/stylesheets/_govuk_frontend.scss app/assets/stylesheets/",
+    "lint:js": "standardx app/assets/javascripts/",
     "lint": "npm run lint:scss && npm run lint:js",
     "build": "gulp",
     "test": "jest --config tests/javascripts/jest.config.js"

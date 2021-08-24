@@ -1,4 +1,4 @@
-import relativeDates from '../../src/assets/javascripts/relative-dates.mjs'
+import relativeDates from '../../app/assets/javascripts/relative-dates.mjs'
 
 afterEach(() => {
   document.body.innerHTML = ''

@@ -1,5 +1,4 @@
 from datetime import datetime
-from glob import glob
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -8,6 +7,7 @@ import pytz
 from freezegun import freeze_time
 
 from app.models.alerts import Alerts
+from app.render import all_view_paths
 
 
 def get_local_route_from_template_path(template_path):
@@ -18,10 +18,9 @@ def get_local_route_from_template_path(template_path):
         return '/alerts'
 
 
-all_templates = glob('./src/*.html')
 local_routes_except_alerts = [
     get_local_route_from_template_path(template_path)
-    for template_path in all_templates]
+    for template_path in all_view_paths]
 
 
 def test_local_links_lead_to_existing_routes_in_pages_with_no_alerts(client_get):

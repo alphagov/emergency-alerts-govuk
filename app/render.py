@@ -7,12 +7,20 @@ from jinja2 import (
 )
 from notifications_utils.formatters import formatted_list
 
-from app.utils import DIST, REPO, ROOT, SRC, file_fingerprint, paragraphize
+from app.utils import DIST, REPO, file_fingerprint, paragraphize
+
+TEMPLATES = REPO / 'app' / 'templates'
+VIEWS = TEMPLATES / 'views'
+
+all_view_paths = [
+    str(path.relative_to(VIEWS)) for path in VIEWS.glob('*.html')
+]
 
 
 def setup_jinja_environment(alerts):
     jinja_loader = ChoiceLoader([
-        FileSystemLoader(str(REPO)),
+        FileSystemLoader(str(TEMPLATES)),
+        FileSystemLoader(str(VIEWS)),
         PrefixLoader({
             'govuk_frontend_jinja': PackageLoader('govuk_frontend_jinja')
         })
@@ -25,7 +33,7 @@ def setup_jinja_environment(alerts):
     env.globals = {
         'font_paths': [
             item.relative_to(DIST)
-            for item in ROOT.glob('assets/fonts/*.woff2')
+            for item in DIST.glob('alerts/assets/fonts/*.woff2')
         ],
         'alerts': alerts,
     }
@@ -35,22 +43,22 @@ def setup_jinja_environment(alerts):
 
 def get_rendered_pages(alerts):
     env = setup_jinja_environment(alerts)
-
     rendered = {}
-    for page in SRC.glob('*.html'):
-        template = env.get_template(str(page))
+
+    for path in all_view_paths:
+        template = env.get_template(path)
+        target = path.replace(".html", "")
 
         # render each individual alert's page
-        if str(page) == 'src/alert.html':
+        if target == 'alert':
             for alert in alerts.public:
                 rendered["alerts/" + alert.identifier] = template.render({'alert_data': alert})
             continue
 
-        if 'index.html' in str(page):
+        if target == 'index':
             rendered['alerts'] = template.render()
-        else:
-            target = str(page.relative_to(SRC))
-            target = target.replace(".html", "")
-            rendered["alerts/" + target] = template.render()
+            continue
+
+        rendered["alerts/" + target] = template.render()
 
     return rendered
