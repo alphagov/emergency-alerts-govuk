@@ -10,7 +10,7 @@ from notifications_utils.formatters import formatted_list
 from app.utils import DIST, REPO, file_fingerprint, paragraphize
 
 TEMPLATES = REPO / 'app' / 'templates'
-VIEWS = REPO / 'src'
+VIEWS = TEMPLATES / 'views'
 
 all_view_paths = [
     str(path.relative_to(VIEWS)) for path in VIEWS.glob('*.html')
