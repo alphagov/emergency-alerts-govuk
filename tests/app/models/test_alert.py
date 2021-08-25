@@ -26,6 +26,19 @@ def test_lt_compares_alerts_based_on_start_date(alert_dict):
     assert Alert(alert_dict_1) < Alert(alert_dict_2)
 
 
+def test_display_areas_falls_back_to_granular_names(alert_dict):
+    alert_dict['areas']['aggregate_names'] = ['aggregate name']
+    alert_dict['areas']['names'] = ['granular name']
+
+    assert Alert(alert_dict).display_areas == ['aggregate name']
+
+    del alert_dict['areas']['aggregate_names']
+    assert Alert(alert_dict).display_areas == ['granular name']
+
+    del alert_dict['areas']['names']
+    assert Alert(alert_dict).display_areas == []
+
+
 def test_expires_date_returns_earliest_expiry_time(alert_dict):
     alert = Alert(alert_dict)
     assert alert.expires_date.as_iso8601 == alert.cancelled_at_date.as_iso8601

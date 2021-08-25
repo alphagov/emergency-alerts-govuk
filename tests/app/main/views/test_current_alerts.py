@@ -11,7 +11,7 @@ def test_current_alerts_page_shows_alerts(
     client_get,
     mocker,
 ):
-    alert_dict['areas']['aggregate_names'] = ['foo']
+    mocker.patch('app.models.alert.Alert.display_areas', ['foo'])
     mocker.patch('app.models.alerts.Alerts.current_and_public', [Alert(alert_dict)])
 
     html = client_get("alerts/current-alerts")
