@@ -28,7 +28,7 @@ def test_past_alerts_page_shows_alerts(
     alert_dict,
     client_get
 ):
-    alert_dict['areas']['aggregate_names'] = ['foo']
+    mocker.patch('app.models.alert.Alert.display_areas', ['foo'])
     mocker.patch('app.models.alert.Alert.is_public', is_public)
     mocker.patch('app.models.alerts.Alerts.expired', [Alert(alert_dict)])
 
