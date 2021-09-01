@@ -50,7 +50,7 @@
         </h2>
       {% endif %}
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-      {{ alert(alert=past_alert) }}
+      {{ alert(alert=past_alert, heading_level=3) }}
     {% endfor %}
     {% if loop.last %}
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">

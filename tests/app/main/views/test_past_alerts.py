@@ -36,7 +36,7 @@ def test_past_alerts_page_shows_alerts(
     mocker.patch('app.models.alerts.Alerts.expired', [Alert(alert_dict)])
 
     html = client_get("alerts/past-alerts")
-    titles = html.select('h2.alerts-alert__title')
+    titles = html.select('h3.alerts-alert__title')
     link = html.select_one('a.govuk-body')
 
     assert len(titles) == 1
