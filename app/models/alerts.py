@@ -23,7 +23,11 @@ class Alerts(SerialisedModelCollection):
     def expired_grouped_by_date(self):
         alerts_by_date = defaultdict(list)
         for alert in self.expired:
-            alerts_by_date[alert.starts_at_date.as_local_date].append(alert)
+            if alert.is_public or all(
+                already_grouped_alert.is_public
+                for already_grouped_alert in alerts_by_date[alert.starts_at_date.as_local_date]
+            ):
+                alerts_by_date[alert.starts_at_date.as_local_date].append(alert)
         return alerts_by_date.items()
 
     @property
