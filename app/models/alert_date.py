@@ -39,3 +39,7 @@ class AlertDate(object):
     @property
     def as_local_datetime(self):
         return self._local_datetime
+
+    @property
+    def as_local_date(self):
+        return self._local_datetime.date()

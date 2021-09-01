@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import yaml
 from notifications_utils.serialised_model import SerialisedModelCollection
 
@@ -16,6 +18,13 @@ class Alerts(SerialisedModelCollection):
     @property
     def expired(self):
         return [alert for alert in self if alert.is_expired]
+
+    @property
+    def expired_grouped_by_date(self):
+        alerts_by_date = defaultdict(list)
+        for alert in self.expired:
+            alerts_by_date[alert.starts_at_date.as_local_date].append(alert)
+        return alerts_by_date.items()
 
     @property
     def public(self):
