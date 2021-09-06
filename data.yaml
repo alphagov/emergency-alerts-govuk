@@ -105,7 +105,7 @@ alerts:
       To find out more, call 0808 1697692 or search for gov.uk/alerts
     areas:
       aggregate_names:
-        - Reading, Berkshire
+        - Reading
 ### vvv DO NOT DELETE: NOT IN DB vvv ###
   - identifier:
     channel: operator
