@@ -2,6 +2,7 @@ from datetime import date
 
 import pytest
 from dateutil.parser import parse as dt_parse
+from freezegun import freeze_time
 
 from app.models.alert_date import AlertDate
 
@@ -36,3 +37,24 @@ def test_AlertDate_at_midday_and_midnight(hour, minute, expected_lang):
     sample_datetime = dt_parse(f'2021-03-21T{hour}:{minute}:00Z')
     alerts_date = AlertDate(sample_datetime)
     assert alerts_date.as_lang == expected_lang
+
+
+@pytest.mark.parametrize('now, sample, expected_is_today', (
+    # GMT
+    ('2021-01-01T00:00:00Z', '2021-12-31T23:59:59Z', False),
+    ('2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z', True),
+    ('2021-01-01T23:59:59Z', '2021-01-01T00:00:00Z', True),
+    ('2021-01-01T00:00:00Z', '2021-01-01T23:59:59Z', True),
+    ('2021-01-01T23:59:59Z', '2021-01-01T23:59:59Z', True),
+    ('2021-01-01T23:59:59Z', '2021-01-02T00:00:00Z', False),
+    # BST
+    ('2021-05-31T23:00:00Z', '2021-05-31T22:59:59Z', False),
+    ('2021-05-31T23:00:00Z', '2021-05-31T23:00:00Z', True),
+    ('2021-06-01T22:59:59Z', '2021-05-31T23:00:00Z', True),
+    ('2021-05-31T23:00:00Z', '2021-06-01T22:59:59Z', True),
+    ('2021-06-01T22:59:59Z', '2021-06-01T22:59:59Z', True),
+    ('2021-06-01T22:59:59Z', '2021-06-01T23:00:00Z', False),
+))
+def test_AlertDate_is_today(now, sample, expected_is_today):
+    with freeze_time(now):
+        assert AlertDate(dt_parse(sample)).is_today == expected_is_today

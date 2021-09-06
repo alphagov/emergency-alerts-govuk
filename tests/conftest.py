@@ -32,9 +32,26 @@ def create_alert_dict(
     }
 
 
+def create_planned_test_dict(
+    starts_at=None,
+    display_areas=None,
+    content=None,
+):
+    return {
+        'starts_at': starts_at or dt_parse('2021-04-21T11:30:00Z'),
+        'display_areas': display_areas or [],
+        'content': content,
+    }
+
+
 @pytest.fixture()
 def alert_dict():
     return create_alert_dict()
+
+
+@pytest.fixture()
+def planned_test_dict():
+    return create_planned_test_dict()
 
 
 @pytest.fixture(scope='session')

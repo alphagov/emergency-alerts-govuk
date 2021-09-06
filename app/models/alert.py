@@ -6,15 +6,24 @@ from notifications_utils.serialised_model import SerialisedModel
 from app.models.alert_date import AlertDate
 
 
-class Alert(SerialisedModel):
+class BaseAlert(SerialisedModel):
     ALLOWED_PROPERTIES = {
+        'starts_at',
+        'content',
+    }
+
+    @property
+    def starts_at_date(self):
+        return AlertDate(self.starts_at)
+
+
+class Alert(BaseAlert):
+    ALLOWED_PROPERTIES = BaseAlert.ALLOWED_PROPERTIES | {
         'id',
         'channel',
-        'starts_at',
         'approved_at',
         'cancelled_at',
         'finishes_at',
-        'content',
         'areas',
     }
 
@@ -30,10 +39,6 @@ class Alert(SerialisedModel):
             return self.areas["aggregate_names"]
 
         return self.areas.get("names", [])
-
-    @property
-    def starts_at_date(self):
-        return AlertDate(self.starts_at)
 
     @property
     def approved_at_date(self):
@@ -73,3 +78,12 @@ class Alert(SerialisedModel):
             self.expires_date.as_utc_datetime >= now and
             self.approved_at_date.as_utc_datetime <= now
         )
+
+
+class PlannedTest(BaseAlert):
+    ALLOWED_PROPERTIES = BaseAlert.ALLOWED_PROPERTIES | {
+        'display_areas',
+    }
+
+    def __lt__(self, other):
+        return self.starts_at < other.starts_at

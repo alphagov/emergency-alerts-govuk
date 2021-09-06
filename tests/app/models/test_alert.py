@@ -2,8 +2,9 @@ import pytest
 from dateutil.parser import parse as dt_parse
 from freezegun import freeze_time
 
-from app.models.alert import Alert
+from app.models.alert import Alert, PlannedTest
 from app.models.alert_date import AlertDate
+from tests.conftest import create_alert_dict, create_planned_test_dict
 
 
 def test_alert_timestamps_properties_are_AlertDates(alert_dict):
@@ -14,14 +15,26 @@ def test_alert_timestamps_properties_are_AlertDates(alert_dict):
     assert isinstance(alert.starts_at_date, AlertDate)
 
 
-def test_lt_compares_alerts_based_on_start_date(alert_dict):
-    alert_dict_1 = {**alert_dict}
-    alert_dict_2 = {**alert_dict}
+def test_planned_test_timestamps_properties_are_AlertDates(planned_test_dict):
+    planned_test = PlannedTest(planned_test_dict)
+    assert isinstance(planned_test.starts_at_date, AlertDate)
+    assert not hasattr(planned_test, 'approved_at_date')
+    assert not hasattr(planned_test, 'cancelled_at_date')
+    assert not hasattr(planned_test, 'finishes_at_date')
+
+
+@pytest.mark.parametrize('model, fixture', (
+    (Alert, create_alert_dict),
+    (PlannedTest, create_planned_test_dict),
+))
+def test_lt_compares_alerts_based_on_start_date(model, fixture):
+    alert_dict_1 = fixture()
+    alert_dict_2 = fixture()
 
     alert_dict_1['starts_at'] = dt_parse('2021-04-21T11:30:00Z')
     alert_dict_2['starts_at'] = dt_parse('2021-04-21T12:30:00Z')
 
-    assert Alert(alert_dict_1) < Alert(alert_dict_2)
+    assert model(alert_dict_1) < model(alert_dict_2)
 
 
 def test_display_areas_falls_back_to_granular_names(alert_dict):
@@ -35,6 +48,21 @@ def test_display_areas_falls_back_to_granular_names(alert_dict):
 
     del alert_dict['areas']['names']
     assert Alert(alert_dict).display_areas == []
+
+
+def test_planned_test_only_has_display_areas():
+    assert PlannedTest(
+        create_planned_test_dict()
+    ).display_areas == []
+
+    assert PlannedTest(
+        create_planned_test_dict(display_areas=['a', 'b'])
+    ).display_areas == ['a', 'b']
+
+    assert not hasattr(
+        PlannedTest(create_planned_test_dict()),
+        'areas',
+    )
 
 
 def test_expires_date_returns_earliest_expiry_time(alert_dict):
@@ -104,7 +132,8 @@ def test_is_current_and_public(is_current, is_public, is_current_and_public, moc
 @pytest.mark.parametrize('channel,is_public', [
     ['severe', True],
     ['government', True],
-    ['operator', False]
+    ['operator', False],
+    ['test', False]
 ])
 def test_is_public(channel, is_public, alert_dict):
     alert_dict['channel'] = channel
