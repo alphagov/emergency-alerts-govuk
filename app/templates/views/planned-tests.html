@@ -38,14 +38,15 @@
       <h1 class="govuk-heading-xl">
         {{ pageTitle }}
       </h1>
+      {#
       <h2 class="govuk-heading-m govuk-!-margin-top-6">
-        Friday 10 September 2021
+        [day of week] [day of month] [month] [year]
       </h2>
       <p class="govuk-body">
-        Some mobile phone networks in the UK will test emergency alerts between 11am and 2pm.
+        Some mobile phone networks in the UK will test emergency alerts between [start hour]am and [end hour]pm.
       </p>
       <p class="govuk-body">
-        Most phones and tablets will not get a test alert. A small number of people may receive 2.
+        Most phones and tablets will not get a test alert.
       </p>
       <p class="govuk-body">
         Find out more <a class="govuk-link" href="/alerts/mobile-network-operator-tests">about mobile network operator tests</a>.
@@ -58,14 +59,13 @@
           This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
         </p>
       </div>
-      {#
+      #}
       <p class="govuk-body">
         There are currently no planned tests of emergency alerts.
       </p>
       <p class="govuk-body">
         You can see previous tests on the <a class="govuk-link" href="/alerts/past-alerts">past alerts page</a>.
       </p>
-      #}
     </div>
   </div>
 {% endblock %}
