@@ -178,6 +178,23 @@ alerts:
     areas:
       aggregate_names:
         - East Suffolk
+  - identifier: 25-may-2021
+    channel: severe
+    approved_at: 2021-05-25T13:00:14+01:00
+    starts_at: 2021-05-25T13:00:14+01:00
+    cancelled_at: 2021-05-25T13:20:05+01:00
+    finishes_at: 2021-05-25T17:00:14+01:00
+    content: |
+      The UK government is testing Emergency Alerts in East Suffolk.
+
+      Emergency alerts tell you what to do if there’s a life-threatening event nearby.
+
+      To find out more, call 0808 1697692 or search for gov.uk/alerts
+    areas:
+      simple_polygons: [[[52.22035, 1.58242], [52.19521, 1.58491], [52.19325, 1.59971], [52.19372, 1.62352], [52.21901, 1.62599], [52.22035, 1.58242]]]
+      aggregate_names:
+        - East Suffolk
+### ^^^ REMOVE BELOW AFTER REDIRECTS LAMBDA IS DEPLOYED ^^^ ###
   - identifier: 3-may-2021
     channel: severe
     approved_at: 2021-05-25T13:00:14+01:00
