@@ -1,6 +1,24 @@
 alerts:
   - identifier:
     channel: operator
+    approved_at: 2021-09-17T11:00:00+01:00
+    starts_at: 2021-09-17T11:00:00+01:00
+    cancelled_at: 2021-09-17T11:15:00+01:00
+    finishes_at: 2021-09-17T11:15:00+01:00
+    content: |
+      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
+    areas: {}
+  - identifier:
+    channel: operator
+    approved_at: 2021-09-17T10:00:00+01:00
+    starts_at: 2021-09-17T10:00:00+01:00
+    cancelled_at: 2021-09-17T10:15:00+01:00
+    finishes_at: 2021-09-17T10:15:00+01:00
+    content: |
+      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
+    areas: {}
+  - identifier:
+    channel: operator
     approved_at: 2021-09-10T13:00:00+01:00
     starts_at: 2021-09-10T13:00:00+01:00
     cancelled_at: 2021-09-10T14:00:00+01:00
