@@ -152,7 +152,6 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-    general_area_names:
   - identifier:
     channel: operator
     approved_at: 2021-06-18T00:00:00+01:00
