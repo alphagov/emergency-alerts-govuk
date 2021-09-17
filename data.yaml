@@ -1,5 +1,6 @@
 alerts:
-  - identifier:
+  - id: fe805da8-44b5-4874-bf90-6a64a6749ae5
+    identifier:
     channel: operator
     approved_at: 2021-09-29T13:30:00+01:00
     starts_at: 2021-09-29T13:30:00+01:00
@@ -8,7 +9,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: 43bb7b38-0925-4cbe-98c9-b9988971840e
+    identifier:
     channel: operator
     approved_at: 2021-09-29T13:00:00+01:00
     starts_at: 2021-09-29T13:00:00+01:00
@@ -17,7 +19,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: 4d75bee2-ef55-4b00-ac75-a56839fab836
+    identifier:
     channel: operator
     approved_at: 2021-09-17T11:00:00+01:00
     starts_at: 2021-09-17T11:00:00+01:00
@@ -26,7 +29,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: 96e869ae-1ec6-45bf-9d57-a627c1117b35
+    identifier:
     channel: operator
     approved_at: 2021-09-17T10:00:00+01:00
     starts_at: 2021-09-17T10:00:00+01:00
@@ -35,7 +39,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: 5a46ad1b-f510-445a-abf9-39e51ac66b8a
+    identifier:
     channel: operator
     approved_at: 2021-09-10T13:00:00+01:00
     starts_at: 2021-09-10T13:00:00+01:00
@@ -44,7 +49,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: 93ae69e6-c8ed-47d5-a691-80d2a5742bc8
+    identifier:
     channel: operator
     approved_at: 2021-09-10T11:05:00+01:00
     starts_at: 2021-09-10T11:05:00+01:00
@@ -53,7 +59,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: 5026e084-8c94-4fbe-9dfd-8f6888a69ea1
+    identifier:
     channel: operator
     approved_at: 2021-09-09T10:15:00+01:00
     starts_at: 2021-09-09T10:15:00+01:00
@@ -62,7 +69,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: f0b071fb-2083-4c93-a977-94fdb3f55680
+    identifier:
     channel: operator
     approved_at: 2021-09-09T10:00:00+01:00
     starts_at: 2021-09-09T10:00:00+01:00
@@ -71,7 +79,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: b1e5298f-ae4a-4e37-abd6-179527447669
+    identifier:
     channel: operator
     approved_at: 2021-08-24T13:04:38+01:00
     starts_at: 2021-08-24T13:04:38+01:00
@@ -80,7 +89,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: 67d8136c-e20c-4e3f-910c-957c54f19cb4
+    identifier:
     channel: operator
     approved_at: 2021-08-24T13:04:38+01:00
     starts_at: 2021-08-24T13:04:38+01:00
@@ -89,7 +99,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: ae8e3f17-3434-4557-8551-d54cee12007c
+    identifier:
     channel: operator
     approved_at: 2021-08-24T13:04:38+01:00
     starts_at: 2021-08-24T13:04:38+01:00
@@ -98,7 +109,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: 4c419ff4-8c74-46d9-89f3-141e65fa2693
+    identifier:
     channel: operator
     approved_at: 2021-08-24T13:04:38+01:00
     starts_at: 2021-08-24T13:04:38+01:00
@@ -107,7 +119,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: 90677eb9-3512-4c32-afc1-72ddf3d72cc7
+    identifier:
     channel: operator
     approved_at: 2021-08-05T13:02:40+01:00
     starts_at: 2021-08-05T13:02:40+01:00
@@ -116,7 +129,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: 7e3a9b37-e6b7-43ee-88e1-fd9ab9d14606
+    identifier:
     channel: operator
     approved_at: 2021-07-28T13:04:38+01:00
     starts_at: 2021-07-28T13:04:38+01:00
@@ -125,7 +139,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: 19aefcd7-93e1-4fe1-b25a-cd1f0caa1655
+    identifier:
     channel: operator
     approved_at: 2021-07-16T13:00:27+01:00
     starts_at: 2021-07-16T13:00:27+01:00
@@ -134,7 +149,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: c4eba1cc-92d9-49eb-9ece-2c45b2483c41
+    identifier:
     channel: operator
     approved_at: 2021-07-14T13:00:18+01:00
     starts_at: 2021-07-14T13:00:18+01:00
@@ -143,7 +159,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: b666c792-7abb-4992-a7d7-799d2118c65f
+    identifier:
     channel: operator
     approved_at: 2021-07-09T12:58:58+01:00
     starts_at: 2021-07-09T12:58:58+01:00
@@ -153,7 +170,8 @@ alerts:
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
 ### vvv DO NOT DELETE: NOT IN DB vvv ###
-  - identifier:
+  - id: 7f1b6b19-7c42-4f10-9e42-f314c168e937
+    identifier:
     channel: operator
     approved_at: 2021-07-02T00:00:00+01:00
     starts_at: 2021-07-02T10:00:00+01:00
@@ -163,7 +181,8 @@ alerts:
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
 ### ^^^ DO NOT DELETE: NOT IN DB ^^^ ###
-  - identifier: 29-jun-2021
+  - id: 32ac31f6-0894-4c3e-a27c-8c0bda5e5cb0
+    identifier: 29-jun-2021
     channel: severe
     approved_at: 2021-06-29T13:00:12+01:00
     starts_at: 2021-06-29T13:00:12+01:00
@@ -179,7 +198,8 @@ alerts:
       aggregate_names:
         - Reading
 ### vvv DO NOT DELETE: NOT IN DB vvv ###
-  - identifier:
+  - id: 52499a28-c5ca-492c-ba3c-d7ac820b06cf
+    identifier:
     channel: operator
     approved_at: 2021-06-22T00:00:00+01:00
     starts_at: 2021-06-22T00:00:00+01:00
@@ -188,7 +208,8 @@ alerts:
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-  - identifier:
+  - id: 2c9d12c1-53fc-4ae2-86b9-6d9fb1ec61dc
+    identifier:
     channel: operator
     approved_at: 2021-06-18T00:00:00+01:00
     starts_at: 2021-06-18T00:00:00+01:00
@@ -198,7 +219,8 @@ alerts:
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
 ### ^^^ DO NOT DELETE: NOT IN DB ^^^ ###
-  - identifier: 25-may-2021-2
+  - id: 7aa6f98d-2611-47b8-a25b-b8f8621b0761
+    identifier: 25-may-2021-2
     channel: government
     approved_at: 2021-05-25T13:30:16+01:00
     starts_at: 2021-05-25T13:30:16+01:00
@@ -213,7 +235,8 @@ alerts:
     areas:
       aggregate_names:
         - East Suffolk
-  - identifier: 25-may-2021
+  - id: 4d16d92f-987f-4dff-8df6-aa762f77223d
+    identifier: 25-may-2021
     channel: severe
     approved_at: 2021-05-25T13:00:14+01:00
     starts_at: 2021-05-25T13:00:14+01:00
