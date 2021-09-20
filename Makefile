@@ -77,6 +77,11 @@ cf-deploy: cf-target ## Deploys the app to Cloud Foundry
 cf-run-task-publish: cf-target
 	cf run-task notify-govuk-alerts -c 'flask publish'
 
+.PHONY: preview
+preview: ## Set environment to preview
+	$(eval export DEPLOY_ENV=preview)
+	@true
+
 .PHONY: staging
 staging: ## Set environment to staging
 	$(eval export DEPLOY_ENV=staging)
