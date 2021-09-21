@@ -2,10 +2,9 @@
 
 Website for emergency alerts, hosted under /alerts on GOV.UK.
 
-- [Preview (in GOV.UK Integration)](https://www.integration.publishing.service.gov.uk/alerts)
+- [Preview (in GOV.UK Integration)](https://www.integration.publishing.service.gov.uk/alerts) (ask in Slack for credentials)
+- [Staging (in GOV.UK Staging)](https://www.staging.publishing.service.gov.uk/alerts) (needs VPN)
 - [Live (gov.uk/alerts)](https://www.gov.uk/alerts)
-
-Note that [GOV.UK Staging](https://www.staging.publishing.service.gov.uk/alerts) also points at the Preview version, but this doesn't seem to work reliably.
 
 ## Setting up
 
