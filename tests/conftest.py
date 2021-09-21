@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 
 import pytest
@@ -11,6 +12,7 @@ from app.models.alerts import Alerts
 @pytest.fixture()
 def alert_dict():
     return {
+        'id': str(uuid.UUID(int=0)),
         'headline': 'Emergency alert',
         'content': 'Something',
         'areas': dict(),
