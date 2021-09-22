@@ -4,6 +4,7 @@ from jinja2 import (
     FileSystemLoader,
     PackageLoader,
     PrefixLoader,
+    contextfilter,
 )
 from notifications_utils.formatters import formatted_list
 
@@ -15,6 +16,12 @@ VIEWS = TEMPLATES / 'views'
 all_view_paths = [
     str(path.relative_to(VIEWS)) for path in VIEWS.glob('*.html')
 ]
+
+
+@contextfilter
+def jinja_filter_get_url_for_alert(jinja_context, alert):
+    alerts = jinja_context['alerts']
+    return get_url_for_alert(alert, alerts)
 
 
 def get_url_for_alert(alert, alerts):
@@ -59,6 +66,7 @@ def setup_jinja_environment(alerts):
     env.filters['file_fingerprint'] = file_fingerprint
     env.filters['formatted_list'] = formatted_list
     env.filters['paragraphize'] = paragraphize
+    env.filters['get_url_for_alert'] = jinja_filter_get_url_for_alert
     env.globals = {
         'font_paths': [
             item.relative_to(DIST)
@@ -81,7 +89,8 @@ def get_rendered_pages(alerts):
         # render each individual alert's page
         if target == 'alert':
             for alert in alerts.public:
-                rendered["alerts/" + alert.identifier] = template.render({'alert_data': alert})
+                alert_url = get_url_for_alert(alert, alerts)
+                rendered["alerts/" + alert_url] = template.render({'alert_data': alert})
             continue
 
         if target == 'index':

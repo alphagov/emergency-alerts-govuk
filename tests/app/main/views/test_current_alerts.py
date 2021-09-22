@@ -1,4 +1,5 @@
-from app.models.alert import Alert
+
+from app.models.alerts import Alerts
 
 
 def test_current_alerts_page(client_get):
@@ -12,7 +13,8 @@ def test_current_alerts_page_shows_alerts(
     mocker,
 ):
     mocker.patch('app.models.alert.Alert.display_areas', ['foo'])
-    mocker.patch('app.models.alerts.Alerts.current_and_public', [Alert(alert_dict)])
+    mocker.patch('app.models.alert.Alert.is_current_and_public', return_value=True)
+    mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([alert_dict]))
 
     html = client_get("alerts/current-alerts")
     titles = html.select('h2.alerts-alert__title')
