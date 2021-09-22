@@ -9,7 +9,6 @@ from app.models.alert_date import AlertDate
 class Alert(SerialisedModel):
     ALLOWED_PROPERTIES = {
         'id',
-        'identifier',
         'channel',
         'starts_at',
         'approved_at',
