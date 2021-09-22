@@ -60,6 +60,7 @@ def client_get(govuk_alerts, mocker):
     def _do_get(path):
         with govuk_alerts.test_client() as client:
             response = client.get(path)
+            assert response.status_code == 200, f'{path} returned {response.status_code}'
             html_text = response.data.decode('utf-8')
             return BeautifulSoup(html_text, 'html.parser')
 
