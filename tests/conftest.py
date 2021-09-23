@@ -18,7 +18,8 @@ def create_alert_dict(
     channel=None,
     starts_at=None,
     approved_at=None,
-    cancelled_at=None,
+    # -1 is a sentinel value, so None can be passed in
+    cancelled_at=-1,
     finishes_at=None,
 ):
     return {
@@ -29,7 +30,7 @@ def create_alert_dict(
         'channel': channel or 'severe',
         'starts_at': starts_at or datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
         'approved_at': approved_at or datetime(2021, 4, 21, 11, 25, tzinfo=pytz.utc),
-        'cancelled_at': cancelled_at or datetime(2021, 4, 21, 12, 30, tzinfo=pytz.utc),
+        'cancelled_at': cancelled_at if cancelled_at != -1 else datetime(2021, 4, 21, 12, 30, tzinfo=pytz.utc),
         'finishes_at': finishes_at or datetime(2021, 4, 21, 15, 30, tzinfo=pytz.utc)
     }
 
