@@ -57,5 +57,6 @@ To run a specific JavaScript test, you'll need to copy the full command from `pa
 
 ## Further documentation
 
-- [Image optimisation](docs/image-optimisation.md)
 - [Architecture](docs/architecture.md)
+- [Image optimisation](docs/image-optimisation.md)
+- [Setting up redirects](docs/redirects.md)
