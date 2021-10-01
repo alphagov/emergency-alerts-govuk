@@ -178,21 +178,6 @@ alerts:
     areas:
       aggregate_names:
         - Reading
-  - identifier: 29-june-2021
-    channel: severe
-    approved_at: 2021-06-29T13:00:12+01:00
-    starts_at: 2021-06-29T13:00:12+01:00
-    cancelled_at: 2021-06-29T14:01:19+01:00
-    finishes_at: 2021-06-29T17:00:12+01:00
-    content: |
-      The UK government is testing Emergency Alerts in Reading, Berkshire.
-
-      Emergency alerts tell you what to do if there’s a life-threatening event nearby.
-
-      To find out more, call 0808 1697692 or search for gov.uk/alerts
-    areas:
-      aggregate_names:
-        - Reading
 ### vvv DO NOT DELETE: NOT IN DB vvv ###
   - identifier:
     channel: operator
