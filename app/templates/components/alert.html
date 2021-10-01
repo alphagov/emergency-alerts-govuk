@@ -1,17 +1,17 @@
 {%- from "components/alerts_icon.html" import alerts_icon -%}
 
-{% macro alert(alert) %}
+{% macro alert(alert, heading_level=2) %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <div class="alerts-icon__container alerts-icon__container--48">
         {{ alerts_icon(height=48, alert_active=alert.is_current) }}
-        <h2 class="alerts-alert__title govuk-heading-s govuk-!-margin-bottom-3">
+        <h{{ heading_level }} class="alerts-alert__title govuk-heading-s govuk-!-margin-bottom-3">
           {% if alert.is_public %}
             <span class="govuk-visually-hidden">Emergency alert sent to </span>{{ alert.display_areas | formatted_list(before_each='', after_each='') }}
           {% else %}
             Mobile network operator test
           {% endif %}
-        </h2>
+        </h{{ heading_level }}>
         {{ alert.content | paragraphize }}
         {% if alert.is_public %}
           <a href="/alerts/{{ alert.identifier }}" class="govuk-link govuk-body">
