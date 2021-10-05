@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import pytest
-import pytz
 from freezegun import freeze_time
 
 from app.models.alert import Alert
@@ -49,11 +48,11 @@ def test_expires_date_returns_earliest_expiry_time(alert_dict):
 
 
 @pytest.mark.parametrize('expiry_date,is_expired', [
-    [datetime(2021, 4, 21, 9, 30, tzinfo=pytz.utc), True],
-    [datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc), False],
+    [datetime(2021, 4, 21, 9, 30), True],
+    [datetime(2021, 4, 21, 11, 0), False],
 ])
 @freeze_time(datetime(
-    2021, 4, 21, 10, 30, tzinfo=pytz.utc
+    2021, 4, 21, 10, 30
 ))
 def test_is_expired_alert_checks_if_alert_is_expired(
     expiry_date,
@@ -66,23 +65,23 @@ def test_is_expired_alert_checks_if_alert_is_expired(
 
 @pytest.mark.parametrize('approved_at_date,expiry_date,is_current', [
     [
-        datetime(2021, 4, 21, 9, 30, tzinfo=pytz.utc),
-        datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
+        datetime(2021, 4, 21, 9, 30),
+        datetime(2021, 4, 21, 11, 30),
         True
     ],
     [
-        datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc),
-        datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
+        datetime(2021, 4, 21, 11, 0),
+        datetime(2021, 4, 21, 11, 30),
         False
     ],
     [
-        datetime(2021, 4, 21, 9, 0, tzinfo=pytz.utc),
-        datetime(2021, 4, 21, 10, 0, tzinfo=pytz.utc),
+        datetime(2021, 4, 21, 9, 0),
+        datetime(2021, 4, 21, 10, 0),
         False
     ],
 ])
 @freeze_time(datetime(
-    2021, 4, 21, 10, 30, tzinfo=pytz.utc
+    2021, 4, 21, 10, 30
 ))
 def test_is_current_alert_checks_if_alert_is_current(
     approved_at_date,

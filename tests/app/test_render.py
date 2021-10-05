@@ -3,7 +3,6 @@ from datetime import datetime
 from uuid import UUID
 
 import pytest
-import pytz
 
 from app.models.alert import Alert
 from app.models.alerts import Alerts
@@ -31,13 +30,12 @@ def test_get_url_for_alert_doesnt_return_non_public_alerts():
     (4, '22-apr-2021'),
 ])
 def test_get_url_for_alert_returns_url_with_count_for_alerts_on_same_day(index, expected_url):
-    # TODO: this should work without tzinfo=pytz.utc
     the_days_alerts = [
-        create_alert_dict(id=UUID(int=0), starts_at=datetime(2021, 4, 20, 22, 59, tzinfo=pytz.utc)),
-        create_alert_dict(id=UUID(int=1), starts_at=datetime(2021, 4, 20, 23, 00, tzinfo=pytz.utc)),
-        create_alert_dict(id=UUID(int=2), starts_at=datetime(2021, 4, 21, 12, 31, tzinfo=pytz.utc)),
-        create_alert_dict(id=UUID(int=3), starts_at=datetime(2021, 4, 21, 12, 31, tzinfo=pytz.utc)),
-        create_alert_dict(id=UUID(int=4), starts_at=datetime(2021, 4, 21, 23, 00, tzinfo=pytz.utc)),
+        create_alert_dict(id=UUID(int=0), starts_at=datetime(2021, 4, 20, 22, 59)),
+        create_alert_dict(id=UUID(int=1), starts_at=datetime(2021, 4, 20, 23, 00)),
+        create_alert_dict(id=UUID(int=2), starts_at=datetime(2021, 4, 21, 12, 31)),
+        create_alert_dict(id=UUID(int=3), starts_at=datetime(2021, 4, 21, 12, 31)),
+        create_alert_dict(id=UUID(int=4), starts_at=datetime(2021, 4, 21, 23, 00)),
     ]
 
     alerts = Alerts(the_days_alerts)
@@ -67,8 +65,8 @@ def test_get_url_for_alert_consistently_sorts_by_id():
 
 def test_get_url_for_alert_skips_non_public_alerts():
     the_days_alerts = [
-        create_alert_dict(starts_at=datetime(2021, 4, 21, 12, 00, tzinfo=pytz.utc), channel='operator'),
-        create_alert_dict(starts_at=datetime(2021, 4, 21, 13, 00, tzinfo=pytz.utc), channel='severe'),
+        create_alert_dict(starts_at=datetime(2021, 4, 21, 12, 00), channel='operator'),
+        create_alert_dict(starts_at=datetime(2021, 4, 21, 13, 00), channel='severe'),
     ]
 
     alerts = Alerts(the_days_alerts)

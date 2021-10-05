@@ -2,7 +2,6 @@ from datetime import datetime
 from uuid import UUID
 
 import pytest
-import pytz
 
 from app.models.alerts import Alerts
 from tests.conftest import create_alert_dict
@@ -51,12 +50,12 @@ def test_past_alerts_page_groups_by_date(
     client_get,
 ):
     alerts = [
-        create_alert_dict(id=UUID(int=1), content='Something 1', starts_at=datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc)),  # noqa
-        create_alert_dict(id=UUID(int=2), content='Something 1', starts_at=datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc)),  # noqa
-        create_alert_dict(id=UUID(int=3), content='Something 2', starts_at=datetime(2021, 4, 22, 0, 0, tzinfo=pytz.utc)),  # noqa
-        create_alert_dict(id=UUID(int=4), content='Something 3', starts_at=datetime(2021, 4, 22, 22, 59, tzinfo=pytz.utc)),  # noqa
-        create_alert_dict(id=UUID(int=5), channel='operator', starts_at=datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc), content='Operator test'),  # noqa
-        create_alert_dict(id=UUID(int=6), channel='operator', starts_at=datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc), content='Operator test'),  # noqa
+        create_alert_dict(id=UUID(int=1), content='Something 1', starts_at=datetime(2021, 4, 21, 11, 0)),
+        create_alert_dict(id=UUID(int=2), content='Something 1', starts_at=datetime(2021, 4, 21, 11, 0)),
+        create_alert_dict(id=UUID(int=3), content='Something 2', starts_at=datetime(2021, 4, 22, 0, 0)),
+        create_alert_dict(id=UUID(int=4), content='Something 3', starts_at=datetime(2021, 4, 22, 22, 59)),
+        create_alert_dict(id=UUID(int=5), channel='operator', starts_at=datetime(2021, 4, 21, 11, 0), content='Operator test'),  # noqa
+        create_alert_dict(id=UUID(int=6), channel='operator', starts_at=datetime(2021, 4, 21, 11, 0), content='Operator test'),  # noqa
     ]
     # set all alerts to cancelled so they show in past alerts
     for alert in alerts:
