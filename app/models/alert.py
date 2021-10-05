@@ -8,7 +8,7 @@ from app.models.alert_date import AlertDate
 
 class Alert(SerialisedModel):
     ALLOWED_PROPERTIES = {
-        'identifier',
+        'id',
         'channel',
         'starts_at',
         'approved_at',
@@ -19,7 +19,10 @@ class Alert(SerialisedModel):
     }
 
     def __lt__(self, other):
-        return self.starts_at < other.starts_at
+        return (self.starts_at, self.id) < (other.starts_at, other.id)
+
+    def __eq__(self, other):
+        return self.id == other.id
 
     @property
     def display_areas(self):

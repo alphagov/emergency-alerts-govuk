@@ -14,7 +14,7 @@
   {{ metaTags(
     description=alert_data.content,
     title=pageTitle,
-    url="https://www.gov.uk/alerts/" ~ alert_data.identifier
+    url="https://www.gov.uk/alerts/" ~ ( alert_data | get_url_for_alert)
   ) }}
 {% endblock %}
 
@@ -80,7 +80,7 @@
   {% set sharingContent %}
     <div class="share-url">
       <p class="govuk-body">
-        https://www.gov.uk/alerts/{{ alert_data.identifier }}
+        https://www.gov.uk/alerts/{{ alert_data | get_url_for_alert }}
       </p>
     </div>
   {% endset %}

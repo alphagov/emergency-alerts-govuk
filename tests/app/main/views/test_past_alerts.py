@@ -1,9 +1,11 @@
 from datetime import datetime
+from uuid import UUID
 
 import pytest
 import pytz
 
-from app.models.alert import Alert
+from app.models.alerts import Alerts
+from tests.conftest import create_alert_dict
 
 
 def test_past_alerts_page(client_get):
@@ -33,7 +35,7 @@ def test_past_alerts_page_shows_alerts(
 ):
     mocker.patch('app.models.alert.Alert.display_areas', ['foo'])
     mocker.patch('app.models.alert.Alert.is_public', is_public)
-    mocker.patch('app.models.alerts.Alerts.expired', [Alert(alert_dict)])
+    mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([alert_dict]))
 
     html = client_get("alerts/past-alerts")
     titles = html.select('h3.alerts-alert__title')
@@ -46,31 +48,21 @@ def test_past_alerts_page_shows_alerts(
 
 def test_past_alerts_page_groups_by_date(
     mocker,
-    alert_dict,
     client_get,
 ):
-    alert_dict_2 = alert_dict.copy()
-    alert_dict_3 = alert_dict.copy()
-    alert_dict_4 = alert_dict.copy()
+    alerts = [
+        create_alert_dict(id=UUID(int=1), content='Something 1', starts_at=datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc)),  # noqa
+        create_alert_dict(id=UUID(int=2), content='Something 1', starts_at=datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc)),  # noqa
+        create_alert_dict(id=UUID(int=3), content='Something 2', starts_at=datetime(2021, 4, 22, 0, 0, tzinfo=pytz.utc)),  # noqa
+        create_alert_dict(id=UUID(int=4), content='Something 3', starts_at=datetime(2021, 4, 22, 22, 59, tzinfo=pytz.utc)),  # noqa
+        create_alert_dict(id=UUID(int=5), channel='operator', starts_at=datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc), content='Operator test'),  # noqa
+        create_alert_dict(id=UUID(int=6), channel='operator', starts_at=datetime(2021, 4, 21, 11, 0, tzinfo=pytz.utc), content='Operator test'),  # noqa
+    ]
+    # set all alerts to cancelled so they show in past alerts
+    for alert in alerts:
+        alert['cancelled_at'] = alert['starts_at']
 
-    alert_dict_2['starts_at'] = datetime(2021, 4, 22, 0, 0, tzinfo=pytz.utc)
-    alert_dict_2['content'] = 'Something 2'
-
-    alert_dict_3['starts_at'] = datetime(2021, 4, 22, 22, 59, tzinfo=pytz.utc)
-    alert_dict_3['content'] = 'Something 3'
-
-    alert_dict_4['channel'] = 'operator'
-    alert_dict_4['content'] = 'Operator test'
-
-    mocker.patch('app.models.alert.Alert.display_areas', ['foo'])
-    mocker.patch('app.models.alerts.Alerts.expired', [
-        Alert(alert_dict),
-        Alert(alert_dict),
-        Alert(alert_dict_2),
-        Alert(alert_dict_3),
-        Alert(alert_dict_4),
-        Alert(alert_dict_4),
-    ])
+    mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts(alerts))
 
     html = client_get("alerts/past-alerts")
     titles_and_paragraphs = html.select('main h2.govuk-heading-m, main p.govuk-body-l')
@@ -81,9 +73,9 @@ def test_past_alerts_page_groups_by_date(
         'Something 3',
         'Something 2',
         'Wednesday 21 April 2021',
-        # Multiple public alerts are shown individually
-        'Something',
-        'Something',
         # Multiple non-public alerts on the same day are combined into one
         'Operator test',
+        # Multiple public alerts are shown individually
+        'Something 1',
+        'Something 1',
     ]

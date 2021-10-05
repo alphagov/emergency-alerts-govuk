@@ -14,7 +14,7 @@
         </h{{ heading_level }}>
         {{ alert.content | paragraphize }}
         {% if alert.is_public %}
-          <a href="/alerts/{{ alert.identifier }}" class="govuk-link govuk-body">
+          <a href="/alerts/{{ alert | get_url_for_alert }}" class="govuk-link govuk-body">
             More information about this alert
             <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
           </a>
