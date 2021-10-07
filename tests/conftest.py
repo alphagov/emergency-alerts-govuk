@@ -2,7 +2,6 @@ import uuid
 from datetime import datetime
 
 import pytest
-import pytz
 from bs4 import BeautifulSoup
 
 from app import create_app
@@ -28,10 +27,10 @@ def create_alert_dict(
         'content': content or 'Something',
         'areas': areas or dict(),
         'channel': channel or 'severe',
-        'starts_at': starts_at or datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
-        'approved_at': approved_at or datetime(2021, 4, 21, 11, 25, tzinfo=pytz.utc),
-        'cancelled_at': cancelled_at if cancelled_at != -1 else datetime(2021, 4, 21, 12, 30, tzinfo=pytz.utc),
-        'finishes_at': finishes_at or datetime(2021, 4, 21, 15, 30, tzinfo=pytz.utc)
+        'starts_at': starts_at or datetime(2021, 4, 21, 11, 30),
+        'approved_at': approved_at or datetime(2021, 4, 21, 11, 25),
+        'cancelled_at': cancelled_at if cancelled_at != -1 else datetime(2021, 4, 21, 12, 30),
+        'finishes_at': finishes_at or datetime(2021, 4, 21, 15, 30)
     }
 
 

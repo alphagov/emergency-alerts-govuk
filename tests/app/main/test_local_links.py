@@ -3,7 +3,6 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import pytest
-import pytz
 from freezegun import freeze_time
 
 from app.models.alerts import Alerts
@@ -37,17 +36,17 @@ def test_local_links_lead_to_existing_routes_in_pages_with_no_alerts(client_get)
 
 @pytest.mark.parametrize("alert_timings", [
     {  # current alert
-        "starts_at": datetime(2021, 4, 21, 11, 25, tzinfo=pytz.utc),
-        "approved_at": datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc),
-        "cancelled_at": datetime(2021, 4, 21, 12, 30, tzinfo=pytz.utc)
+        "starts_at": datetime(2021, 4, 21, 11, 25),
+        "approved_at": datetime(2021, 4, 21, 11, 30),
+        "cancelled_at": datetime(2021, 4, 21, 12, 30)
     },
     {  # past alert
-        "starts_at": datetime(2021, 4, 20, 11, 25, tzinfo=pytz.utc),
-        "approved_at": datetime(2021, 4, 20, 11, 30, tzinfo=pytz.utc),
-        "cancelled_at": datetime(2021, 4, 20, 12, 30, tzinfo=pytz.utc)
+        "starts_at": datetime(2021, 4, 20, 11, 25),
+        "approved_at": datetime(2021, 4, 20, 11, 30),
+        "cancelled_at": datetime(2021, 4, 20, 12, 30)
     }
 ])
-@freeze_time(datetime(2021, 4, 21, 11, 30, tzinfo=pytz.utc))
+@freeze_time(datetime(2021, 4, 21, 11, 30))
 def test_local_links_lead_to_existing_routes_in_pages_with_alerts(
     client_get,
     alert_dict,

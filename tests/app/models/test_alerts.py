@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import pytest
-import pytz
 import yaml
 from freezegun import freeze_time
 
@@ -11,7 +10,7 @@ from app.models.alerts import Alerts
 
 
 @freeze_time(datetime(
-    2021, 4, 21, 11, 30, tzinfo=pytz.utc
+    2021, 4, 21, 11, 30
 ))
 def test_from_yaml_loads_data(tmp_path, alert_dict):
     sample_yaml = yaml.dump({
@@ -42,15 +41,15 @@ def test_from_yaml_filters_areas(tmp_path, alert_dict, mocker):
 
 
 @freeze_time(datetime(
-    2021, 4, 21, 11, 30, tzinfo=pytz.utc
+    2021, 4, 21, 11, 30
 ))
 def test_last_updated(alert_dict):
     alert_dict['starts_at'] = datetime(
-        2021, 4, 21, 11, 10, tzinfo=pytz.utc
+        2021, 4, 21, 11, 10
     )
     alert_dict_2 = alert_dict.copy()
     alert_dict_2['starts_at'] = datetime(
-        2021, 4, 21, 11, 20, tzinfo=pytz.utc
+        2021, 4, 21, 11, 20
     )
 
     alerts = Alerts([alert_dict, alert_dict_2])
