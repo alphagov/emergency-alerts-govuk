@@ -74,37 +74,37 @@ alerts:
     areas: {}
   - id: b1e5298f-ae4a-4e37-abd6-179527447669
     channel: operator
-    approved_at: 2021-08-24T12:04:38
-    starts_at: 2021-08-24T12:04:38
-    cancelled_at: 2021-08-24T12:17:43
-    finishes_at: 2021-08-24T16:04:38
+    approved_at: 2021-08-23T12:04:38
+    starts_at: 2021-08-23T12:04:38
+    cancelled_at: 2021-08-23T12:17:43
+    finishes_at: 2021-08-23T16:04:38
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
   - id: 67d8136c-e20c-4e3f-910c-957c54f19cb4
     channel: operator
-    approved_at: 2021-08-24T12:04:38
-    starts_at: 2021-08-24T12:04:38
-    cancelled_at: 2021-08-24T12:17:43
-    finishes_at: 2021-08-24T16:04:38
+    approved_at: 2021-08-23T12:04:38
+    starts_at: 2021-08-23T12:04:38
+    cancelled_at: 2021-08-23T12:17:43
+    finishes_at: 2021-08-23T16:04:38
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
   - id: ae8e3f17-3434-4557-8551-d54cee12007c
     channel: operator
-    approved_at: 2021-08-24T12:04:38
-    starts_at: 2021-08-24T12:04:38
-    cancelled_at: 2021-08-24T12:17:43
-    finishes_at: 2021-08-24T16:04:38
+    approved_at: 2021-08-23T12:04:38
+    starts_at: 2021-08-23T12:04:38
+    cancelled_at: 2021-08-23T12:17:43
+    finishes_at: 2021-08-23T16:04:38
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
   - id: 4c419ff4-8c74-46d9-89f3-141e65fa2693
     channel: operator
-    approved_at: 2021-08-24T12:04:38
-    starts_at: 2021-08-24T12:04:38
-    cancelled_at: 2021-08-24T12:17:43
-    finishes_at: 2021-08-24T16:04:38
+    approved_at: 2021-08-23T12:04:38
+    starts_at: 2021-08-23T12:04:38
+    cancelled_at: 2021-08-23T12:17:43
+    finishes_at: 2021-08-23T16:04:38
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
