@@ -1,11 +1,12 @@
 import pytest
 
+from app.models.alert import Alert
 from app.models.alerts import Alerts
 
 
 @pytest.fixture()
 def alerts():
-    return Alerts.from_yaml()
+    return [Alert(alert_dict) for alert_dict in Alerts.from_yaml()]
 
 
 def test_alert_sent_before_starts_before_expires(alerts):
