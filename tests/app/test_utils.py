@@ -10,7 +10,7 @@ from app.utils import (
     file_fingerprint,
     is_in_uk,
     paragraphize,
-    purge_cache,
+    purge_fastly_cache,
     upload_to_s3,
 )
 
@@ -65,13 +65,13 @@ def test_upload_to_s3(govuk_alerts):
 
 
 @patch('app.utils.requests')
-def test_purge_cache(mock_requests, govuk_alerts):
+def test_purge_fastly_cache(mock_requests, govuk_alerts):
     headers = {
         "Accept": "application/json",
         "Fastly-Key": "test-api-key"
     }
 
-    purge_cache()
+    purge_fastly_cache()
 
     fastly_url = "https://api.fastly.com/service/test-service-id/purge/test-surrogate-key"
     mock_requests.post.assert_called_once_with(fastly_url, headers=headers)
