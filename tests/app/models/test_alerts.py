@@ -1,6 +1,5 @@
-from datetime import datetime
-
 import pytest
+from dateutil.parser import parse as dt_parse
 from freezegun import freeze_time
 
 from app.models.alert import Alert
@@ -31,17 +30,11 @@ def test_from_yaml():
     assert isinstance(Alerts.from_yaml()[0], dict)
 
 
-@freeze_time(datetime(
-    2021, 4, 21, 11, 30
-))
+@freeze_time('2021-04-21T11:30:00Z')
 def test_last_updated(alert_dict):
-    alert_dict['starts_at'] = datetime(
-        2021, 4, 21, 11, 10
-    )
+    alert_dict['starts_at'] = dt_parse('2021-04-21T11:10:00Z')
     alert_dict_2 = alert_dict.copy()
-    alert_dict_2['starts_at'] = datetime(
-        2021, 4, 21, 11, 20
-    )
+    alert_dict_2['starts_at'] = dt_parse('2021-04-21T11:20:00Z')
 
     alerts = Alerts([alert_dict, alert_dict_2])
 

@@ -1,8 +1,8 @@
-from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlparse
 
 import pytest
+from dateutil.parser import parse as dt_parse
 from freezegun import freeze_time
 
 from app.models.alerts import Alerts
@@ -36,17 +36,17 @@ def test_local_links_lead_to_existing_routes_in_pages_with_no_alerts(client_get)
 
 @pytest.mark.parametrize("alert_timings", [
     {  # current alert
-        "starts_at": datetime(2021, 4, 21, 11, 25),
-        "approved_at": datetime(2021, 4, 21, 11, 30),
-        "cancelled_at": datetime(2021, 4, 21, 12, 30)
+        "starts_at": dt_parse('2021-04-21T11:25:00Z'),
+        "approved_at": dt_parse('2021-04-21T11:30:00Z'),
+        "cancelled_at": dt_parse('2021-04-21T12:30:00Z')
     },
     {  # past alert
-        "starts_at": datetime(2021, 4, 20, 11, 25),
-        "approved_at": datetime(2021, 4, 20, 11, 30),
-        "cancelled_at": datetime(2021, 4, 20, 12, 30)
+        "starts_at": dt_parse('2021-04-20T11:25:00Z'),
+        "approved_at": dt_parse('2021-04-20T11:30:00Z'),
+        "cancelled_at": dt_parse('2021-04-20T12:30:00Z')
     }
 ])
-@freeze_time(datetime(2021, 4, 21, 11, 30))
+@freeze_time('2021-04-21T11:30:00Z')
 def test_local_links_lead_to_existing_routes_in_pages_with_alerts(
     client_get,
     alert_dict,

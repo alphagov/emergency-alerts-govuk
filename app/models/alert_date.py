@@ -1,4 +1,3 @@
-import pytz
 from notifications_utils.timezones import utc_string_to_aware_gmt_datetime
 
 
@@ -6,8 +5,7 @@ class AlertDate(object):
     """Makes a datetime available in different formats"""
 
     def __init__(self, _datetime):
-        # _datetime must be a naive UTC datetime
-        self._datetime = _datetime
+        self._datetime = _datetime  # a timezone-aware UTC datetime
         self._local_datetime = utc_string_to_aware_gmt_datetime(self._datetime)
 
     @property
@@ -47,9 +45,7 @@ class AlertDate(object):
 
     @property
     def as_utc_datetime(self):
-        # as self._datetime is a naive UTC datetime, we can simply add the UTC tzinfo
-        # to convert it into an aware UTC datetime
-        return self._datetime.replace(tzinfo=pytz.utc)
+        return self._datetime
 
     @property
     def as_local_datetime(self):

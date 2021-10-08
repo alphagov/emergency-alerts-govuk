@@ -1,6 +1,5 @@
-from datetime import datetime
-
 import pytest
+from dateutil.parser import parse as dt_parse
 from freezegun import freeze_time
 
 from app.models.alert import Alert
@@ -19,8 +18,8 @@ def test_lt_compares_alerts_based_on_start_date(alert_dict):
     alert_dict_1 = {**alert_dict}
     alert_dict_2 = {**alert_dict}
 
-    alert_dict_1['starts_at'] = datetime(2021, 4, 21, 11, 30)
-    alert_dict_2['starts_at'] = datetime(2021, 4, 21, 12, 30)
+    alert_dict_1['starts_at'] = dt_parse('2021-04-21T11:30:00Z')
+    alert_dict_2['starts_at'] = dt_parse('2021-04-21T12:30:00Z')
 
     assert Alert(alert_dict_1) < Alert(alert_dict_2)
 
@@ -48,12 +47,10 @@ def test_expires_date_returns_earliest_expiry_time(alert_dict):
 
 
 @pytest.mark.parametrize('expiry_date,is_expired', [
-    [datetime(2021, 4, 21, 9, 30), True],
-    [datetime(2021, 4, 21, 11, 0), False],
+    [dt_parse('2021-04-21T09:30:00Z'), True],
+    [dt_parse('2021-04-21T11:00:00Z'), False],
 ])
-@freeze_time(datetime(
-    2021, 4, 21, 10, 30
-))
+@freeze_time('2021-04-21T10:30:00Z')
 def test_is_expired_alert_checks_if_alert_is_expired(
     expiry_date,
     is_expired,
@@ -65,24 +62,22 @@ def test_is_expired_alert_checks_if_alert_is_expired(
 
 @pytest.mark.parametrize('approved_at_date,expiry_date,is_current', [
     [
-        datetime(2021, 4, 21, 9, 30),
-        datetime(2021, 4, 21, 11, 30),
+        dt_parse('2021-04-21T09:30:00Z'),
+        dt_parse('2021-04-21T11:30:00Z'),
         True
     ],
     [
-        datetime(2021, 4, 21, 11, 0),
-        datetime(2021, 4, 21, 11, 30),
+        dt_parse('2021-04-21T11:00:00Z'),
+        dt_parse('2021-04-21T11:30:00Z'),
         False
     ],
     [
-        datetime(2021, 4, 21, 9, 0),
-        datetime(2021, 4, 21, 10, 0),
+        dt_parse('2021-04-21T09:00:00Z'),
+        dt_parse('2021-04-21T10:00:00Z'),
         False
     ],
 ])
-@freeze_time(datetime(
-    2021, 4, 21, 10, 30
-))
+@freeze_time('2021-04-21T10:30:00Z')
 def test_is_current_alert_checks_if_alert_is_current(
     approved_at_date,
     expiry_date,
