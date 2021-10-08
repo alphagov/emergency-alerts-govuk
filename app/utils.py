@@ -65,7 +65,7 @@ def upload_to_s3(rendered_pages):
         item.put(Body=content, ContentType="text/html")
 
 
-def purge_cache():
+def purge_fastly_cache():
     fastly_service_id = current_app.config['FASTLY_SERVICE_ID']
     fastly_api_key = current_app.config['FASTLY_API_KEY']
     surrogate_key = current_app.config['FASTLY_SURROGATE_KEY']
