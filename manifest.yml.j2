@@ -27,16 +27,14 @@ applications:
         memory: 64M
 
     env:
+      # Logging and metrics
       LOGGING_STDOUT_JSON: '1'
-
-      # Credentials variables
-      NOTIFICATION_QUEUE_PREFIX: '{{ NOTIFICATION_QUEUE_PREFIX }}'
       NOTIFY_ENVIRONMENT: '{{ environment }}'
       NOTIFY_LOG_PATH: '/home/vcap/logs/app.log'
-
       STATSD_HOST: "notify-statsd-exporter-{{ environment }}.apps.internal"
 
       # SQS
+      NOTIFICATION_QUEUE_PREFIX: '{{ NOTIFICATION_QUEUE_PREFIX }}'
       AWS_ACCESS_KEY_ID: '{{ GOVUK_ALERTS_NOTIFY_AWS_ACCESS_KEY_ID }}'
       AWS_SECRET_ACCESS_KEY: '{{ GOVUK_ALERTS_NOTIFY_AWS_SECRET_ACCESS_KEY }}'
 
@@ -45,6 +43,10 @@ applications:
       BROADCASTS_AWS_SECRET_ACCESS_KEY: '{{ GOVUK_ALERTS_BROADCASTS_AWS_SECRET_ACCESS_KEY }}'
       GOVUK_ALERTS_S3_BUCKET_NAME: '{{ GOVUK_ALERTS_S3_BUCKET_NAME }}'
 
-      # fastly
+      # Fastly
       FASTLY_SERVICE_ID: '{{ GOVUK_ALERTS_FASTLY_SERVICE_ID }}'
       FASTLY_API_KEY: '{{ GOVUK_ALERTS_FASTLY_API_KEY }}'
+
+      # Notify API
+      NOTIFY_API_HOST_NAME: '{{ API_HOST_NAME }}'
+      NOTIFY_API_CLIENT_SECRET: '{{ GOVUK_ALERTS_NOTIFY_API_KEY }}'

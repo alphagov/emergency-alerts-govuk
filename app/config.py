@@ -20,6 +20,10 @@ class Config():
     FASTLY_API_KEY = os.getenv("FASTLY_API_KEY")
     FASTLY_SURROGATE_KEY = 'notify-emergency-alerts'
 
+    NOTIFY_API_HOST_NAME = os.environ.get('NOTIFY_API_HOST_NAME')
+    NOTIFY_API_CLIENT_SECRET = os.environ.get('NOTIFY_API_CLIENT_SECRET')
+    NOTIFY_API_CLIENT_ID = "govuk-alerts"
+
     CELERY = {
         'broker_url': 'sqs://',
         'broker_transport_options': {
@@ -44,6 +48,11 @@ class Config():
     STATSD_ENABLED = bool(STATSD_HOST)
 
 
+class Development(Config):
+    NOTIFY_API_CLIENT_SECRET = "govuk-alerts-secret-key"
+    NOTIFY_API_HOST_NAME = "http://localhost:6011"
+
+
 class Test(Config):
     DEBUG = True
 
@@ -57,7 +66,7 @@ class Test(Config):
 
 
 configs = {
-    'development': Config,
+    'development': Development,
     'test': Test,
     'production': Config,
     'staging': Config,
