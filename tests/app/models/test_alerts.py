@@ -7,16 +7,18 @@ from app.models.alert_date import AlertDate
 from app.models.alerts import Alerts
 
 
-def test_load_includes_yaml_data(alert_dict, mocker):
+def test_load(alert_dict, mocker):
     mocker.patch.object(Alerts, 'from_yaml', return_value=[alert_dict])
+    mocker.patch.object(Alerts, 'from_api', return_value=[alert_dict])
     alerts = Alerts.load()
-    assert len(alerts) == 1
+    assert len(alerts) == 2
     assert isinstance(alerts[0], Alert)
 
 
 def test_load_filters_areas(tmp_path, alert_dict, mocker):
     alert_dict['areas']['simple_polygons'] = 'polygons'
     mocker.patch.object(Alerts, 'from_yaml', return_value=[alert_dict])
+    mocker.patch.object(Alerts, 'from_api', return_value=[])
 
     mocker.patch('app.models.alerts.is_in_uk', return_value=False)
     assert len(Alerts.load()) == 0

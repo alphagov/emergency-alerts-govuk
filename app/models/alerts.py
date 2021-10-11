@@ -3,6 +3,7 @@ from collections import defaultdict
 import yaml
 from notifications_utils.serialised_model import SerialisedModelCollection
 
+from app import alerts_api_client
 from app.models.alert import Alert
 from app.models.alert_date import AlertDate
 from app.utils import REPO, is_in_uk
@@ -54,7 +55,7 @@ class Alerts(SerialisedModelCollection):
 
     @classmethod
     def from_api(cls):
-        return []
+        return alerts_api_client.get_alerts()
 
     @classmethod
     def from_yaml(cls, path=REPO / 'data.yaml'):
