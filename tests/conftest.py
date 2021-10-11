@@ -11,7 +11,6 @@ from app.models.alerts import Alerts
 def create_alert_dict(
     *,
     id=None,
-    headline=None,
     content=None,
     areas=None,
     channel=None,
@@ -23,7 +22,6 @@ def create_alert_dict(
 ):
     return {
         'id': str(id or uuid.UUID(int=0)),
-        'headline': headline or 'Emergency alert',
         'content': content or 'Something',
         'areas': areas or dict(),
         'channel': channel or 'severe',
