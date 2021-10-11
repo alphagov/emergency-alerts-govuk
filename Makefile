@@ -26,7 +26,7 @@ bootstrap:
 
 .PHONY: test
 test:
-	isort --check-only *.py lib tests
+	isort --check-only *.py app tests
 	flake8 .
 	npm run lint
 	npm test
