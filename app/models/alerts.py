@@ -3,6 +3,7 @@ from collections import defaultdict
 import yaml
 from notifications_utils.serialised_model import SerialisedModelCollection
 
+from app import alerts_api_client
 from app.models.alert import Alert
 from app.models.alert_date import AlertDate
 from app.utils import REPO, is_in_uk
@@ -42,20 +43,21 @@ class Alerts(SerialisedModelCollection):
     def last_updated_date(self):
         return AlertDate(self.last_updated)
 
-    # We'll have multiple datasources in future. Having this
-    # method now gives a clean abstraction so we don't have to
-    # change too much when we add them (and remove this comment!)
     @classmethod
     def load(cls):
-        return cls.from_yaml()
+        data = cls.from_yaml() + cls.from_api()
+
+        return cls([
+            alert_dict for alert_dict in data
+            if 'simple_polygons' not in alert_dict['areas'] or
+            is_in_uk(alert_dict['areas']['simple_polygons'])
+        ])
+
+    @classmethod
+    def from_api(cls):
+        return alerts_api_client.get_alerts()
 
     @classmethod
     def from_yaml(cls, path=REPO / 'data.yaml'):
         with path.open() as stream:
-            data = yaml.load(stream, Loader=yaml.CLoader)
-
-        return cls([
-            alert_dict for alert_dict in data['alerts']
-            if 'simple_polygons' not in alert_dict['areas'] or
-            is_in_uk(alert_dict['areas']['simple_polygons'])
-        ])
+            return yaml.load(stream, Loader=yaml.CLoader)['alerts']

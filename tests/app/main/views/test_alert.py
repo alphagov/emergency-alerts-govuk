@@ -1,7 +1,7 @@
-from datetime import datetime
 from uuid import uuid4
 
 import pytest
+from dateutil.parser import parse as dt_parse
 from freezegun import freeze_time
 
 from app.models.alerts import Alerts
@@ -30,8 +30,8 @@ def test_alert_breadcrumbs(
 def test_alert_links_to_correct_page_based_on_url_slug(is_expired, client_get, mocker):
     mocker.patch('app.models.alert.Alert.is_expired', is_expired)
     mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([
-        create_alert_dict(id=uuid4(), content='test 1', starts_at=datetime(2021, 4, 21, 11, 0)),
-        create_alert_dict(id=uuid4(), content='test 2', starts_at=datetime(2021, 4, 21, 12, 0))
+        create_alert_dict(id=uuid4(), content='test 1', starts_at=dt_parse('2021-04-21T11:00:00Z')),
+        create_alert_dict(id=uuid4(), content='test 2', starts_at=dt_parse('2021-04-21T12:00:00Z')),
     ]))
 
     html = client_get('alerts/21-apr-2021-2')
@@ -48,9 +48,9 @@ def test_alert_says_expired_alert_stopped(client_get, mocker):
         create_alert_dict(
             id=uuid4(),
             content='test 1',
-            starts_at=datetime(2021, 4, 21, 11, 0),
+            starts_at=dt_parse('2021-04-21T11:00:00Z'),
             cancelled_at=None,
-            finishes_at=datetime(2021, 4, 21, 15, 0),
+            finishes_at=dt_parse('2021-04-21T15:00:00Z'),
         )
     ]))
 
@@ -58,15 +58,15 @@ def test_alert_says_expired_alert_stopped(client_get, mocker):
     assert html.select_one('main h2').text.strip() == 'Stopped sending at 4:00pm on Wednesday 21 April 2021'
 
 
-@freeze_time('2021-04-21T14:00:00')
+@freeze_time('2021-04-21T14:00:00Z')
 def test_alert_says_active_alert_is_active(client_get, mocker):
     mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([
         create_alert_dict(
             id=uuid4(),
             content='test 1',
-            starts_at=datetime(2021, 4, 21, 11, 0),
+            starts_at=dt_parse('2021-04-21T11:00:00Z'),
             cancelled_at=None,
-            finishes_at=datetime(2021, 4, 21, 15, 0),
+            finishes_at=dt_parse('2021-04-21T15:00:00Z'),
         )
     ]))
 

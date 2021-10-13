@@ -1,8 +1,8 @@
 import random
-from datetime import datetime
 from uuid import UUID
 
 import pytest
+from dateutil.parser import parse as dt_parse
 
 from app.models.alert import Alert
 from app.models.alerts import Alerts
@@ -14,7 +14,7 @@ def test_get_url_for_alert_doesnt_return_non_public_alerts():
     alerts = Alerts([
         create_alert_dict(
             channel='operator',
-            starts_at=datetime(2021, 4, 21, 11, 30),
+            starts_at=dt_parse('2021-04-21T11:30:00Z'),
         )
     ])
 
@@ -31,11 +31,11 @@ def test_get_url_for_alert_doesnt_return_non_public_alerts():
 ])
 def test_get_url_for_alert_returns_url_with_count_for_alerts_on_same_day(index, expected_url):
     the_days_alerts = [
-        create_alert_dict(id=UUID(int=0), starts_at=datetime(2021, 4, 20, 22, 59)),
-        create_alert_dict(id=UUID(int=1), starts_at=datetime(2021, 4, 20, 23, 00)),
-        create_alert_dict(id=UUID(int=2), starts_at=datetime(2021, 4, 21, 12, 31)),
-        create_alert_dict(id=UUID(int=3), starts_at=datetime(2021, 4, 21, 12, 31)),
-        create_alert_dict(id=UUID(int=4), starts_at=datetime(2021, 4, 21, 23, 00)),
+        create_alert_dict(id=UUID(int=0), starts_at=dt_parse('2021-04-20T22:59:00Z')),
+        create_alert_dict(id=UUID(int=1), starts_at=dt_parse('2021-04-20T23:00:00Z')),
+        create_alert_dict(id=UUID(int=2), starts_at=dt_parse('2021-04-21T12:31:00Z')),
+        create_alert_dict(id=UUID(int=3), starts_at=dt_parse('2021-04-21T12:31:00Z')),
+        create_alert_dict(id=UUID(int=4), starts_at=dt_parse('2021-04-21T23:00:00Z')),
     ]
 
     alerts = Alerts(the_days_alerts)
@@ -65,8 +65,8 @@ def test_get_url_for_alert_consistently_sorts_by_id():
 
 def test_get_url_for_alert_skips_non_public_alerts():
     the_days_alerts = [
-        create_alert_dict(starts_at=datetime(2021, 4, 21, 12, 00), channel='operator'),
-        create_alert_dict(starts_at=datetime(2021, 4, 21, 13, 00), channel='severe'),
+        create_alert_dict(starts_at=dt_parse('2021-04-21T12:00:00Z'), channel='operator'),
+        create_alert_dict(starts_at=dt_parse('2021-04-21T13:00:00Z'), channel='severe'),
     ]
 
     alerts = Alerts(the_days_alerts)

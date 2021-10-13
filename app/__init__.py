@@ -5,10 +5,12 @@ from notifications_utils import logging
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
 
 from app.celery.celery import NotifyCelery
+from app.notify_client.alerts_api_client import AlertsApiClient
 from app.utils import DIST
 
 notify_celery = NotifyCelery()
 statsd_client = StatsdClient()
+alerts_api_client = AlertsApiClient()
 
 
 def create_app():
@@ -30,5 +32,6 @@ def create_app():
     statsd_client.init_app(application)
     logging.init_app(application, statsd_client)
     notify_celery.init_app(application)
+    alerts_api_client.init_app(application)
 
     return application

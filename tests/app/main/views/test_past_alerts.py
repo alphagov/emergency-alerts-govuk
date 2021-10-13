@@ -1,7 +1,7 @@
-from datetime import datetime
 from uuid import UUID
 
 import pytest
+from dateutil.parser import parse as dt_parse
 
 from app.models.alerts import Alerts
 from tests.conftest import create_alert_dict
@@ -50,12 +50,12 @@ def test_past_alerts_page_groups_by_date(
     client_get,
 ):
     alerts = [
-        create_alert_dict(id=UUID(int=1), content='Something 1', starts_at=datetime(2021, 4, 21, 11, 0)),
-        create_alert_dict(id=UUID(int=2), content='Something 1', starts_at=datetime(2021, 4, 21, 11, 0)),
-        create_alert_dict(id=UUID(int=3), content='Something 2', starts_at=datetime(2021, 4, 22, 0, 0)),
-        create_alert_dict(id=UUID(int=4), content='Something 3', starts_at=datetime(2021, 4, 22, 22, 59)),
-        create_alert_dict(id=UUID(int=5), channel='operator', starts_at=datetime(2021, 4, 21, 11, 0), content='Operator test'),  # noqa
-        create_alert_dict(id=UUID(int=6), channel='operator', starts_at=datetime(2021, 4, 21, 11, 0), content='Operator test'),  # noqa
+        create_alert_dict(id=UUID(int=1), content='Something 1', starts_at=dt_parse('2021-04-21T11:00:00Z')),
+        create_alert_dict(id=UUID(int=2), content='Something 1', starts_at=dt_parse('2021-04-21T11:00:00Z')),
+        create_alert_dict(id=UUID(int=3), content='Something 2', starts_at=dt_parse('2021-04-22T00:00:00Z')),
+        create_alert_dict(id=UUID(int=4), content='Something 3', starts_at=dt_parse('2021-04-22T22:59:00Z')),
+        create_alert_dict(id=UUID(int=5), channel='operator', starts_at=dt_parse('2021-04-21T11:00:00Z'), content='Operator test'),  # noqa
+        create_alert_dict(id=UUID(int=6), channel='operator', starts_at=dt_parse('2021-04-21T11:00:00Z'), content='Operator test'),  # noqa
     ]
     # set all alerts to cancelled so they show in past alerts
     for alert in alerts:

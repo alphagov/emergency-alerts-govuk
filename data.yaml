@@ -1,232 +1,34 @@
-# all timestamps must be UTC
+# This file contains alerts that, for whatever reason, are not
+# included in the API datasource.
+#
+# Notes for adding a new alert:
+#
+# - all timestamps must be UTC
 alerts:
-  - id: fe805da8-44b5-4874-bf90-6a64a6749ae5
-    channel: operator
-    approved_at: 2021-09-29T12:30:00
-    starts_at: 2021-09-29T12:30:00
-    cancelled_at: 2021-09-29T12:45:00
-    finishes_at: 2021-09-29T14:00:00
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: 43bb7b38-0925-4cbe-98c9-b9988971840e
-    channel: operator
-    approved_at: 2021-09-29T12:00:00
-    starts_at: 2021-09-29T12:00:00
-    cancelled_at: 2021-09-29T12:15:00
-    finishes_at: 2021-09-29T13:00:00
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: 4d75bee2-ef55-4b00-ac75-a56839fab836
-    channel: operator
-    approved_at: 2021-09-17T10:00:00
-    starts_at: 2021-09-17T10:00:00
-    cancelled_at: 2021-09-17T10:15:00
-    finishes_at: 2021-09-17T10:15:00
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: 96e869ae-1ec6-45bf-9d57-a627c1117b35
-    channel: operator
-    approved_at: 2021-09-17T09:00:00
-    starts_at: 2021-09-17T09:00:00
-    cancelled_at: 2021-09-17T09:15:00
-    finishes_at: 2021-09-17T09:15:00
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: 5a46ad1b-f510-445a-abf9-39e51ac66b8a
-    channel: operator
-    approved_at: 2021-09-10T12:00:00
-    starts_at: 2021-09-10T12:00:00
-    cancelled_at: 2021-09-10T13:00:00
-    finishes_at: 2021-09-10T13:00:00
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: 93ae69e6-c8ed-47d5-a691-80d2a5742bc8
-    channel: operator
-    approved_at: 2021-09-10T10:05:00
-    starts_at: 2021-09-10T10:05:00
-    cancelled_at: 2021-09-10T11:00:00
-    finishes_at: 2021-09-10T11:00:00
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: 5026e084-8c94-4fbe-9dfd-8f6888a69ea1
-    channel: operator
-    approved_at: 2021-09-09T09:15:00
-    starts_at: 2021-09-09T09:15:00
-    cancelled_at: 2021-09-09T09:30:00
-    finishes_at: 2021-09-09T09:30:00
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: f0b071fb-2083-4c93-a977-94fdb3f55680
-    channel: operator
-    approved_at: 2021-09-09T09:00:00
-    starts_at: 2021-09-09T09:00:00
-    cancelled_at: 2021-09-09T09:15:00
-    finishes_at: 2021-09-09T09:15:00
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: b1e5298f-ae4a-4e37-abd6-179527447669
-    channel: operator
-    approved_at: 2021-08-23T12:04:38
-    starts_at: 2021-08-23T12:04:38
-    cancelled_at: 2021-08-23T12:17:43
-    finishes_at: 2021-08-23T16:04:38
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: 67d8136c-e20c-4e3f-910c-957c54f19cb4
-    channel: operator
-    approved_at: 2021-08-23T12:04:38
-    starts_at: 2021-08-23T12:04:38
-    cancelled_at: 2021-08-23T12:17:43
-    finishes_at: 2021-08-23T16:04:38
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: ae8e3f17-3434-4557-8551-d54cee12007c
-    channel: operator
-    approved_at: 2021-08-23T12:04:38
-    starts_at: 2021-08-23T12:04:38
-    cancelled_at: 2021-08-23T12:17:43
-    finishes_at: 2021-08-23T16:04:38
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: 4c419ff4-8c74-46d9-89f3-141e65fa2693
-    channel: operator
-    approved_at: 2021-08-23T12:04:38
-    starts_at: 2021-08-23T12:04:38
-    cancelled_at: 2021-08-23T12:17:43
-    finishes_at: 2021-08-23T16:04:38
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: 90677eb9-3512-4c32-afc1-72ddf3d72cc7
-    channel: operator
-    approved_at: 2021-08-05T12:02:40
-    starts_at: 2021-08-05T12:02:40
-    cancelled_at: 2021-08-05T12:14:41
-    finishes_at: 2021-08-06T12:01:40
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: 7e3a9b37-e6b7-43ee-88e1-fd9ab9d14606
-    channel: operator
-    approved_at: 2021-07-28T12:04:38
-    starts_at: 2021-07-28T12:04:38
-    cancelled_at: 2021-07-28T12:17:43
-    finishes_at: 2021-07-28T16:04:38
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: 19aefcd7-93e1-4fe1-b25a-cd1f0caa1655
-    channel: operator
-    approved_at: 2021-07-16T12:00:27
-    starts_at: 2021-07-16T12:00:27
-    cancelled_at: 2021-07-16T12:03:07
-    finishes_at: 2021-07-16T16:00:27
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: c4eba1cc-92d9-49eb-9ece-2c45b2483c41
-    channel: operator
-    approved_at: 2021-07-14T12:00:18
-    starts_at: 2021-07-14T12:00:18
-    cancelled_at: 2021-07-14T12:05:34
-    finishes_at: 2021-07-14T16:00:18
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-  - id: b666c792-7abb-4992-a7d7-799d2118c65f
-    channel: operator
-    approved_at: 2021-07-09T11:58:58
-    starts_at: 2021-07-09T11:58:58
-    cancelled_at: 2021-07-09T12:08:37
-    finishes_at: 2021-07-09T15:58:58
-    content: |
-      This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
-    areas: {}
-### vvv DO NOT DELETE: NOT IN DB vvv ###
   - id: 7f1b6b19-7c42-4f10-9e42-f314c168e937
     channel: operator
-    approved_at: 2021-07-02T09:00:00
-    starts_at: 2021-07-02T09:00:00
+    approved_at: 2021-07-02T09:00:00Z
+    starts_at: 2021-07-02T09:00:00Z
     cancelled_at:
-    finishes_at: 2021-07-02T11:00:00
+    finishes_at: 2021-07-02T11:00:00Z
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-### ^^^ DO NOT DELETE: NOT IN DB ^^^ ###
-  - id: 32ac31f6-0894-4c3e-a27c-8c0bda5e5cb0
-    channel: severe
-    approved_at: 2021-06-29T12:00:12
-    starts_at: 2021-06-29T12:00:12
-    cancelled_at: 2021-06-29T13:01:19
-    finishes_at: 2021-06-29T16:00:12
-    content: |
-      The UK government is testing Emergency Alerts in Reading, Berkshire.
-
-      Emergency alerts tell you what to do if there’s a life-threatening event nearby.
-
-      To find out more, call 0808 1697692 or search for gov.uk/alerts
-    areas:
-      aggregate_names:
-        - Reading
-### vvv DO NOT DELETE: NOT IN DB vvv ###
   - id: 52499a28-c5ca-492c-ba3c-d7ac820b06cf
     channel: operator
-    approved_at: 2021-06-22T09:00:00
-    starts_at: 2021-06-22T09:00:00
+    approved_at: 2021-06-22T09:00:00Z
+    starts_at: 2021-06-22T09:00:00Z
     cancelled_at:
-    finishes_at: 2021-06-22T22:59:59
+    finishes_at: 2021-06-22T22:59:59Z
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
   - id: 2c9d12c1-53fc-4ae2-86b9-6d9fb1ec61dc
     channel: operator
-    approved_at: 2021-06-18T09:00:00
-    starts_at: 2021-06-18T09:00:00
+    approved_at: 2021-06-18T09:00:00Z
+    starts_at: 2021-06-18T09:00:00Z
     cancelled_at:
-    finishes_at: 2021-06-18T22:59:59
+    finishes_at: 2021-06-18T22:59:59Z
     content: |
       This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
     areas: {}
-### ^^^ DO NOT DELETE: NOT IN DB ^^^ ###
-  - id: 7aa6f98d-2611-47b8-a25b-b8f8621b0761
-    channel: government
-    approved_at: 2021-05-25T12:30:16
-    starts_at: 2021-05-25T12:30:16
-    cancelled_at: 2021-05-25T12:46:07
-    finishes_at: 2021-05-25T16:30:16
-    content: |
-      The UK government is testing Emergency Alerts in East Suffolk.
-
-      Emergency alerts tell you what to do if there’s a life-threatening event nearby.
-
-      To find out more, call 0808 1697692 or search for gov.uk/alerts
-    areas:
-      aggregate_names:
-        - East Suffolk
-  - id: 4d16d92f-987f-4dff-8df6-aa762f77223d
-    channel: severe
-    approved_at: 2021-05-25T12:00:14
-    starts_at: 2021-05-25T12:00:14
-    cancelled_at: 2021-05-25T12:20:05
-    finishes_at: 2021-05-25T16:00:14
-    content: |
-      The UK government is testing Emergency Alerts in East Suffolk.
-
-      Emergency alerts tell you what to do if there’s a life-threatening event nearby.
-
-      To find out more, call 0808 1697692 or search for gov.uk/alerts
-    areas:
-      simple_polygons: [[[52.22035, 1.58242], [52.19521, 1.58491], [52.19325, 1.59971], [52.19372, 1.62352], [52.21901, 1.62599], [52.22035, 1.58242]]]
-      aggregate_names:
-        - East Suffolk

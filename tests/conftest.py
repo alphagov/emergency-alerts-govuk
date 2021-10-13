@@ -1,8 +1,8 @@
 import uuid
-from datetime import datetime
 
 import pytest
 from bs4 import BeautifulSoup
+from dateutil.parser import parse as dt_parse
 
 from app import create_app
 from app.models.alerts import Alerts
@@ -11,7 +11,6 @@ from app.models.alerts import Alerts
 def create_alert_dict(
     *,
     id=None,
-    headline=None,
     content=None,
     areas=None,
     channel=None,
@@ -23,14 +22,13 @@ def create_alert_dict(
 ):
     return {
         'id': str(id or uuid.UUID(int=0)),
-        'headline': headline or 'Emergency alert',
         'content': content or 'Something',
         'areas': areas or dict(),
         'channel': channel or 'severe',
-        'starts_at': starts_at or datetime(2021, 4, 21, 11, 30),
-        'approved_at': approved_at or datetime(2021, 4, 21, 11, 25),
-        'cancelled_at': cancelled_at if cancelled_at != -1 else datetime(2021, 4, 21, 12, 30),
-        'finishes_at': finishes_at or datetime(2021, 4, 21, 15, 30)
+        'starts_at': starts_at or dt_parse('2021-04-21T11:30:00Z'),
+        'approved_at': approved_at or dt_parse('2021-04-21T11:25:00Z'),
+        'cancelled_at': cancelled_at if cancelled_at != -1 else dt_parse('2021-04-21T12:30:00Z'),
+        'finishes_at': finishes_at or dt_parse('2021-04-21T15:30:00Z'),
     }
 
 

@@ -1,7 +1,5 @@
-from datetime import datetime
-
 import pytest
-import yaml
+from dateutil.parser import parse as dt_parse
 from freezegun import freeze_time
 
 from app.models.alert import Alert
@@ -9,48 +7,36 @@ from app.models.alert_date import AlertDate
 from app.models.alerts import Alerts
 
 
-@freeze_time(datetime(
-    2021, 4, 21, 11, 30
-))
-def test_from_yaml_loads_data(tmp_path, alert_dict):
-    sample_yaml = yaml.dump({
-        'alerts': [alert_dict],
-    })
-
-    data_file = tmp_path / 'data.yaml'
-    data_file.write_text(sample_yaml)
-
-    alerts = Alerts.from_yaml(data_file)
-    assert len(alerts) == 1
+def test_load(alert_dict, mocker):
+    mocker.patch.object(Alerts, 'from_yaml', return_value=[alert_dict])
+    mocker.patch.object(Alerts, 'from_api', return_value=[alert_dict])
+    alerts = Alerts.load()
+    assert len(alerts) == 2
     assert isinstance(alerts[0], Alert)
-    assert isinstance(alerts.last_updated_date, AlertDate)
 
 
-def test_from_yaml_filters_areas(tmp_path, alert_dict, mocker):
+def test_load_filters_areas(tmp_path, alert_dict, mocker):
     alert_dict['areas']['simple_polygons'] = 'polygons'
-    sample_yaml = yaml.dump({'alerts': [alert_dict]})
-
-    data_file = tmp_path / 'data.yaml'
-    data_file.write_text(sample_yaml)
+    mocker.patch.object(Alerts, 'from_yaml', return_value=[alert_dict])
+    mocker.patch.object(Alerts, 'from_api', return_value=[])
 
     mocker.patch('app.models.alerts.is_in_uk', return_value=False)
-    assert len(Alerts.from_yaml(data_file)) == 0
+    assert len(Alerts.load()) == 0
 
     mocker.patch('app.models.alerts.is_in_uk', return_value=True)
-    assert len(Alerts.from_yaml(data_file)) == 1
+    assert len(Alerts.load()) == 1
 
 
-@freeze_time(datetime(
-    2021, 4, 21, 11, 30
-))
+def test_from_yaml():
+    assert len(Alerts.from_yaml()) > 0
+    assert isinstance(Alerts.from_yaml()[0], dict)
+
+
+@freeze_time('2021-04-21T11:30:00Z')
 def test_last_updated(alert_dict):
-    alert_dict['starts_at'] = datetime(
-        2021, 4, 21, 11, 10
-    )
+    alert_dict['starts_at'] = dt_parse('2021-04-21T11:10:00Z')
     alert_dict_2 = alert_dict.copy()
-    alert_dict_2['starts_at'] = datetime(
-        2021, 4, 21, 11, 20
-    )
+    alert_dict_2['starts_at'] = dt_parse('2021-04-21T11:20:00Z')
 
     alerts = Alerts([alert_dict, alert_dict_2])
 
