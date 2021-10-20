@@ -76,6 +76,25 @@ cf-deploy: cf-target ## Deploys the app to Cloud Foundry
 
 cf-run-task-publish: cf-target
 	cf run-task notify-govuk-alerts -c 'flask publish'
+	# run a shell to setup a command to check progress;
+	# "eval" is hacky way of assigning some text we want
+	# to substitute later - by evaluating what follows as
+	# a mini makefile and merging its state with this one
+	$(eval \
+		CHECK_COMMAND := cf curl "/v3/apps/`cf app --guid notify-govuk-alerts`/tasks?order_by=-created_at" | jq -r ".resources[0].state" \
+	)
+	# run a little shell script to check if the task is
+	# successful and return a non-zero status if not;
+	# make doesn't support multiline scripts, so the "\"
+	# and ";" turn it into a oneliner with an exit status
+	for _ in 1 2 3 4 5; do \
+		if $(CHECK_COMMAND) | grep SUCCEEDED; then\
+			exit 0; \
+		fi; \
+		sleep 3; \
+	done; \
+	cf logs notify-govuk-alerts --recent; \
+	exit 1
 
 .PHONY: preview
 preview: ## Set environment to preview
