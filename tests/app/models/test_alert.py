@@ -138,3 +138,17 @@ def test_is_current_and_public(is_current, is_public, is_current_and_public, moc
 def test_is_public(channel, is_public, alert_dict):
     alert_dict['channel'] = channel
     assert Alert(alert_dict).is_public == is_public
+
+
+@pytest.mark.parametrize('channel, expected_display_areas', [
+    ('severe', ['Chipping Sodbury']),
+    ('government', ['Chipping Sodbury']),
+    ('operator', []),
+    ('test', [])
+])
+def test_displayed_areas_for_public_alerts_only(
+    channel, expected_display_areas, alert_dict
+):
+    alert_dict['channel'] = channel
+    alert_dict['areas']['aggregate_names'] = ['Chipping Sodbury']
+    assert Alert(alert_dict).display_areas == expected_display_areas

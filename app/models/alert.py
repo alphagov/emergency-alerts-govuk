@@ -9,7 +9,6 @@ from app.models.alert_date import AlertDate
 class BaseAlert(SerialisedModel):
     ALLOWED_PROPERTIES = {
         'starts_at',
-        'content',
     }
 
     @property
@@ -25,6 +24,7 @@ class Alert(BaseAlert):
         'cancelled_at',
         'finishes_at',
         'areas',
+        'content',
     }
 
     def __lt__(self, other):
@@ -35,6 +35,9 @@ class Alert(BaseAlert):
 
     @property
     def display_areas(self):
+        if not self.is_public:
+            return []
+
         if "aggregate_names" in self.areas:
             return self.areas["aggregate_names"]
 
@@ -83,6 +86,7 @@ class Alert(BaseAlert):
 class PlannedTest(BaseAlert):
     ALLOWED_PROPERTIES = BaseAlert.ALLOWED_PROPERTIES | {
         'display_areas',
+        'description',
     }
 
     def __lt__(self, other):

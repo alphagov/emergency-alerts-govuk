@@ -42,13 +42,13 @@
       <h2 class="govuk-heading-m govuk-!-margin-top-6">
         {{ alert.starts_at_date.date_as_lang }}
       </h2>
-      {% if alert.content %}
+      {% if alert.description %}
         {% if alert.display_areas %}
           <h3 class="govuk-body govuk-!-margin-bottom-6">
             <span class="govuk-visually-hidden">Planned test will be sent to </span>{{ alert.display_areas | formatted_list(before_each='', after_each='') }}
           </h3>
         {% endif %}
-        {{ alert.content | paragraphize(classes="govuk-body") }}
+        {{ alert.description | paragraphize(classes="govuk-body") }}
       {% else %}
       <p class="govuk-body">
         Some mobile phone networks in the UK will test emergency alerts.

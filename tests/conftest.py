@@ -35,12 +35,12 @@ def create_alert_dict(
 def create_planned_test_dict(
     starts_at=None,
     display_areas=None,
-    content=None,
+    description=None,
 ):
     return {
         'starts_at': starts_at or dt_parse('2021-04-21T11:30:00Z'),
         'display_areas': display_areas or [],
-        'content': content,
+        'description': description,
     }
 
 
