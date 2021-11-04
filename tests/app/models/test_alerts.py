@@ -5,6 +5,7 @@ from freezegun import freeze_time
 from app.models.alert import Alert
 from app.models.alert_date import AlertDate
 from app.models.alerts import Alerts
+from tests.conftest import create_alert_dict
 
 
 def test_load(alert_dict, mocker):
@@ -72,3 +73,39 @@ def test_public_alerts(alert_dict, mocker):
 
     mocker.patch(__name__ + '.Alert.is_public', False)
     assert len(Alerts([alert_dict]).public) == 0
+
+
+@freeze_time('2021-01-01T00:00:00Z')
+def test_public_alerts_dont_get_listed_as_tests(mocker):
+    mocker.patch(__name__ + '.Alert.is_current_and_public', True)
+    alerts = Alerts([
+        create_alert_dict(),
+        create_alert_dict(),
+    ])
+
+    assert len(alerts) == 2
+    assert len(alerts.current_and_public) == 2
+    assert len(alerts.test_alerts_today) == 0
+    assert len(alerts.current_and_planned_test_alerts) == 0
+    assert alerts.dates_of_current_and_planned_test_alerts == set()
+
+
+@freeze_time('2021-01-01')
+def test_multiple_test_alerts_on_the_same_day_are_aggregated(mocker):
+    mocker.patch(__name__ + '.Alert.is_public', False)
+    alerts = Alerts([
+        create_alert_dict(
+            starts_at='2021-01-01T01:01:01Z'
+        ),
+        create_alert_dict(
+            starts_at='2021-01-01T02:02:02Z'
+        ),
+    ])
+
+    assert len(alerts) == 2
+    assert len(alerts.current_and_public) == 0
+    assert len(alerts.test_alerts_today) == 1
+    assert len(alerts.current_and_planned_test_alerts) == 1
+    assert alerts.dates_of_current_and_planned_test_alerts == {
+        AlertDate(dt_parse('2021-01-01T12:01:00Z'))
+    }
