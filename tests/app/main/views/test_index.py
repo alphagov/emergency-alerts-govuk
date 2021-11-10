@@ -3,7 +3,7 @@ import hashlib
 
 import pytest
 
-from app.models.alert import PlannedTest
+from app.models.planned_test import PlannedTest
 from tests import normalize_spaces
 from tests.conftest import create_planned_test_dict
 
