@@ -119,7 +119,7 @@ def test_is_public(channel, is_public, alert_dict):
     ('operator', []),
     ('test', [])
 ])
-def test_displayed_areas_for_public_alerts_only(
+def test_display_areas_shows_public_alerts_only(
     channel, expected_display_areas, alert_dict
 ):
     alert_dict['channel'] = channel
