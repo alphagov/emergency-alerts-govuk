@@ -10,7 +10,7 @@ def test_planned_test_timestamps_properties_are_AlertDates(planned_test_dict):
     assert isinstance(planned_test.starts_at_date, AlertDate)
 
 
-def test_lt_compares_alerts_based_on_start_date():
+def test_lt_compares_planned_tests_based_on_start_date():
     alert_dict_1 = create_planned_test_dict()
     alert_dict_2 = create_planned_test_dict()
 
