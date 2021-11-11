@@ -6,7 +6,7 @@ planned_tests: []
 #      - Scotland
 #      - Wales
 #      - Northern Ireland
-#    content: |
-#      Example
+#    description: |
+#      The UK goverment will test Emergency Alerts between […]
 #
-#      Example
+#      If you get an alert […]

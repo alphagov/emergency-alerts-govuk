@@ -2,8 +2,8 @@ import pytest
 from dateutil.parser import parse as dt_parse
 from freezegun import freeze_time
 
-from app.models.alert import PlannedTest
 from app.models.alerts import Alerts
+from app.models.planned_test import PlannedTest
 from tests import normalize_spaces
 from tests.conftest import create_alert_dict
 
@@ -26,7 +26,7 @@ def test_planned_tests_page(mocker, client_get):
     (
         [PlannedTest({
             'starts_at': '2021-02-03T00:00:00Z',
-            'content': None,
+            'description': None,
             'display_areas': [],
         })],
         ['Wednesday 3 February 2021'],
@@ -46,7 +46,7 @@ def test_planned_tests_page(mocker, client_get):
     (
         [PlannedTest({
             'starts_at': '2021-02-03T23:00:00Z',
-            'content': 'Paragraph 1\n\nParagraph 2',
+            'description': 'Paragraph 1\n\nParagraph 2',
             'display_areas': ['Ibiza', 'The Norfolk Broads'],
         })],
         ['Wednesday 3 February 2021'],
@@ -60,12 +60,12 @@ def test_planned_tests_page(mocker, client_get):
         [
             PlannedTest({
                 'starts_at': '2021-02-03T00:00:00Z',
-                'content': 'Paragraph 1\n\nParagraph 2',
+                'description': 'Paragraph 1\n\nParagraph 2',
                 'display_areas': ['Ibiza'],
             }),
             PlannedTest({
                 'starts_at': '2021-02-03T01:00:00Z',
-                'content': 'Paragraph 3\n\nParagraph 4',
+                'description': 'Paragraph 3\n\nParagraph 4',
                 'display_areas': ['The Norfolk Broads'],
             }),
         ],
@@ -138,7 +138,15 @@ def test_planned_tests_page_with_current_operator_test(
     assert [
         normalize_spaces(p.text) for p in html.select('main p')
     ] == [
-        'Something'
+        'Some mobile phone networks in the UK will test emergency alerts.',
+        'Most phones and tablets will not get a test alert.',
+        'Find out more about mobile network operator tests.',
+        'The alert will say:',
+        (
+            'This is a mobile network operator test of the Emergency Alerts '
+            'service. You do not need to take any action. To find out more, '
+            'search for gov.uk/alerts'
+        ),
     ]
 
 

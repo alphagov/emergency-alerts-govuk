@@ -4,8 +4,9 @@ import yaml
 from notifications_utils.serialised_model import SerialisedModelCollection
 
 from app import alerts_api_client
-from app.models.alert import Alert, PlannedTest
+from app.models.alert import Alert
 from app.models.alert_date import AlertDate
+from app.models.planned_tests import PlannedTests
 from app.utils import REPO, is_in_uk
 
 
@@ -83,13 +84,3 @@ class Alerts(SerialisedModelCollection):
     def from_yaml(cls, path=REPO / 'data.yaml'):
         with path.open() as stream:
             return yaml.load(stream, Loader=yaml.CLoader)['alerts']
-
-
-class PlannedTests(SerialisedModelCollection):
-    model = PlannedTest
-
-    @classmethod
-    def from_yaml(cls, path=REPO / 'planned-tests.yaml'):
-        data = yaml.load(path.read_bytes(), Loader=yaml.CLoader)
-
-        return cls(data['planned_tests'])
