@@ -8,9 +8,6 @@ from tests.conftest import create_planned_test_dict
 def test_planned_test_timestamps_properties_are_AlertDates(planned_test_dict):
     planned_test = PlannedTest(planned_test_dict)
     assert isinstance(planned_test.starts_at_date, AlertDate)
-    assert not hasattr(planned_test, 'approved_at_date')
-    assert not hasattr(planned_test, 'cancelled_at_date')
-    assert not hasattr(planned_test, 'finishes_at_date')
 
 
 def test_lt_compares_alerts_based_on_start_date():
