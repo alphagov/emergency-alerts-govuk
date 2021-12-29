@@ -32,6 +32,11 @@ test:
 	npm test
 	pytest tests/
 
+.PHONY: freeze-requirements
+freeze-requirements: ## create static requirements.txt
+	pip install --upgrade pip-tools
+	pip-compile requirements.in
+
 .PHONY: cf-login
 cf-login: ## Log in to Cloud Foundry
 	$(if ${CF_USERNAME},,$(error Must specify CF_USERNAME))
