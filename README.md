@@ -62,3 +62,4 @@ To run a specific JavaScript test, you'll need to copy the full command from `pa
 - [Architecture](docs/architecture.md)
 - [Image optimisation](docs/image-optimisation.md)
 - [Setting up redirects](docs/redirects.md)
+- [Updating dependencies](https://github.com/alphagov/notifications-manuals/wiki/Dependencies)
