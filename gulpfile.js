@@ -104,7 +104,7 @@ const rollupTask = (fileName) => () => {
 const scss = {
   compile: () => {
     return src(paths.src + 'stylesheets/**/*.scss')
-      .pipe(plugins.sass(
+      .pipe(plugins.sass.sync(
         {
           includePaths: [paths.govuk_frontend],
           outputStyle: 'compressed'
