@@ -125,5 +125,6 @@
 {% endblock %}
 
 {% block bodyEnd %}
+  {{ super() }}
   <script type="text/javascript" src="{{ '/alerts/assets/javascripts/govuk-frontend-details.js' | file_fingerprint }}"></script>
 {% endblock %}
