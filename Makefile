@@ -92,11 +92,11 @@ cf-run-task-publish: cf-target
 	# successful and return a non-zero status if not;
 	# make doesn't support multiline scripts, so the "\"
 	# and ";" turn it into a oneliner with an exit status
-	for _ in 1 2 3 4 5; do \
+	for _ in 1 2 3 4 5 6; do \
 		if $(CHECK_COMMAND) | grep SUCCEEDED; then\
 			exit 0; \
 		fi; \
-		sleep 3; \
+		sleep 10; \
 	done; \
 	cf logs notify-govuk-alerts --recent; \
 	exit 1
