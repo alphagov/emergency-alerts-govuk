@@ -12,7 +12,7 @@ Website for emergency alerts, hosted under /alerts on GOV.UK.
 
 ### Python version
 
-At the moment we run Python 3.6 in production.
+We run Python 3.9 in production.
 
 ### NPM packages
 
