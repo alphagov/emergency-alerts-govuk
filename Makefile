@@ -21,6 +21,7 @@ run-flask:
 .PHONY: bootstrap
 bootstrap:
 	pip install -r requirements_for_test.txt
+	$(if $(shell which n), n auto)
 	npm ci
 	npm run build
 
