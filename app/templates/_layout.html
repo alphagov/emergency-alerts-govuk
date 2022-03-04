@@ -34,6 +34,7 @@
 {% endblock %}
 
 {% block header %}
+  <script async type="text/javascript" src="{{ '/alerts/assets/javascripts/govuk-frontend-skip-link.js' | file_fingerprint }}"></script>
   {{ govukHeader({
     'assetsPath': '/alerts/assets/images'
   }) }}
@@ -102,8 +103,4 @@
       ]
     }
   }) }}
-{% endblock %}
-
-{% block bodyEnd %}
-  <script async type="text/javascript" src="{{ '/alerts/assets/javascripts/govuk-frontend-skip-link.js' | file_fingerprint }}"></script>
 {% endblock %}
