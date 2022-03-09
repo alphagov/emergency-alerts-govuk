@@ -16,7 +16,7 @@ clean:
 
 .PHONY: run-flask
 run-flask:
-	FLASK_ENV=development flask run
+	FLASK_ENV=development flask run -p 6017
 
 .PHONY: bootstrap
 bootstrap:
