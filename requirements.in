@@ -1,4 +1,4 @@
-govuk-frontend-jinja==1.4.0
+govuk-frontend-jinja==2.0.0
 Jinja2==2.11.3
 MarkupSafe==1.1.1
 PyYAML==5.4.1

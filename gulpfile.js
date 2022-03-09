@@ -83,7 +83,7 @@ const rollupTask = (fileName) => () => {
         include: 'node_modules/**'
       }),
       // Terser is a replacement for UglifyJS
-      rollupPluginTerser()
+      rollupPluginTerser({'ie8': true})
     ]
   }).then(bundle => {
     return bundle.write({
@@ -104,7 +104,7 @@ const rollupTask = (fileName) => () => {
 const scss = {
   compile: () => {
     return src(paths.src + 'stylesheets/**/*.scss')
-      .pipe(plugins.sass(
+      .pipe(plugins.sass.sync(
         {
           includePaths: [paths.govuk_frontend],
           outputStyle: 'compressed'
@@ -127,6 +127,7 @@ const defaultTask = parallel(
   copy.html5shiv,
   copy.images,
   scss.compile,
+  rollupTask('govuk-frontend-skip-link'),
   rollupTask('govuk-frontend-details'),
   rollupTask('sharing-button'),
   rollupTask('relative-dates')
