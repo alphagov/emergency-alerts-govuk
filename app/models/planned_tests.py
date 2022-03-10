@@ -10,6 +10,6 @@ class PlannedTests(SerialisedModelCollection):
 
     @classmethod
     def from_yaml(cls, path=REPO / 'planned-tests.yaml'):
-        data = yaml.load(path.read_bytes(), Loader=yaml.CLoader)
+        data = yaml.load(path.read_bytes())
 
         return cls(data['planned_tests'])
