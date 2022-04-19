@@ -27,7 +27,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^13.1.3",
-    "govuk-frontend": "^4.0.1",
+    "govuk-frontend": "github:alphagov/govuk-frontend#202c4c6f82b13dd6a06183380096c0e78933d5e0",
     "gulp": "^4.0.2",
     "gulp-if": "^3.0.0",
     "gulp-postcss": "^9.0.1",

@@ -1,4 +1,4 @@
-import Button from 'govuk-frontend/govuk/components/button/button'
+import { Button } from 'govuk-frontend'
 
 export default function sharingButton () {
   var container = document.querySelector('.share-url')

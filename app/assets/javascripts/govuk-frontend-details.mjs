@@ -1,10 +1,10 @@
-import { nodeListForEach } from 'govuk-frontend/govuk/common'
-import Details from 'govuk-frontend/govuk/components/details/details'
+import { Details } from 'govuk-frontend'
 
 export default function govukFrontendDetails () {
   var details = document.querySelectorAll('[data-module="govuk-details"]')
+  var i;
 
-  nodeListForEach(details, function (detail) {
-    new Details(detail).init()
-  })
+  for (i = 0; i < details.length; i++) {
+    new Details(details[i]).init()
+  }
 }

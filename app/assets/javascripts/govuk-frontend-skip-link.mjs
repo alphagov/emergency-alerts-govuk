@@ -1,10 +1,10 @@
-import { nodeListForEach } from 'govuk-frontend/govuk/common'
-import SkipLink from 'govuk-frontend/govuk/components/skip-link/skip-link'
+import { SkipLink } from 'govuk-frontend'
 
 export default function govukFrontendSkipLink () {
   var skipLinks = document.querySelectorAll('[data-module="govuk-skip-link"]')
+  var i;
 
-  nodeListForEach(skipLinks, function (skipLink) {
-    new SkipLink(skipLink).init()
-  })
+  for (i = 0; i < skipLinks.length; i++) {
+    new SkipLink(skipLinks[i]).init()
+  }
 }
