@@ -14,18 +14,23 @@ Website for emergency alerts, hosted under /alerts on GOV.UK.
 
 We run Python 3.9 in production.
 
-### NPM packages
+### NodeJS & NPM
+
+If you don't have NodeJS on your system, install it with homebrew.
 
 ```shell
 brew install node
 ```
 
-[NPM](npmjs.org) is Node's package management tool. `n` is a tool for managing different versions of Node. The following installs `n` and uses the long term support (LTS) version of Node.
+`nvm` is a tool for managing different versions of NodeJS. Follow [the guidance on nvm's github repository](https://github.com/nvm-sh/nvm#installing-and-updating) to install it.
+
+Once installed, run the following to switch to the version of NodeJS for this project. If you don't
+have that version, it should tell you how to install it.
 
 ```shell
-npm install -g n
-n lts
+nvm use
 ```
+
 ## To run the application
 
 ```shell
@@ -65,3 +70,4 @@ To run a specific JavaScript test, you'll need to copy the full command from `pa
 - [Image optimisation](docs/image-optimisation.md)
 - [Setting up redirects](docs/redirects.md)
 - [Updating dependencies](https://github.com/alphagov/notifications-manuals/wiki/Dependencies)
+- [JavaScript documentation](https://github.com/alphagov/notifications-manuals/wiki/JavaScript-Documentation)

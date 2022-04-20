@@ -21,15 +21,13 @@ run-flask:
 .PHONY: bootstrap
 bootstrap:
 	pip install -r requirements_for_test.txt
-	npm ci
-	npm run build
+	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci && npm run build
 
 .PHONY: test
 test:
 	isort --check-only *.py app tests
 	flake8 .
-	npm run lint
-	npm test
+	source $(HOME)/.nvm/nvm.sh && npm run lint && npm test
 	pytest tests/
 
 .PHONY: freeze-requirements
