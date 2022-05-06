@@ -21,7 +21,7 @@ run-flask:
 .PHONY: bootstrap
 bootstrap:
 	pip install -r requirements_for_test.txt
-	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci && npm run build
+	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm run build
 
 .PHONY: test
 test:
