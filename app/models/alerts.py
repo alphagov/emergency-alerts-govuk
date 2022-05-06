@@ -83,4 +83,4 @@ class Alerts(SerialisedModelCollection):
     @classmethod
     def from_yaml(cls, path=REPO / 'data.yaml'):
         with path.open() as stream:
-            return yaml.load(stream)['alerts']
+            return yaml.safe_load(stream)['alerts']
