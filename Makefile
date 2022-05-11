@@ -23,6 +23,10 @@ bootstrap:
 	pip install -r requirements_for_test.txt
 	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm run build
 
+.PHONY: npm-audit
+npm-audit:  ## Check for vulnerabilities in NPM packages
+	source $(HOME)/.nvm/nvm.sh && npm run audit
+
 .PHONY: test
 test:
 	isort --check-only *.py app tests
