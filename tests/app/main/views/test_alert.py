@@ -73,3 +73,28 @@ def test_alert_says_active_alert_is_active(client_get, mocker):
     html = client_get('alerts/21-apr-2021')
     # no "Stopped sending at ..." h2
     assert html.find('main h2') is None
+
+
+@pytest.mark.parametrize('url, expected_href_attribute', (
+    (
+        'gov.uk/alerts',
+        'http://gov.uk/alerts',
+    ),
+    (
+        'https://example.com/?a=foo&b="bar"#baz',
+        'https://example.com/?a=foo&b="bar"#baz',
+    ),
+))
+def test_urls_in_alerts_are_clickable(client_get, mocker, url, expected_href_attribute):
+    mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([
+        create_alert_dict(
+            id=uuid4(),
+            content=f'go to {url}',
+            starts_at=dt_parse('2021-04-21T11:00:00Z'),
+        ),
+    ]))
+
+    html = client_get('alerts/21-apr-2021')
+    link = html.select_one('p.govuk-body-l a.govuk-link')
+    assert link['href'] == expected_href_attribute
+    assert link.text == url

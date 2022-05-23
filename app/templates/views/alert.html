@@ -2,7 +2,7 @@
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 {%- from "govuk_frontend_jinja/components/details/macro.html" import govukDetails -%}
-{%- from "components/alert.html" import alert -%}
+{%- from "components/alert.html" import alert_body -%}
 {%- from "components/alerts_icon.html" import alerts_icon -%}
 {%- from "components/image.html" import image -%}
 {%- from "components/meta_tags.html" import metaTags -%}
@@ -56,7 +56,7 @@
         Stopped sending <time datetime="{{ alert_data.expires_date.as_iso8601 }}">{{ alert_data.expires_date.as_lang }}</time>
       </h2>
       {% endif %}
-      {{ alert_data.content | paragraphize }}
+      {{ alert_body(alert_data) }}
 
       <p class="govuk-body govuk-!-margin-bottom-0">
         Sent by the UK government <time datetime="{{ alert_data.starts_at_date.as_iso8601 }}">{{ alert_data.starts_at_date.as_lang }}</time>

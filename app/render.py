@@ -6,7 +6,7 @@ from jinja2 import (
     PrefixLoader,
     contextfilter,
 )
-from notifications_utils.formatters import formatted_list
+from notifications_utils.formatters import autolink_urls, formatted_list
 
 from app.utils import DIST, REPO, file_fingerprint, paragraphize
 
@@ -63,6 +63,7 @@ def setup_jinja_environment(alerts):
     ])
 
     env = Environment(loader=jinja_loader, autoescape=True)
+    env.filters['autolink_urls'] = autolink_urls
     env.filters['file_fingerprint'] = file_fingerprint
     env.filters['formatted_list'] = formatted_list
     env.filters['paragraphize'] = paragraphize
