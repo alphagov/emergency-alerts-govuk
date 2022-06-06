@@ -12,7 +12,7 @@
             Mobile network operator test
           {% endif %}
         </h{{ heading_level }}>
-        {{ alert.content | paragraphize }}
+        {{ alert_body(alert) }}
         {% if alert.is_public %}
           <a href="/alerts/{{ alert | get_url_for_alert }}" class="govuk-link govuk-body">
             More information about this alert
@@ -26,4 +26,8 @@
       </div>
     </div>
   </div>
+{% endmacro %}
+
+{% macro alert_body(alert) %}
+  {{ alert.content | paragraphize | autolink_urls(classes='govuk-link') }}
 {% endmacro %}
