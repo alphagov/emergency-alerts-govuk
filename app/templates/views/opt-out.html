@@ -40,57 +40,24 @@
         How to opt out of emergency alerts
       </h1>
       <p class="govuk-body">
-        You can opt out of some emergency alerts, but not the most important ones.
+        You can opt out of emergency alerts, but you should keep them switched on for your own safety.
       </p>
       <p class="govuk-body">
         You cannot opt out by subject, only by how serious the emergency is. If you opt out because you do not want flood warnings, for example, you might miss alerts for fires and extreme weather.
       </p>
       <p class="govuk-body">
-        Because of this, you should keep emergency alerts switched on for your own safety.
+        To opt out:
       </p>
-      <h2 class="govuk-heading-l">
-        Android phones and tablets
-      </h2>
+      <ul class="govuk-list govuk-list--number">
+        <li>
+          Search your settings for ‘emergency alerts’
+        </li>
+        <li>
+          Turn off ‘severe alerts’ and ‘extreme alerts’.
+        </li>
+      </ul>
       <p class="govuk-body">
-        To opt out, search your settings for ‘emergency alerts’ and turn off <b class="govuk-!-font-weight-bold">Severe alerts</b>.
-      </p>
-      <p class="govuk-body">
-        If this does not work, contact your device manufacturer.
-      </p>
-      <h3 class="govuk-heading-s" id="mobile-network-operator-tests">
-        Mobile network operator tests
-      </h3>
-      <p class="govuk-body">
-        To opt out of mobile network operator tests, search your settings for ‘emergency alerts’ and turn off <b class="govuk-!-font-weight-bold">Test alerts</b>.
-      </p>
-      {% set testAlertButton %}
-      If you cannot see <b class="govuk-!-font-weight-bold">Test alerts</b>
-      {% endset %}
-      {% set testAlertAdvice %}
-        <ul class="govuk-list govuk-list--number">
-          <li>
-            Open your phone calling app.
-          </li>
-          <li>
-            Use the keypad to enter <span class="govuk-!-font-numeric govuk-!-font-weight-bold">*#*#2627#*#*</span>
-          </li>
-          <li>
-            Search your settings for ‘emergency alerts’ and turn off <b class="govuk-!-font-weight-bold">Test alerts</b>.
-          </li>
-        </ul>
-      {% endset %}
-      {{ govukDetails({
-        "summaryHtml": testAlertButton,
-        "html": testAlertAdvice
-      }) }}
-      <h2 class="govuk-heading-l">
-        iPhone
-      </h2>
-      <p class="govuk-body">
-        To opt out, search your settings for ‘emergency alerts’ and turn off <b class="govuk-!-font-weight-bold">Severe alerts</b>.
-      </p>
-      <p class="govuk-body">
-        If this does not work, contact your device manufacturer.
+        If you still get alerts, contact your device manufacturer for help.
       </p>
     </div>
   </div>
