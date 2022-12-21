@@ -1,5 +1,5 @@
 {
-  "name": "notifications-govuk-alerts",
+  "name": "emergency-alerts-govuk",
   "version": "0.0.1",
   "description": "Static pages for GOVUK alerts",
   "engines": {
@@ -16,11 +16,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alphagov/notifications-govuk-alerts.git"
+    "url": "git+https://github.com/alphagov/emergency-alerts-govuk.git"
   },
   "author": "Government Digital Service",
   "license": "MIT",
-  "homepage": "https://github.com/alphagov/notifications-govuk-alerts#readme",
+  "homepage": "https://github.com/alphagov/emergency-alerts-govuk#readme",
   "dependencies": {
     "govuk-frontend": "^4.0.1",
     "html5shiv": "^3.7.3",

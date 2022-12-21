@@ -1,4 +1,4 @@
-# notifications-govuk-alerts
+# emergency-alerts-govuk
 
 Website for emergency alerts, hosted under /alerts on GOV.UK.
 
@@ -47,7 +47,7 @@ We aim to match the [browsers supported by GOVUK Frontend](https://github.com/al
 
 Any Python code changes you make should be picked up automatically in development. If you're developing JavaScript code, run `npm run watch` to achieve the same.
 
-**This app can also be run as a Celery worker, but this is currently broken on some machines. See https://github.com/alphagov/notifications-govuk-alerts/issues/214**
+**This app can also be run as a Celery worker, but this is currently broken on some machines. See https://github.com/alphagov/emergency-alerts-govuk/issues/214**
 
 ## To test the application
 

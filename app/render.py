@@ -6,7 +6,7 @@ from jinja2 import (
     PrefixLoader,
     contextfilter,
 )
-from notifications_utils.formatters import autolink_urls, formatted_list
+from emergency_alerts_utils.formatters import autolink_urls, formatted_list
 
 from app.utils import DIST, REPO, file_fingerprint, paragraphize
 
