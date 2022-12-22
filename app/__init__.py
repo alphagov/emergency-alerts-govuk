@@ -1,9 +1,9 @@
 import os
 
-from flask import Flask
 from emergency_alerts_utils import logging
 from emergency_alerts_utils.celery import NotifyCelery
 from emergency_alerts_utils.clients.statsd.statsd_client import StatsdClient
+from flask import Flask
 
 from app.notify_client.alerts_api_client import AlertsApiClient
 from app.utils import DIST
