@@ -1,6 +1,6 @@
 # Redirects
 
-If you need to set up a new redirect, you can do that in our notifications-broadcasts-infra repository.
+If you need to set up a new redirect, you can do that in our emergency-alerts-infra repository.
 
 In there, head to `terraform/modules/govuk-alerts-website/files/redirects` and add your redirect to REDIRECTS constant, using the following format:
 

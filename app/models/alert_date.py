@@ -1,7 +1,7 @@
 import datetime
 
 import pytz
-from notifications_utils.timezones import (
+from emergency_alerts_utils.timezones import (
     local_timezone,
     utc_string_to_aware_gmt_datetime,
 )

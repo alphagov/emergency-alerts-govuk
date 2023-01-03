@@ -1,5 +1,5 @@
 import yaml
-from notifications_utils.serialised_model import SerialisedModelCollection
+from emergency_alerts_utils.serialised_model import SerialisedModelCollection
 
 from app.models.planned_test import PlannedTest
 from app.utils import REPO

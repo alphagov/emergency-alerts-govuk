@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 import yaml
-from notifications_utils.serialised_model import SerialisedModelCollection
+from emergency_alerts_utils.serialised_model import SerialisedModelCollection
 
 from app import alerts_api_client
 from app.models.alert import Alert

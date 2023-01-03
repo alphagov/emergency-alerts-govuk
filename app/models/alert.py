@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import pytz
-from notifications_utils.serialised_model import SerialisedModel
+from emergency_alerts_utils.serialised_model import SerialisedModel
 
 from app.models.alert_date import AlertDate
 

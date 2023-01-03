@@ -13,18 +13,18 @@ awscli-cwlogs==1.4.6
 billiard==3.6.4.0
     # via celery
 bleach==4.1.0
-    # via notifications-utils
+    # via emergency-alerts-utils
 boto3==1.20.26
     # via
     #   -r requirements.in
-    #   notifications-utils
+    #   emergency-alerts-utils
 botocore==1.23.26
     # via
     #   awscli
     #   boto3
     #   s3transfer
 cachetools==5.0.0
-    # via notifications-utils
+    # via emergency-alerts-utils
 celery==5.1.2
     # via -r requirements.in
 certifi==2021.10.8
@@ -58,13 +58,13 @@ flask==1.1.2
     # via
     #   -r requirements.in
     #   flask-redis
-    #   notifications-utils
+    #   emergency-alerts-utils
 flask-redis==0.4.0
-    # via notifications-utils
+    # via emergency-alerts-utils
 geojson==2.5.0
-    # via notifications-utils
+    # via emergency-alerts-utils
 govuk-bank-holidays==0.10
-    # via notifications-utils
+    # via emergency-alerts-utils
 govuk-frontend-jinja==2.0.0
     # via -r requirements.in
 idna==3.3
@@ -72,13 +72,13 @@ idna==3.3
 itsdangerous==2.0.1
     # via
     #   flask
-    #   notifications-utils
+    #   emergency-alerts-utils
 jinja2==2.11.3
     # via
     #   -r requirements.in
     #   flask
     #   govuk-frontend-jinja
-    #   notifications-utils
+    #   emergency-alerts-utils
 jmespath==0.10.0
     # via
     #   boto3
@@ -90,19 +90,19 @@ markupsafe==1.1.1
     #   -r requirements.in
     #   jinja2
 mistune==0.8.4
-    # via notifications-utils
+    # via emergency-alerts-utils
 notifications-python-client==6.2.1
     # via -r requirements.in
-notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@56.0.2
+emergency-alerts-utils @ git+https://github.com/alphagov/emergency-alerts-utils.git@60.0.0-alpha
     # via -r requirements.in
 orderedset==2.0.3
-    # via notifications-utils
+    # via emergency-alerts-utils
 packaging==21.3
     # via
     #   bleach
     #   redis
 phonenumbers==8.12.40
-    # via notifications-utils
+    # via emergency-alerts-utils
 prompt-toolkit==3.0.24
     # via click-repl
 pyasn1==0.4.8
@@ -114,24 +114,24 @@ pyjwt==2.3.0
 pyparsing==3.0.6
     # via packaging
 pypdf2==2.4.2
-    # via notifications-utils
+    # via emergency-alerts-utils
 pyproj==3.2.1
-    # via notifications-utils
+    # via emergency-alerts-utils
 python-dateutil==2.8.2
     # via
     #   awscli-cwlogs
     #   botocore
 python-json-logger==2.0.2
-    # via notifications-utils
+    # via emergency-alerts-utils
 pytz==2021.3
     # via
     #   celery
-    #   notifications-utils
+    #   emergency-alerts-utils
 pyyaml==5.4.1
     # via
     #   -r requirements.in
     #   awscli
-    #   notifications-utils
+    #   emergency-alerts-utils
 redis==4.1.0
     # via flask-redis
 requests==2.26.0
@@ -139,7 +139,7 @@ requests==2.26.0
     #   awscli-cwlogs
     #   govuk-bank-holidays
     #   notifications-python-client
-    #   notifications-utils
+    #   emergency-alerts-utils
 rsa==4.7.2
     # via awscli
 s3transfer==0.5.0
@@ -147,7 +147,7 @@ s3transfer==0.5.0
     #   awscli
     #   boto3
 shapely==1.8.0
-    # via notifications-utils
+    # via emergency-alerts-utils
 six==1.16.0
     # via
     #   awscli-cwlogs
@@ -155,9 +155,9 @@ six==1.16.0
     #   click-repl
     #   python-dateutil
 smartypants==2.0.1
-    # via notifications-utils
+    # via emergency-alerts-utils
 statsd==3.3.0
-    # via notifications-utils
+    # via emergency-alerts-utils
 typing-extensions==4.3.0
     # via pypdf2
 urllib3==1.26.7
