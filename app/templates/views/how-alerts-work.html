@@ -2,6 +2,7 @@
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 {%- from "components/meta_tags.html" import metaTags -%}
+{%- from "components/related_content.html" import related_content -%}
 
 {% set pageTitle = "How emergency alerts work" %}
 
@@ -102,6 +103,24 @@
       <p class="govuk-body">
         Emergency alerts will not replace local news, radio, television or social media.
       </p>
+    </div>
+    <div class="govuk-grid-column-one-third">
+      {{ related_content({
+        "items": [
+          {
+            "text": "About Emergency Alerts",
+            "href": ""
+          },
+          {
+            "text": "Current emergency alerts",
+            "href": "/current-alerts"
+          },
+          {
+            "text": "Past emergency alerts",
+            "href": "/past-alerts"
+          },
+        ]
+      }) }}
     </div>
   </div>
 {% endblock %}
