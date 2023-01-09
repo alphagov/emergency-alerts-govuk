@@ -49,68 +49,102 @@
 
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-half">
+    <div class="govuk-grid-column-two-thirds">
       <h2 class="govuk-heading-l">About Emergency Alerts</h2>
       <p class="govuk-body">
-        Emergency Alerts is a new service from the UK government. It’s expected to launch in 2023.
-      </p>
-      <p class="govuk-body">
-        Emergency alerts will warn you if there’s a danger to life nearby.
+        Emergency Alerts is a UK government service that will warn you if there’s a danger to life nearby.
       </p>
       <p class="govuk-body">
         In an emergency, your mobile phone or tablet will receive an alert with advice about how to stay safe.
       </p>
-      <p class="govuk-body">
-        <a href="/alerts/when-you-get-an-alert" class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold">What happens when you get an alert</a>
-      </p>
-    </div>
-    <div class="govuk-grid-column-one-half">
-      {{ example() }}
-    </div>
-  </div>
-  <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-8">
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-half">
+      <div class="govuk-inset-text">
+        The government does not need to know your phone number or location to send you an alert.
+      </div>
       <h2 class="govuk-heading-l">Reasons you might get an&nbsp;alert</h2>
       <p class="govuk-body">
-        The government and mobile phone networks are testing emergency alerts.
+        You may get alerts about:
+      </p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>
+          severe flooding
+        </li>
+        <li>
+          fires
+        </li>
+        <li>
+          extreme weather
+        </li>
+        <li>
+          public health emergencies
+        </li>
+      </ul>
+      <p class="govuk-body">
+        Emergency alerts will only be sent by:
+      </p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>
+          the emergency services
+        </li>
+        <li>
+          government departments, agencies and public bodies that deal with emergencies
+        </li>
+      </ul>
+      <h2 class="govuk-heading-l">What happens when you get an emergency alert</h2>
+      <p class="govuk-body">
+        Your mobile phone or tablet may:
+      </p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>
+          make a loud siren-like sound, even if it’s set on silent
+        </li>
+        <li>
+          vibrate
+        </li>
+        <li>
+          read out the alert
+        </li>
+      </ul>
+      <p class="govuk-body">
+        The sound and vibration will last for about 10 seconds.
       </p>
       <p class="govuk-body">
-        You may get an alert if you live in, or travel through, a test area.
-      </p>
-      <p class="govuk-body"><a href="/alerts/reasons-you-might-get-an-alert" class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold">Other reasons you might get an alert</a></p>
-    </div>
-    <div class="govuk-grid-column-one-half">
-      {{ image(
-        path="/alerts/assets/images/emergencies.jpg",
-        height="810",
-        width="870",
-        alt="Three images showing flooding, a fire, and blue police lights",
-        centred=True,
-        extra_margin=True
-      ) }}
-    </div>
-  </div>
-  <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-8">
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-half">
-      <h2 class="govuk-heading-l">How it works</h2>
-      <p class="govuk-body">
-        Emergency alerts are broadcast from mobile phone masts. Every compatible mobile phone or tablet in range will receive an alert.
+        An alert will include a phone number or a link to the GOV.UK website for more information.
       </p>
       <p class="govuk-body">
-        The government does not need your phone number to send you an alert.
+        You’ll get alerts based on your current location - not where you live or work. You do not need to turn on location services to receive alerts.
       </p>
-      <p class="govuk-body">
-        <a href="/alerts/how-alerts-work" class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold">How emergency alerts work</a>
-      </p>
-    </div>
-    <div class="govuk-grid-column-one-half">
       <div class="responsive-embed responsive-embed--16by9">
         <div class="responsive-embed__content">
           <iframe title="UK Emergency Alerts" width="560" height="315" src="https://www.youtube-nocookie.com/embed/9yLd2AjGzYI" frameborder="0" allowfullscreen></iframe>
         </div>
       </div>
+      <div class="govuk-!-padding-bottom-8"></div>
+      <h2 class="govuk-heading-l">What you need to do</h2>
+      <p class="govuk-body">
+        When you get an alert, stop what you’re doing and follow the instructions in the alert.
+      </p>
+      <h3 class="govuk-heading-m">If you’re driving or riding when you get an alert</h3>
+      <p class="govuk-body">
+        Find somewhere safe to stop before using your mobile phone or tablet. If you have a passenger, ask them to read the alert immediately.
+      </p>
+      <div class="govuk-inset-text">
+        It is illegal to use a hand-held device while driving or riding.
+      </div>
+      <h2 class="govuk-heading-l">If you cannot receive emergency alerts</h2>
+      <p class="govuk-body">
+        If you do not have a compatible device, you’ll still be informed about an emergency. The emergency services have other ways to warn you when there is a threat to life.
+      </p>
+      <div class="govuk-inset-text">
+        Emergency alerts will not replace local news, radio, television or social media.
+      </div>
+      <h2 class="govuk-heading-l">If you’re deaf, hard of hearing, blind or partially sighted</h2>
+      <p class="govuk-body">
+        If you have a vision or hearing impairment, audio and vibration attention signals will let you know you have an emergency alert.
+      </p>
+      <h2 class="govuk-heading-l">Alert languages</h2>
+      <p class="govuk-body">
+        Emergency alerts will be sent in English. In Wales, they may also be sent in Welsh.
+      </p>
     </div>
   </div>
 {% endblock %}
