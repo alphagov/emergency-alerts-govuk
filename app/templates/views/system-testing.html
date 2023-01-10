@@ -1,0 +1,81 @@
+{% extends "content.html" %}
+
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "components/alert.html" import alert -%}
+{%- from "components/meta_tags.html" import metaTags -%}
+
+{% set pageTitle = "Testing the Emergency Alerts system" %}
+
+{% block metaTags %}
+  {{ metaTags(
+    description="About Emergency Alerts System testing",
+    title=pageTitle,
+    url="https://www.gov.uk/alerts/system-testing"
+  ) }}
+{% endblock %}
+
+{% block prefetch %}
+  <link rel="prefetch" href="{{ '/alerts/assets/javascripts/govuk-frontend-details.js' | file_fingerprint }}" />
+{% endblock %}
+
+{% block pageTitleCurrent -%}
+  {{ pageTitle }}
+{%- endblock %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "/"
+      },
+      {
+        "text": "Emergency Alerts",
+        "href": "/alerts"
+      }
+    ]
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+        {{ pageTitle }}
+      </h1>
+      <p class="govuk-body">
+        The emergency alert system is tested to make sure it works well. Testing also lets you see what an alert looks like on your device.
+      </p>
+      <p class="govuk-body">
+        All <a class="govuk-link" href="/alerts/how-alerts-work">compatible devices</a> will receive national tests. The time and date of tests will be available in advance.
+      </p>
+      <p class="govuk-body">
+        Your device will make a loud siren-like sound for about 10 seconds. You do not need to take action.
+      </p>
+      <p class="govuk-body">
+        You can turn off your device or switch it to airplane mode during the test period if you do not want to receive the alert.
+      </p>
+      <p class="govuk-body">
+        You can also <a class="govuk-link" href="/alerts/how-alerts-work">opt out</a> of emergency alerts if you want to.
+      </p>
+      <h2 class="govuk-heading-l">
+        Service test alerts
+      </h2>
+      <p class="govuk-body">
+        The government and mobile network operators occasionally carry out emergency alerts service tests across the UK.
+      </p>
+      <p class="govuk-body">
+        These are different from national tests. You’ll only get service test alerts if you have an older Android phone or tablet with operator test alerts turned on.
+      </p>
+      <p class="govuk-body">
+        Your device may make a loud siren-like sound for about 10 seconds. You do not need to take action.
+      </p>
+      <p class="govuk-body">
+        To opt out of service alerts, turn off ‘test alerts’ in your settings. If you still get alerts, contact your device manufacturer for help.
+      </p>
+      <p class="govuk-inset-text">
+        For most people, the chance of receiving a service test alert will be low.
+      </p>
+    </div>
+  </div>
+{% endblock %}
