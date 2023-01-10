@@ -3,6 +3,7 @@
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 {%- from "components/alert.html" import alert -%}
 {%- from "components/meta_tags.html" import metaTags -%}
+{%- from "components/related_content.html" import related_content -%}
 
 {% set pageTitle = "Current alerts" %}
 
@@ -38,17 +39,40 @@
 {% endblock %}
 
 {% block mainContent %}
-  <h1 class="govuk-heading-xl">
-    Current alerts
-  </h1>
-  {% for current_alert in alerts.current_and_public | sort(reverse=True) %}
-  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-  {{ alert(alert=current_alert) }}
-  {% endfor %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+        Current alerts
+      </h1>
+      {% for current_alert in alerts.current_and_public | sort(reverse=True) %}
+      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+      {{ alert(alert=current_alert) }}
+      {% endfor %}
 
-  {% if alerts.current_and_public %}
-  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
-  {% else %}
-  <p class="govuk-body">There are no current emergency alerts.</p>
-  {% endif %}
+      {% if alerts.current_and_public %}
+      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
+      {% else %}
+      <p class="govuk-body">There are no current emergency alerts.</p>
+      {% endif %}
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+      {{ related_content({
+        "items": [
+          {
+            "text": "About Emergency Alerts",
+            "href": "/alerts"
+          },
+          {
+            "text": "How emergency alerts work",
+            "href": "/alerts/how-alerts-work"
+          },
+          {
+            "text": "Past emergency alerts",
+            "href": "/alerts/past-alerts"
+          },
+        ]
+      }) }}
+    </div>
+  </div>
 {% endblock %}

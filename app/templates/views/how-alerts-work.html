@@ -2,6 +2,7 @@
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 {%- from "components/meta_tags.html" import metaTags -%}
+{%- from "components/related_content.html" import related_content -%}
 
 {% set pageTitle = "How emergency alerts work" %}
 
@@ -133,6 +134,24 @@
       <div class="govuk-inset-text">
         Data about you, your device or location will not be collected or shared.
       </div>
+    </div>
+    <div class="govuk-grid-column-one-third">
+      {{ related_content({
+        "items": [
+          {
+            "text": "About Emergency Alerts",
+            "href": "/alerts"
+          },
+          {
+            "text": "Current emergency alerts",
+            "href": "/alerts/current-alerts"
+          },
+          {
+            "text": "Past emergency alerts",
+            "href": "/alerts/past-alerts"
+          },
+        ]
+      }) }}
     </div>
   </div>
 {% endblock %}

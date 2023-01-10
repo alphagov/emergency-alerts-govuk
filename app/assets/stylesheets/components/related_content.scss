@@ -1,0 +1,11 @@
+@import "govuk/settings/all";
+
+.app-related-items {
+    border-top: 2px solid #1d70b8;
+    padding-top: 10px;
+    .govuk-list {
+        >li{
+            margin-bottom: 10px;
+        }
+    }
+}
