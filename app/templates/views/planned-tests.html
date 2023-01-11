@@ -1,6 +1,7 @@
 {% extends "content.html" %}
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "components/related_content.html" import related_content -%}
 {%- from "components/meta_tags.html" import metaTags -%}
 
 {% set pageTitle = "Planned tests" %}
@@ -77,6 +78,32 @@
         You can see previous tests on the <a class="govuk-link" href="/alerts/past-alerts">past alerts page</a>.
       </p>
       {% endfor %}
+    </div>
+    <div class="govuk-grid-column-one-third">
+      {{ related_content({
+        "items": [
+          {
+            "text": "About Emergency Alerts",
+            "href": "/alerts"
+          },
+          {
+            "text": "How emergency alerts work",
+            "href": "/alerts/how-alerts-work"
+          },
+          {
+            "text": "Testing the Emergency Alerts system",
+            "href": "/alerts/system-testing"
+          },
+          {
+            "text": "Current emergency alerts",
+            "href": "/alerts/current-alerts"
+          },
+          {
+            "text": "Past emergency alerts",
+            "href": "/alerts/past-alerts"
+          }
+        ]
+      }) }}
     </div>
   </div>
 {% endblock %}
