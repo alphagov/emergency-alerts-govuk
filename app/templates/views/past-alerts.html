@@ -4,7 +4,7 @@
 {%- from "components/alert.html" import alert -%}
 {%- from "components/meta_tags.html" import metaTags -%}
 
-{% set pageTitle = "Past alerts" %}
+{% set pageTitle = "Past emergency alerts" %}
 
 {% block metaTags %}
   {{ metaTags(
@@ -41,21 +41,25 @@
   <h1 class="govuk-heading-xl">
     {{ pageTitle }}
   </h1>
-  {% for _date, past_alerts in alerts.expired_grouped_by_date | sort(reverse=True) %}
-    {% set date_loop = loop %}
-    {% for past_alert in past_alerts | sort(reverse=True) %}
-      {% if loop.first %}
-        <h2 class="govuk-heading-m {% if not date_loop.first %}govuk-!-margin-top-9{% endif %}">
-          {{ past_alert.starts_at_date.date_as_lang }}
-        </h2>
-      {% endif %}
-      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-      {{ alert(alert=past_alert, heading_level=3) }}
-    {% endfor %}
-    {% if loop.last %}
-      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-    {% endif %}
-  {% else %}
-    <p class="govuk-body">There are no past emergency alerts.</p>
-  {% endfor %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% for _date, past_alerts in alerts.expired_grouped_by_date | sort(reverse=True) %}
+        {% set date_loop = loop %}
+        {% for past_alert in past_alerts | sort(reverse=True) %}
+          {% if loop.first %}
+            <h2 class="govuk-heading-m {% if not date_loop.first %}govuk-!-margin-top-9{% endif %}">
+              {{ past_alert.starts_at_date.date_as_lang }}
+            </h2>
+          {% endif %}
+          <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+          {{ alert(alert=past_alert, heading_level=3) }}
+        {% endfor %}
+        {% if loop.last %}
+          <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        {% endif %}
+      {% else %}
+        <p class="govuk-body">There are no past emergency alerts.</p>
+      {% endfor %}
+    </div>
+  </div>
 {% endblock %}
