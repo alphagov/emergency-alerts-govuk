@@ -3,6 +3,7 @@
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 {%- from "components/alert.html" import alert -%}
 {%- from "components/meta_tags.html" import metaTags -%}
+{%- from "components/related_content.html" import related_content -%}
 
 {% set pageTitle = "Testing the Emergency Alerts system" %}
 
@@ -76,6 +77,29 @@
       <p class="govuk-inset-text">
         For most people, the chance of receiving a service test alert will be low.
       </p>
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+      {{ related_content({
+        "items": [
+          {
+            "text": "About Emergency Alerts",
+            "href": "/alerts"
+          },
+          {
+            "text": "How emergency alerts work",
+            "href": "/alerts/how-alerts-work"
+          },
+          {
+            "text": "Current emergency alerts",
+            "href": "/alerts/current-alerts"
+          },
+          {
+            "text": "Past emergency alerts",
+            "href": "/alerts/past-alerts"
+          }
+        ]
+      }) }}
     </div>
   </div>
 {% endblock %}
