@@ -39,6 +39,10 @@
       <h1 class="govuk-heading-xl">
         {{ pageTitle }}
       </h1>
+    </div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
       {% for alert_or_planned_test in alerts.current_and_planned_test_alerts|sort %}
       <h2 class="govuk-heading-m govuk-!-margin-top-6">
         {{ alert_or_planned_test.starts_at_date.date_as_lang }}

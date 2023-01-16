@@ -42,8 +42,12 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-xl">
-        Current alerts
+        {{ pageTitle }}
       </h1>
+    </div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
       {% for current_alert in alerts.current_and_public | sort(reverse=True) %}
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
       {{ alert(alert=current_alert) }}
