@@ -1,5 +1,6 @@
 {% extends "govuk_frontend_jinja/template.html" %}
 
+{%- from "govuk_frontend_jinja_overrides/templates/components/header/macro.html" import govukHeaderOverride -%}
 {%- from "govuk_frontend_jinja/components/phase-banner/macro.html" import govukPhaseBanner -%}
 
 {% block pageTitle %}{% block pageTitleCurrent %}{% endblock %} - GOV.UK{% endblock %}
@@ -37,7 +38,7 @@
 
 {% block header %}
   <script async type="text/javascript" src="{{ '/alerts/assets/javascripts/govuk-frontend-skip-link.js' | file_fingerprint }}"></script>
-  {{ govukHeader({
+  {{ govukHeaderOverride({
     'assetsPath': '/alerts/assets/images',
     "serviceName": "Emergency Alerts"
   }) }}

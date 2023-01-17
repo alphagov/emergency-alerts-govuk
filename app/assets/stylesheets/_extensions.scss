@@ -1,3 +1,10 @@
+.govuk-header {
+  &__service-name {
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+}
+
 .govuk-footer {
   border-top: govuk-spacing(2) solid govuk-colour('blue');
 }
