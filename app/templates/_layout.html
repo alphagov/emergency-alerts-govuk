@@ -1,5 +1,7 @@
 {% extends "govuk_frontend_jinja/template.html" %}
 
+{%- from "govuk_frontend_jinja/components/phase-banner/macro.html" import govukPhaseBanner -%}
+
 {% block pageTitle %}{% block pageTitleCurrent %}{% endblock %} - GOV.UK{% endblock %}
 
 {% block headIcons %}
@@ -36,8 +38,17 @@
 {% block header %}
   <script async type="text/javascript" src="{{ '/alerts/assets/javascripts/govuk-frontend-skip-link.js' | file_fingerprint }}"></script>
   {{ govukHeader({
-    'assetsPath': '/alerts/assets/images'
+    'assetsPath': '/alerts/assets/images',
+    "serviceName": "Emergency Alerts"
   }) }}
+  <div class="govuk-width-container">
+    {{ govukPhaseBanner({
+      'tag': {
+        'text': "beta"
+      },
+      'text': 'This is a new service that is being trialled.'
+    }) }}
+  </div>
 {% endblock %}
 
 {% block content %}
