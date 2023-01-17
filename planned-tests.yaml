@@ -1,12 +1,11 @@
 planned_tests: []
-# Example
-#  - starts_at: 2021-08-24T13:04:38+01:00
-#    display_areas:
-#      - England
-#      - Scotland
-#      - Wales
-#      - Northern Ireland
-#    description: |
-#      The UK goverment will test Emergency Alerts between […]
-#
-#      If you get an alert […]
+  # Example
+  # - id: dd5af9c4-849a-4c23-a523-d6cbda2557d9
+  #   channel: operator
+  #   approved_at: 2021-07-02T09:00:00Z
+  #   starts_at: 2023-02-09T13:04:38+01:00
+  #   cancelled_at:
+  #   finishes_at: 2021-07-02T11:00:00Z
+  #   content: |
+  #     This is a mobile network operator test of the Emergency Alerts service. You do not need to take any action. To find out more, search for gov.uk/alerts
+  #   areas: {}

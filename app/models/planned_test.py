@@ -5,9 +5,14 @@ from app.models.alert_date import AlertDate
 
 class PlannedTest(SerialisedModel):
     ALLOWED_PROPERTIES = {
-        'description',
-        'display_areas',
+        'id',
+        'channel',
+        'approved_at',
         'starts_at',
+        'cancelled_at',
+        'finishes_at',
+        'areas',
+        'content',
     }
 
     def __lt__(self, other):

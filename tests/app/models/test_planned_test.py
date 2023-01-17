@@ -20,14 +20,14 @@ def test_lt_compares_planned_tests_based_on_start_date():
     assert PlannedTest(alert_dict_1) < PlannedTest(alert_dict_2)
 
 
-def test_planned_test_only_has_display_areas():
+def test_planned_test_only_has_areas():
     assert PlannedTest(
         create_planned_test_dict()
-    ).display_areas == []
+    ).areas == []
 
     assert PlannedTest(
-        create_planned_test_dict(display_areas=['a', 'b'])
-    ).display_areas == ['a', 'b']
+        create_planned_test_dict(areas=['a', 'b'])
+    ).areas == ['a', 'b']
 
     assert not hasattr(
         PlannedTest(create_planned_test_dict()),
