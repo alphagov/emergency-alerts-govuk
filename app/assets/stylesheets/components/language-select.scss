@@ -6,8 +6,9 @@
 
 .hmrc-language-select__list {
   margin-top: 1em;
-  float: right;
-  text-align: right;
+  float: left;
+  text-align: left;
+  padding-inline-start: 0px;
 }
 
 .hmrc-language-select__list-item {
