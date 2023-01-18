@@ -6,13 +6,13 @@
 {%- from "components/meta_tags.html" import metaTags -%}
 {%- from "components/related_content.html" import related_content -%}
 
-{% set pageTitle = "Rhybuddion yn y gorffennol" %}
+{% set pageTitle = "Rhybuddion ar hyn o bryd" %}
 
 {% block metaTags %}
   {{ metaTags(
-    description="A list of past emergency alerts that were sent in the UK",
+    description="A list of the emergency alerts currently being sent in the UK",
     title=pageTitle,
-    url="https://www.gov.uk/alerts/past-alerts.cy"
+    url="https://www.gov.uk/alerts/current-alerts.cy"
   ) }}
 {% endblock %}
 
@@ -39,7 +39,7 @@
   }) }}
 {% endblock %}
 
-{% block content %}
+{% block mainContent %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-xl">
@@ -50,31 +50,25 @@
       {{ hmrcLanguageSelect({
         'language': 'cy',
         'en': {
-          'href': '/alerts/past-alerts'
+          'href': '/alerts/current-alerts'
         }
       }) }}
     </div>
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% for _date, past_alerts in alerts.expired_grouped_by_date | sort(reverse=True) %}
-        {% set date_loop = loop %}
-        {% for past_alert in past_alerts | sort(reverse=True) %}
-          {% if loop.first %}
-            <h2 class="govuk-heading-m {% if not date_loop.first %}govuk-!-margin-top-9{% endif %}">
-              {{ past_alert.starts_at_date.date_as_lang }}
-            </h2>
-          {% endif %}
-          <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-          {{ alert(alert=past_alert, heading_level=3, language='cy') }}
-        {% endfor %}
-        {% if loop.last %}
-          <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        {% endif %}
-      {% else %}
-        <p class="govuk-body">There are no past emergency alerts.</p>
+      {% for current_alert in alerts.current_and_public | sort(reverse=True) %}
+      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+      {{ alert(alert=current_alert) }}
       {% endfor %}
+
+      {% if alerts.current_and_public %}
+      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
+      {% else %}
+      <p class="govuk-body">Does dim rhybuddion argyfwng ar hyn o bryd.</p>
+      {% endif %}
     </div>
+
     <div class="govuk-grid-column-one-third">
       {{ related_content({
         "items": [
@@ -91,8 +85,8 @@
             "href": "/alerts/system-testing"
           },
           {
-            "text": "Current alerts",
-            "href": "/alerts/current-alerts"
+            "text": "Past alerts",
+            "href": "/alerts/past-alerts"
           },
           {
             "text": "Planned tests",
