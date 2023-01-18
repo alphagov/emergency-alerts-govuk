@@ -5,13 +5,13 @@
 {%- from "components/related_content.html" import related_content -%}
 {%- from "components/meta_tags.html" import metaTags -%}
 
-{% set pageTitle = "Planned tests" %}
+{% set pageTitle = "Profion ar y gweill" %}
 
 {% block metaTags %}
   {{ metaTags(
     description="Planned tests of the Emergency Alerts service",
     title=pageTitle,
-    url="https://www.gov.uk/alerts/planned-tests"
+    url="https://www.gov.uk/alerts/planned-tests.cy"
   ) }}
 {% endblock %}
 
@@ -43,9 +43,9 @@
     </div>
     <div class="govuk-grid-column-one-third">
       {{ hmrcLanguageSelect({
-        'language': 'en',
-        'cy': {
-          'href': '/alerts/planned-tests.cy'
+        'language': 'cy',
+        'en': {
+          'href': '/alerts/planned-tests'
         }
       }) }}
     </div>
@@ -85,7 +85,7 @@
       {% endif %}
       {% else %}
       <p class="govuk-body">
-        There are currently no planned tests of emergency alerts.
+        Ar hyn o bryd does dim profion ar y gweill ar gyfer rhybuddion argyfwng.
       </p>
       {% endfor %}
     </div>
