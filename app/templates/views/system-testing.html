@@ -1,6 +1,7 @@
 {% extends "content.html" %}
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "govuk_frontend_jinja_overrides/templates/components/language-select/macro.html" import hmrcLanguageSelect -%}
 {%- from "components/alert.html" import alert -%}
 {%- from "components/meta_tags.html" import metaTags -%}
 {%- from "components/related_content.html" import related_content -%}
@@ -45,6 +46,14 @@
         {{ pageTitle }}
       </h1>
     </div>
+    <div class="govuk-grid-column-one-third">
+      {{ hmrcLanguageSelect({
+        'language': 'en',
+        'cy': {
+          'href': '/alerts/system-testing.cy'
+        }
+      }) }}
+    </div>
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -52,7 +61,7 @@
         The emergency alert system is tested to make sure it works well. Testing also lets you see what an alert looks like on your device.
       </p>
       <p class="govuk-body">
-        All <a class="govuk-link" href="/alerts/how-alerts-work">compatible devices</a> will receive national tests. The time and date of tests will be available in advance.
+        All <a class="govuk-link" href="/alerts/how-alerts-work#compatible-devices">compatible devices</a> will receive national tests. The time and date of tests will be available in advance.
       </p>
       <p class="govuk-body">
         Your device will make a loud siren-like sound for about 10 seconds. You do not need to take action.

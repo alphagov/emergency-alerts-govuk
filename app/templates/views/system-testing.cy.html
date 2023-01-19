@@ -1,0 +1,123 @@
+{% extends "content.html" %}
+
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "govuk_frontend_jinja_overrides/templates/components/language-select/macro.html" import hmrcLanguageSelect -%}
+{%- from "components/alert.html" import alert -%}
+{%- from "components/meta_tags.html" import metaTags -%}
+{%- from "components/related_content.html" import related_content -%}
+
+{% set pageTitle = "Profi'r system Rhybuddion Argyfwng" %}
+
+{% block metaTags %}
+  {{ metaTags(
+    description="About Emergency Alerts System testing",
+    title=pageTitle,
+    url="https://www.gov.uk/alerts/system-testing.cy"
+  ) }}
+{% endblock %}
+
+{% block prefetch %}
+  <link rel="prefetch" href="{{ '/alerts/assets/javascripts/govuk-frontend-details.js' | file_fingerprint }}" />
+{% endblock %}
+
+{% block pageTitleCurrent -%}
+  {{ pageTitle }}
+{%- endblock %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "/"
+      },
+      {
+        "text": "Emergency Alerts",
+        "href": "/alerts"
+      }
+    ]
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+        {{ pageTitle }}
+      </h1>
+    </div>
+    <div class="govuk-grid-column-one-third">
+      {{ hmrcLanguageSelect({
+        'language': 'cy',
+        'en': {
+          'href': '/alerts/system-testing'
+        }
+      }) }}
+    </div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <p class="govuk-body">
+        Rhoddir prawf ar y system rhybuddion argyfwng i sicrhau ei bod yn gweithio'n dda. Mae profi hefyd yn gadael i chi weld sut mae rhybudd yn edrych ar eich dyfais.
+      </p>
+      <p class="govuk-body">
+        Caiff pob <a class="govuk-link" href="/alerts/how-alerts-work.cy#compatible-devices">dyfais gydweddol</a> brofion cenedlaethol. Bydd amser a dyddiad y profion ar gael ymlaen llaw.
+      </p>
+      <p class="govuk-body">
+        Bydd eich dyfais yn gwneud sŵn uchel tebyg i seiren am ryw 10 eiliad. Does dim angen i chi wneud dim.
+      </p>
+      <p class="govuk-body">
+        Gallwch chi ddiffodd eich dyfais neu ei throsglwyddo i fodd awyren yn ystod y cyfnod prawf os nad ydych chi am gael y rhybudd.
+      </p>
+      <p class="govuk-body">
+        Gallwch chi hefyd <a class="govuk-link" href="/alerts/how-alerts-work.cy">optio allan</a> o rybuddion argyfwng os dymunwch.
+      </p>
+      <h2 class="govuk-heading-l">
+        Rhybuddion profion gwasanaeth
+      </h2>
+      <p class="govuk-body">
+        O bryd i'w gilydd bydd y llywodraeth a gweithredwyr rhwydweithiau ffonau symudol yn cynnal profion ar y gwasanaeth rhybuddion argyfwng ar draws y DU.
+      </p>
+      <p class="govuk-body">
+        Mae'r rhain yn wahanol i brofion cenedlaethol. Cewch chi rybuddion profion gwasanaeth yn unig os bydd gennych chi ffôn Android neu lechen hŷn sydd â'r rhybuddion profion gweithredwr ymlaen.
+      </p>
+      <p class="govuk-body">
+        Efallai y bydd eich dyfais yn gwneud sŵn uchel tebyg i seiren am ryw 10 eiliad. Does dim angen i chi wneud dim.
+      </p>
+      <p class="govuk-body">
+        I optio allan o'r rhybuddion gwasanaeth, diffoddwch y 'rhybuddion prawf' yn eich gosodiadau. Os byddwch chi'n dal i dderbyn rhybuddion, cysylltwch â gwneuthurwr eich dyfais i gael cymorth.
+      </p>
+      <p class="govuk-inset-text">
+        Yn achos y rhan fwyaf o bobl, ychydig yw'r tebygrwydd o gael rhybudd prawf gwasanaeth.
+      </p>
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+      {{ related_content({
+        "items": [
+          {
+            "text": "Am Emergency Alerts",
+            "href": "/alerts.cy"
+          },
+          {
+            "text": "Sut mae'r rhybuddion argyfwng yn gweithio",
+            "href": "/alerts/how-alerts-work.cy"
+          },
+          {
+            "text": "Rhybuddion ar hyn o bryd",
+            "href": "/alerts/current-alerts.cy"
+          },
+          {
+            "text": "Rhybuddion yn y gorffennol",
+            "href": "/alerts/past-alerts.cy"
+          },
+          {
+            "text": "Profion ar y gweill",
+            "href": "/alerts/planned-tests.cy"
+          }
+        ],
+        "language": "cy"
+      }) }}
+    </div>
+  </div>
+{% endblock %}

@@ -1,6 +1,7 @@
 {% extends "content.html" %}
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "govuk_frontend_jinja_overrides/templates/components/language-select/macro.html" import hmrcLanguageSelect -%}
 {%- from "components/meta_tags.html" import metaTags -%}
 {%- from "components/related_content.html" import related_content -%}
 
@@ -39,6 +40,14 @@
       <h1 class="govuk-heading-xl">
         {{ pageTitle }}
       </h1>
+    </div>
+    <div class="govuk-grid-column-one-third">
+      {{ hmrcLanguageSelect({
+        'language': 'en',
+        'cy': {
+          'href': '/alerts/how-alerts-work.cy'
+        }
+      }) }}
     </div>
   </div>
   <div class="govuk-grid-row">

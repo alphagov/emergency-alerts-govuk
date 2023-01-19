@@ -1,3 +1,4 @@
+
 {% extends "content.html" %}
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
@@ -8,13 +9,13 @@
 {%- from "components/meta_tags.html" import metaTags -%}
 {%- from "components/related_content.html" import related_content -%}
 
-{% set pageTitle = "About Emergency Alerts" %}
+{% set pageTitle = "Am Emergency Alerts" %}
 
 {% block metaTags %}
   {{ metaTags(
     description="Your mobile phone or tablet may get an emergency alert if there’s a danger to life nearby. Alerts tell you what to do to stay safe.",
     title=pageTitle,
-    url="https://www.gov.uk/alerts"
+    url="https://www.gov.uk/alerts.cy"
   ) }}
 {% endblock %}
 
@@ -46,9 +47,9 @@
     </div>
     <div class="govuk-grid-column-one-third">
       {{ hmrcLanguageSelect({
-        'language': 'en',
-        'cy': {
-          'href': '/alerts.cy'
+        'language': 'cy',
+        'en': {
+          'href': '/alerts'
         }
       }) }}
     </div>
@@ -65,66 +66,66 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <p class="govuk-body">
-        Emergency Alerts is a UK government service that will warn you if there’s a danger to life nearby.
+        Un o wasanaethau llywodraeth y DU yw Emergency Alerts a fydd yn eich rhybuddio pan fydd perygl i fywyd gerllaw.
       </p>
       <p class="govuk-body">
-        In an emergency, your mobile phone or tablet will receive an alert with advice about how to stay safe.
+        Mewn argyfwng, caiff eich ffôn symudol neu'ch llechen rybudd â chyngor am sut i gadw'n ddiogel.
       </p>
       <div class="govuk-inset-text">
-        The government does not need to know your phone number or location to send you an alert.
+        Does dim angen i'r llywodraeth wybod eich rhif ffôn na'ch lleoliad er mwyn anfon rhybudd atoch.
       </div>
-      <h2 class="govuk-heading-l">Reasons you might get an&nbsp;alert</h2>
+      <h2 class="govuk-heading-l">Rhesymau pam y gallech gael&nbsp;rhybudd</h2>
       <p class="govuk-body">
-        You may get alerts about:
+        Gallech gael rhybuddion am y canlynol:
       </p>
       <ul class="govuk-list govuk-list--bullet">
         <li>
-          severe flooding
+          llifogydd difrifol
         </li>
         <li>
-          fires
+          tanau
         </li>
         <li>
-          extreme weather
+          tywydd eithafol
         </li>
         <li>
-          public health emergencies
+          argyfyngau iechyd y cyhoedd
         </li>
       </ul>
       <p class="govuk-body">
-        Emergency alerts will only be sent by:
+        Anfonir rhybuddion argyfwng yn unig trwy:
       </p>
       <ul class="govuk-list govuk-list--bullet">
         <li>
-          the emergency services
+          y gwasanaethau brys
         </li>
         <li>
-          government departments, agencies and public bodies that deal with emergencies
+          adrannau'r llywodraeth, asiantaethau a chyrff cyhoeddus sy'n ymdrin ag argyfyngau
         </li>
       </ul>
-      <h2 class="govuk-heading-l">What happens when you get an emergency alert</h2>
+      <h2 class="govuk-heading-l">Beth sy'n digwydd pan gewch chi rybudd argyfwng</h2>
       <p class="govuk-body">
-        Your mobile phone or tablet may:
+        Gallai eich ffôn symudol neu eich llechen:
       </p>
       <ul class="govuk-list govuk-list--bullet">
         <li>
-          make a loud siren-like sound, even if it’s set on silent
+          wneud sŵn uchel tebyg i seiren, hyd yn oed os yw ar osodiad tawel
         </li>
         <li>
-          vibrate
+          dirgrynu
         </li>
         <li>
-          read out the alert
+          darllen y rhybudd yn uchel
         </li>
       </ul>
       <p class="govuk-body">
-        The sound and vibration will last for about 10 seconds.
+        Bydd y sŵn a'r dirgryniad yn parhau am ryw 10 eiliad.
       </p>
       <p class="govuk-body">
-        An alert will include a phone number or a link to the GOV.UK website for more information.
+        Bydd rhybudd yn cynnwys rhif ffôn neu ddolen at wefan GOV.UK am ragor o wybodaeth.
       </p>
       <p class="govuk-body">
-        You’ll get alerts based on your current location - not where you live or work. You do not need to turn on location services to receive alerts.
+        Cewch chi ragor o rybuddion ar sail eich lleoliad presennol – nid ble rydych chi'n byw neu'n gweithio. Does dim angen i chi droi gwasanaethau lleoliad ymlaen i gael rhybuddion.
       </p>
       <div class="responsive-embed responsive-embed--16by9">
         <div class="responsive-embed__content">
@@ -132,57 +133,58 @@
         </div>
       </div>
       <div class="govuk-!-padding-bottom-8"></div>
-      <h2 class="govuk-heading-l">What you need to do</h2>
+      <h2 class="govuk-heading-l">Beth mae angen i chi ei wneud</h2>
       <p class="govuk-body">
-        When you get an alert, stop what you’re doing and follow the instructions in the alert.
+        Pan gewch chi rybudd, stopiwch beth rydych chi'n ei wneud a dilynwch y cyfarwyddiadau yn y rhybudd.
       </p>
-      <h3 class="govuk-heading-m">If you’re driving or riding when you get an alert</h3>
+      <h3 class="govuk-heading-m">Os ydych chi'n gyrru neu'n reidio pan gewch chi rybudd</h3>
       <p class="govuk-body">
-        Find somewhere safe to stop before using your mobile phone or tablet. If you have a passenger, ask them to read the alert immediately.
-      </p>
-      <div class="govuk-inset-text">
-        It is illegal to use a hand-held device while driving or riding.
-      </div>
-      <h2 class="govuk-heading-l">If you cannot receive emergency alerts</h2>
-      <p class="govuk-body">
-        If you do not have a <a class="govuk-link" href="/alerts/how-alerts-work#compatible-devices">compatible device</a>, you’ll still be informed about an emergency. The emergency services have other ways to warn you when there is a threat to life.
+        Dewch o hyd i le diogel i aros cyn defnyddio eich ffôn symudol neu'ch llechen Os oes gennych chi deithiwr, gofynnwch iddo/i ddarllen y rhybudd ar unwaith.
       </p>
       <div class="govuk-inset-text">
-        Emergency alerts will not replace local news, radio, television or social media.
+        Mae defnyddio dyfais llaw wrth yrru neu reidio yn erbyn y gyfraith.
       </div>
-      <h2 class="govuk-heading-l">If you’re deaf, hard of hearing, blind or partially sighted</h2>
+      <h2 class="govuk-heading-l">Os na allwch chi dderbyn rhybuddion argyfwng.</h2>
       <p class="govuk-body">
-        If you have a vision or hearing impairment, audio and vibration attention signals will let you know you have an emergency alert.
+        Os nad oes gennych chi <a class="govuk-link" href="/alerts/how-alerts-work.cy#compatible-devices">ddyfais gydweddol</a>, rhoddir gwybod o hyd i chi am argyfwng. Mae gan y gwasanaethau brys ffyrdd eraill o'ch rhybuddio pan fydd bygythiad i fywyd.
       </p>
-      <h2 class="govuk-heading-l">Alert languages</h2>
+      <div class="govuk-inset-text">
+        Ni fydd rhybuddion argyfwng yn disodli newyddion lleol, radio, teledu na'r cyfryngau cymdeithasol.
+      </div>
+      <h2 class="govuk-heading-l">Os ydych chi'n fyddar, yn drwm eich clyw, yn ddall neu'n rhannol ddall</h2>
       <p class="govuk-body">
-        Emergency alerts will be sent in English. In Wales, they may also be sent in Welsh.
+        Os oes gennych nam ar eich golwg neu'ch clyw, bydd signalau sylw sain a dirgrynu yn rhoi gwybod i chi fod gennych chi rybudd argyfwng.
+      </p>
+      <h2 class="govuk-heading-l">Ieithoedd y rhybuddion</h2>
+      <p class="govuk-body">
+        Anfonir rhybuddion argyfwng yn y Saesneg. Yng Nghymru, gellir hefyd eu hanfon yn y Gymraeg.
       </p>
     </div>
     <div class="govuk-grid-column-one-third">
       {{ related_content({
         "items": [
           {
-            "text": "How emergency alerts work",
-            "href": "/alerts/how-alerts-work"
+            "text": "Sut mae'r rhybuddion argyfwng yn gweithio",
+            "href": "/alerts/how-alerts-work.cy"
           },
           {
-            "text": "Testing the Emergency Alerts system",
-            "href": "/alerts/system-testing"
+            "text": "Profi'r system Rhybuddion Argyfwng",
+            "href": "/alerts/system-testing.cy"
           },
           {
-            "text": "Current alerts",
-            "href": "/alerts/current-alerts"
+            "text": "Rhybuddion ar hyn o bryd",
+            "href": "/alerts/current-alerts.cy"
           },
           {
-            "text": "Past alerts",
-            "href": "/alerts/past-alerts"
+            "text": "Rhybuddion yn y gorffennol",
+            "href": "/alerts/past-alerts.cy"
           },
           {
-            "text": "Planned tests",
-            "href": "/alerts/planned-tests"
+            "text": "Profion ar y gweill",
+            "href": "/alerts/planned-tests.cy"
           }
-        ]
+        ],
+        "language": "cy"
       }) }}
     </div>
   </div>

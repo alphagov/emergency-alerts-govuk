@@ -6,13 +6,13 @@
 {%- from "components/meta_tags.html" import metaTags -%}
 {%- from "components/related_content.html" import related_content -%}
 
-{% set pageTitle = "Past alerts" %}
+{% set pageTitle = "Rhybuddion yn y gorffennol" %}
 
 {% block metaTags %}
   {{ metaTags(
     description="A list of past emergency alerts that were sent in the UK",
     title=pageTitle,
-    url="https://www.gov.uk/alerts/past-alerts"
+    url="https://www.gov.uk/alerts/past-alerts.cy"
   ) }}
 {% endblock %}
 
@@ -48,9 +48,9 @@
     </div>
     <div class="govuk-grid-column-one-third">
       {{ hmrcLanguageSelect({
-        'language': 'en',
-        'cy': {
-          'href': '/alerts/past-alerts.cy'
+        'language': 'cy',
+        'en': {
+          'href': '/alerts/past-alerts'
         }
       }) }}
     </div>
@@ -66,7 +66,7 @@
             </h2>
           {% endif %}
           <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-          {{ alert(alert=past_alert, heading_level=3) }}
+          {{ alert(alert=past_alert, heading_level=3, language='cy') }}
         {% endfor %}
         {% if loop.last %}
           <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
@@ -79,26 +79,27 @@
       {{ related_content({
         "items": [
           {
-            "text": "About Emergency Alerts",
-            "href": "/alerts"
+            "text": "Am Emergency Alerts",
+            "href": "/alerts.cy"
           },
           {
-            "text": "How emergency alerts work",
-            "href": "/alerts/how-alerts-work"
+            "text": "Sut mae'r rhybuddion argyfwng yn gweithio",
+            "href": "/alerts/how-alerts-work.cy"
           },
           {
-            "text": "Testing the Emergency Alerts system",
-            "href": "/alerts/system-testing"
+            "text": "Profi'r system Rhybuddion Argyfwng",
+            "href": "/alerts/system-testing.cy"
           },
           {
-            "text": "Current alerts",
-            "href": "/alerts/current-alerts"
+            "text": "Rhybuddion ar hyn o bryd",
+            "href": "/alerts/current-alerts.cy"
           },
           {
-            "text": "Planned tests",
-            "href": "/alerts/planned-tests"
+            "text": "Profion ar y gweill",
+            "href": "/alerts/planned-tests.cy"
           }
-        ]
+        ],
+        "language": "cy"
       }) }}
     </div>
   </div>

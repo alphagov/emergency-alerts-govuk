@@ -1,0 +1,30 @@
+// Using HMRC classes. Need to be bundled with Gulp.
+
+.hmrc-language-select {
+  font-size: 16px;
+}
+
+.hmrc-language-select__list {
+  margin-top: 1em;
+  float: left;
+  text-align: left;
+  padding-inline-start: 0px;
+}
+
+.hmrc-language-select__list-item {
+  display: inline-block;
+
+  &:first-child:after {
+    content: "";
+    display: inline-block;
+    position: relative;
+    top: .1875em;
+    height: 1em;
+    border-right: .09375em solid #0b0c0c;
+  }
+
+  a,
+  [aria-current] {
+    padding: .3125em;
+  }
+}
