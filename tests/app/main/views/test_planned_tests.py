@@ -15,11 +15,8 @@ def test_planned_tests_page(mocker, client_get):
     assert [
         normalize_spaces(p.text) for p in html.select('main p')
     ] == [
-        'There are currently no planned tests of emergency alerts.',
-        'You can see previous tests on the past alerts page.',
+        'There are currently no planned tests of emergency alerts.'
     ]
-    assert html.select_one('main p a').text == 'past alerts page'
-    assert html.select_one('main p a')['href'] == '/alerts/past-alerts'
 
 
 @pytest.mark.parametrize('data_from_yaml, expected_h2s, expected_h3s, expected_paragraphs', (
@@ -34,7 +31,6 @@ def test_planned_tests_page(mocker, client_get):
         [
             'Some mobile phone networks in the UK will test emergency alerts.',
             'Most phones and tablets will not get a test alert.',
-            'Find out more about mobile network operator tests.',
             'The alert will say:',
             (
                 'This is a mobile network operator test of the Emergency Alerts '
@@ -96,13 +92,13 @@ def test_planned_tests_page_with_upcoming_test(
     mocker.patch('app.models.alerts.PlannedTests.from_yaml', return_value=data_from_yaml)
     html = client_get("alerts/planned-tests")
     assert [
-        normalize_spaces(h2.text) for h2 in html.select('main h2')
+        normalize_spaces(h2.text) for h2 in html.select('main .govuk-grid-column-two-thirds h2')
     ] == expected_h2s
     assert [
-        normalize_spaces(h3.text) for h3 in html.select('main h3')
+        normalize_spaces(h3.text) for h3 in html.select('main .govuk-grid-column-two-thirds h3')
     ] == expected_h3s
     assert [
-        normalize_spaces(p.text) for p in html.select('main p')
+        normalize_spaces(p.text) for p in html.select('main .govuk-grid-column-two-thirds p')
     ] == expected_paragraphs
 
 
@@ -130,17 +126,16 @@ def test_planned_tests_page_with_current_operator_test(
     ]))
     html = client_get("alerts/planned-tests")
     assert [
-        normalize_spaces(h2.text) for h2 in html.select('main h2')
+        normalize_spaces(h2.text) for h2 in html.select('.govuk-grid-column-two-thirds h2')
     ] == [
         'Wednesday 21 April 2021'
     ]
     assert not html.select('main h3')
     assert [
-        normalize_spaces(p.text) for p in html.select('main p')
+        normalize_spaces(p.text) for p in html.select('.govuk-grid-column-two-thirds p')
     ] == [
         'Some mobile phone networks in the UK will test emergency alerts.',
         'Most phones and tablets will not get a test alert.',
-        'Find out more about mobile network operator tests.',
         'The alert will say:',
         (
             'This is a mobile network operator test of the Emergency Alerts '
