@@ -11,8 +11,10 @@ from app.render import all_view_paths
 
 def get_local_route_from_template_path(template_path):
     local_route = '/alerts/' + Path(template_path).stem
-    if local_route != '/alerts/index':
+    if local_route != '/alerts/index' and local_route != '/alerts/index.cy':
         return local_route
+    elif local_route == '/alerts/index.cy':  # Welsh index
+        return '/alerts.cy'
     else:  # index page is mapped to root of /alerts directory
         return '/alerts'
 
