@@ -10,7 +10,7 @@ from tests.conftest import create_planned_test_dict
 
 def test_index_page(client_get):
     html = client_get("alerts")
-    assert html.select_one('h1').text.strip() == "Emergency Alerts"
+    assert html.select_one('h1').text.strip() == "About Emergency Alerts"
     assert 'current alert' not in html.text
 
 
@@ -32,7 +32,7 @@ def test_index_page_shows_current_alerts(
     html = client_get("alerts")
     assert '1 current alert' in html.text
     # Test alerts should not show on homepage when there is a current alert
-    assert 'planned test' not in html.select_one('main').text.lower()
+    assert 'planned test' not in html.select_one('main h2').text.lower()
 
 
 @pytest.mark.parametrize('current_and_planned_test_alerts, expected_banner', (
