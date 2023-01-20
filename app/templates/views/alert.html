@@ -61,33 +61,33 @@
       <p class="govuk-body govuk-!-margin-bottom-0">
         Sent by the UK government <time datetime="{{ alert_data.starts_at_date.as_iso8601 }}">{{ alert_data.starts_at_date.as_lang }}</time>
       </p>
+      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+      {% set alertAreas %}
+        <p class="govuk-body">
+          Sent to {{ alertAreaNames }}.
+        </p>
+        <p class="govuk-body">
+          Surrounding areas might also have received the alert.
+        </p>
+      {% endset %}
+      {{ govukDetails({
+        "summaryText": "See where this alert was sent",
+        "html": alertAreas,
+        "classes": "govuk-!-margin-bottom-3"
+      }) }}
+      {% set sharingContent %}
+        <div class="share-url">
+          <p class="govuk-body">
+            https://www.gov.uk/alerts/{{ alert_data | get_url_for_alert }}
+          </p>
+        </div>
+      {% endset %}
+      {{ govukDetails({
+        "summaryText": "Share this page",
+        "html": sharingContent
+      }) }}
     </div>
   </div>
-  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-  {% set alertAreas %}
-    <p class="govuk-body">
-      Sent to {{ alertAreaNames }}.
-    </p>
-    <p class="govuk-body">
-      Surrounding areas might also have received the alert.
-    </p>
-  {% endset %}
-  {{ govukDetails({
-    "summaryText": "See where this alert was sent",
-    "html": alertAreas,
-    "classes": "govuk-!-margin-bottom-3"
-  }) }}
-  {% set sharingContent %}
-    <div class="share-url">
-      <p class="govuk-body">
-        https://www.gov.uk/alerts/{{ alert_data | get_url_for_alert }}
-      </p>
-    </div>
-  {% endset %}
-  {{ govukDetails({
-    "summaryText": "Share this page",
-    "html": sharingContent
-  }) }}
 {% endblock %}
 
 {% block bodyEnd %}
