@@ -59,7 +59,7 @@
     <div class="govuk-grid-column-two-thirds">
       {% for current_alert in alerts.current_and_public | sort(reverse=True) %}
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-      {{ alert(alert=current_alert) }}
+      {{ alert(alert=current_alert, language='cy') }}
       {% endfor %}
 
       {% if alerts.current_and_public %}
