@@ -22,6 +22,7 @@
   &--48 {
     padding-left: 48px;
     min-height: 32px;
+    padding-right: 25px;
 
     @include govuk-media-query($from: tablet) {
       padding-left: 72px;
