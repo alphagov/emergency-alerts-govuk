@@ -1,5 +1,7 @@
 {% extends "govuk_frontend_jinja/template.html" %}
 
+{%- from "govuk_frontend_jinja/components/phase-banner/macro.html" import govukPhaseBanner -%}
+
 {% block pageTitle %}{% block pageTitleCurrent %}{% endblock %} - GOV.UK{% endblock %}
 
 {% block headIcons %}
@@ -38,6 +40,14 @@
   {{ govukHeader({
     'assetsPath': '/alerts/assets/images'
   }) }}
+  <div class="govuk-width-container">
+    {{ govukPhaseBanner({
+      'tag': {
+        'text': "beta"
+      },
+      'text': 'This is a new service that is being trialled.'
+    }) }}
+  </div>
 {% endblock %}
 
 {% block content %}
