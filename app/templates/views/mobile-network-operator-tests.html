@@ -1,0 +1,63 @@
+{% extends "content.html" %}
+
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "components/alert.html" import alert -%}
+{%- from "components/meta_tags.html" import metaTags -%}
+
+{% set pageTitle = "Mobile network operator tests" %}
+
+{% block metaTags %}
+  {{ metaTags(
+    description="About mobile network operator tests of Emergency Alerts",
+    title=pageTitle,
+    url="https://www.gov.uk/alerts/mobile-network-operator-tests"
+  ) }}
+{% endblock %}
+
+{% block prefetch %}
+  <link rel="prefetch" href="{{ '/alerts/assets/javascripts/govuk-frontend-details.js' | file_fingerprint }}" />
+{% endblock %}
+
+{% block pageTitleCurrent -%}
+  {{ pageTitle }}
+{%- endblock %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "/"
+      },
+      {
+        "text": "Emergency Alerts",
+        "href": "/alerts"
+      }
+    ]
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+        {{ pageTitle }}
+      </h1>
+      <p class="govuk-body">
+        Mobile phone networks are <a class="govuk-link" href="/alerts/planned-tests">testing emergency alerts</a> in the UK.
+      </p>
+      <p class="govuk-body">
+        You’ll only get test alerts from your mobile network operator if you have an Android phone or tablet with test alerts switched on.
+      </p>
+      <p class="govuk-body">
+        If you get an alert, your device may make a loud siren-like sound for about 10 seconds.
+      </p>
+      <p class="govuk-body">
+        To opt out of mobile network operator tests, turn off ‘test alerts’ in your settings.
+      </p>
+      <p class="govuk-body">
+        If you still get alerts, contact your device manufacturer for help.
+      </p>
+    </div>
+  </div>
+{% endblock %}
