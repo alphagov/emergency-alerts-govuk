@@ -1,7 +1,7 @@
 {% extends "content.html" %}
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
-{%- from "components/banner.html" import banner, planned_tests_banner -%}
+{%- from "components/banner.html" import banner, national_test_banner, planned_tests_banner -%}
 {%- from "components/image.html" import image -%}
 {%- from "components/example.html" import example -%}
 {%- from "components/meta_tags.html" import metaTags -%}
@@ -45,11 +45,14 @@
     </div>
   </div>
   {% if alerts.current_and_public %}
-  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-  {{ banner(alerts.current_and_public | length, alerts.last_updated_date) }}
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    {{ banner(alerts.current_and_public | length, alerts.last_updated_date) }}
   {% elif alerts.dates_of_current_and_planned_test_alerts %}
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
     {{ planned_tests_banner(alerts.current_and_planned_test_alerts | length, alerts.dates_of_current_and_planned_test_alerts) }}
+  {% elif alerts.dates_of_planned_public_test_alerts %}
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    {{ national_test_banner(alerts.dates_of_planned_public_test_alerts) }}
   {% else %}
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
     <h2 class="govuk-heading-m" id="subsection-title">

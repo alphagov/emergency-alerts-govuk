@@ -49,7 +49,34 @@ class Alerts(SerialisedModelCollection):
         return PlannedTests.from_yaml()
 
     @property
+    def planned_public_test_alerts(self):
+        return [
+            planned_test for planned_test
+            in self.planned_tests
+            if planned_test.is_future and planned_test.is_public
+        ]
+
+    @property
+    def dates_of_planned_public_test_alerts(self):
+        return {
+            planned_test.starts_at_date.at_midday
+            for planned_test in self.planned_public_test_alerts
+        }
+
+    @property
+    def planned_non_public_tests(self):
+        return [
+            planned_test for planned_test
+            in self.planned_tests
+            if planned_test.is_future and not planned_test.is_public
+        ]
+
+    @property
     def current_and_planned_test_alerts(self):
+        return self.test_alerts_today + self.planned_non_public_tests
+
+    @property
+    def all_current_and_planned_test_alerts(self):
         return self.test_alerts_today + self.planned_tests
 
     @property
