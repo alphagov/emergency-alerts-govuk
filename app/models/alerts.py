@@ -71,11 +71,11 @@ class Alerts(SerialisedModelCollection):
 
     @property
     def test_alerts_today(self):
-        for alert in self:
-            if alert.starts_at_date.is_today and not alert.is_public:
-                # Only show at most one test alert for a given day
-                return [alert]
-        return []
+        return [
+            alert for alert
+            in self
+            if alert.starts_at_date.is_today and not alert.is_public
+        ]
 
     @property
     def planned_tests(self):
