@@ -34,28 +34,18 @@
 
 {% macro planned_tests_banner(number_of_test_alerts, dates_of_test_alerts) %}
 
-  {% set subtitle %}
+  {% set message %}
     {% for alert_date in dates_of_test_alerts|sort %}
       {% if loop.index == 1 %}
-        <time datetime="{{ alert_date.as_iso8601_date }}">{{ alert_date.date_as_lang }}</time>
-      {% elif loop.index == 2 %}
-        {% if dates_of_test_alerts|length == 2 %}
-          and <time datetime="{{ alert_date.as_iso8601_date }}">{{ alert_date.date_as_lang }}</time>
-        {% endif %}
-      {% elif loop.last %}
-        to <time datetime="{{ alert_date.as_iso8601_date }}">{{ alert_date.date_as_lang }}</time>
+        On {{ alert_date.as_alert_lang }}, there will be a national test of the UK Emergency Alerts service.</a>
       {% endif %}
     {% endfor %}
   {% endset %}
 
-  <div class="alerts-notification-banner alerts-icon__container alerts-icon__container--48" role="region" aria-labelledby="alerts-notification-banner__title">
-    {{ alerts_icon(height=48, alert_active=False) }}
-    <h2 class="alerts-notification-banner__title govuk-heading-m govuk-!-margin-bottom-1" id="alerts-notification-banner__title">
-      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/planned-tests">{{ number_of_test_alerts }} planned {% if number_of_test_alerts == 1 %}test{% else %}tests{% endif %}</a>
+  <div class="govuk-grid-column-full-column">
+    <h2 class="govuk-heading-m">
+      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/planned-tests">{{ message }}</a>
     </h2>
-    <p class="alerts-notification-banner__age govuk-body">
-      {{ subtitle }}
-    </p>
   </div>
 
 {% endmacro %}
