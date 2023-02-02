@@ -22,6 +22,14 @@ class PlannedTest(SerialisedModel):
         return self.starts_at < other.starts_at
 
     @property
+    def display_areas(self):
+
+        if "aggregate_names" in self.areas:
+            return self.areas["aggregate_names"]
+
+        return self.areas.get("names", [])
+
+    @property
     def starts_at_date(self):
         return AlertDate(self.starts_at)
 
@@ -43,9 +51,6 @@ class PlannedTest(SerialisedModel):
         return self.channel in ["government", "severe"]
 
     @property
-    def is_future(self):
+    def is_planned(self):
         now = datetime.now(pytz.utc)
-
-        return (
-            self.expires_date.as_utc_datetime >= now
-        )
+        return self.expires_date.as_utc_datetime >= now

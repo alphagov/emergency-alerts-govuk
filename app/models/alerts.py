@@ -18,8 +18,41 @@ class Alerts(SerialisedModelCollection):
         return [alert for alert in self if alert.is_current_and_public]
 
     @property
+    def planned(self):
+        return [
+            alert for alert in self if alert.is_planned
+            ] + [
+                planned_test for planned_test
+                in self.planned_tests
+                if planned_test.is_planned
+            ]
+
+    @property
     def expired(self):
         return [alert for alert in self if alert.is_expired]
+
+    @property
+    def planned_grouped_by_date(self):
+        alerts_by_date = defaultdict(list)
+        for alert in self.planned:
+            alerts_by_date[alert.starts_at_date.as_local_date].append(alert)
+        return alerts_by_date.items()
+
+    @property
+    def planned_public_grouped_by_date(self):
+        alerts_by_date = defaultdict(list)
+        for alert in self.planned:
+            if alert.is_public:
+                alerts_by_date[alert.starts_at_date.as_local_date].append(alert)
+        return alerts_by_date.items()
+
+    @property
+    def planned_non_public_grouped_by_date(self):
+        alerts_by_date = defaultdict(list)
+        for alert in self.planned:
+            if not alert.is_public:
+                alerts_by_date[alert.starts_at_date.as_local_date].append(alert)
+        return alerts_by_date.items()
 
     @property
     def expired_grouped_by_date(self):
@@ -53,7 +86,7 @@ class Alerts(SerialisedModelCollection):
         return [
             planned_test for planned_test
             in self.planned_tests
-            if planned_test.is_future and planned_test.is_public
+            if planned_test.is_planned and planned_test.is_public
         ]
 
     @property
@@ -68,7 +101,7 @@ class Alerts(SerialisedModelCollection):
         return [
             planned_test for planned_test
             in self.planned_tests
-            if planned_test.is_future and not planned_test.is_public
+            if planned_test.is_planned and not planned_test.is_public
         ]
 
     @property
