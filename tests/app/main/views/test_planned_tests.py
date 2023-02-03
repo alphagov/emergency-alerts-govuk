@@ -22,9 +22,14 @@ def test_planned_tests_page(mocker, client_get):
 @pytest.mark.parametrize('data_from_yaml, expected_h2s, expected_h3s, expected_paragraphs', (
     (
         [PlannedTest({
-            'starts_at': '2021-02-03T00:00:00Z',
-            'description': None,
-            'display_areas': [],
+            'id': '1513b353-685e-488e-9547-4e1ce7359051',
+            'channel': 'operator',
+            'approved_at': '2021-02-01T23:00:00Z',
+            'starts_at': '2021-02-03T20:00:00Z',
+            'cancelled_at': None,
+            'finishes_at': '2021-02-03T22:00:00Z',
+            'content': None,
+            'areas': []
         })],
         ['Wednesday 3 February 2021'],
         [],
@@ -41,9 +46,14 @@ def test_planned_tests_page(mocker, client_get):
     ),
     (
         [PlannedTest({
-            'starts_at': '2021-02-03T23:00:00Z',
-            'description': 'Paragraph 1\n\nParagraph 2',
-            'display_areas': ['Ibiza', 'The Norfolk Broads'],
+            'id': '4775b57c-3ad0-4270-a9e0-9ece3171aa9b',
+            'channel': 'operator',
+            'approved_at': '2021-02-01T23:00:00Z',
+            'starts_at': '2021-02-03T20:00:00Z',
+            'cancelled_at': None,
+            'finishes_at': '2021-02-03T22:00:00Z',
+            'content': 'Paragraph 1\n\nParagraph 2',
+            'areas': ['Ibiza', 'The Norfolk Broads']
         })],
         ['Wednesday 3 February 2021'],
         ['Planned test will be sent to Ibiza and The Norfolk Broads'],
@@ -55,14 +65,24 @@ def test_planned_tests_page(mocker, client_get):
     (
         [
             PlannedTest({
-                'starts_at': '2021-02-03T00:00:00Z',
-                'description': 'Paragraph 1\n\nParagraph 2',
-                'display_areas': ['Ibiza'],
+                'id': 'eda516fc-47bd-445e-b49b-6fd4eeaff7d5',
+                'channel': 'operator',
+                'approved_at': '2021-02-01T23:00:00Z',
+                'starts_at': '2021-02-03T20:00:00Z',
+                'cancelled_at': None,
+                'finishes_at': '2021-02-03T22:00:00Z',
+                'content': 'Paragraph 1\n\nParagraph 2',
+                'areas': ['Ibiza']
             }),
             PlannedTest({
-                'starts_at': '2021-02-03T01:00:00Z',
-                'description': 'Paragraph 3\n\nParagraph 4',
-                'display_areas': ['The Norfolk Broads'],
+                'id': '5838d0d7-37eb-4ec9-87a7-5d9dc5b650c3',
+                'channel': 'operator',
+                'approved_at': '2021-02-01T23:00:00Z',
+                'starts_at': '2021-02-03T20:00:00Z',
+                'cancelled_at': None,
+                'finishes_at': '2021-02-03T22:00:00Z',
+                'content': 'Paragraph 3\n\nParagraph 4',
+                'areas': ['The Norfolk Broads']
             }),
         ],
         [

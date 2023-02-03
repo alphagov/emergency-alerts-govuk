@@ -13,6 +13,25 @@
 {% endmacro %}
 
 
+{% macro national_test_banner(dates_of_test_alerts) %}
+
+  {% set title %}
+    {% for alert_date in dates_of_test_alerts|sort %}
+      {% if loop.index == 1 %}
+        On {{ alert_date.as_alert_lang }}, there will be a national test of the UK Emergency Alerts service.
+      {% endif %}
+    {% endfor %}
+  {% endset %}
+
+  <div class="alerts-notification-banner" role="region" aria-labelledby="alerts-national-test-banner__title">
+    <h2 class="alerts-notification-banner__title govuk-heading-m govuk-!-margin-bottom-1" id="alerts-national-test-banner__title">
+      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/planned-tests">{{ title }}</a>
+    </h2>
+  </div>
+
+{% endmacro %}
+
+
 {% macro planned_tests_banner(number_of_test_alerts, dates_of_test_alerts) %}
 
   {% set subtitle %}
@@ -38,4 +57,5 @@
       {{ subtitle }}
     </p>
   </div>
+
 {% endmacro %}

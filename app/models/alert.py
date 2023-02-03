@@ -26,8 +26,6 @@ class Alert(SerialisedModel):
 
     @property
     def display_areas(self):
-        if not self.is_public:
-            return []
 
         if "aggregate_names" in self.areas:
             return self.areas["aggregate_names"]
@@ -76,3 +74,8 @@ class Alert(SerialisedModel):
             self.expires_date.as_utc_datetime >= now and
             self.approved_at_date.as_utc_datetime <= now
         )
+
+    @property
+    def is_planned(self):
+        now = datetime.now(pytz.utc)
+        return self.expires_date.as_utc_datetime >= now

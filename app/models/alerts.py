@@ -18,8 +18,41 @@ class Alerts(SerialisedModelCollection):
         return [alert for alert in self if alert.is_current_and_public]
 
     @property
+    def planned(self):
+        return [
+            alert for alert in self if alert.is_planned
+            ] + [
+                planned_test for planned_test
+                in self.planned_tests
+                if planned_test.is_planned
+            ]
+
+    @property
     def expired(self):
         return [alert for alert in self if alert.is_expired]
+
+    @property
+    def planned_grouped_by_date(self):
+        alerts_by_date = defaultdict(list)
+        for alert in self.planned:
+            alerts_by_date[alert.starts_at_date.as_local_date].append(alert)
+        return alerts_by_date.items()
+
+    @property
+    def planned_public_grouped_by_date(self):
+        alerts_by_date = defaultdict(list)
+        for alert in self.planned:
+            if alert.is_public:
+                alerts_by_date[alert.starts_at_date.as_local_date].append(alert)
+        return alerts_by_date.items()
+
+    @property
+    def planned_non_public_grouped_by_date(self):
+        alerts_by_date = defaultdict(list)
+        for alert in self.planned:
+            if not alert.is_public:
+                alerts_by_date[alert.starts_at_date.as_local_date].append(alert)
+        return alerts_by_date.items()
 
     @property
     def expired_grouped_by_date(self):
@@ -38,18 +71,45 @@ class Alerts(SerialisedModelCollection):
 
     @property
     def test_alerts_today(self):
-        for alert in self:
-            if alert.starts_at_date.is_today and not alert.is_public:
-                # Only show at most one test alert for a given day
-                return [alert]
-        return []
+        return [
+            alert for alert
+            in self
+            if alert.starts_at_date.is_today and not alert.is_public
+        ]
 
     @property
     def planned_tests(self):
         return PlannedTests.from_yaml()
 
     @property
+    def planned_public_test_alerts(self):
+        return [
+            planned_test for planned_test
+            in self.planned_tests
+            if planned_test.is_planned and planned_test.is_public
+        ]
+
+    @property
+    def dates_of_planned_public_test_alerts(self):
+        return {
+            planned_test.starts_at_date.at_midday
+            for planned_test in self.planned_public_test_alerts
+        }
+
+    @property
+    def planned_non_public_tests(self):
+        return [
+            planned_test for planned_test
+            in self.planned_tests
+            if planned_test.is_planned and not planned_test.is_public
+        ]
+
+    @property
     def current_and_planned_test_alerts(self):
+        return self.test_alerts_today + self.planned_non_public_tests
+
+    @property
+    def all_current_and_planned_test_alerts(self):
         return self.test_alerts_today + self.planned_tests
 
     @property
