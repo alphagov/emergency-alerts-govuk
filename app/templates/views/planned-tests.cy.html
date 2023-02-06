@@ -56,26 +56,16 @@
         {% for _date, alerts_or_planned_tests in alerts.planned_non_public_grouped_by_date | sort %}
           {% set date_loop = loop %}
           {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
-        {% else %}
-          <p class="govuk-body">
-            There are currently no planned tests of emergency alerts.
-          </p>
-          <p class="govuk-body">
-            You can see previous tests on the <a class="govuk-link" href="/alerts/past-alerts">past alerts page</a>.
-          </p>
         {% endfor %}
       {% elif alerts.planned_public_grouped_by_date %}
         {% for _date, alerts_or_planned_tests in alerts.planned_public_grouped_by_date | sort %}
           {% set date_loop = loop %}
           {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
-        {% else %}
-          <p class="govuk-body">
-            There are currently no planned tests of emergency alerts.
-          </p>
-          <p class="govuk-body">
-            You can see previous tests on the <a class="govuk-link" href="/alerts/past-alerts">past alerts page</a>.
-          </p>
         {% endfor %}
+      {% else %}
+        <p class="govuk-body">
+          There are currently no planned tests of emergency alerts.
+        </p>
       {% endif %}
     </div>
     <div class="govuk-grid-column-one-third">

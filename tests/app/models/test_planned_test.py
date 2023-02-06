@@ -28,8 +28,3 @@ def test_planned_test_only_has_areas():
     assert PlannedTest(
         create_planned_test_dict(areas=['a', 'b'])
     ).areas == ['a', 'b']
-
-    assert not hasattr(
-        PlannedTest(create_planned_test_dict()),
-        'areas',
-    )

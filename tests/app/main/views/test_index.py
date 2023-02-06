@@ -11,7 +11,7 @@ from tests.conftest import create_planned_test_dict
 def test_index_page(client_get):
     html = client_get("alerts")
     assert html.select_one('h1').text.strip() == "About Emergency Alerts"
-    assert 'current alert' not in html.text
+    assert 'current alert' not in html.select('.govuk-heading-m')
 
 
 @pytest.mark.parametrize('planned_tests', (

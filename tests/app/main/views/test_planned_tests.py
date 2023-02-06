@@ -24,18 +24,18 @@ def test_planned_tests_page(mocker, client_get):
         [PlannedTest({
             'id': '1513b353-685e-488e-9547-4e1ce7359051',
             'channel': 'operator',
-            'approved_at': '2021-02-01T23:00:00Z',
-            'starts_at': '2021-02-03T20:00:00Z',
+            'approved_at': dt_parse('2021-02-01T23:00:00Z'),
+            'starts_at': dt_parse('2021-02-03T20:00:00Z'),
             'cancelled_at': None,
-            'finishes_at': '2021-02-03T22:00:00Z',
-            'content': None,
-            'areas': []
+            'finishes_at': dt_parse('2021-02-03T22:00:00Z'),
+            'content': 'This is a mobile network operator test of the Emergency Alerts '
+                       'service. You do not need to take any action. To find out more, '
+                       'search for gov.uk/alerts',
+            'areas': {'names': ['Ibiza']}
         })],
-        ['Wednesday 3 February 2021'],
+        ['Wednesday 3 February 2021', 'Ibiza'],
         [],
         [
-            'Some mobile phone networks in the UK will test emergency alerts.',
-            'Most phones and tablets will not get a test alert.',
             'The alert will say:',
             (
                 'This is a mobile network operator test of the Emergency Alerts '
@@ -48,16 +48,17 @@ def test_planned_tests_page(mocker, client_get):
         [PlannedTest({
             'id': '4775b57c-3ad0-4270-a9e0-9ece3171aa9b',
             'channel': 'operator',
-            'approved_at': '2021-02-01T23:00:00Z',
-            'starts_at': '2021-02-03T20:00:00Z',
+            'approved_at': dt_parse('2021-02-01T23:00:00Z'),
+            'starts_at': dt_parse('2021-02-03T20:00:00Z'),
             'cancelled_at': None,
-            'finishes_at': '2021-02-03T22:00:00Z',
+            'finishes_at': dt_parse('2021-02-03T22:00:00Z'),
             'content': 'Paragraph 1\n\nParagraph 2',
-            'areas': ['Ibiza', 'The Norfolk Broads']
+            'areas': {'names': ['Ibiza', 'The Norfolk Broads']}
         })],
-        ['Wednesday 3 February 2021'],
-        ['Planned test will be sent to Ibiza and The Norfolk Broads'],
+        ['Wednesday 3 February 2021', 'Ibiza and The Norfolk Broads'],
+        [],
         [
+            'The alert will say:',
             'Paragraph 1',
             'Paragraph 2',
         ]
@@ -67,40 +68,39 @@ def test_planned_tests_page(mocker, client_get):
             PlannedTest({
                 'id': 'eda516fc-47bd-445e-b49b-6fd4eeaff7d5',
                 'channel': 'operator',
-                'approved_at': '2021-02-01T23:00:00Z',
-                'starts_at': '2021-02-03T20:00:00Z',
+                'approved_at': dt_parse('2021-02-01T23:00:00Z'),
+                'starts_at': dt_parse('2021-02-03T20:00:00Z'),
                 'cancelled_at': None,
-                'finishes_at': '2021-02-03T22:00:00Z',
+                'finishes_at': dt_parse('2021-02-03T22:00:00Z'),
                 'content': 'Paragraph 1\n\nParagraph 2',
-                'areas': ['Ibiza']
+                'areas': {'names': ['Ibiza']}
             }),
             PlannedTest({
                 'id': '5838d0d7-37eb-4ec9-87a7-5d9dc5b650c3',
                 'channel': 'operator',
-                'approved_at': '2021-02-01T23:00:00Z',
-                'starts_at': '2021-02-03T20:00:00Z',
+                'approved_at': dt_parse('2021-02-01T23:00:00Z'),
+                'starts_at': dt_parse('2021-02-03T20:00:00Z'),
                 'cancelled_at': None,
-                'finishes_at': '2021-02-03T22:00:00Z',
+                'finishes_at': dt_parse('2021-02-03T22:00:00Z'),
                 'content': 'Paragraph 3\n\nParagraph 4',
-                'areas': ['The Norfolk Broads']
+                'areas': {'names': ['The Norfolk Broads']}
             }),
         ],
         [
-            # Not aggregated because it’s unlikely we’ll plan two
-            # different tests on the same day
-            'Wednesday 3 February 2021', 'Wednesday 3 February 2021'
+            'Wednesday 3 February 2021', 'Ibiza', 'The Norfolk Broads'
         ],
+        [],
         [
-            'Planned test will be sent to Ibiza',
-            'Planned test will be sent to The Norfolk Broads'],
-        [
+            'The alert will say:',
             'Paragraph 1',
             'Paragraph 2',
+            "The alert will say:",
             'Paragraph 3',
             'Paragraph 4',
         ]
     ),
 ))
+@freeze_time('2021-01-01T11:00:00Z')
 def test_planned_tests_page_with_upcoming_test(
     mocker,
     client_get,
@@ -126,11 +126,11 @@ def test_planned_tests_page_with_upcoming_test(
     # Doesn’t matter if the alert is still active…
     {},
     # Or if it’s cancelled before now
-    {'cancelled_at': dt_parse('2021-04-21T10:00:00Z')},
+    {'cancelled_at': dt_parse('2021-04-21T11:00:00Z')},
     # Or if it’s finished already
-    {'finishes_at': dt_parse('2021-04-21T10:00:00Z')},
+    {'finishes_at': dt_parse('2021-04-21T11:00:00Z')},
 ))
-@freeze_time('2021-04-21T11:00:00Z')
+@freeze_time('2021-04-21T10:00:00Z')
 def test_planned_tests_page_with_current_operator_test(
     mocker,
     client_get,
@@ -141,6 +141,9 @@ def test_planned_tests_page_with_current_operator_test(
         create_alert_dict(
             channel='operator',
             starts_at=dt_parse('2021-04-21T09:00:00Z'),
+            content='This is a mobile network operator test of the Emergency Alerts '
+                    'service. You do not need to take any action. To find out more, '
+                    'search for gov.uk/alerts',
             **extra_json_fields
         )
     ]))
@@ -148,14 +151,12 @@ def test_planned_tests_page_with_current_operator_test(
     assert [
         normalize_spaces(h2.text) for h2 in html.select('.govuk-grid-column-two-thirds h2')
     ] == [
-        'Wednesday 21 April 2021'
+        'Wednesday 21 April 2021', "None"
     ]
     assert not html.select('main h3')
     assert [
         normalize_spaces(p.text) for p in html.select('.govuk-grid-column-two-thirds p')
     ] == [
-        'Some mobile phone networks in the UK will test emergency alerts.',
-        'Most phones and tablets will not get a test alert.',
         'The alert will say:',
         (
             'This is a mobile network operator test of the Emergency Alerts '
@@ -175,6 +176,8 @@ def test_planned_tests_page_with_previous_days_operator_test(
         create_alert_dict(
             channel='operator',
             starts_at=dt_parse('2021-04-20T09:00:00Z'),
+            finishes_at=dt_parse('2021-04-20T10:00:00Z'),
+            cancelled_at=None,
         )
     ]))
     html = client_get("alerts/planned-tests")

@@ -56,26 +56,16 @@
         {% for _date, alerts_or_planned_tests in alerts.planned_non_public_grouped_by_date | sort %}
           {% set date_loop = loop %}
           {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
-        {% else %}
-          <p class="govuk-body">
-            There are currently no planned tests of emergency alerts.
-          </p>
-          <p class="govuk-body">
-            You can see previous tests on the <a class="govuk-link" href="/alerts/past-alerts">past alerts page</a>.
-          </p>
         {% endfor %}
       {% elif alerts.planned_public_grouped_by_date %}
         {% for _date, alerts_or_planned_tests in alerts.planned_public_grouped_by_date | sort %}
           {% set date_loop = loop %}
           {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
-        {% else %}
-          <p class="govuk-body">
-            There are currently no planned tests of emergency alerts.
-          </p>
-          <p class="govuk-body">
-            You can see previous tests on the <a class="govuk-link" href="/alerts/past-alerts">past alerts page</a>.
-          </p>
         {% endfor %}
+      {% else %}
+        <p class="govuk-body">
+          There are currently no planned tests of emergency alerts.
+        </p>
       {% endif %}
     </div>
     <div class="govuk-grid-column-one-third">
@@ -117,17 +107,11 @@
     <h2 class="govuk-heading-m govuk-!-margin-top-6">
       {{ alert_or_planned_test.display_areas | formatted_list(before_each='', after_each='') }}
     </h2>
-    {#
-      Only planned tests have a description – for real alerts we show
-      fixed content (below).
-    #}
     <p class="govuk-body">
       The alert will say:
     </p>
     <div class="govuk-inset-text govuk-!-margin-top-2">
-      <p class="govuk-body">
-        {{ alert_or_planned_test.content | paragraphize(classes="govuk-body") }}
-      </p>
+      {{ alert_or_planned_test.content | paragraphize(classes="govuk-body") }}
     </div>
   {% endfor %}
 {% endmacro %}

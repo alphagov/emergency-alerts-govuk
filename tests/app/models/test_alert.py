@@ -116,8 +116,8 @@ def test_is_public(channel, is_public, alert_dict):
 @pytest.mark.parametrize('channel, expected_display_areas', [
     ('severe', ['Chipping Sodbury']),
     ('government', ['Chipping Sodbury']),
-    ('operator', []),
-    ('test', [])
+    ('operator', ['Chipping Sodbury']),
+    ('test', ['Chipping Sodbury'])
 ])
 def test_display_areas_shows_public_alerts_only(
     channel, expected_display_areas, alert_dict
