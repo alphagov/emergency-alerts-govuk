@@ -70,22 +70,7 @@
           Surrounding areas might also have received the alert.
         </p>
       {% endset %}
-      {{ govukDetails({
-        "summaryText": "See where this alert was sent",
-        "html": alertAreas,
-        "classes": "govuk-!-margin-bottom-3"
-      }) }}
-      {% set sharingContent %}
-        <div class="share-url">
-          <p class="govuk-body">
-            https://www.gov.uk/alerts/{{ alert_data | get_url_for_alert }}
-          </p>
-        </div>
-      {% endset %}
-      {{ govukDetails({
-        "summaryText": "Share this page",
-        "html": sharingContent
-      }) }}
+      <p>{{ alertAreas }}</p>
     </div>
   </div>
 {% endblock %}
