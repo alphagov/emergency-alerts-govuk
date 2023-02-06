@@ -13,3 +13,10 @@
   @include govuk-font($size: false, $tabular: true);
   letter-spacing: .06em;
 }
+
+.address {
+  border-left: 1px solid #b1b4b6;
+  padding-left: 15px;
+  margin-bottom: 30px;
+  margin-top: 30px;
+}
