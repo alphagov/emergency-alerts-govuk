@@ -92,7 +92,7 @@ class Alerts(SerialisedModelCollection):
     @property
     def dates_of_planned_public_test_alerts(self):
         return {
-            planned_test.starts_at_date.at_midday
+            planned_test.starts_at_date
             for planned_test in self.planned_public_test_alerts
         }
 
