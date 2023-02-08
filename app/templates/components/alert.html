@@ -24,12 +24,12 @@
         {% else %}
           {% if language == 'cy' %}
             <a href="/alerts/system-testing.cy" class="govuk-link govuk-body">
-              Rhagor o wybodaeth am profi'r gwasanaeth Rybuddion Argyfwng
+              Dysgwch ragor am profi'r gwasanaeth Rhybuddion Argyfwng
               <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
             </a>
           {% else %}
             <a href="/alerts/system-testing" class="govuk-link govuk-body">
-              More information about testing the Emergency Alerts service
+              Find out more about testing the Emergency Alerts service
               <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
             </a>
           {% endif %}
