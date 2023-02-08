@@ -20,7 +20,7 @@ class Alerts(SerialisedModelCollection):
     @property
     def planned(self):
         return [
-            alert for alert in self if alert.is_planned
+            alert for alert in self if alert.is_planned and not alert.is_public
             ] + [
                 planned_test for planned_test
                 in self.planned_tests
