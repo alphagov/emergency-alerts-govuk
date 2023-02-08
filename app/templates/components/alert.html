@@ -12,12 +12,24 @@
         {% if alert.is_public %}
           {% if language == 'cy' %}
             <a href="/alerts/{{ alert | get_url_for_alert }}" class="govuk-link govuk-body">
-              Rhagor o wybodaeth am y rhybudd hwn.
+              Rhagor o wybodaeth am y rhybudd hwn
               <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
             </a>
           {% else %}
             <a href="/alerts/{{ alert | get_url_for_alert }}" class="govuk-link govuk-body">
               More information about this alert
+              <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
+            </a>
+          {% endif %}
+        {% else %}
+          {% if language == 'cy' %}
+            <a href="/alerts/system-testing.cy" class="govuk-link govuk-body">
+              Rhagor o wybodaeth am profi'r gwasanaeth Rybuddion Argyfwng
+              <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
+            </a>
+          {% else %}
+            <a href="/alerts/system-testing" class="govuk-link govuk-body">
+              More information about testing the Emergency Alerts service
               <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
             </a>
           {% endif %}
