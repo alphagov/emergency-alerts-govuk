@@ -108,17 +108,22 @@
     <h2 class="govuk-heading-m govuk-!-margin-top-6">
       {{ alert_or_planned_test.display_areas | formatted_list(before_each='', after_each='') }}
     </h2>
-    {#
-      Only planned tests have a description – for real alerts we show
-      fixed content (below).
-    #}
+    {% if not alert_or_planned_test.is_public %}
+      <p class="govuk-body">
+        Bydd prawf ar rwydwaith ffonau symudol gwasanaeth Rhybuddion Argyfwng y DU heddiw.
+      </p>
+      <p class="govuk-body">
+        Ni chaiff y rhan fwyaf o ffonau symudol a llechi rybudd prawf.
+      </p>
+      <p class="govuk-body">
+        Dysgwch ragor am <a href="/alerts/system-testing.cy" class="govuk-link">brofi'r system Rhybuddion Argyfwng</a>.
+      </p>
+    {% endif %}
     <p class="govuk-body">
-      The alert will say:
+      Bydd y rhybudd yn dweud:
     </p>
     <div class="govuk-inset-text govuk-!-margin-top-2">
-      <p class="govuk-body">
         {{ alert_or_planned_test.content | paragraphize(classes="govuk-body") }}
-      </p>
     </div>
   {% endfor %}
 {% endmacro %}

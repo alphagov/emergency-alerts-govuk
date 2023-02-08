@@ -107,6 +107,17 @@
     <h2 class="govuk-heading-m govuk-!-margin-top-6">
       {{ alert_or_planned_test.display_areas | formatted_list(before_each='', after_each='') }}
     </h2>
+    {% if not alert_or_planned_test.is_public %}
+      <p class="govuk-body">
+        There will be a mobile phone network test of the UK Emergency Alerts service today.
+      </p>
+      <p class="govuk-body">
+        Most mobile phones and tablets will not get a test alert.
+      </p>
+      <p class="govuk-body">
+        Find out more about <a href="/alerts/system-testing.cy" class="govuk-link">testing the Emergency Alerts service</a>.
+      </p>
+    {% endif %}
     <p class="govuk-body">
       The alert will say:
     </p>

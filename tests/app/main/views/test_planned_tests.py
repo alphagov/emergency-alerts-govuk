@@ -36,6 +36,9 @@ def test_planned_tests_page(mocker, client_get):
         ['Wednesday 3 February 2021', 'Ibiza'],
         [],
         [
+            'There will be a mobile phone network test of the UK Emergency Alerts service today.',
+            'Most mobile phones and tablets will not get a test alert.',
+            'Find out more about testing the Emergency Alerts service.',
             'The alert will say:',
             (
                 'This is a mobile network operator test of the Emergency Alerts '
@@ -58,6 +61,9 @@ def test_planned_tests_page(mocker, client_get):
         ['Wednesday 3 February 2021', 'Ibiza and The Norfolk Broads'],
         [],
         [
+            'There will be a mobile phone network test of the UK Emergency Alerts service today.',
+            'Most mobile phones and tablets will not get a test alert.',
+            'Find out more about testing the Emergency Alerts service.',
             'The alert will say:',
             'Paragraph 1',
             'Paragraph 2',
@@ -91,9 +97,15 @@ def test_planned_tests_page(mocker, client_get):
         ],
         [],
         [
+            'There will be a mobile phone network test of the UK Emergency Alerts service today.',
+            'Most mobile phones and tablets will not get a test alert.',
+            'Find out more about testing the Emergency Alerts service.',
             'The alert will say:',
             'Paragraph 1',
             'Paragraph 2',
+            'There will be a mobile phone network test of the UK Emergency Alerts service today.',
+            'Most mobile phones and tablets will not get a test alert.',
+            'Find out more about testing the Emergency Alerts service.',
             "The alert will say:",
             'Paragraph 3',
             'Paragraph 4',
@@ -157,6 +169,9 @@ def test_planned_tests_page_with_current_operator_test(
     assert [
         normalize_spaces(p.text) for p in html.select('.govuk-grid-column-two-thirds p')
     ] == [
+        'There will be a mobile phone network test of the UK Emergency Alerts service today.',
+        'Most mobile phones and tablets will not get a test alert.',
+        'Find out more about testing the Emergency Alerts service.',
         'The alert will say:',
         (
             'This is a mobile network operator test of the Emergency Alerts '
