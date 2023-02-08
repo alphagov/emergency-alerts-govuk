@@ -15,7 +15,7 @@ def test_planned_tests_page(mocker, client_get):
     assert [
         normalize_spaces(p.text) for p in html.select('main p')
     ] == [
-        'There are currently no planned tests of emergency alerts.'
+        'There are currently no planned tests.'
     ]
 
 
@@ -182,5 +182,5 @@ def test_planned_tests_page_with_previous_days_operator_test(
     ]))
     html = client_get("alerts/planned-tests")
     assert normalize_spaces(html.select_one('main p').text) == (
-        'There are currently no planned tests of emergency alerts.'
+        'There are currently no planned tests.'
     )
