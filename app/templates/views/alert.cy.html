@@ -15,7 +15,7 @@
   {{ metaTags(
     description=alert_data.content,
     title=pageTitle,
-    url="https://www.gov.uk/alerts/" ~ ( alert_data | get_url_for_alert)
+    url="https://www.gov.uk/alerts/" ~ ( alert_data | get_url_for_alert ) ~ ".cy"
   ) }}
 {% endblock %}
 
@@ -24,9 +24,9 @@
 {%- endblock %}
 
 {% if alert_data.is_expired %}
-  {% set parentBreadcrumb = {"text": "Past alerts", "href": "/alerts/past-alerts"} %}
+  {% set parentBreadcrumb = {"text": "Rhybuddion yn y gorffennol", "href": "/alerts/past-alerts.cy"} %}
 {% else %}
-  {% set parentBreadcrumb = {"text": "Current alerts", "href": "/alerts/current-alerts"} %}
+  {% set parentBreadcrumb = {"text": "Rhybuddion ar hyn o bryd", "href": "/alerts/current-alerts.cy"} %}
 {% endif %}
 
 {% block beforeContent %}
@@ -37,8 +37,8 @@
         "href": "/"
       },
       {
-        "text": "About Emergency Alerts",
-        "href": "/alerts"
+        "text": "Am Rybuddion Argyfwng",
+        "href": "/alerts.cy"
       },
       parentBreadcrumb,
     ]
@@ -55,9 +55,9 @@
     </div>
     <div class="govuk-grid-column-one-third">
       {{ hmrcLanguageSelect({
-        'language': 'en',
-        'cy': {
-          'href': '/alerts/' ~ (alert_data | get_url_for_alert) ~ '.cy'
+        'language': 'cy',
+        'en': {
+          'href': '/alerts/' ~ (alert_data | get_url_for_alert)
         }
       }) }}
     </div>
@@ -77,10 +77,10 @@
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
       {% set alertAreas %}
         <p class="govuk-body">
-          This alert was sent to {{ alertAreaNames }}.
+          Anfonwyd at {{ alertAreaNames }}.
         </p>
         <p class="govuk-body">
-          Surrounding areas might also have received the alert.
+          Efallai fod ardaloedd oddi amgylch hefyd wedi cael y rhybudd.
         </p>
       {% endset %}
       <p>{{ alertAreas }}</p>

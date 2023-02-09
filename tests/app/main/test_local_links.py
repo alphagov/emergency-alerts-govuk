@@ -22,7 +22,7 @@ def get_local_route_from_template_path(template_path):
 local_routes_except_alerts = [
     get_local_route_from_template_path(template_path)
     for template_path in all_view_paths
-    if template_path != 'alert.html'
+    if template_path != 'alert.html' and template_path != 'alert.cy.html'
 ]
 
 
@@ -56,7 +56,7 @@ def test_local_links_lead_to_existing_routes_in_pages_with_alerts(
     mocker
 ):
     # fake an alert existing in the routes and data
-    local_routes = local_routes_except_alerts + ['/alerts/some-alert-slug']
+    local_routes = local_routes_except_alerts + ['/alerts/some-alert-slug'] + ['/alerts/some-alert-slug.cy']
     mocker.patch('app.render.get_url_for_alert', return_value='some-alert-slug')
 
     alert_dict.update(alert_timings)
