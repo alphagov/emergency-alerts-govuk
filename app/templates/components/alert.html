@@ -6,7 +6,7 @@
       <div class="alerts-icon__container alerts-icon__container--48">
         {{ alerts_icon(height=48, alert_active=alert.is_current) }}
         <h{{ heading_level }} class="alerts-alert__title govuk-heading-s govuk-!-margin-bottom-3">
-            <span class="govuk-visually-hidden">Emergency alert sent to </span>{{ alert.display_areas | formatted_list(before_each='', after_each='') }}
+            <span class="govuk-visually-hidden">Emergency alert sent to </span>{% if alert.display_areas %}{{ alert.display_areas | formatted_list(before_each='', after_each='') }}{% elif not alert.is_public %}Mobile network operator test{% endif %}
         </h{{ heading_level }}>
         {{ alert_body(alert) }}
         {% if alert.is_public %}
