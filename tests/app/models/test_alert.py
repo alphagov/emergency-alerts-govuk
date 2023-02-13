@@ -90,6 +90,30 @@ def test_is_current_alert_checks_if_alert_is_current(
     assert Alert(alert_dict).is_current == is_current
 
 
+@pytest.mark.parametrize('expiry_date,is_planned', [
+    [
+        dt_parse('2021-04-22T11:30:00Z'),
+        True
+    ],
+    [
+        dt_parse('2021-04-21T11:30:00Z'),
+        True
+    ],
+    [
+        dt_parse('2021-04-21T10:00:00Z'),
+        False
+    ],
+])
+@freeze_time('2021-04-21T10:30:00Z')
+def test_is_planned_alert_checks_if_alert_is_planned(
+    expiry_date,
+    is_planned,
+    alert_dict
+):
+    alert_dict['cancelled_at'] = expiry_date
+    assert Alert(alert_dict).is_planned == is_planned
+
+
 @pytest.mark.parametrize('is_current,is_public,is_current_and_public', [
     [True, True, True],
     [False, True, False],
