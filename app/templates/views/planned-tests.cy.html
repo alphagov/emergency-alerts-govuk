@@ -102,7 +102,9 @@
       </h2>
     {% endif %}
     <h2 class="govuk-heading-m govuk-!-margin-top-6">
-      {{ alert_or_planned_test.display_areas | formatted_list(before_each='', after_each='') }}
+      {% if alert_or_planned_test.is_public %}
+        {{ alert_or_planned_test.display_areas | formatted_list(before_each='', after_each='') }}
+      {% endif %}
     </h2>
     {% if not alert_or_planned_test.is_public %}
       <p class="govuk-body">

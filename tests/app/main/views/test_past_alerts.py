@@ -15,7 +15,7 @@ def test_past_alerts_page(client_get):
 @pytest.mark.parametrize('is_public,expected_title,expected_link_text', [
     [
         False,
-        'Emergency alert sent to foo',
+        'Mobile network operator test',
         '',
     ],
     [
