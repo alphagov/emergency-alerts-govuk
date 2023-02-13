@@ -3,9 +3,9 @@ from dateutil.parser import parse as dt_parse
 from freezegun import freeze_time
 
 from app.models.alert import Alert
-from app.models.planned_test import PlannedTest
 from app.models.alert_date import AlertDate
 from app.models.alerts import Alerts
+from app.models.planned_test import PlannedTest  # noqa silence linter, evaluated in mocker patch strings
 from tests.conftest import create_alert_dict
 
 
@@ -60,7 +60,7 @@ def test_current_and_public_alerts(alert_dict, mocker):
     assert len(Alerts([alert_dict]).current_and_public) == 0
 
 
-def test_planned_alerts(alert_dict, mocker):
+def test_planned_alerts(alert_dict, planned_test_dict, mocker):
     mocker.patch(__name__ + '.PlannedTest.is_planned', False)
     assert len(Alerts([alert_dict]).planned) == 0
 
@@ -74,12 +74,12 @@ def test_planned_alerts(alert_dict, mocker):
 
     mocker.patch(__name__ + '.PlannedTest.is_planned', False)
     mocker.patch(__name__ + '.Alert.is_planned', False)
-    assert len(Alerts([alert_dict]).planned) == 0
+    assert len(Alerts([alert_dict] + [planned_test_dict]).planned) == 0
 
     mocker.patch(__name__ + '.PlannedTest.is_planned', True)
     mocker.patch(__name__ + '.Alert.is_planned', True)
     mocker.patch(__name__ + '.Alert.is_public', False)
-    assert len(Alerts([alert_dict]).planned) == 2
+    assert len(Alerts([alert_dict] + [planned_test_dict]).planned) == 2
 
 
 def test_expired_alerts(alert_dict, mocker):
