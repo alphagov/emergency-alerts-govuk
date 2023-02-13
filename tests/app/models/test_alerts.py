@@ -5,7 +5,7 @@ from freezegun import freeze_time
 from app.models.alert import Alert
 from app.models.alert_date import AlertDate
 from app.models.alerts import Alerts
-from app.models.planned_test import PlannedTest  # noqa silence linter, evaluated in mocker patch strings
+from app.models.planned_test import PlannedTest  # noqa silence linter
 from tests.conftest import create_alert_dict
 
 
