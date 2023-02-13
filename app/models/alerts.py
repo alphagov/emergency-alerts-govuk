@@ -32,13 +32,6 @@ class Alerts(SerialisedModelCollection):
         return [alert for alert in self if alert.is_expired]
 
     @property
-    def planned_grouped_by_date(self):
-        alerts_by_date = defaultdict(list)
-        for alert in self.planned:
-            alerts_by_date[alert.starts_at_date.as_local_date].append(alert)
-        return alerts_by_date.items()
-
-    @property
     def planned_public_grouped_by_date(self):
         alerts_by_date = defaultdict(list)
         for alert in self.planned:
