@@ -35,7 +35,6 @@ def test_alert_links_to_correct_page_based_on_url_slug(is_expired, client_get, m
     ]))
 
     html = client_get('alerts/21-apr-2021-2')
-    assert html.select_one('.share-url p').text.strip() == 'https://www.gov.uk/alerts/21-apr-2021-2'
     assert html.select('p.govuk-body-l')[0].text == 'test 2'
     assert html.select('p.govuk-body')[0].text.strip() == (
         'Sent by the UK government at 1:00pm on Wednesday 21 April 2021'

@@ -1,0 +1,22 @@
+{% macro related_content(params) -%}
+  <aside class="app-related-items" role="complementary">
+    <h2 class="govuk-heading-m" id="subsection-title">
+    {% if params.language == 'cy' %}
+      Cynnwys cysylltiedig
+    {% else %}
+      Related content
+    {% endif %}
+    </h2>
+    <nav role="navigation" aria-labelledby="subsection-title">
+      <ul class="govuk-list govuk-!-font-size-16">
+        {% for item in params['items'] %}
+          <li>
+            <a class="govuk-link" href="{{item.href}}">
+              {{item.text}}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </aside>
+{%- endmacro %}

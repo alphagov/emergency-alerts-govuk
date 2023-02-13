@@ -5,6 +5,7 @@ from freezegun import freeze_time
 from app.models.alert import Alert
 from app.models.alert_date import AlertDate
 from app.models.alerts import Alerts
+from app.models.planned_test import PlannedTest  # noqa silence linter
 from tests.conftest import create_alert_dict
 
 
@@ -59,6 +60,28 @@ def test_current_and_public_alerts(alert_dict, mocker):
     assert len(Alerts([alert_dict]).current_and_public) == 0
 
 
+def test_planned_alerts(alert_dict, planned_test_dict, mocker):
+    mocker.patch(__name__ + '.PlannedTest.is_planned', False)
+    assert len(Alerts([alert_dict]).planned) == 0
+
+    mocker.patch(__name__ + '.Alert.is_planned', True)
+    mocker.patch(__name__ + '.Alert.is_public', False)
+    assert len(Alerts([alert_dict]).planned) == 1
+
+    mocker.patch(__name__ + '.Alert.is_planned', True)
+    mocker.patch(__name__ + '.Alert.is_public', True)
+    assert len(Alerts([alert_dict]).planned) == 0
+
+    mocker.patch(__name__ + '.PlannedTest.is_planned', False)
+    mocker.patch(__name__ + '.Alert.is_planned', False)
+    assert len(Alerts([alert_dict] + [planned_test_dict]).planned) == 0
+
+    mocker.patch(__name__ + '.PlannedTest.is_planned', True)
+    mocker.patch(__name__ + '.Alert.is_planned', True)
+    mocker.patch(__name__ + '.Alert.is_public', False)
+    assert len(Alerts([alert_dict] + [planned_test_dict]).planned) == 2
+
+
 def test_expired_alerts(alert_dict, mocker):
     mocker.patch(__name__ + '.Alert.is_expired', True)
     assert len(Alerts([alert_dict]).expired) == 1
@@ -104,8 +127,8 @@ def test_multiple_test_alerts_on_the_same_day_are_aggregated(mocker):
 
     assert len(alerts) == 2
     assert len(alerts.current_and_public) == 0
-    assert len(alerts.test_alerts_today) == 1
-    assert len(alerts.current_and_planned_test_alerts) == 1
+    assert len(alerts.test_alerts_today) == 2
+    assert len(alerts.current_and_planned_test_alerts) == 2
     assert alerts.dates_of_current_and_planned_test_alerts == {
         AlertDate(dt_parse('2021-01-01T12:01:00Z'))
     }

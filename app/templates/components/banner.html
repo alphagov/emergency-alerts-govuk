@@ -1,10 +1,10 @@
 {%- from "components/alerts_icon.html" import alerts_icon -%}
 
-{% macro banner(number_of_alerts, last_updated) %}
+{% macro banner(number_of_alerts, last_updated, lang='en') %}
   <div class="alerts-notification-banner alerts-icon__container alerts-icon__container--48" role="region" aria-labelledby="alerts-notification-banner__title">
     {{ alerts_icon(height=48) }}
     <h2 class="alerts-notification-banner__title govuk-heading-m govuk-!-margin-bottom-1" id="alerts-notification-banner__title">
-      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/current-alerts">{{ number_of_alerts }} current {% if number_of_alerts == 1 %}alert{% else %}alerts{% endif %}</a>
+      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/current-alerts{% if lang == 'cy' %}.cy{% endif %}">{{ number_of_alerts }} current {% if number_of_alerts == 1 %}alert{% else %}alerts{% endif %}</a>
     </h2>
     <p class="alerts-notification-banner__age govuk-body">
       Updated <time class="relative-date" datetime="{{ last_updated.as_iso8601 }}">{{ last_updated.as_lang }}</time>
@@ -13,7 +13,26 @@
 {% endmacro %}
 
 
-{% macro planned_tests_banner(number_of_test_alerts, dates_of_test_alerts) %}
+{% macro national_test_banner(dates_of_test_alerts, lang='en') %}
+
+  {% set title %}
+    {% for alert_date in dates_of_test_alerts|sort %}
+      {% if loop.index == 1 %}
+        On {{ alert_date.as_alert_lang }}, there will be a national test of the UK Emergency Alerts service.
+      {% endif %}
+    {% endfor %}
+  {% endset %}
+
+  <div class="alerts-notification-banner" role="region" aria-labelledby="alerts-national-test-banner__title">
+    <h2 class="alerts-notification-banner__title govuk-heading-m govuk-!-margin-bottom-1" id="alerts-national-test-banner__title">
+      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/planned-tests{% if lang == 'cy' %}.cy{% endif %}">{{ title }}</a>
+    </h2>
+  </div>
+
+{% endmacro %}
+
+
+{% macro planned_tests_banner(number_of_test_alerts, dates_of_test_alerts, lang='en') %}
 
   {% set subtitle %}
     {% for alert_date in dates_of_test_alerts|sort %}
@@ -32,10 +51,11 @@
   <div class="alerts-notification-banner alerts-icon__container alerts-icon__container--48" role="region" aria-labelledby="alerts-notification-banner__title">
     {{ alerts_icon(height=48, alert_active=False) }}
     <h2 class="alerts-notification-banner__title govuk-heading-m govuk-!-margin-bottom-1" id="alerts-notification-banner__title">
-      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/planned-tests">{{ number_of_test_alerts }} planned {% if number_of_test_alerts == 1 %}test{% else %}tests{% endif %}</a>
+      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/planned-tests{% if lang == 'cy' %}.cy{% endif %}">{{ number_of_test_alerts }} planned {% if number_of_test_alerts == 1 %}test{% else %}tests{% endif %}</a>
     </h2>
     <p class="alerts-notification-banner__age govuk-body">
       {{ subtitle }}
     </p>
   </div>
+
 {% endmacro %}

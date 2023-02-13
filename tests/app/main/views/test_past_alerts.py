@@ -15,8 +15,8 @@ def test_past_alerts_page(client_get):
 @pytest.mark.parametrize('is_public,expected_title,expected_link_text', [
     [
         False,
-        'Mobile network operator test',
-        'More information about mobile network operator tests',
+        'Emergency alert sent to foo',
+        '',
     ],
     [
         True,
@@ -42,7 +42,8 @@ def test_past_alerts_page_shows_alerts(
 
     assert len(titles) == 1
     assert titles[0].text.strip() == expected_title
-    assert expected_link_text in link.text
+    if is_public:
+        assert expected_link_text in link.text
 
 
 def test_past_alerts_page_groups_by_date(
@@ -64,7 +65,8 @@ def test_past_alerts_page_groups_by_date(
     mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts(alerts))
 
     html = client_get("alerts/past-alerts")
-    titles_and_paragraphs = html.select('main h2.govuk-heading-m, main p.govuk-body-l')
+    titles_and_paragraphs = html.select('main .govuk-grid-column-two-thirds h2.govuk-heading-m, \
+        main .govuk-grid-column-two-thirds p.govuk-body-l')
     assert [
         element.text.strip() for element in titles_and_paragraphs
     ] == [

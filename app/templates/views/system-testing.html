@@ -6,13 +6,13 @@
 {%- from "components/meta_tags.html" import metaTags -%}
 {%- from "components/related_content.html" import related_content -%}
 
-{% set pageTitle = "Current alerts" %}
+{% set pageTitle = "Testing the Emergency Alerts service" %}
 
 {% block metaTags %}
   {{ metaTags(
-    description="A list of the emergency alerts currently being sent in the UK",
+    description="About Emergency Alerts service testing",
     title=pageTitle,
-    url="https://www.gov.uk/alerts/current-alerts"
+    url="https://www.gov.uk/alerts/system-testing"
   ) }}
 {% endblock %}
 
@@ -39,7 +39,7 @@
   }) }}
 {% endblock %}
 
-{% block mainContent %}
+{% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-xl">
@@ -50,23 +50,31 @@
       {{ hmrcLanguageSelect({
         'language': 'en',
         'cy': {
-          'href': '/alerts/current-alerts.cy'
+          'href': '/alerts/system-testing.cy'
         }
       }) }}
     </div>
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% for current_alert in alerts.current_and_public | sort(reverse=True) %}
-      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-      {{ alert(alert=current_alert) }}
-      {% endfor %}
-
-      {% if alerts.current_and_public %}
-      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
-      {% else %}
-      <p class="govuk-body">There are no current alerts.</p>
-      {% endif %}
+      <p class="govuk-body">
+        The government and mobile network operators occasionally carry out Emergency Alerts service tests across the UK.
+      </p>
+      <p class="govuk-body">
+        You’ll only get service test alerts if you have an older Android phone or tablet with operator test alerts turned on.
+      </p>
+      <p class="govuk-body">
+        Your device may make a loud siren-like sound for about 10 seconds. You do not need to take action.
+      </p>
+      <h2 class="govuk-heading-l">
+        Opting out of service test alerts
+      </h2>
+      <p class="govuk-body">
+        To opt out, turn off ‘test alerts’ in your settings. If you still get alerts, contact your device manufacturer for help.
+      </p>
+      <p class="govuk-inset-text">
+        For most people, the chance of receiving a service test alert will be very low.
+      </p>
     </div>
 
     <div class="govuk-grid-column-one-third">
@@ -83,6 +91,10 @@
           {
             "text": "Planned tests",
             "href": "/alerts/planned-tests"
+          },
+          {
+            "text": "Current alerts",
+            "href": "/alerts/current-alerts"
           },
           {
             "text": "Past alerts",

@@ -1,27 +1,38 @@
 {%- from "components/alerts_icon.html" import alerts_icon -%}
 
-{% macro alert(alert, heading_level=2) %}
+{% macro alert(alert, heading_level=2, language='en') %}
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-full">
       <div class="alerts-icon__container alerts-icon__container--48">
         {{ alerts_icon(height=48, alert_active=alert.is_current) }}
         <h{{ heading_level }} class="alerts-alert__title govuk-heading-s govuk-!-margin-bottom-3">
-          {% if alert.is_public %}
-            <span class="govuk-visually-hidden">Emergency alert sent to </span>{{ alert.display_areas | formatted_list(before_each='', after_each='') }}
-          {% else %}
-            Mobile network operator test
-          {% endif %}
+            <span class="govuk-visually-hidden">Emergency alert sent to </span>{% if alert.display_areas %}{{ alert.display_areas | formatted_list(before_each='', after_each='') }}{% elif not alert.is_public %}Mobile network operator test{% endif %}
         </h{{ heading_level }}>
         {{ alert_body(alert) }}
         {% if alert.is_public %}
-          <a href="/alerts/{{ alert | get_url_for_alert }}" class="govuk-link govuk-body">
-            More information about this alert
-            <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
-          </a>
+          {% if language == 'cy' %}
+            <a href="/alerts/{{ alert | get_url_for_alert }}.cy" class="govuk-link govuk-body">
+              Rhagor o wybodaeth am y rhybudd hwn
+              <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
+            </a>
+          {% else %}
+            <a href="/alerts/{{ alert | get_url_for_alert }}" class="govuk-link govuk-body">
+              More information about this alert
+              <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
+            </a>
+          {% endif %}
         {% else %}
-          <a href="/alerts/mobile-network-operator-tests" class="govuk-link govuk-body">
-            More information about mobile network operator tests
-          </a>
+          {% if language == 'cy' %}
+            <a href="/alerts/system-testing.cy" class="govuk-link govuk-body">
+              Dysgwch ragor am profi'r gwasanaeth Rhybuddion Argyfwng
+              <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
+            </a>
+          {% else %}
+            <a href="/alerts/system-testing" class="govuk-link govuk-body">
+              Find out more about testing the Emergency Alerts service
+              <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
+            </a>
+          {% endif %}
         {% endif %}
       </div>
     </div>

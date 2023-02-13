@@ -1,5 +1,6 @@
 {% extends "govuk_frontend_jinja/template.html" %}
 
+{%- from "govuk_frontend_jinja_overrides/templates/components/header/macro.html" import govukHeaderOverride -%}
 {%- from "govuk_frontend_jinja/components/phase-banner/macro.html" import govukPhaseBanner -%}
 
 {% block pageTitle %}{% block pageTitleCurrent %}{% endblock %} - GOV.UK{% endblock %}
@@ -37,8 +38,9 @@
 
 {% block header %}
   <script async type="text/javascript" src="{{ '/alerts/assets/javascripts/govuk-frontend-skip-link.js' | file_fingerprint }}"></script>
-  {{ govukHeader({
-    'assetsPath': '/alerts/assets/images'
+  {{ govukHeaderOverride({
+    'assetsPath': '/alerts/assets/images',
+    "serviceName": "Emergency Alerts"
   }) }}
   <div class="govuk-width-container">
     {{ govukPhaseBanner({
@@ -56,48 +58,8 @@
 
 {% block footer %}
   {{ govukFooter({
-    'navigation': [
-      {
-        'title': 'Emergency Alerts',
-        'columns': 2,
-        'items': [
-          {
-            'text': 'Current alerts',
-            'href': '/alerts/current-alerts'
-          },
-          {
-            'text': 'Past alerts',
-            'href': '/alerts/past-alerts'
-          },
-          {
-            'text': 'When you get an emergency alert',
-            'href': '/alerts/when-you-get-an-alert'
-          },
-          {
-            'text': 'Reasons you might get an emergency alert',
-            'href': '/alerts/reasons-you-might-get-an-alert'
-          },
-          {
-            'text': 'How emergency alerts work',
-            'href': '/alerts/how-alerts-work'
-          },
-          {
-            'text': 'Opt out of emergency alerts',
-            'href': '/alerts/opt-out'
-          },
-          {
-            'text': 'Planned tests',
-            'href': '/alerts/planned-tests'
-          },
-        ]
-      }
-    ],
     'meta': {
       'items': [
-        {
-          'text': 'GOV.UK home page',
-          'href': '/'
-        },
         {
           'text': 'Privacy',
           'href': '/alerts/privacy-notice'

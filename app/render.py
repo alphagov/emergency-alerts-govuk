@@ -94,8 +94,19 @@ def get_rendered_pages(alerts):
                 rendered["alerts/" + alert_url] = template.render({'alert_data': alert})
             continue
 
+        # Render each alert's page in Welsh
+        if target == 'alert.cy':
+            for alert in alerts.public:
+                alert_url = get_url_for_alert(alert, alerts)
+                rendered["alerts/" + alert_url + ".cy"] = template.render({'alert_data': alert})
+            continue
+
         if target == 'index':
             rendered['alerts'] = template.render()
+            continue
+
+        if target == 'index.cy':
+            rendered['alerts.cy'] = template.render()
             continue
 
         rendered["alerts/" + target] = template.render()

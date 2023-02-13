@@ -33,14 +33,24 @@ def create_alert_dict(
 
 
 def create_planned_test_dict(
+    id=None,
+    channel=None,
+    approved_at=None,
     starts_at=None,
-    display_areas=None,
-    description=None,
+    cancelled_at=None,
+    finishes_at=None,
+    areas=None,
+    content=None
 ):
     return {
+        'id': id or uuid.uuid4(),
+        'channel': channel or 'operator',
+        'approved_at': approved_at or dt_parse('2021-04-16T12:00:00Z'),
         'starts_at': starts_at or dt_parse('2021-04-21T11:30:00Z'),
-        'display_areas': display_areas or [],
-        'description': description,
+        'cancelled_at': cancelled_at or None,
+        'finishes_at': finishes_at or dt_parse('2021-04-21T13:30:00Z'),
+        'areas': areas or [],
+        'content': content,
     }
 
 

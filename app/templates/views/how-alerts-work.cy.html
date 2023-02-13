@@ -1,0 +1,175 @@
+{% extends "content.html" %}
+
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "govuk_frontend_jinja_overrides/templates/components/language-select/macro.html" import hmrcLanguageSelect -%}
+{%- from "components/meta_tags.html" import metaTags -%}
+{%- from "components/related_content.html" import related_content -%}
+
+{% set pageTitle = "Sut mae'r rhybuddion argyfwng yn gweithio" %}
+
+{% block metaTags %}
+  {{ metaTags(
+    description="Emergency alerts are broadcast from mobile phone masts. Find out if your phone or tablet can receive alerts.",
+    title=pageTitle,
+    url="https://www.gov.uk/alerts/how-alerts-work.cy"
+  ) }}
+{% endblock %}
+
+{% block pageTitleCurrent -%}
+  {{ pageTitle }}
+{%- endblock %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "/"
+      },
+      {
+        "text": "Am Rybuddion Argyfwng",
+        "href": "/alerts.cy"
+      }
+    ]
+  }) }}
+{% endblock %}
+
+{% block mainContent %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+        {{ pageTitle }}
+      </h1>
+    </div>
+    <div class="govuk-grid-column-one-third">
+      {{ hmrcLanguageSelect({
+        'language': 'cy',
+        'en': {
+          'href': '/alerts/how-alerts-work'
+        }
+      }) }}
+    </div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <p class="govuk-body">
+        Mewn argyfwng, bydd mastiau ffonau symudol yn yr ardal oddi amgylch yn darlledu rhybudd. Bydd pob ffôn symudol neu lechen gydweddol  o fewn cyrraedd y mastiau hyn yn cael y rhybudd.
+      </p>
+      <div class="govuk-inset-text">
+        Mae rhybuddion argyfwng yn gweithio ar bob un o rwydweithiau ffôn 4G a 5G y DU.
+      </div>
+      <p class="govuk-body">
+        Does dim angen bod eich ffôn symudol na'ch llechen wedi'u cysylltu â data symudol neu wifi i gael rhybuddion.
+      </p>
+      <p class="govuk-body">
+        Mae rhybuddion argyfwng yn rhad ac am ddim. Does dim angen i chi lofnodi ar eu cyfer na lawrlwytho ap.
+      </p>
+      <h2 class="govuk-heading-l">
+        Rhesymau na chewch chi rybuddion
+      </h2>
+      <p class="govuk-body">
+        Ni chewch chi rybuddion os yw eich dyfais:
+      </p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>
+          wedi ei diffodd neu ar fodd awyren
+        </li>
+        <li>
+          wedi ei chysylltu â rhwydwaith 2G neu 3G
+        </li>
+        <li>
+          ar wifi yn unig
+        </li>
+        <li>
+          yn anghydweddol
+        </li>
+      </ul>
+      <h2 id="compatible-devices" class="scroll-mt-20 govuk-heading-l">
+        Ffonau symudol a dyfeisiau eraill cydweddol
+      </h2>
+      <p class="govuk-body">
+        Gwnewch yn siŵr fod gan eich dyfais yr holl ddiweddariadau meddalwedd diweddaraf.
+      </p>
+      <p class="govuk-body">
+        Mae rhybuddion argyfwng yn gweithio ar y canlynol:
+      </p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>
+          Ffonau iPhone sy'n rhedeg iOS 14.5 neu systemau diweddarach
+        </li>
+        <li>
+          Ffonau a llechi Android sy'n rhedeg Android 11 neu systemau diweddarach
+        </li>
+      </ul>
+      <p class="govuk-body">
+        Os oes gennych chi fersiwn Android cynharach, efallai y bydd modd o hyd i chi gael rhybuddion. I wirio, chwiliwch osodiadau'ch dyfais am ‘osodiadau argyfwng’.
+      </p>
+      <h2 class="govuk-heading-l">
+        Os hoffech weld rhybudd eto
+      </h2>
+      <p class="govuk-body">
+        I weld rhybudd eto, ewch i <a class="govuk-link" href="/alerts/current-alerts.cy">rybuddion presennol</a> neu
+        <a class="govuk-link" href="/alerts/past-alerts.cy">rybuddion y gorffennol</a>.
+      </p>
+      <p class="govuk-body">
+        Gallwch chi hefyd chwilio am rybuddion argyfwng ar eich ffôn symudol neu'ch llechen.
+      </p>
+      <h2 class="govuk-heading-l">
+        Os cewch chi negeseuon atgoffa am rybudd
+      </h2>
+      <p class="govuk-body">
+        Efallai y caiff ffonau symudol a llechi Android fwy nag un neges atgoffa am yr un rhybudd argyfwng. Gallwch ddiffodd y negeseuon rhybudd hyn trwy'r gosodiadau ‘rhybuddion argyfwng’ ar eich dyfais.
+      </p>
+      <h2 class="govuk-heading-l">
+        Optio allan o rybuddion argyfwng
+      </h2>
+      <p class="govuk-body">
+        Gallwch optio allan o rybuddion argyfwng, ond dylech eu cadw ymlaen er eich diogelwch eich hun.
+      </p>
+      <p class="govuk-body" id="opt-out">
+        I optio allan:
+      </p>
+      <ul class="govuk-list">
+        <ol type="1">
+          <li>Chwiliwch am ‘rybuddion argyfwng’ yn eich gosodiadau.</li>
+          <li>Diffoddwch ‘rybuddion difrifol’ a ‘rhybuddion eithafol’.</li>
+        </ol>
+      </ul>
+      <p class="govuk-body">
+        Os byddwch chi'n dal i dderbyn rhybuddion, cysylltwch â gwneuthurwr eich dyfais i gael cymorth.
+      </p>
+      <h2 class="govuk-heading-l">
+        Eich data personol
+      </h2>
+      <p class="govuk-body">
+        Does dim angen bod gan y gwasanaethau brys na llywodraeth y DU eich rhif ffôn er mwyn anfon rhybudd atoch chi.
+      </p>
+      <div class="govuk-inset-text">
+        Ni chaiff data amdanoch chi, eich dyfais na'ch lleoliad eu casglu na'u rhannu.
+      </div>
+    </div>
+    <div class="govuk-grid-column-one-third">
+      {{ related_content({
+        "items": [
+          {
+            "text": "Am Rybuddion Argyfwng",
+            "href": "/alerts.cy"
+          },
+          {
+            "text": "Profion ar y gweill",
+            "href": "/alerts/planned-tests.cy"
+          },
+          {
+            "text": "Rhybuddion ar hyn o bryd",
+            "href": "/alerts/current-alerts.cy"
+          },
+          {
+            "text": "Rhybuddion yn y gorffennol",
+            "href": "/alerts/past-alerts.cy"
+          }
+        ],
+        "language": "cy"
+      }) }}
+    </div>
+  </div>
+{% endblock %}
