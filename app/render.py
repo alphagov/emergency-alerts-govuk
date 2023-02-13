@@ -106,7 +106,7 @@ def get_rendered_pages(alerts):
             continue
 
         if target == 'index.cy':
-            rendered['alerts.cy'] = template.render()
+            rendered['alerts/about.cy'] = template.render()
             continue
 
         rendered["alerts/" + target] = template.render()
