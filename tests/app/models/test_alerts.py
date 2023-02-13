@@ -77,6 +77,8 @@ def test_planned_alerts(alert_dict, planned_test_dict, mocker):
     assert len(Alerts([alert_dict] + [planned_test_dict]).planned) == 0
 
     mocker.patch(__name__ + '.PlannedTest.is_planned', True)
+    mocker.patch(__name__ + '.Alert.is_planned', True)
+    mocker.patch(__name__ + '.Alert.is_public', False)
     assert len(Alerts([alert_dict] + [planned_test_dict]).planned) == 2
 
 
