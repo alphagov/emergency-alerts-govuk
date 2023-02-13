@@ -33,7 +33,7 @@ def test_planned_tests_page(mocker, client_get):
                        'search for gov.uk/alerts',
             'areas': {'names': ['Ibiza']}
         })],
-        ['Wednesday 3 February 2021', 'Ibiza'],
+        ['Wednesday 3 February 2021', ''],
         [],
         [
             'There will be a mobile phone network test of the UK Emergency Alerts service today.',
@@ -58,7 +58,7 @@ def test_planned_tests_page(mocker, client_get):
             'content': 'Paragraph 1\n\nParagraph 2',
             'areas': {'names': ['Ibiza', 'The Norfolk Broads']}
         })],
-        ['Wednesday 3 February 2021', 'Ibiza and The Norfolk Broads'],
+        ['Wednesday 3 February 2021', ''],
         [],
         [
             'There will be a mobile phone network test of the UK Emergency Alerts service today.',
@@ -93,7 +93,7 @@ def test_planned_tests_page(mocker, client_get):
             }),
         ],
         [
-            'Wednesday 3 February 2021', 'Ibiza', 'The Norfolk Broads'
+            'Wednesday 3 February 2021', '', ''
         ],
         [],
         [
@@ -163,7 +163,7 @@ def test_planned_tests_page_with_current_operator_test(
     assert [
         normalize_spaces(h2.text) for h2 in html.select('.govuk-grid-column-two-thirds h2')
     ] == [
-        'Wednesday 21 April 2021', "None"
+        'Wednesday 21 April 2021', ''
     ]
     assert not html.select('main h3')
     assert [
