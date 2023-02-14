@@ -5,13 +5,13 @@
 {%- from "components/related_content.html" import related_content -%}
 {%- from "components/meta_tags.html" import metaTags -%}
 
-{% set pageTitle = "Profion ar y gweill" %}
+{% set pageTitle = "Service tests" %}
 
 {% block metaTags %}
   {{ metaTags(
     description="Planned tests of the Emergency Alerts service",
     title=pageTitle,
-    url="https://www.gov.uk/alerts/planned-tests"
+    url="https://www.gov.uk/alerts/service-tests"
   ) }}
 {% endblock %}
 
@@ -27,8 +27,8 @@
         "href": "/"
       },
       {
-        "text": "Am Rybuddion Argyfwng",
-        "href": "/alerts/about.cy"
+        "text": "About Emergency Alerts",
+        "href": "/alerts"
       }
     ]
   }) }}
@@ -43,9 +43,9 @@
     </div>
     <div class="govuk-grid-column-one-third">
       {{ hmrcLanguageSelect({
-        'language': 'cy',
-        'en': {
-          'href': '/alerts/planned-tests'
+        'language': 'en',
+        'cy': {
+          'href': '/alerts/service-tests.cy'
         }
       }) }}
     </div>
@@ -64,7 +64,7 @@
         {% endfor %}
       {% else %}
         <p class="govuk-body">
-          Ar hyn o bryd does dim profion ar y gweill ar gyfer rhybuddion argyfwng.
+          There are currently no service tests.
         </p>
       {% endif %}
     </div>
@@ -72,23 +72,22 @@
       {{ related_content({
         "items": [
           {
-            "text": "Am Rybuddion Argyfwng",
-            "href": "/alerts/about.cy"
+            "text": "About Emergency Alerts",
+            "href": "/alerts"
           },
           {
-            "text": "Sut mae'r rhybuddion argyfwng yn gweithio",
-            "href": "/alerts/how-alerts-work.cy"
+            "text": "How emergency alerts work",
+            "href": "/alerts/how-alerts-work"
           },
           {
-            "text": "Rhybuddion ar hyn o bryd",
-            "href": "/alerts/current-alerts.cy"
+            "text": "Current alerts",
+            "href": "/alerts/current-alerts"
           },
           {
-            "text": "Rhybuddion yn y gorffennol",
-            "href": "/alerts/past-alerts.cy"
+            "text": "Past alerts",
+            "href": "/alerts/past-alerts"
           }
-        ],
-        "language": "cy"
+        ]
       }) }}
     </div>
   </div>
@@ -108,20 +107,20 @@
     </h2>
     {% if not alert_or_planned_test.is_public %}
       <p class="govuk-body">
-        Bydd prawf ar rwydwaith ffonau symudol gwasanaeth Rhybuddion Argyfwng y DU heddiw.
+        There will be a service test of the UK Emergency Alerts system today.
       </p>
       <p class="govuk-body">
-        Ni chaiff y rhan fwyaf o ffonau symudol a llechi rybudd prawf.
+        Most mobile phones and tablets will not get a test alert.
       </p>
       <p class="govuk-body">
-        Dysgwch ragor am <a href="/alerts/system-testing.cy" class="govuk-link">profi'r gwasanaeth Rhybuddion Argyfwng</a>.
+        Find out more about <a href="/alerts/system-testing.cy" class="govuk-link">testing the Emergency Alerts service</a>.
       </p>
     {% endif %}
     <p class="govuk-body">
-      Bydd y rhybudd yn dweud:
+      The alert will say:
     </p>
     <div class="govuk-inset-text govuk-!-margin-top-2">
-        {{ alert_or_planned_test.content | paragraphize(classes="govuk-body") }}
+      {{ alert_or_planned_test.content | paragraphize(classes="govuk-body") }}
     </div>
   {% endfor %}
 {% endmacro %}
