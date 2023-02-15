@@ -1,0 +1,126 @@
+{% extends "content.html" %}
+
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "govuk_frontend_jinja_overrides/templates/components/language-select/macro.html" import hmrcLanguageSelect -%}
+{%- from "components/related_content.html" import related_content -%}
+{%- from "components/meta_tags.html" import metaTags -%}
+
+{% set pageTitle = "Planned tests" %}
+
+{% block metaTags %}
+  {{ metaTags(
+    description="Planned tests of the Emergency Alerts service",
+    title=pageTitle,
+    url="https://www.gov.uk/alerts/planned-tests"
+  ) }}
+{% endblock %}
+
+{% block pageTitleCurrent -%}
+  {{ pageTitle }}
+{%- endblock %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "/"
+      },
+      {
+        "text": "About Emergency Alerts",
+        "href": "/alerts"
+      }
+    ]
+  }) }}
+{% endblock %}
+
+{% block mainContent %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+        {{ pageTitle }}
+      </h1>
+    </div>
+    <div class="govuk-grid-column-one-third">
+      {{ hmrcLanguageSelect({
+        'language': 'en',
+        'cy': {
+          'href': '/alerts/planned-tests.cy'
+        }
+      }) }}
+    </div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if alerts.planned_non_public_grouped_by_date %}
+        {% for _date, alerts_or_planned_tests in alerts.planned_non_public_grouped_by_date | sort %}
+          {% set date_loop = loop %}
+          {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
+        {% endfor %}
+      {% elif alerts.planned_public_grouped_by_date %}
+        {% for _date, alerts_or_planned_tests in alerts.planned_public_grouped_by_date | sort %}
+          {% set date_loop = loop %}
+          {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
+        {% endfor %}
+      {% else %}
+        <p class="govuk-body">
+          There are currently no planned tests.
+        </p>
+      {% endif %}
+    </div>
+    <div class="govuk-grid-column-one-third">
+      {{ related_content({
+        "items": [
+          {
+            "text": "About Emergency Alerts",
+            "href": "/alerts"
+          },
+          {
+            "text": "How emergency alerts work",
+            "href": "/alerts/how-alerts-work"
+          },
+          {
+            "text": "Current alerts",
+            "href": "/alerts/current-alerts"
+          },
+          {
+            "text": "Past alerts",
+            "href": "/alerts/past-alerts"
+          }
+        ]
+      }) }}
+    </div>
+  </div>
+{% endblock %}
+
+{% macro planned_tests_by_date(date_loop, alerts_or_planned_tests) %}
+  {% for alert_or_planned_test in alerts_or_planned_tests | sort %}
+    {% if loop.first %}
+      <h2 class="govuk-heading-m {% if not date_loop.first %}govuk-!-margin-top-9{% endif %}">
+        {{ alert_or_planned_test.starts_at_date.date_as_lang }}
+      </h2>
+    {% endif %}
+    <h2 class="govuk-heading-m govuk-!-margin-top-6">
+      {% if alert_or_planned_test.is_public %}
+        {{ alert_or_planned_test.display_areas | formatted_list(before_each='', after_each='') }}
+      {% endif %}
+    </h2>
+    {% if not alert_or_planned_test.is_public %}
+      <p class="govuk-body">
+        There will be a mobile phone network test of the UK Emergency Alerts service today.
+      </p>
+      <p class="govuk-body">
+        Most mobile phones and tablets will not get a test alert.
+      </p>
+      <p class="govuk-body">
+        Find out more about <a href="/alerts/system-testing.cy" class="govuk-link">testing the Emergency Alerts service</a>.
+      </p>
+    {% endif %}
+    <p class="govuk-body">
+      The alert will say:
+    </p>
+    <div class="govuk-inset-text govuk-!-margin-top-2">
+      {{ alert_or_planned_test.content | paragraphize(classes="govuk-body") }}
+    </div>
+  {% endfor %}
+{% endmacro %}
