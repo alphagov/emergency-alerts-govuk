@@ -90,16 +90,12 @@ class Alerts(SerialisedModelCollection):
         }
 
     @property
-    def planned_non_public_tests(self):
-        return [
-            planned_test for planned_test
-            in self.planned_tests
-            if planned_test.is_planned and not planned_test.is_public
-        ]
-
-    @property
     def current_and_planned_test_alerts(self):
-        return self.test_alerts_today + self.planned_non_public_tests
+        return [
+            planned for planned
+            in self.planned
+            if not planned.is_public
+        ]
 
     @property
     def all_current_and_planned_test_alerts(self):
