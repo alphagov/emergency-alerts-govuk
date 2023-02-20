@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytz
 from emergency_alerts_utils.serialised_model import SerialisedModel
@@ -65,6 +65,12 @@ class Alert(SerialisedModel):
     def is_expired(self):
         now = datetime.now(pytz.utc)
         return self.expires_date.as_utc_datetime < now
+
+    @property
+    def is_archived(self):
+        archival_point = (datetime.now(pytz.utc) - timedelta(hours=48))
+        return self.expires_date.as_utc_datetime < archival_point \
+            and not self.is_public
 
     @property
     def is_current(self):
