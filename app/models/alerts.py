@@ -29,7 +29,7 @@ class Alerts(SerialisedModelCollection):
 
     @property
     def expired(self):
-        return [alert for alert in self if alert.is_expired]
+        return [alert for alert in self if alert.is_expired and not alert.is_archived]
 
     @property
     def planned_public_grouped_by_date(self):

@@ -61,6 +61,24 @@ def test_is_expired_alert_checks_if_alert_is_expired(
     assert Alert(alert_dict).is_expired == is_expired
 
 
+@pytest.mark.parametrize('channel,expiry_date,is_archived', [
+    ['operator', dt_parse('2021-04-21T09:30:00Z'), False],
+    ['operator', dt_parse('2021-04-19T09:30:00Z'), True],
+    ['severe', dt_parse('2021-04-21T09:30:00Z'), False],
+    ['severe', dt_parse('2021-04-19T09:30:00Z'), False],
+])
+@freeze_time('2021-04-21T10:30:00Z')
+def test_is_archived_alert_checks_if_alert_is_archived(
+    channel,
+    expiry_date,
+    is_archived,
+    alert_dict
+):
+    alert_dict['channel'] = channel
+    alert_dict['cancelled_at'] = expiry_date
+    assert Alert(alert_dict).is_archived == is_archived
+
+
 @pytest.mark.parametrize('approved_at_date,expiry_date,is_current', [
     [
         dt_parse('2021-04-21T09:30:00Z'),
