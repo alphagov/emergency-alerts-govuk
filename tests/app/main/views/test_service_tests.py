@@ -10,12 +10,12 @@ from tests.conftest import create_alert_dict
 
 def test_planned_tests_page(mocker, client_get):
     mocker.patch('app.models.alerts.PlannedTests.from_yaml', return_value=[])
-    html = client_get("alerts/planned-tests")
-    assert html.select_one('h1').text.strip() == "Planned tests"
+    html = client_get("alerts/service-tests")
+    assert html.select_one('h1').text.strip() == "Service tests"
     assert [
         normalize_spaces(p.text) for p in html.select('main p')
     ] == [
-        'There are currently no planned tests.'
+        'There are currently no service tests.'
     ]
 
 
@@ -36,7 +36,7 @@ def test_planned_tests_page(mocker, client_get):
         ['Wednesday 3 February 2021', ''],
         [],
         [
-            'There will be a mobile phone network test of the UK Emergency Alerts service today.',
+            'There will be a service test of the UK Emergency Alerts system today.',
             'Most mobile phones and tablets will not get a test alert.',
             'Find out more about testing the Emergency Alerts service.',
             'The alert will say:',
@@ -61,7 +61,7 @@ def test_planned_tests_page(mocker, client_get):
         ['Wednesday 3 February 2021', ''],
         [],
         [
-            'There will be a mobile phone network test of the UK Emergency Alerts service today.',
+            'There will be a service test of the UK Emergency Alerts system today.',
             'Most mobile phones and tablets will not get a test alert.',
             'Find out more about testing the Emergency Alerts service.',
             'The alert will say:',
@@ -97,13 +97,13 @@ def test_planned_tests_page(mocker, client_get):
         ],
         [],
         [
-            'There will be a mobile phone network test of the UK Emergency Alerts service today.',
+            'There will be a service test of the UK Emergency Alerts system today.',
             'Most mobile phones and tablets will not get a test alert.',
             'Find out more about testing the Emergency Alerts service.',
             'The alert will say:',
             'Paragraph 1',
             'Paragraph 2',
-            'There will be a mobile phone network test of the UK Emergency Alerts service today.',
+            'There will be a service test of the UK Emergency Alerts system today.',
             'Most mobile phones and tablets will not get a test alert.',
             'Find out more about testing the Emergency Alerts service.',
             "The alert will say:",
@@ -122,7 +122,7 @@ def test_planned_tests_page_with_upcoming_test(
     expected_paragraphs,
 ):
     mocker.patch('app.models.alerts.PlannedTests.from_yaml', return_value=data_from_yaml)
-    html = client_get("alerts/planned-tests")
+    html = client_get("alerts/service-tests")
     assert [
         normalize_spaces(h2.text) for h2 in html.select('main .govuk-grid-column-two-thirds h2')
     ] == expected_h2s
@@ -159,7 +159,7 @@ def test_planned_tests_page_with_current_operator_test(
             **extra_json_fields
         )
     ]))
-    html = client_get("alerts/planned-tests")
+    html = client_get("alerts/service-tests")
     assert [
         normalize_spaces(h2.text) for h2 in html.select('.govuk-grid-column-two-thirds h2')
     ] == [
@@ -169,7 +169,7 @@ def test_planned_tests_page_with_current_operator_test(
     assert [
         normalize_spaces(p.text) for p in html.select('.govuk-grid-column-two-thirds p')
     ] == [
-        'There will be a mobile phone network test of the UK Emergency Alerts service today.',
+        'There will be a service test of the UK Emergency Alerts system today.',
         'Most mobile phones and tablets will not get a test alert.',
         'Find out more about testing the Emergency Alerts service.',
         'The alert will say:',
@@ -195,7 +195,7 @@ def test_planned_tests_page_with_previous_days_operator_test(
             cancelled_at=None,
         )
     ]))
-    html = client_get("alerts/planned-tests")
+    html = client_get("alerts/service-tests")
     assert normalize_spaces(html.select_one('main p').text) == (
-        'There are currently no planned tests.'
+        'There are currently no service tests.'
     )

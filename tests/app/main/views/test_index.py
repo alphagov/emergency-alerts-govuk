@@ -90,7 +90,7 @@ def test_index_page_shows_planned_tests(
     )
 
     assert html.select_one('.alerts-notification-banner a')['href'] == (
-        '/alerts/planned-tests'
+        '/alerts/service-tests'
     )
 
 

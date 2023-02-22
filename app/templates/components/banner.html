@@ -25,7 +25,7 @@
 
   <div class="alerts-notification-banner" role="region" aria-labelledby="alerts-national-test-banner__title">
     <h2 class="alerts-notification-banner__title govuk-heading-m govuk-!-margin-bottom-1" id="alerts-national-test-banner__title">
-      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/planned-tests{% if lang == 'cy' %}.cy{% endif %}">{{ title }}</a>
+      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/service-tests{% if lang == 'cy' %}.cy{% endif %}">{{ title }}</a>
     </h2>
   </div>
 
@@ -51,7 +51,7 @@
   <div class="alerts-notification-banner alerts-icon__container alerts-icon__container--48" role="region" aria-labelledby="alerts-notification-banner__title">
     {{ alerts_icon(height=48, alert_active=False) }}
     <h2 class="alerts-notification-banner__title govuk-heading-m govuk-!-margin-bottom-1" id="alerts-notification-banner__title">
-      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/planned-tests{% if lang == 'cy' %}.cy{% endif %}">{{ number_of_test_alerts }} planned {% if number_of_test_alerts == 1 %}test{% else %}tests{% endif %}</a>
+      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/service-tests{% if lang == 'cy' %}.cy{% endif %}">{{ number_of_test_alerts }} planned {% if number_of_test_alerts == 1 %}test{% else %}tests{% endif %}</a>
     </h2>
     <p class="alerts-notification-banner__age govuk-body">
       {{ subtitle }}
