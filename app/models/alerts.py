@@ -40,10 +40,10 @@ class Alerts(SerialisedModelCollection):
         return [alert for alert in self if alert.is_past]
 
     @property
-    def planned_public_grouped_by_date(self):
+    def planned_grouped_by_date(self):
         alerts_by_date = defaultdict(list)
         for planned_test in self.planned_tests:
-            if planned_test.is_public and planned_test.is_planned:
+            if planned_test.is_planned:
                 alerts_by_date[planned_test.starts_at_date.as_local_date].append(planned_test)
         return alerts_by_date.items()
 
