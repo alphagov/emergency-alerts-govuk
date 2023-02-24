@@ -76,7 +76,7 @@ def test_is_archived_alert_checks_if_alert_is_archived(
 ):
     alert_dict['channel'] = channel
     alert_dict['cancelled_at'] = expiry_date
-    assert Alert(alert_dict).is_archived == is_archived
+    assert Alert(alert_dict).is_archived_test == is_archived
 
 
 @pytest.mark.parametrize('approved_at_date,expiry_date,is_current', [

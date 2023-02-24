@@ -82,6 +82,14 @@ def test_planned_alerts(alert_dict, planned_test_dict, mocker):
     assert len(Alerts([alert_dict] + [planned_test_dict]).planned) == 2
 
 
+def test_past_alerts(alert_dict, mocker):
+    mocker.patch(__name__ + '.Alert.is_past', True)
+    assert len(Alerts([alert_dict]).past) == 1
+
+    mocker.patch(__name__ + '.Alert.is_past', False)
+    assert len(Alerts([alert_dict]).past) == 0
+
+
 def test_expired_alerts(alert_dict, mocker):
     mocker.patch(__name__ + '.Alert.is_expired', True)
     assert len(Alerts([alert_dict]).expired) == 1
@@ -109,26 +117,32 @@ def test_public_alerts_dont_get_listed_as_tests(mocker):
     assert len(alerts) == 2
     assert len(alerts.current_and_public) == 2
     assert len(alerts.test_alerts_today) == 0
+    assert len(alerts.planned) == 0
     assert len(alerts.current_and_planned_test_alerts) == 0
+    assert len(alerts.planned_test_alerts) == 0
     assert alerts.dates_of_current_and_planned_test_alerts == set()
 
 
-@freeze_time('2021-01-01')
+@freeze_time('2021-01-01T02:00:00Z')
 def test_multiple_test_alerts_on_the_same_day_are_aggregated(mocker):
     mocker.patch(__name__ + '.Alert.is_public', False)
     alerts = Alerts([
         create_alert_dict(
-            starts_at='2021-01-01T01:01:01Z'
+            starts_at=dt_parse('2021-01-01T01:01:01Z'),
+            cancelled_at=dt_parse('2021-01-01T01:59:59Z')
         ),
         create_alert_dict(
-            starts_at='2021-01-01T02:02:02Z'
+            starts_at=dt_parse('2021-01-01T02:02:02Z'),
+            cancelled_at=dt_parse('2021-01-01T02:59:59Z')
         ),
     ])
 
     assert len(alerts) == 2
     assert len(alerts.current_and_public) == 0
     assert len(alerts.test_alerts_today) == 2
-    assert len(alerts.current_and_planned_test_alerts) == 2
+    assert len(alerts.planned) == 1
+    assert len(alerts.current_and_planned_test_alerts) == 1
+    assert len(alerts.planned_test_alerts) == 0
     assert alerts.dates_of_current_and_planned_test_alerts == {
         AlertDate(dt_parse('2021-01-01T12:01:00Z'))
     }

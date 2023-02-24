@@ -32,7 +32,7 @@ def test_index_page_shows_current_alerts(
     html = client_get("alerts")
     assert '1 current alert' in html.text
     # Test alerts should not show on homepage when there is a current alert
-    assert 'planned test' not in html.select_one('main h2').text.lower()
+    assert 'service test' not in html.select_one('main h2').text.lower()
 
 
 @pytest.mark.parametrize('current_and_planned_test_alerts, expected_banner', (
@@ -41,7 +41,7 @@ def test_index_page_shows_current_alerts(
             starts_at='2021-02-03T00:00:00Z'
         ))
     ], (
-        '1 planned test '
+        '1 service test '
         'Wednesday 3 February 2021'
     )),
     ([
@@ -52,7 +52,7 @@ def test_index_page_shows_current_alerts(
             starts_at='2021-06-03T00:00:00Z'
         )),
     ], (
-        '2 planned tests '
+        '2 service tests '
         'Wednesday 3 February 2021 and Thursday 3 June 2021'
     )),
     ([
@@ -66,7 +66,7 @@ def test_index_page_shows_current_alerts(
             starts_at='2021-06-03T23:00:01Z'
         )),
     ], (
-        '3 planned tests '
+        '3 service tests '
         'Wednesday 3 February 2021 to Friday 4 June 2021'
     )),
 ))

@@ -57,11 +57,6 @@
           {% set date_loop = loop %}
           {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
         {% endfor %}
-      {% elif alerts.planned_public_grouped_by_date %}
-        {% for _date, alerts_or_planned_tests in alerts.planned_public_grouped_by_date | sort %}
-          {% set date_loop = loop %}
-          {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
-        {% endfor %}
       {% else %}
         <p class="govuk-body">
           Ar hyn o bryd does dim profion ar y gwasanaeth.

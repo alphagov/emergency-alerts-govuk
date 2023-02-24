@@ -58,8 +58,8 @@ def test_past_alerts_does_not_show_archived(
         create_alert_dict(id=UUID(int=2), content='Something 1', starts_at=dt_parse('2021-04-21T11:00:00Z')),
         create_alert_dict(id=UUID(int=3), channel='operator', starts_at=dt_parse('2021-04-21T11:00:00Z'), content='Operator test'),  # noqa
         create_alert_dict(id=UUID(int=4), channel='operator', starts_at=dt_parse('2021-04-21T11:00:00Z'), content='Operator test'),  # noqa
-        create_alert_dict(id=UUID(int=5), channel='operator', starts_at=dt_parse('2021-04-22T11:00:00Z'), content='Operator test'),  # noqa
-        create_alert_dict(id=UUID(int=6), channel='operator', starts_at=dt_parse('2021-04-22T11:00:00Z'), content='Operator test'),  # noqa
+        create_alert_dict(id=UUID(int=5), channel='operator', starts_at=dt_parse('2021-04-22T12:00:00Z'), content='Operator test'),  # noqa
+        create_alert_dict(id=UUID(int=6), channel='operator', starts_at=dt_parse('2021-04-22T10:00:00Z'), content='Operator test'),  # noqa
     ]
     # set all alerts to cancelled so they show in past alerts
     for alert in alerts:
@@ -77,7 +77,6 @@ def test_past_alerts_does_not_show_archived(
         'Operator test',
         # Only public alerts show after over 48 hours, not service tests
         'Wednesday 21 April 2021',
-        # Multiple public alerts are shown individually
         'Something 1',
         'Something 1',
     ]
@@ -93,8 +92,8 @@ def test_past_alerts_page_groups_by_date(
         create_alert_dict(id=UUID(int=2), content='Something 1', starts_at=dt_parse('2021-04-21T11:00:00Z')),
         create_alert_dict(id=UUID(int=3), content='Something 2', starts_at=dt_parse('2021-04-22T00:00:00Z')),
         create_alert_dict(id=UUID(int=4), content='Something 3', starts_at=dt_parse('2021-04-22T22:59:00Z')),
-        create_alert_dict(id=UUID(int=5), channel='operator', starts_at=dt_parse('2021-04-21T11:00:00Z'), content='Operator test'),  # noqa
-        create_alert_dict(id=UUID(int=6), channel='operator', starts_at=dt_parse('2021-04-21T11:00:00Z'), content='Operator test'),  # noqa
+        create_alert_dict(id=UUID(int=5), channel='operator', starts_at=dt_parse('2021-04-21T12:00:00Z'), content='Operator test'),  # noqa
+        create_alert_dict(id=UUID(int=6), channel='operator', starts_at=dt_parse('2021-04-21T12:00:00Z'), content='Operator test'),  # noqa
     ]
     # set all alerts to cancelled so they show in past alerts
     for alert in alerts:
