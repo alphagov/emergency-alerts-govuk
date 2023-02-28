@@ -2,28 +2,15 @@ import pytest
 from dateutil.parser import parse as dt_parse
 from freezegun import freeze_time
 
-from app.models.alerts import Alerts
 from app.models.planned_test import PlannedTest
 from tests import normalize_spaces
-from tests.conftest import create_alert_dict
-
-
-def test_planned_tests_page(mocker, client_get):
-    mocker.patch('app.models.alerts.PlannedTests.from_yaml', return_value=[])
-    html = client_get("alerts/planned-tests")
-    assert html.select_one('h1').text.strip() == "Planned tests"
-    assert [
-        normalize_spaces(p.text) for p in html.select('main p')
-    ] == [
-        'There are currently no planned tests.'
-    ]
 
 
 @pytest.mark.parametrize('data_from_yaml, expected_h2s, expected_h3s, expected_paragraphs', (
     (
         [PlannedTest({
             'id': '1513b353-685e-488e-9547-4e1ce7359051',
-            'channel': 'operator',
+            'channel': 'severe',
             'approved_at': dt_parse('2021-02-01T23:00:00Z'),
             'starts_at': dt_parse('2021-02-03T20:00:00Z'),
             'cancelled_at': None,
@@ -33,12 +20,9 @@ def test_planned_tests_page(mocker, client_get):
                        'search for gov.uk/alerts',
             'areas': {'names': ['Ibiza']}
         })],
-        ['Wednesday 3 February 2021', ''],
+        ['Wednesday 3 February 2021', 'Ibiza'],
         [],
         [
-            'There will be a mobile phone network test of the UK Emergency Alerts service today.',
-            'Most mobile phones and tablets will not get a test alert.',
-            'Find out more about testing the Emergency Alerts service.',
             'The alert will say:',
             (
                 'This is a mobile network operator test of the Emergency Alerts '
@@ -50,7 +34,7 @@ def test_planned_tests_page(mocker, client_get):
     (
         [PlannedTest({
             'id': '4775b57c-3ad0-4270-a9e0-9ece3171aa9b',
-            'channel': 'operator',
+            'channel': 'severe',
             'approved_at': dt_parse('2021-02-01T23:00:00Z'),
             'starts_at': dt_parse('2021-02-03T20:00:00Z'),
             'cancelled_at': None,
@@ -58,12 +42,9 @@ def test_planned_tests_page(mocker, client_get):
             'content': 'Paragraph 1\n\nParagraph 2',
             'areas': {'names': ['Ibiza', 'The Norfolk Broads']}
         })],
-        ['Wednesday 3 February 2021', ''],
+        ['Wednesday 3 February 2021', 'Ibiza and The Norfolk Broads'],
         [],
         [
-            'There will be a mobile phone network test of the UK Emergency Alerts service today.',
-            'Most mobile phones and tablets will not get a test alert.',
-            'Find out more about testing the Emergency Alerts service.',
             'The alert will say:',
             'Paragraph 1',
             'Paragraph 2',
@@ -97,13 +78,13 @@ def test_planned_tests_page(mocker, client_get):
         ],
         [],
         [
-            'There will be a mobile phone network test of the UK Emergency Alerts service today.',
+            'There will be a service test of the UK Emergency Alerts system today.',
             'Most mobile phones and tablets will not get a test alert.',
             'Find out more about testing the Emergency Alerts service.',
             'The alert will say:',
             'Paragraph 1',
             'Paragraph 2',
-            'There will be a mobile phone network test of the UK Emergency Alerts service today.',
+            'There will be a service test of the UK Emergency Alerts system today.',
             'Most mobile phones and tablets will not get a test alert.',
             'Find out more about testing the Emergency Alerts service.',
             "The alert will say:",
@@ -122,7 +103,7 @@ def test_planned_tests_page_with_upcoming_test(
     expected_paragraphs,
 ):
     mocker.patch('app.models.alerts.PlannedTests.from_yaml', return_value=data_from_yaml)
-    html = client_get("alerts/planned-tests")
+    html = client_get("alerts/announcements")
     assert [
         normalize_spaces(h2.text) for h2 in html.select('main .govuk-grid-column-two-thirds h2')
     ] == expected_h2s
@@ -132,70 +113,3 @@ def test_planned_tests_page_with_upcoming_test(
     assert [
         normalize_spaces(p.text) for p in html.select('main .govuk-grid-column-two-thirds p')
     ] == expected_paragraphs
-
-
-@pytest.mark.parametrize('extra_json_fields', (
-    # Doesn’t matter if the alert is still active…
-    {},
-    # Or if it’s cancelled before now
-    {'cancelled_at': dt_parse('2021-04-21T11:00:00Z')},
-    # Or if it’s finished already
-    {'finishes_at': dt_parse('2021-04-21T11:00:00Z')},
-))
-@freeze_time('2021-04-21T10:00:00Z')
-def test_planned_tests_page_with_current_operator_test(
-    mocker,
-    client_get,
-    extra_json_fields,
-):
-    mocker.patch('app.models.alerts.PlannedTests.from_yaml', return_value=[])
-    mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([
-        create_alert_dict(
-            channel='operator',
-            starts_at=dt_parse('2021-04-21T09:00:00Z'),
-            content='This is a mobile network operator test of the Emergency Alerts '
-                    'service. You do not need to take any action. To find out more, '
-                    'search for gov.uk/alerts',
-            **extra_json_fields
-        )
-    ]))
-    html = client_get("alerts/planned-tests")
-    assert [
-        normalize_spaces(h2.text) for h2 in html.select('.govuk-grid-column-two-thirds h2')
-    ] == [
-        'Wednesday 21 April 2021', ''
-    ]
-    assert not html.select('main h3')
-    assert [
-        normalize_spaces(p.text) for p in html.select('.govuk-grid-column-two-thirds p')
-    ] == [
-        'There will be a mobile phone network test of the UK Emergency Alerts service today.',
-        'Most mobile phones and tablets will not get a test alert.',
-        'Find out more about testing the Emergency Alerts service.',
-        'The alert will say:',
-        (
-            'This is a mobile network operator test of the Emergency Alerts '
-            'service. You do not need to take any action. To find out more, '
-            'search for gov.uk/alerts'
-        ),
-    ]
-
-
-@freeze_time('2021-04-21T11:00:00Z')
-def test_planned_tests_page_with_previous_days_operator_test(
-    mocker,
-    client_get,
-):
-    mocker.patch('app.models.alerts.PlannedTests.from_yaml', return_value=[])
-    mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([
-        create_alert_dict(
-            channel='operator',
-            starts_at=dt_parse('2021-04-20T09:00:00Z'),
-            finishes_at=dt_parse('2021-04-20T10:00:00Z'),
-            cancelled_at=None,
-        )
-    ]))
-    html = client_get("alerts/planned-tests")
-    assert normalize_spaces(html.select_one('main p').text) == (
-        'There are currently no planned tests.'
-    )

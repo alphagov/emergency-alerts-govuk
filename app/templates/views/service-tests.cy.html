@@ -5,13 +5,13 @@
 {%- from "components/related_content.html" import related_content -%}
 {%- from "components/meta_tags.html" import metaTags -%}
 
-{% set pageTitle = "Profion ar y gweill" %}
+{% set pageTitle = "Profion ar y gwasanaeth" %}
 
 {% block metaTags %}
   {{ metaTags(
     description="Planned tests of the Emergency Alerts service",
     title=pageTitle,
-    url="https://www.gov.uk/alerts/planned-tests"
+    url="https://www.gov.uk/alerts/service-tests.cy"
   ) }}
 {% endblock %}
 
@@ -45,21 +45,21 @@
       {{ hmrcLanguageSelect({
         'language': 'cy',
         'en': {
-          'href': '/alerts/planned-tests'
+          'href': '/alerts/service-tests'
         }
       }) }}
     </div>
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% if alerts.planned_grouped_by_date %}
-        {% for _date, alerts_or_planned_tests in alerts.planned_grouped_by_date | sort %}
+      {% if alerts.planned_non_public_grouped_by_date %}
+        {% for _date, alerts_or_planned_tests in alerts.planned_non_public_grouped_by_date | sort %}
           {% set date_loop = loop %}
           {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
         {% endfor %}
       {% else %}
         <p class="govuk-body">
-          Ar hyn o bryd does dim profion ar y gweill ar gyfer rhybuddion argyfwng.
+          Ar hyn o bryd does dim profion ar y gwasanaeth.
         </p>
       {% endif %}
     </div>
@@ -73,10 +73,6 @@
           {
             "text": "Sut mae'r rhybuddion argyfwng yn gweithio",
             "href": "/alerts/how-alerts-work.cy"
-          },
-          {
-            "text": "Profion ar y gweill",
-            "href": "/alerts/service-tests.cy"
           },
           {
             "text": "Rhybuddion ar hyn o bryd",
@@ -107,7 +103,7 @@
     </h2>
     {% if not alert_or_planned_test.is_public %}
       <p class="govuk-body">
-        Bydd prawf ar rwydwaith ffonau symudol gwasanaeth Rhybuddion Argyfwng y DU heddiw.
+        Bydd prawf gwasanaeth ar system Rhybuddion Argyfwng y DU heddiw.
       </p>
       <p class="govuk-body">
         Ni chaiff y rhan fwyaf o ffonau symudol a llechi rybudd prawf.

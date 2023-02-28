@@ -1,4 +1,5 @@
 from dateutil.parser import parse as dt_parse
+from freezegun import freeze_time
 
 from app.models.alert_date import AlertDate
 from app.models.planned_test import PlannedTest
@@ -28,3 +29,40 @@ def test_planned_test_only_has_areas():
     assert PlannedTest(
         create_planned_test_dict(areas=['a', 'b'])
     ).areas == ['a', 'b']
+
+
+def test_public_planned_tests_are_not_operator():
+    planned_test = PlannedTest(
+        create_planned_test_dict(
+            channel='operator'
+        ))
+    assert not planned_test.is_public
+
+    planned_test = PlannedTest(
+        create_planned_test_dict(
+            channel='severe'
+        ))
+    assert planned_test.is_public
+
+    planned_test = PlannedTest(
+        create_planned_test_dict(
+            channel='government'
+        ))
+    assert planned_test.is_public
+
+
+@freeze_time('2021-01-01T02:00:00Z')
+def test_future_planned_tests_are_planned():
+    planned_test = PlannedTest(
+        create_planned_test_dict(
+            starts_at=dt_parse('2021-01-01T01:01:01Z'),
+            cancelled_at=dt_parse('2021-01-01T01:59:59Z')
+        ))
+    assert not planned_test.is_planned
+
+    planned_test = PlannedTest(
+        create_planned_test_dict(
+            starts_at=dt_parse('2021-01-01T02:01:01Z'),
+            cancelled_at=dt_parse('2021-01-01T02:59:59Z')
+        ))
+    assert planned_test.is_planned
