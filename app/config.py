@@ -47,10 +47,14 @@ class Config():
     STATSD_PORT = 8125
     STATSD_ENABLED = bool(STATSD_HOST)
 
+    PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
+
 
 class Development(Config):
     NOTIFY_API_CLIENT_SECRET = "govuk-alerts-secret-key"
     NOTIFY_API_HOST_NAME = "http://localhost:6011"
+
+    PLANNED_TESTS_YAML_FILE_NAME = "planned-tests-dev.yaml"
 
 
 class Test(Config):
@@ -63,6 +67,8 @@ class Test(Config):
     BROADCASTS_AWS_ACCESS_KEY_ID = "test-key-id"
     BROADCASTS_AWS_SECRET_ACCESS_KEY = "test-secret-key"
     GOVUK_ALERTS_S3_BUCKET_NAME = "test-bucket-name"
+
+    PLANNED_TESTS_YAML_FILE_NAME = "planned-tests-test.yaml"
 
 
 configs = {
