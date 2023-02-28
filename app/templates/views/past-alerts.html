@@ -57,7 +57,7 @@
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% for _date, past_alerts in alerts.expired_grouped_by_date | sort(reverse=True) %}
+      {% for _date, past_alerts in alerts.past_grouped_by_date | sort(reverse=True) %}
         {% set date_loop = loop %}
         {% for past_alert in past_alerts | sort(reverse=True) %}
           {% if loop.first %}
@@ -87,8 +87,8 @@
             "href": "/alerts/how-alerts-work"
           },
           {
-            "text": "Planned tests",
-            "href": "/alerts/planned-tests"
+            "text": "Service tests",
+            "href": "/alerts/service-tests"
           },
           {
             "text": "Current alerts",

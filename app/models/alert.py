@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytz
 from emergency_alerts_utils.serialised_model import SerialisedModel
@@ -62,9 +62,9 @@ class Alert(SerialisedModel):
         return self.channel in ['government', 'severe']
 
     @property
-    def is_expired(self):
+    def is_planned(self):
         now = datetime.now(pytz.utc)
-        return self.expires_date.as_utc_datetime < now
+        return self.expires_date.as_utc_datetime >= now
 
     @property
     def is_current(self):
@@ -76,6 +76,32 @@ class Alert(SerialisedModel):
         )
 
     @property
-    def is_planned(self):
+    def is_expired(self):
         now = datetime.now(pytz.utc)
-        return self.expires_date.as_utc_datetime >= now
+        return self.expires_date.as_utc_datetime < now
+
+    @property
+    def is_past(self):
+        if self.is_public:
+            return self.is_expired
+        # Only show service tests for a limited time in past
+        else:
+            return self.is_expired and not self.starts_at_date.is_today and \
+                not self.is_active_test and not self.is_archived_test
+
+    @property
+    def is_active_test(self):
+        # An alert is considered active if it started in the last hour.
+        now = datetime.now(pytz.utc)
+        hour_old = (datetime.now(pytz.utc) - timedelta(hours=1))
+        return self.starts_at_date.as_utc_datetime >= hour_old \
+            and self.starts_at_date.as_utc_datetime <= now \
+            and not self.is_public
+
+    @property
+    def is_archived_test(self):
+        # An alert is considered archived (and therefore shouldn't be shown)
+        # if it's a test that ended over 48 hours ago
+        archival_point = (datetime.now(pytz.utc) - timedelta(hours=48))
+        return self.expires_date.as_utc_datetime <= archival_point \
+            and not self.is_public
