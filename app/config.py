@@ -68,13 +68,19 @@ class Test(Config):
     BROADCASTS_AWS_SECRET_ACCESS_KEY = "test-secret-key"
     GOVUK_ALERTS_S3_BUCKET_NAME = "test-bucket-name"
 
-    PLANNED_TESTS_YAML_FILE_NAME = "planned-tests-test.yaml"
+
+class Staging(Config):
+    PLANNED_TESTS_YAML_FILE_NAME = "planned-tests-staging.yaml"
+
+
+class Preview(Config):
+    PLANNED_TESTS_YAML_FILE_NAME = "planned-tests-preview.yaml"
 
 
 configs = {
     'development': Development,
     'test': Test,
+    'staging': Staging,
+    'preview': Preview,
     'production': Config,
-    'staging': Config,
-    'preview': Config,
 }
