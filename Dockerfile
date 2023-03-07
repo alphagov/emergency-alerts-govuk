@@ -24,23 +24,20 @@ RUN mv $SHELL_CONF $SHELL_CONF.bak; cat $SHELL_CONF.bak | sed 's/\[ -z "$PS1" \]
 RUN apt-get update -y
 
 # Install OS tools
-RUN apt-get install wget curl git unzip vim make build-essential apt-utils telnet dnsutils libcurl4-openssl-dev libssl-dev -y
+RUN apt-get install wget curl git unzip vim make build-essential apt-utils telnet dnsutils libcurl4-openssl-dev libssl-dev -y --no-install-recommends
 
 # Install Python and VENV.
-RUN apt-get install $PYTHON_VERSION $PYTHON_VERSION-venv python3-pip libpython3.9-dev -y && mkdir $VENV_ROOT
+RUN apt-get install $PYTHON_VERSION $PYTHON_VERSION-venv python3-pip libpython3.9-dev -y --no-install-recommends && mkdir $VENV_ROOT
 
 # Install NVM and node
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh | bash
-RUN . $SHELL_CONF && nvm install $NODE_VERSION && nvm use $NODE_VERSION  || echo 'Could not find node version';
-RUN . $SHELL_CONF && node --version
+RUN . $SHELL_CONF && nvm install $NODE_VERSION && nvm use $NODE_VERSION && node --version || echo 'Could not find node version';
 
 # Copy repo
 COPY . $GOVUK_DIR
 
 # Build emergency-alerts-api
-RUN $PYTHON_VERSION -m venv $VENV_GOVUK
-RUN . $VENV_GOVUK/bin/activate && pip3 install pycurl
-RUN cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && make bootstrap
+RUN $PYTHON_VERSION -m venv $VENV_GOVUK && . $VENV_GOVUK/bin/activate && pip3 install pycurl && cd $GOVUK_DIR && make bootstrap
 
 CMD cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && export FLASK_ENV=development && flask run -p 6017 --host=0.0.0.0
 
