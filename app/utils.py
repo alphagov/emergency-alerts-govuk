@@ -62,9 +62,6 @@ def upload_to_s3(rendered_pages):
         region_name=os.environ.get("AWS_REGION"),
     )
 
-    s3 = boto3.client('s3')
-    print(s3.list_buckets())
-
     s3 = session.resource('s3')
     bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME')
 
