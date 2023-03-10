@@ -56,12 +56,14 @@ def upload_to_s3(rendered_pages):
     #     region_name=current_app.config["BROADCASTS_AWS_REGION"],
     # )
 
-    session = boto3.Session(
-        aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
-        aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
-        aws_session_token=os.environ.get("AWS_SESSION_TOKEN"),
-        region_name=os.environ.get("AWS_REGION"),
-    )
+    # session = boto3.Session(
+    #     aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+    #     aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+    #     aws_session_token=os.environ.get("AWS_SESSION_TOKEN"),
+    #     region_name=os.environ.get("AWS_REGION"),
+    # )
+
+    session = boto3.Session()
 
     s3 = session.resource('s3')
     bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME')
