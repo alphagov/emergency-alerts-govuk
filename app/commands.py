@@ -1,12 +1,9 @@
 import click
 
-# from app.celery.tasks import publish_govuk_alerts
 from flask import current_app
 from flask import cli
 
-from app.models.alerts import Alerts
-from app.render import get_rendered_pages
-from app.utils import purge_fastly_cache, upload_to_s3
+from app.utils import purge_fastly_cache, upload_to_s3, upload_assets_to_s3
 
 
 def setup_commands(app):
@@ -16,12 +13,21 @@ def setup_commands(app):
 @click.command('publish')
 @cli.with_appcontext
 def publish():
-    # publish_govuk_alerts()
     try:
-        alerts = Alerts.load()
-        rendered_pages = get_rendered_pages(alerts)
-
-        upload_to_s3(rendered_pages)
+        upload_to_s3()
         purge_fastly_cache()
-    except Exception:
-        current_app.logger.exception("Failed to publish content to gov.uk/alerts")
+    except Exception as e:
+        current_app.logger.exception("Publish FAILED: {e}")
+
+
+@click.command('publish-with-assets')
+@cli.with_appcontext
+def publish_with_assets():
+    try:
+        upload_to_s3()
+        upload_assets_to_s3()
+        purge_fastly_cache()
+    except FileExistsError as e:
+        current_app.logger.exception(f"Publish assets FAILED: {e}")
+    except Exception as e:
+        current_app.logger.exception(f"Publish FAILED: {e}")

@@ -1,3 +1,5 @@
+import os
+
 from emergency_alerts_utils.formatters import autolink_urls, formatted_list
 from jinja2 import (
     ChoiceLoader,
@@ -112,3 +114,17 @@ def get_rendered_pages(alerts):
         rendered["alerts/" + target] = template.render()
 
     return rendered
+
+
+def get_assets(folder):
+    assets = {}
+
+    for root, _, files in os.walk(folder):
+        s3path = root[root.find("alerts/"):]
+        files = [f for f in files if not f[0] == '.']
+        for file in files:
+            # print(os.path.join(s3path, file))
+            # print(s3path + " ------ " + file)
+            assets[s3path] = file
+
+    return assets

@@ -1,11 +1,14 @@
+import boto3
 import os
 import re
-from pathlib import Path
-
-import boto3
 import requests
+
 from flask import current_app
 from jinja2 import Markup, escape
+from pathlib import Path
+
+from app.models.alerts import Alerts
+from app.render import get_rendered_pages, get_assets
 
 REPO = Path(__file__).parent.parent
 DIST = REPO / 'dist'
@@ -49,35 +52,49 @@ def is_in_uk(simple_polygons):
     )
 
 
-def upload_to_s3(rendered_pages):
-    # session = boto3.session.Session(
-    #     aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
-    #     aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
-    #     region_name=current_app.config["BROADCASTS_AWS_REGION"],
-    # )
+def upload_to_s3():
+    # session = boto3.Session()
+    # s3 = session.resource('s3')
+    # bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME')
 
-    # session = boto3.Session(
-    #     aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
-    #     aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
-    #     aws_session_token=os.environ.get("AWS_SESSION_TOKEN"),
-    #     region_name=os.environ.get("AWS_REGION"),
-    # )
+    alerts = Alerts.load()
+    rendered_pages = get_rendered_pages(alerts)
+    upload_items_to_s3(rendered_pages, content_type="text/html")
 
+    # for path, content in rendered_pages.items():
+    #     current_app.logger.info("Uploading " + path)
+    #     item = s3.Object(bucket_name, path)
+    #     item.put(Body=content, ContentType="text/html")
+
+
+def upload_assets_to_s3():
+    # session = boto3.Session()
+    # s3 = session.resource('s3')
+    # bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME')
+
+    if not Path(DIST).exists():
+        raise FileExistsError(f'Folder {DIST} not found.')
+
+    asset_items = get_assets(DIST)
+    upload_items_to_s3(asset_items)
+
+
+def upload_items_to_s3(item_dict, content_type=None):
     session = boto3.Session()
-
     s3 = session.resource('s3')
     bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME')
 
-    for path, content in rendered_pages.items():
+    for path, content in item_dict.items():
         current_app.logger.info("Uploading " + path)
         item = s3.Object(bucket_name, path)
-        item.put(Body=content, ContentType="text/html")
+        item.put(Body=content, ContentType=content_type)
+
 
 
 def purge_fastly_cache():
-    fastly_service_id = os.environ.get['FASTLY_SERVICE_ID']
-    fastly_api_key = os.environ.get['FASTLY_API_KEY']
-    surrogate_key = os.environ.get['FASTLY_SURROGATE_KEY']
+    fastly_service_id = os.environ.get('FASTLY_SERVICE_ID', 'placeholder')
+    fastly_api_key = os.environ.get('FASTLY_API_KEY', 'placeholder')
+    surrogate_key = os.environ.get('FASTLY_SURROGATE_KEY', 'notify-emergency-alerts')
     fastly_url = f"https://api.fastly.com/service/{fastly_service_id}/purge/{surrogate_key}"
 
     headers = {
