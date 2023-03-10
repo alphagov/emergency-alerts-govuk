@@ -8,6 +8,7 @@ from app.utils import purge_fastly_cache, upload_to_s3, upload_assets_to_s3
 
 def setup_commands(app):
     app.cli.add_command(publish)
+    app.cli.add_command(publish_with_assets)
 
 
 @click.command('publish')

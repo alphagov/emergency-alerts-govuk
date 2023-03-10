@@ -121,10 +121,11 @@ def get_assets(folder):
 
     for root, _, files in os.walk(folder):
         s3path = root[root.find("alerts/"):]
+
+        # ignore hidden files and folders
         files = [f for f in files if not f[0] == '.']
+
         for file in files:
-            # print(os.path.join(s3path, file))
-            # print(s3path + " ------ " + file)
             assets[s3path] = file
 
     return assets
