@@ -51,7 +51,7 @@ def is_in_uk(simple_polygons):
 
 
 def upload_html_to_s3(rendered_pages):
-    upload_to_s3(rendered_pages.items(), content_type="text/html")
+    upload_to_s3(rendered_pages.items())
 
 
 def upload_assets_to_s3():
@@ -63,7 +63,7 @@ def upload_assets_to_s3():
     upload_to_s3(assets.items())
 
 
-def upload_to_s3(items, content_type=None):
+def upload_to_s3(items):
     session = boto3.Session()
 
     s3 = session.resource('s3')
@@ -72,7 +72,7 @@ def upload_to_s3(items, content_type=None):
     for path, content in items:
         current_app.logger.info("Uploading " + path)
         item = s3.Object(bucket_name, path)
-        item.put(Body=content, ContentType=content_type)
+        item.put(Body=content)
 
 
 def purge_fastly_cache():
