@@ -69,7 +69,7 @@ def upload_to_s3(items, content_type=None):
     s3 = session.resource('s3')
     bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME')
 
-    for path, content in items():
+    for path, content in items:
         current_app.logger.info("Uploading " + path)
         item = s3.Object(bucket_name, path)
         item.put(Body=content, ContentType=content_type)
