@@ -1,14 +1,12 @@
-import boto3
 import os
 import re
-import requests
-
-from flask import current_app
-from jinja2 import Markup, escape
 from pathlib import Path
 
-from app.models.alerts import Alerts
-from app.render import get_rendered_pages, get_assets
+import boto3
+import requests
+from flask import current_app
+from jinja2 import Markup, escape
+
 
 REPO = Path(__file__).parent.parent
 DIST = REPO / 'dist'
@@ -52,49 +50,35 @@ def is_in_uk(simple_polygons):
     )
 
 
-def upload_to_s3():
-    # session = boto3.Session()
-    # s3 = session.resource('s3')
-    # bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME')
-
-    alerts = Alerts.load()
-    rendered_pages = get_rendered_pages(alerts)
-    upload_items_to_s3(rendered_pages, content_type="text/html")
-
-    # for path, content in rendered_pages.items():
-    #     current_app.logger.info("Uploading " + path)
-    #     item = s3.Object(bucket_name, path)
-    #     item.put(Body=content, ContentType="text/html")
+def upload_html_to_s3(rendered_pages):
+    upload_to_s3(rendered_pages.items(), content_type="text/html")
 
 
 def upload_assets_to_s3():
-    # session = boto3.Session()
-    # s3 = session.resource('s3')
-    # bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME')
-
     if not Path(DIST).exists():
         raise FileExistsError(f'Folder {DIST} not found.')
 
-    asset_items = get_assets(DIST)
-    upload_items_to_s3(asset_items)
+    assets = get_assets(DIST)
+
+    upload_to_s3(assets.items())
 
 
-def upload_items_to_s3(item_dict, content_type=None):
+def upload_to_s3(items, content_type=None):
     session = boto3.Session()
+
     s3 = session.resource('s3')
     bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME')
 
-    for path, content in item_dict.items():
+    for path, content in items():
         current_app.logger.info("Uploading " + path)
         item = s3.Object(bucket_name, path)
         item.put(Body=content, ContentType=content_type)
 
 
-
 def purge_fastly_cache():
-    fastly_service_id = os.environ.get('FASTLY_SERVICE_ID', 'placeholder')
-    fastly_api_key = os.environ.get('FASTLY_API_KEY', 'placeholder')
-    surrogate_key = os.environ.get('FASTLY_SURROGATE_KEY', 'notify-emergency-alerts')
+    fastly_service_id = os.environ.get['FASTLY_SERVICE_ID']
+    fastly_api_key = os.environ.get['FASTLY_API_KEY']
+    surrogate_key = os.environ.get['FASTLY_SURROGATE_KEY']
     fastly_url = f"https://api.fastly.com/service/{fastly_service_id}/purge/{surrogate_key}"
 
     headers = {
@@ -105,3 +89,18 @@ def purge_fastly_cache():
 
     resp = requests.post(fastly_url, headers=headers)
     resp.raise_for_status()
+
+
+def get_assets(folder):
+    assets = {}
+
+    for root, _, files in os.walk(folder):
+        s3path = root[root.find("alerts/"):]
+
+        # ignore hidden files and folders
+        files = [f for f in files if not f[0] == '.']
+
+        for file in files:
+            assets[s3path] = file
+
+    return assets
