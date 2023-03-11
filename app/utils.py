@@ -101,6 +101,7 @@ def get_assets(folder):
         files = [f for f in files if not f[0] == '.']
 
         for file in files:
+            print(s3path + " ------ " + file)
             assets[s3path] = file
 
     return assets
