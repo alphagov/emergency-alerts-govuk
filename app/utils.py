@@ -60,11 +60,6 @@ def upload_assets_to_s3():
 
     assets = get_assets(DIST)
 
-
-    s3 = boto3.client('s3')
-    with open('filename.txt', 'rb') as data:
-        s3.upload_fileobj(data, 'bucketname', 'filenameintos3.txt')
-
     upload_to_s3(assets.items())
 
 
@@ -110,7 +105,6 @@ def get_assets(folder):
             
             s3name = s3path + "/" + file
             print(s3name)
-
 
             with open(root + "/" + file, 'rb') as data:
                 assets[s3name] = data
