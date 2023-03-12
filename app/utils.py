@@ -60,7 +60,12 @@ def upload_assets_to_s3():
 
     assets = get_assets(DIST)
 
-    upload_to_s3(assets.items())
+    s3 = boto3.client('s3')
+    bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME')
+
+    for localfile, s3path in assets.items():
+        with open(localfile, 'rb') as data:
+            s3.upload_fileobj(data, bucket_name, s3path)
 
 
 def upload_to_s3(items):
@@ -101,12 +106,12 @@ def get_assets(folder):
         files = [f for f in files if not f[0] == '.']
 
         for file in files:
-            print(root + "/" + file)
-            
+            rootname = root + "/" + file
+            print(rootname)
+
             s3name = s3path + "/" + file
             print(s3name)
 
-            with open(root + "/" + file, 'rb') as data:
-                assets[s3name] = data
+            assets[rootname] = s3name
 
     return assets
