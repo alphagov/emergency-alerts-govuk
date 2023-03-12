@@ -81,9 +81,9 @@ def upload_to_s3(items):
 
 
 def purge_fastly_cache():
-    fastly_service_id = os.environ.get['FASTLY_SERVICE_ID']
-    fastly_api_key = os.environ.get['FASTLY_API_KEY']
-    surrogate_key = os.environ.get['FASTLY_SURROGATE_KEY']
+    fastly_service_id = os.environ.get('FASTLY_SERVICE_ID')
+    fastly_api_key = os.environ.get('FASTLY_API_KEY')
+    surrogate_key = os.environ.get('FASTLY_SURROGATE_KEY')
     fastly_url = f"https://api.fastly.com/service/{fastly_service_id}/purge/{surrogate_key}"
 
     headers = {
