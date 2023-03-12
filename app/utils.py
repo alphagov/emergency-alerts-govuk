@@ -107,11 +107,7 @@ def get_assets(folder):
 
         for file in files:
             rootname = root + "/" + file
-            print(rootname)
-
             s3name = s3path + "/" + file
-            print(s3name)
-
             assets[rootname] = s3name
 
     return assets
