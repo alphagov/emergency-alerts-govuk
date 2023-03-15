@@ -7,7 +7,6 @@ import requests
 from flask import current_app
 from jinja2 import Markup, escape
 
-
 REPO = Path(__file__).parent.parent
 DIST = REPO / 'dist'
 
@@ -51,7 +50,14 @@ def is_in_uk(simple_polygons):
 
 
 def upload_html_to_s3(rendered_pages):
-    upload_to_s3(rendered_pages.items())
+    session = boto3.Session()
+    s3 = session.resource('s3')
+    bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME', "test-bucket")
+
+    for path, content in rendered_pages.items():
+        current_app.logger.info("Uploading " + path)
+        item = s3.Object(bucket_name, path)
+        item.put(Body=content, ContentType="text/html")
 
 
 def upload_assets_to_s3():
@@ -61,23 +67,11 @@ def upload_assets_to_s3():
     assets = get_assets(DIST)
 
     s3 = boto3.client('s3')
-    bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME')
+    bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME', "test-bucket")
 
     for localfile, s3path in assets.items():
         with open(localfile, 'rb') as data:
             s3.upload_fileobj(data, bucket_name, s3path)
-
-
-def upload_to_s3(items):
-    session = boto3.Session()
-
-    s3 = session.resource('s3')
-    bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME')
-
-    for path, content in items:
-        current_app.logger.info("Uploading " + path)
-        item = s3.Object(bucket_name, path)
-        item.put(Body=content)
 
 
 def purge_fastly_cache():

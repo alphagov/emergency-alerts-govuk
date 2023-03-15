@@ -1,12 +1,10 @@
 import click
-
 # from app.celery.tasks import publish_govuk_alerts
-from flask import current_app
-from flask import cli
+from flask import cli, current_app
 
 from app.models.alerts import Alerts
 from app.render import get_rendered_pages
-from app.utils import purge_fastly_cache, upload_html_to_s3, upload_assets_to_s3
+from app.utils import purge_fastly_cache, upload_assets_to_s3, upload_html_to_s3
 
 
 def setup_commands(app):
@@ -21,7 +19,7 @@ def publish():
         _publish_html()
         purge_fastly_cache()
     except Exception as e:
-        current_app.logger.exception("Publish FAILED: {e}")
+        current_app.logger.exception(f"Publish FAILED: {e}")
 
 
 @click.command('publish-with-assets')
