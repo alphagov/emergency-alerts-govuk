@@ -24,14 +24,14 @@ planned_tests:
     cancelled_at:
     finishes_at: 2023-04-24T19:00:00Z
     content: |
-      This is a test of Emergency Alerts, a new UK government service that will warn you if there’s a life-threatening emergency nearby.
-      In an actual emergency, follow the instructions in the alert to keep yourself and others safe.
-      Visit gov.uk/alerts for more information.
-      This is a test. You do not need to take any action.
       Prawf ar Rybuddion Argyfwng yw hwn, sef gwasanaeth newydd gan lywodraeth y DU a fydd yn eich rhybuddio pan fydd argyfwng sy'n berygl i fywyd gerllaw.
       Mewn argyfwng go iawn, dilynwch y cyfarwyddiadau yn y rhybudd i'ch cadw chi ac eraill yn ddiogel.
       Ewch i gov.uk/alerts i gael rhagor o wybodaeth.
       Prawf yw hwn Does dim angen i chi wneud dim.
+      This is a test of Emergency Alerts, a new UK government service that will warn you if there’s a life-threatening emergency nearby.
+      In an actual emergency, follow the instructions in the alert to keep yourself and others safe.
+      Visit gov.uk/alerts for more information.
+      This is a test. You do not need to take any action.
     areas: {
       names: [
         "Wales"
