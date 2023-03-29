@@ -6,6 +6,7 @@ from dateutil.parser import parse as dt_parse
 
 from app import create_app
 from app.models.alerts import Alerts
+from app.models.planned_tests import PlannedTests
 
 
 def create_alert_dict(
@@ -78,6 +79,7 @@ def govuk_alerts():
 @pytest.fixture()
 def client_get(govuk_alerts, mocker):
     mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([]))
+    mocker.patch('app.models.planned_tests.PlannedTests.from_yaml', return_value=PlannedTests([]))
     mocker.patch('app.render.file_fingerprint', return_value='1234')
 
     def _do_get(path):
