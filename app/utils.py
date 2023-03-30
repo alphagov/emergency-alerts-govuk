@@ -50,8 +50,13 @@ def is_in_uk(simple_polygons):
 
 
 def upload_html_to_s3(rendered_pages):
-    session = boto3.Session()
+    session = boto3.Session(
+        aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
+        region_name=current_app.config["BROADCASTS_AWS_REGION"],
+    )
     s3 = session.resource('s3')
+
     bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME', "test-bucket")
 
     for path, content in rendered_pages.items():
@@ -66,7 +71,13 @@ def upload_assets_to_s3():
 
     assets = get_assets(DIST)
 
-    s3 = boto3.client('s3')
+    session = boto3.Session(
+        aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
+        region_name=current_app.config["BROADCASTS_AWS_REGION"],
+    )
+    s3 = session.resource('s3')
+
     bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME', "test-bucket")
 
     for localfile, s3path in assets.items():
@@ -75,9 +86,9 @@ def upload_assets_to_s3():
 
 
 def purge_fastly_cache():
-    fastly_service_id = os.environ.get('FASTLY_SERVICE_ID')
-    fastly_api_key = os.environ.get('FASTLY_API_KEY')
-    surrogate_key = os.environ.get('FASTLY_SURROGATE_KEY')
+    fastly_service_id = current_app.config['FASTLY_SERVICE_ID']
+    fastly_api_key = current_app.config['FASTLY_API_KEY']
+    surrogate_key = current_app.config['FASTLY_SURROGATE_KEY']
     fastly_url = f"https://api.fastly.com/service/{fastly_service_id}/purge/{surrogate_key}"
 
     headers = {
