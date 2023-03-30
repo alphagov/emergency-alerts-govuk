@@ -49,15 +49,10 @@ def is_in_uk(simple_polygons):
     )
 
 
-def upload_to_s3(rendered_pages):
-    session = boto3.session.Session(
-        aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
-        aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
-        region_name=current_app.config["BROADCASTS_AWS_REGION"],
-    )
-
+def upload_html_to_s3(rendered_pages):
+    session = boto3.Session()
     s3 = session.resource('s3')
-    bucket_name = current_app.config['GOVUK_ALERTS_S3_BUCKET_NAME']
+    bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME', "test-bucket")
 
     for path, content in rendered_pages.items():
         current_app.logger.info("Uploading " + path)
@@ -65,10 +60,24 @@ def upload_to_s3(rendered_pages):
         item.put(Body=content, ContentType="text/html")
 
 
+def upload_assets_to_s3():
+    if not Path(DIST).exists():
+        raise FileExistsError(f'Folder {DIST} not found.')
+
+    assets = get_assets(DIST)
+
+    s3 = boto3.client('s3')
+    bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME', "test-bucket")
+
+    for localfile, s3path in assets.items():
+        with open(localfile, 'rb') as data:
+            s3.upload_fileobj(data, bucket_name, s3path)
+
+
 def purge_fastly_cache():
-    fastly_service_id = current_app.config['FASTLY_SERVICE_ID']
-    fastly_api_key = current_app.config['FASTLY_API_KEY']
-    surrogate_key = current_app.config['FASTLY_SURROGATE_KEY']
+    fastly_service_id = os.environ.get('FASTLY_SERVICE_ID')
+    fastly_api_key = os.environ.get('FASTLY_API_KEY')
+    surrogate_key = os.environ.get('FASTLY_SURROGATE_KEY')
     fastly_url = f"https://api.fastly.com/service/{fastly_service_id}/purge/{surrogate_key}"
 
     headers = {
@@ -79,3 +88,20 @@ def purge_fastly_cache():
 
     resp = requests.post(fastly_url, headers=headers)
     resp.raise_for_status()
+
+
+def get_assets(folder):
+    assets = {}
+
+    for root, _, files in os.walk(folder):
+        s3path = root[root.find("alerts/"):]
+
+        # ignore hidden files and folders
+        files = [f for f in files if not f[0] == '.']
+
+        for file in files:
+            rootname = root + "/" + file
+            s3name = s3path + "/" + file
+            assets[rootname] = s3name
+
+    return assets

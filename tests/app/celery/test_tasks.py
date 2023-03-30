@@ -8,7 +8,7 @@ from app.celery.tasks import publish_govuk_alerts
 
 @patch('app.celery.tasks.Alerts.load')
 @patch('app.celery.tasks.get_rendered_pages')
-@patch('app.celery.tasks.upload_to_s3')
+@patch('app.celery.tasks.upload_html_to_s3')
 @patch('app.celery.tasks.purge_fastly_cache')
 def test_publish_govuk_alerts(
     mock_purge_fastly_cache,
@@ -25,7 +25,7 @@ def test_publish_govuk_alerts(
 
 @patch('app.celery.tasks.Alerts.load')
 @patch('app.celery.tasks.get_rendered_pages')
-@patch('app.celery.tasks.upload_to_s3')
+@patch('app.celery.tasks.upload_html_to_s3')
 @pytest.mark.xfail(raises=Retry)
 def test_publish_govuk_alerts_retries(
     mock_upload_to_s3,

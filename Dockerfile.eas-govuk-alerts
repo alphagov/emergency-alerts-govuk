@@ -1,0 +1,44 @@
+FROM ubuntu:20.04
+
+# Build the image with the following commands
+# gds aws cell-broadcast-development-admin bash ./scripts/docker-build.sh --ENVIRONMENT development --IMAGE <image-name> --ARGS '--load'
+# where <args> can be '--load' (import built image into local docker cache) or '--push' (push built image out to AWS ECR)
+
+ARG DEBIAN_FRONTEND='noninteractive'
+ARG ENVIRONMENT='development'
+ARG PIP_DEFAULT_TIMEOUT=1000
+
+ENV VENV_ROOT=/venv
+ENV SHELL_CONF=/root/.bashrc
+ENV PYTHON_VERSION='python3.9'
+ENV NODE_VERSION='v16.14.0'
+ENV NVM_VERSION='v0.39.1'
+
+ENV VENV_GOVUK=/venv/govuk-alerts
+ENV GOVUK_DIR=/eas/emergency-alerts-govuk
+
+# Copy the bashrc file and replace existing.
+RUN mv $SHELL_CONF $SHELL_CONF.bak; cat $SHELL_CONF.bak | sed 's/\[ -z "$PS1" \] && return//' > $SHELL_CONF;
+
+# Update OS to latest.
+RUN apt-get update -y
+
+# Install OS tools
+RUN apt-get install wget curl git unzip vim make build-essential apt-utils telnet dnsutils libcurl4-openssl-dev libssl-dev -y --no-install-recommends
+
+# Install Python and VENV.
+RUN apt-get install $PYTHON_VERSION $PYTHON_VERSION-venv python3-pip libpython3.9-dev -y --no-install-recommends && mkdir $VENV_ROOT
+
+# Install NVM and node
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh | bash
+RUN . $SHELL_CONF && nvm install $NODE_VERSION && nvm use $NODE_VERSION && node --version || echo 'Could not find node version';
+
+# Copy repo
+COPY . $GOVUK_DIR
+
+# Build emergency-alerts-api
+RUN $PYTHON_VERSION -m venv $VENV_GOVUK && . $VENV_GOVUK/bin/activate && pip3 install pycurl && cd $GOVUK_DIR && make bootstrap
+
+CMD cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && export FLASK_ENV=development && flask run -p 6017 --host=0.0.0.0
+
+EXPOSE 6017

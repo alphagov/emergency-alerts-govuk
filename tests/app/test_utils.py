@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from unittest.mock import patch
 
@@ -11,7 +12,7 @@ from app.utils import (
     is_in_uk,
     paragraphize,
     purge_fastly_cache,
-    upload_to_s3,
+    upload_html_to_s3,
 )
 
 
@@ -47,19 +48,19 @@ def test_is_in_uk_returns_polygons_in_uk_bounding_box(alert_dict, lat, lon, in_u
 @mock_s3
 def test_upload_to_s3(govuk_alerts):
     client = boto3.client('s3')
-    client.create_bucket(Bucket='test-bucket-name')
+    client.create_bucket(Bucket='test-bucket')
 
     pages = {"alerts": "<p>this is some test content</p>"}
-    upload_to_s3(pages)
+    upload_html_to_s3(pages)
 
     object_keys = [
         obj['Key'] for obj in
-        client.list_objects(Bucket='test-bucket-name')['Contents']
+        client.list_objects(Bucket='test-bucket')['Contents']
     ]
 
     assert object_keys == ['alerts']
 
-    alerts_object = client.get_object(Bucket='test-bucket-name', Key='alerts')
+    alerts_object = client.get_object(Bucket='test-bucket', Key='alerts')
     assert alerts_object['Body'].read().decode('utf-8') == pages['alerts']
     assert alerts_object['ContentType'] == 'text/html'
 
@@ -70,6 +71,10 @@ def test_purge_fastly_cache(mock_requests, govuk_alerts):
         "Accept": "application/json",
         "Fastly-Key": "test-api-key"
     }
+
+    os.environ["FASTLY_SERVICE_ID"] = "test-service-id"
+    os.environ["FASTLY_SURROGATE_KEY"] = "test-surrogate-key"
+    os.environ['FASTLY_API_KEY'] = "test-api-key"
 
     purge_fastly_cache()
 
