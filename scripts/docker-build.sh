@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 
 PLATFORM=linux/amd64
 # We can add linux/arm64 back in if we need it
