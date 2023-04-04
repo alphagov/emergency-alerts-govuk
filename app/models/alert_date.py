@@ -42,6 +42,12 @@ class AlertDate(object):
         return f'{dt:%A} {dt.day} {dt:%B} {dt:%Y}'
 
     @property
+    def datetime_as_lang(self):
+        dt = self._local_datetime
+        meridiem = f'{dt:%p}'.lower()
+        return f'{dt:%A} {dt.day} {dt:%B} {dt:%Y} at {dt:%-I}{meridiem}'
+
+    @property
     def as_url(self):
         """
         * non-zero padded day
@@ -60,7 +66,7 @@ class AlertDate(object):
     @property
     def as_alert_lang(self, lang='en-GB'):
         dt = self._local_datetime
-        return f'{dt:%A} {dt.day} {dt:%B} {dt:%Y}, at {dt:%-I%p}'
+        return f'{dt:%A} {dt.day} {dt:%B} {dt:%Y} at {dt:%-I%p}'
 
     @property
     def as_alert_date_lang(self, lang='en-GB'):
