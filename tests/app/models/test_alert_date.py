@@ -11,7 +11,6 @@ def test_AlertDate_properties():
     sample_datetime = dt_parse('2021-03-02T10:30:00Z')
     alerts_date = AlertDate(sample_datetime)
     assert alerts_date.as_lang == 'at 10:30am on Tuesday 2 March 2021'
-    assert alerts_date.as_alert_lang == 'Tuesday 2 March 2021 at 10AM'
     assert alerts_date.datetime_as_lang == 'Tuesday 2 March 2021 at 10am'
     assert alerts_date.as_iso8601 == '2021-03-02T10:30:00+00:00'
     assert alerts_date.as_utc_datetime == dt_parse('2021-03-02T10:30:00Z')
@@ -23,7 +22,6 @@ def test_AlertDate_properties_work_with_bst():
     sample_datetime = dt_parse('2021-04-20T23:30:00Z')
     alerts_date = AlertDate(sample_datetime)
     assert alerts_date.as_lang == 'at 12:30am on Wednesday 21 April 2021'
-    assert alerts_date.as_alert_lang == 'Wednesday 21 April 2021 at 12AM'
     assert alerts_date.datetime_as_lang == 'Wednesday 21 April 2021 at 12am'
     assert alerts_date.as_iso8601 == '2021-04-21T00:30:00+01:00'
     assert alerts_date.as_utc_datetime == dt_parse('2021-04-20T23:30:00Z')

@@ -64,11 +64,6 @@ class AlertDate(object):
         return f'at {self.time_as_lang} on {self.date_as_lang}'
 
     @property
-    def as_alert_lang(self, lang='en-GB'):
-        dt = self._local_datetime
-        return f'{dt:%A} {dt.day} {dt:%B} {dt:%Y} at {dt:%-I%p}'
-
-    @property
     def as_iso8601(self):
         return self._local_datetime.isoformat()
 
