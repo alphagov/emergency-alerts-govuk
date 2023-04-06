@@ -18,7 +18,7 @@
   {% set title %}
     {% for alert_date in dates_of_test_alerts|sort %}
       {% if loop.index == 1 %}
-        On {{ alert_date.as_alert_date_lang }}, there will be a national test of the UK Emergency Alerts service.
+        On {{ alert_date.datetime_as_lang }}, there will be a national test of the UK Emergency Alerts service.
       {% endif %}
     {% endfor %}
   {% endset %}

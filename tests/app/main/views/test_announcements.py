@@ -20,7 +20,7 @@ from tests import normalize_spaces
                        'search for gov.uk/alerts',
             'areas': {'names': ['Ibiza']}
         })],
-        ['Wednesday 3 February 2021', 'Ibiza'],
+        ['Wednesday 3 February 2021 at 8pm', 'Ibiza'],
         [],
         [
             'The alert will say:',
@@ -42,7 +42,7 @@ from tests import normalize_spaces
             'content': 'Paragraph 1\n\nParagraph 2',
             'areas': {'names': ['Ibiza', 'The Norfolk Broads']}
         })],
-        ['Wednesday 3 February 2021', 'Ibiza and The Norfolk Broads'],
+        ['Wednesday 3 February 2021 at 8pm', 'Ibiza and The Norfolk Broads'],
         [],
         [
             'The alert will say:',
@@ -74,7 +74,7 @@ from tests import normalize_spaces
             }),
         ],
         [
-            'Wednesday 3 February 2021', '', ''
+            'Wednesday 3 February 2021 at 8pm', '', ''
         ],
         [],
         [
