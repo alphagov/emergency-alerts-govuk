@@ -1,7 +1,7 @@
 planned_tests:
   - id: dd5af9c4-849a-4c23-a523-d6cbda2557d9
     channel: severe
-    approved_at: 2023-03-01T09:00:00Z
+    approved_at: 2023-04-06T09:00:00Z
     starts_at: 2023-04-23T14:00:00Z
     cancelled_at:
     finishes_at: 2023-04-23T15:00:00Z
@@ -19,7 +19,7 @@ planned_tests:
     }
   - id: b9ce9c12-9847-47cb-b41b-2a417ecf4ebc
     channel: severe
-    approved_at: 2023-03-01T09:00:00Z
+    approved_at: 2023-04-06T09:00:00Z
     starts_at: 2023-04-23T14:00:00Z
     cancelled_at:
     finishes_at: 2023-04-23T15:00:00Z
