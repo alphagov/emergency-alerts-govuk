@@ -30,6 +30,13 @@ have that version, it should tell you how to install it.
 ```shell
 nvm use
 ```
+### Additional Dependencies for Macbook M1 Pro Users
+To compile and run the project you need the following
+
+```
+brew install proj
+brew install geos
+```
 
 ## To run the application
 
