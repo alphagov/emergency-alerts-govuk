@@ -58,8 +58,7 @@
     {% if alerts.current_and_public %}
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
       {{ banner(alerts.current_and_public | length, alerts.last_updated_date, lang='cy') }}
-    {% endif %}
-    {% if alerts.dates_of_planned_test_alerts %}
+    {% elif alerts.dates_of_planned_test_alerts %}
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
       {{ national_test_banner(alerts.dates_of_planned_test_alerts, lang='cy') }}
     {% endif %}
