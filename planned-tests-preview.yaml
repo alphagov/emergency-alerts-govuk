@@ -4,7 +4,7 @@ planned_tests:
     approved_at: 2023-04-06T09:00:00Z
     starts_at: 2023-04-23T14:00:00Z
     cancelled_at:
-    finishes_at: 2023-04-23T15:00:00Z
+    finishes_at: 2023-04-23T14:05:00Z
     content: |
       This is a test of Emergency Alerts, a new UK government service that will warn you if there’s a life-threatening emergency nearby.
       In a real emergency, follow the instructions in the alert to keep yourself and others safe.
@@ -22,7 +22,7 @@ planned_tests:
     approved_at: 2023-04-06T09:00:00Z
     starts_at: 2023-04-23T14:00:00Z
     cancelled_at:
-    finishes_at: 2023-04-23T15:00:00Z
+    finishes_at: 2023-04-23T14:05:00Z
     content: |
       Prawf o wasanaeth Rhybuddion Argyfwng Llywodraeth y DU yw hwn. Bydd yn eich rhybuddio os oes argyfwng gerllaw sy'n peryglu bywyd.
       Mewn argyfwng go iawn, dilynwch y cyfarwyddiadau yn y rhybudd i'ch cadw chi ac eraill yn ddiogel.
