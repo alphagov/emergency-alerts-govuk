@@ -1,43 +1,4 @@
-planned_tests:
-  - id: dd5af9c4-849a-4c23-a523-d6cbda2557d9
-    channel: severe
-    approved_at: 2023-04-06T09:00:00Z
-    starts_at: 2023-04-23T14:00:00Z
-    cancelled_at:
-    finishes_at: 2023-04-23T15:00:00Z
-    content: |
-      This is a test of Emergency Alerts, a new UK government service that will warn you if there’s a life-threatening emergency nearby.
-      In a real emergency, follow the instructions in the alert to keep yourself and others safe.
-      Visit gov.uk/alerts for more information.
-      This is a test. You do not need to take any action.
-    areas: {
-      names: [
-        "England",
-        "Northern Ireland",
-        "Scotland"
-      ]
-    }
-  - id: b9ce9c12-9847-47cb-b41b-2a417ecf4ebc
-    channel: severe
-    approved_at: 2023-04-06T09:00:00Z
-    starts_at: 2023-04-23T14:00:00Z
-    cancelled_at:
-    finishes_at: 2023-04-23T15:00:00Z
-    content: |
-      Prawf o wasanaeth Rhybuddion Argyfwng Llywodraeth y DU yw hwn. Bydd yn eich rhybuddio os oes argyfwng gerllaw sy'n peryglu bywyd.
-      Mewn argyfwng go iawn, dilynwch y cyfarwyddiadau yn y rhybudd i'ch cadw chi ac eraill yn ddiogel.
-      Ewch i gov.uk/alerts i wybod mwy.
-      Prawf yw hwn. Does dim angen i chi wneud dim.
-      This is a test of Emergency Alerts, a new UK government service that will warn you if there’s a life-threatening emergency nearby.
-      In a real emergency, follow the instructions in the alert to keep yourself and others safe.
-      Visit gov.uk/alerts for more information.
-      This is a test. You do not need to take any action.
-    areas: {
-      names: [
-        "Wales"
-      ]
-    }
-
+planned_tests: []
   # - id: dd5af9c4-849a-4c23-a523-d6cbda2557d9
   #   channel: government
   #   approved_at: 2021-07-02T09:00:00Z
