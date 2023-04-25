@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import pytz
 from emergency_alerts_utils.serialised_model import SerialisedModel
@@ -101,6 +101,6 @@ class Alert(SerialisedModel):
     def is_archived_test(self):
         # An alert is considered archived (and therefore shouldn't be shown)
         # if it's a test that ended over 48 hours ago
-        archival_point = (datetime.now(pytz.utc) - timedelta(hours=48))
-        return self.expires_date.as_utc_datetime <= archival_point \
+        now = datetime.now(pytz.utc)
+        return self.expires_date.as_utc_datetime <= now \
             and not self.is_public

@@ -16,11 +16,6 @@ def test_past_alerts_page(client_get):
 @freeze_time('2021-04-23T11:00:00Z')
 @pytest.mark.parametrize('is_public,expected_title,expected_link_text', [
     [
-        False,
-        'Mobile network operator test',
-        '',
-    ],
-    [
         True,
         'Emergency alert sent to foo',
         'More information about this alert',
@@ -73,8 +68,6 @@ def test_past_alerts_does_not_show_archived(
     assert [
         element.text.strip() for element in titles_and_paragraphs
     ] == [
-        'Thursday 22 April 2021',
-        'Operator test',
         # Only public alerts show after over 48 hours, not service tests
         'Wednesday 21 April 2021',
         'Something 1',
@@ -111,8 +104,6 @@ def test_past_alerts_page_groups_by_date(
         'Something 3',
         'Something 2',
         'Wednesday 21 April 2021',
-        # Multiple non-public alerts on the same day are combined into one
-        'Operator test',
         # Multiple public alerts are shown individually
         'Something 1',
         'Something 1',

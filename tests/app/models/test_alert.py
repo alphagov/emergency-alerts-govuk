@@ -62,7 +62,7 @@ def test_is_expired_alert_checks_if_alert_is_expired(
 
 
 @pytest.mark.parametrize('channel,expiry_date,is_archived', [
-    ['operator', dt_parse('2021-04-21T09:30:00Z'), False],
+    ['operator', dt_parse('2021-04-21T09:30:00Z'), True],
     ['operator', dt_parse('2021-04-19T09:30:00Z'), True],
     ['severe', dt_parse('2021-04-21T09:30:00Z'), False],
     ['severe', dt_parse('2021-04-19T09:30:00Z'), False],
