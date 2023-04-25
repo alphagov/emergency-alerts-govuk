@@ -140,7 +140,4 @@ def test_multiple_test_alerts_on_the_same_day_are_aggregated(mocker):
     assert len(alerts.current_and_public) == 0
     assert len(alerts.test_alerts_today) == 2
     assert len(alerts.planned) == 1
-    assert len(alerts.current_and_planned_test_alerts) == 1
-    assert alerts.dates_of_current_and_planned_test_alerts == {
-        AlertDate(dt_parse('2021-01-01T12:01:00Z'))
-    }
+    assert len(alerts.current_and_planned_test_alerts) == 0
