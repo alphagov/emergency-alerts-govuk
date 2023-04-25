@@ -28,7 +28,7 @@ class Alerts(SerialisedModelCollection):
         return [
             alert for alert
             in self
-            if alert.starts_at_date.is_today and not alert.is_public
+            if alert.is_active_test and not alert.is_public
         ]
 
     @property
