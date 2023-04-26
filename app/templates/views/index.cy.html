@@ -54,17 +54,13 @@
       }) }}
     </div>
   </div>
-  {% if alerts.current_and_public or alerts.dates_of_current_and_planned_test_alerts or alerts.dates_of_planned_test_alerts %}
+  {% if alerts.current_and_public or alerts.dates_of_planned_test_alerts %}
     {% if alerts.current_and_public %}
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
       {{ banner(alerts.current_and_public | length, alerts.last_updated_date, lang='cy') }}
     {% elif alerts.dates_of_planned_test_alerts %}
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
       {{ national_test_banner(alerts.dates_of_planned_test_alerts, lang='cy') }}
-    {% endif %}
-    {% if alerts.dates_of_current_and_planned_test_alerts %}
-      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-      {{ service_tests_banner(alerts.dates_of_current_and_planned_test_alerts | length, alerts.dates_of_current_and_planned_test_alerts, lang='cy') }}
     {% endif %}
   {% else %}
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
