@@ -20,6 +20,15 @@ ENV GOVUK_DIR=/eas/emergency-alerts-govuk
 # Copy the bashrc file and replace existing.
 RUN mv $SHELL_CONF $SHELL_CONF.bak; cat $SHELL_CONF.bak | sed 's/\[ -z "$PS1" \] && return//' > $SHELL_CONF;
 
+# Update OS to latest.
+RUN apt-get update -y
+
+# Install OS tools
+RUN apt-get install wget curl git unzip vim make build-essential apt-utils telnet dnsutils libcurl4-openssl-dev libssl-dev -y --no-install-recommends
+
+# Install Python and VENV.
+RUN apt-get install $PYTHON_VERSION $PYTHON_VERSION-venv python3-pip libpython3.9-dev -y --no-install-recommends && mkdir $VENV_ROOT
+
 # Install NVM and node
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh | bash
 RUN . $SHELL_CONF && nvm install $NODE_VERSION && nvm use $NODE_VERSION && node --version || echo 'Could not find node version';
