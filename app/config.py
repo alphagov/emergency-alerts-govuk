@@ -4,7 +4,8 @@ from kombu import Exchange, Queue
 
 
 class Config():
-    NOTIFICATION_QUEUE_PREFIX = os.getenv('NOTIFICATION_QUEUE_PREFIX')
+    # Prefix to identify queues in SQS
+    NOTIFICATION_QUEUE_PREFIX = f"{os.getenv('ENVIRONMENT')}-"
     QUEUE_NAME = "govuk-alerts"
 
     NOTIFY_APP_NAME = 'govuk-alerts'
