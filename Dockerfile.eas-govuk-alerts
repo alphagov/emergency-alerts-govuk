@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 
 # Build the image with the following commands
-# gds aws cell-broadcast-development-admin bash ./scripts/docker-build.sh --ENVIRONMENT development --IMAGE <image-name> --ARGS '--load'
+# gds aws cell-broadcast-development-admin bash ./scripts/docker-build.sh --IMAGE <image-name> --ARGS '--load'
 # where <args> can be '--load' (import built image into local docker cache) or '--push' (push built image out to AWS ECR)
 
 ARG DEBIAN_FRONTEND='noninteractive'
@@ -38,6 +38,8 @@ COPY . $GOVUK_DIR
 
 # Build emergency-alerts-api
 RUN $PYTHON_VERSION -m venv $VENV_GOVUK && . $VENV_GOVUK/bin/activate && pip3 install pycurl && cd $GOVUK_DIR && make bootstrap
+
+RUN useradd -ms /bin/bash easuser && chown -R easuser:easuser $GOVUK_DIR
 
 CMD cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && export FLASK_ENV=development && flask run -p 6017 --host=0.0.0.0
 

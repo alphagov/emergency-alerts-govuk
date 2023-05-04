@@ -5,10 +5,10 @@ from kombu import Exchange, Queue
 
 class Config():
     NOTIFICATION_QUEUE_PREFIX = os.getenv('NOTIFICATION_QUEUE_PREFIX')
-    QUEUE_NAME = 'govuk-alerts'
+    QUEUE_NAME = "govuk-alerts"
 
     NOTIFY_APP_NAME = 'govuk-alerts'
-    NOTIFY_AWS_REGION = 'eu-west-1'
+    AWS_REGION = 'eu-west-2'
     NOTIFY_LOG_PATH = os.getenv('NOTIFY_LOG_PATH', 'application.log')
 
     BROADCASTS_AWS_ACCESS_KEY_ID = os.getenv("BROADCASTS_AWS_ACCESS_KEY_ID")
@@ -25,14 +25,16 @@ class Config():
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
     CELERY = {
-        'broker_url': 'sqs://',
-        'broker_transport_options': {
-            'region': NOTIFY_AWS_REGION,
-            'visibility_timeout': 310,
-            'queue_name_prefix': NOTIFICATION_QUEUE_PREFIX,
-            'wait_time_seconds': 20,  # enable long polling, with a wait time of 20 seconds
+        "broker_url": "https://sqs.eu-west-2.amazonaws.com",
+        "broker_transport": "sqs",
+        "broker_transport_options": {
+            "region": AWS_REGION,
+            "visibility_timeout": 310,
+            "queue_name_prefix": NOTIFICATION_QUEUE_PREFIX,
+            "is_secure": True,
+            "task_acks_late": True,
         },
-        'timezone': 'Europe/London',
+        "timezone": "UTC",
         'imports': ['app.celery.tasks'],
         'task_queues': [
             Queue(QUEUE_NAME, Exchange('default'), routing_key=QUEUE_NAME)
@@ -40,7 +42,7 @@ class Config():
         # Restart workers after a few tasks have been executed - this will help prevent any memory leaks
         # (not that we should be encouraging sloppy memory management). Although the tasks are time-critical,
         # we don't expect to get them in quick succession, so a small restart delay is acceptable.
-        'worker_max_tasks_per_child': 20
+        'worker_max_tasks_per_child': 10
     }
 
     STATSD_HOST = os.getenv('STATSD_HOST')

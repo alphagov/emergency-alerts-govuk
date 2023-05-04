@@ -39,6 +39,18 @@ freeze-requirements: ## create static requirements.txt
 	pip install --upgrade pip-tools
 	pip-compile requirements.in
 
+.PHONY: run-celery
+run-celery: ## Run celery
+	. environment.sh && celery \
+		-A run_celery.notify_celery worker \
+		--uid=$(shell id -u easuser) \
+		--pidfile=/tmp/celery.pid \
+		--prefetch-multiplier=1 \
+		--loglevel=INFO \
+		--concurrency=1 \
+		--autoscale=1,1
+		--hostname=0.0.0.0
+
 .PHONY: cf-login
 cf-login: ## Log in to Cloud Foundry
 	$(if ${CF_USERNAME},,$(error Must specify CF_USERNAME))
