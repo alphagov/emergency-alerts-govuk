@@ -11,7 +11,7 @@ phases:
   build:
     commands:
       - make bootstrap
-      - echo $BROADCASTS_AWS_ACCESS_KEY_ID
+      - echo $AWS_ACCESS_KEY_ID
       - cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && flask publish-with-assets
   post_build:
     commands:
