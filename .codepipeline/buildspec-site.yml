@@ -11,7 +11,9 @@ phases:
   build:
     commands:
       - make bootstrap
-      - echo $AWS_ACCESS_KEY_ID
+      - echo printenv
+      - aws sts get-caller-identity
+      - curl 169.254.170.2$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
       - cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && flask publish-with-assets
   post_build:
     commands:
