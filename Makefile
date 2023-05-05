@@ -46,7 +46,7 @@ run-celery: ## Run celery
 		--uid=$(shell id -u easuser) \
 		--pidfile=/tmp/celery.pid \
 		--prefetch-multiplier=1 \
-		--loglevel=INFO \
+		--loglevel=WARNING \
 		--concurrency=1 \
 		--autoscale=1,1
 		--hostname=0.0.0.0
