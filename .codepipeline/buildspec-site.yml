@@ -8,12 +8,15 @@ phases:
   pre_build:
     commands:
       - echo "" > environment.sh
+      - |
+        CREDS=$(curl 169.254.170.2$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI)
+        export AWS_ACCESS_KEY_ID=$(echo $CREDS | jq .AccessKeyId | tr -d '"')
+        export AWS_SECRET_ACCESS_KEY_ID=$(echo $CREDS | jq .SecretAccessKey | tr -d '"')
+        export AWS_DEFAULT_REGION=eu-west-2
+        export AWS_SESSION_TOKEN=$(echo $CREDS | jq .Token | tr -d '"')
   build:
     commands:
       - make bootstrap
-      - echo printenv
-      - aws sts get-caller-identity
-      - curl 169.254.170.2$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
       - cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && flask publish-with-assets
   post_build:
     commands:
