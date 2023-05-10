@@ -11,7 +11,7 @@ phases:
   build:
     commands:
       - make bootstrap
-      - python .codepipline/test.py
+      - python .codepipeline/test.py
   post_build:
     commands:
       - echo "No post build commands"
