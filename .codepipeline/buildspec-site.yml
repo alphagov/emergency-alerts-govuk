@@ -16,6 +16,7 @@ phases:
         export AWS_SESSION_TOKEN=$(echo $CREDS | jq .Token | tr -d '"')
   build:
     commands:
+      - printenv
       - make bootstrap
       - cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && flask publish-with-assets
   post_build:
