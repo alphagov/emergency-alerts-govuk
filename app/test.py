@@ -4,6 +4,12 @@ import sys
 import boto3
 
 
+def test():
+    sqs_client = boto3.client('sqs')
+    queue = sqs_client.create_queue(QueueName='test', Attributes={'DelaySeconds': '5'})
+    sys.stdout.write(queue.url)
+
+
 def list_buckets():
     session = boto3.Session()
     s3 = session.resource('s3')
@@ -12,3 +18,6 @@ def list_buckets():
 
     for bucket_object in bucket.objects.all():
         sys.stdout.write(bucket_object.key)
+
+
+test()
