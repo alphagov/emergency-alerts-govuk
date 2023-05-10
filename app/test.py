@@ -1,6 +1,7 @@
 import os
-import boto3
 import sys
+
+import boto3
 
 
 def list_buckets():
