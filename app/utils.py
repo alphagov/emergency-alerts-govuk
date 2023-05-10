@@ -50,13 +50,14 @@ def is_in_uk(simple_polygons):
 
 
 def upload_html_to_s3(rendered_pages):
-    s3_client = boto3.client('s3')
+    session = boto3.Session()
+    s3 = session.resource('s3')
 
     bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME', "test-bucket")
 
     for path, content in rendered_pages.items():
         current_app.logger.info("Uploading " + path)
-        item = s3_client.Object(bucket_name, path)
+        item = s3.Object(bucket_name, path)
         item.put(Body=content, ContentType="text/html")
 
 
@@ -66,13 +67,14 @@ def upload_assets_to_s3():
 
     assets = get_assets(DIST)
 
-    s3_client = boto3.client('s3')
+    session = boto3.Session()
+    s3 = session.resource('s3')
 
     bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME', "test-bucket")
 
     for localfile, s3path in assets.items():
         with open(localfile, 'rb') as data:
-            s3_client.upload_fileobj(data, bucket_name, s3path)
+            s3.upload_fileobj(data, bucket_name, s3path)
 
 
 def purge_fastly_cache():
