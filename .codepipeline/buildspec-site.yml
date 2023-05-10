@@ -8,7 +8,6 @@ phases:
   pre_build:
     commands:
       - echo "" > environment.sh
-      - aws sts get-caller-identity
   build:
     commands:
       - make bootstrap
