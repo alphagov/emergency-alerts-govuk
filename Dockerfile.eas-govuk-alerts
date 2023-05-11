@@ -29,7 +29,7 @@ RUN apt-get install wget curl git unzip vim make build-essential apt-utils telne
 
 # Install Python.
 RUN cd /opt && \
-    wget https://www.python.org/ftp/python/$PYTHON_FULL_VERSION/Python-$PYTHON_FULL_VERSION.tgz && \
+    wget https://www.python.org/ftp/python/$PYTHON_FULL_VERSION/Python-$PYTHON_FULL_VERSION.tgz --no-check-certificate && \
     tar xzvf Python-$PYTHON_FULL_VERSION.tgz && \
     cd Python-$PYTHON_FULL_VERSION && \
     ./configure && \
