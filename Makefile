@@ -20,7 +20,7 @@ run-flask:
 
 .PHONY: bootstrap
 bootstrap:
-	pip install -r requirements_for_test.txt
+	pip3 install -r requirements_for_test.txt
 	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm run build
 
 .PHONY: npm-audit
@@ -36,7 +36,7 @@ test:
 
 .PHONY: freeze-requirements
 freeze-requirements: ## create static requirements.txt
-	pip install --upgrade pip-tools
+	pip3 install --upgrade pip-tools
 	pip-compile requirements.in
 
 .PHONY: cf-login
