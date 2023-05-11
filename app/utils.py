@@ -1,7 +1,7 @@
 import os
-import sys
 import re
 from pathlib import Path
+import sys
 
 import boto3
 import requests
