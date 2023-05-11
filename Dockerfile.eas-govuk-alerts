@@ -10,7 +10,8 @@ ARG PIP_DEFAULT_TIMEOUT=1000
 
 ENV VENV_ROOT=/venv
 ENV SHELL_CONF=/root/.bashrc
-ENV PYTHON_VERSION='python3.9'
+ENV PYTHON_VERSION='3.9'
+ENV PYTHON_FULL_VERSION='$PYTHON_VERSION.16'
 ENV NODE_VERSION='v16.14.0'
 ENV NVM_VERSION='v0.39.1'
 
@@ -26,8 +27,18 @@ RUN apt-get update -y
 # Install OS tools
 RUN apt-get install wget curl git unzip vim make build-essential apt-utils telnet dnsutils libcurl4-openssl-dev libssl-dev -y --no-install-recommends
 
-# Install Python and VENV.
-RUN apt-get install $PYTHON_VERSION $PYTHON_VERSION-venv python3-pip libpython3.9-dev -y --no-install-recommends && mkdir $VENV_ROOT
+# Install Python.
+RUN cd /opt && \
+    wget https://www.python.org/ftp/python/$PYTHON_FULL_VERSION/Python-$PYTHON_FULL_VERSION.tgz && \
+    tar xzvf Python-$PYTHON_FULL_VERSION.tgz && \
+    cd Python-$PYTHON_FULL_VERSION && \
+    ./configure && \
+    make && \
+    make install && \
+    ln -fs /opt/Python-$PYTHON_FULL_VERSION/Python /usr/bin/python$PYTHON_VERSION
+
+# Install VENV.
+RUN apt-get install python$PYTHON_VERSION-venv python3-pip libpython$PYTHON_VERSION-dev -y --no-install-recommends && mkdir $VENV_ROOT
 
 # Install NVM and node
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh | bash
@@ -37,7 +48,7 @@ RUN . $SHELL_CONF && nvm install $NODE_VERSION && nvm use $NODE_VERSION && node 
 COPY . $GOVUK_DIR
 
 # Build emergency-alerts-api
-RUN $PYTHON_VERSION -m venv $VENV_GOVUK && . $VENV_GOVUK/bin/activate && $PYTHON_VERSION -m pip install --upgrade pip wheel setuptools && pip install pycurl && cd $GOVUK_DIR && make bootstrap
+RUN python$PYTHON_VERSION -m venv $VENV_GOVUK && . $VENV_GOVUK/bin/activate && python$PYTHON_VERSION -m pip install --upgrade pip wheel setuptools && pip install pycurl && cd $GOVUK_DIR && make bootstrap
 
 CMD cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && export FLASK_ENV=development && flask run -p 6017 --host=0.0.0.0
 
