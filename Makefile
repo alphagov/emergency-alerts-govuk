@@ -36,7 +36,7 @@ test:
 
 .PHONY: freeze-requirements
 freeze-requirements: ## create static requirements.txt
-	pip install --upgrade pip-tools
+	pip3 install --upgrade pip-tools
 	pip-compile requirements.in
 
 .PHONY: cf-login
