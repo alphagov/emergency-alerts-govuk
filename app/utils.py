@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 from pathlib import Path
 
@@ -50,15 +51,16 @@ def is_in_uk(simple_polygons):
 
 
 def upload_html_to_s3(rendered_pages):
-    session = boto3.Session()
-    s3 = session.resource('s3')
+    sys.stdout.write(sys.version)
+    # session = boto3.Session()
+    # s3 = session.resource('s3')
 
-    bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME', "test-bucket")
+    # bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME', "test-bucket")
 
-    for path, content in rendered_pages.items():
-        current_app.logger.info("Uploading " + path)
-        item = s3.Object(bucket_name, path)
-        item.put(Body=content, ContentType="text/html")
+    # for path, content in rendered_pages.items():
+    #     current_app.logger.info("Uploading " + path)
+    #     item = s3.Object(bucket_name, path)
+    #     item.put(Body=content, ContentType="text/html")
 
 
 def upload_assets_to_s3():

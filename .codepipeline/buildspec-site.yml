@@ -4,13 +4,13 @@ phases:
   install:
     commands:
       - apt-get update
-      - apt-get -y install python3-dev --fix-missing
+      - apt-get -y install python2-dev --fix-missing
   pre_build:
     commands:
       - echo "" > environment.sh
   build:
     commands:
-      - cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && make bootstrap && pip3 freeze && python3 --version && flask publish-with-assets
+      - make bootstrap && pip3 freeze && python3 --version && flask publish-with-assets
   post_build:
     commands:
       - echo "No post build commands"
