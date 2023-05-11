@@ -26,6 +26,7 @@ RUN apt-get update -y
 
 # Install OS tools
 RUN apt-get install wget curl git unzip vim make build-essential apt-utils telnet dnsutils libcurl4-openssl-dev libssl-dev -y --no-install-recommends
+RUN apt install zlib1g
 
 # Install Python.
 RUN cd /opt && \
