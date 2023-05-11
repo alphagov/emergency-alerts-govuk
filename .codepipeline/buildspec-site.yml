@@ -10,7 +10,7 @@ phases:
       - echo "" > environment.sh
   build:
     commands:
-      - cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && make bootstrap && flask publish-with-assets
+      - cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && make bootstrap && pip3 freeze && python3 --version && flask publish-with-assets
   post_build:
     commands:
       - echo "No post build commands"
