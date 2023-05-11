@@ -25,8 +25,30 @@ RUN mv $SHELL_CONF $SHELL_CONF.bak; cat $SHELL_CONF.bak | sed 's/\[ -z "$PS1" \]
 RUN apt-get update -y
 
 # Install OS tools
-RUN apt-get install wget curl git unzip vim make build-essential apt-utils telnet dnsutils libcurl4-openssl-dev libssl-dev -y --no-install-recommends
-RUN apt install zlib1g-dev
+RUN apt-get install build-essential \
+                    libssl-dev \
+                    zlib1g-dev \
+                    libbz2-dev \
+                    libreadline-dev \
+                    libsqlite3-dev \
+                    llvm \
+                    libncurses5-dev \
+                    libncursesw5-dev \
+                    xz-utils \
+                    tk-dev \
+                    libffi-dev \
+                    liblzma-dev \
+                    python-openssl \
+                    libcurl4-openssl-dev \
+                    dnsutils \
+                    telnet \
+                    apt-utils \
+                    make \
+                    vim \
+                    unzip \
+                    git \
+                    curl \
+                    wget -y --no-install-recommends
 
 # Install Python.
 RUN cd /opt && \
