@@ -49,7 +49,7 @@ RUN apt-get install build-essential \
                     git \
                     curl \
                     wget \
-                    ca-certificates -y --no-install-recommends \
+                    ca-certificates -y --no-install-recommends && \
                     update-ca-certificates
 
 # Install Python.
