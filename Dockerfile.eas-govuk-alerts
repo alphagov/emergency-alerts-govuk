@@ -48,7 +48,9 @@ RUN apt-get install build-essential \
                     unzip \
                     git \
                     curl \
-                    wget -y --no-install-recommends
+                    wget \
+                    ca-certificates -y --no-install-recommends \
+                    update-ca-certificates
 
 # Install Python.
 RUN cd /opt && \
