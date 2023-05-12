@@ -11,5 +11,11 @@ function run_celery(){
   . $VENV_API/bin/activate && make run-celery &
 }
 
+function flask_publish(){
+  cd $GOVUK_DIR;
+  . $VENV_GOVUK/bin/activate && flask publish-with-assets
+}
+
 configure_container_role
 run_celery
+flask_publish
