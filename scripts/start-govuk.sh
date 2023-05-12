@@ -8,7 +8,7 @@ function configure_container_role(){
 
 function run_celery(){
   cd $GOVUK_DIR;
-  . $GOVUK_DIR/bin/activate && make run-celery &
+  . $VENV_GOVUK/bin/activate && make run-celery &
 }
 
 function flask_publish(){

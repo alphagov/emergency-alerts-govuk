@@ -65,6 +65,10 @@ RUN cd /opt && \
 # Install VENV.
 RUN apt-get install python$PYTHON_VERSION-venv python3-pip libpython$PYTHON_VERSION-dev -y --no-install-recommends && mkdir $VENV_ROOT
 
+# Install AWS CLI
+RUN curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip'; unzip 'awscliv2.zip' && \
+    ./aws/install;
+
 # Install NVM and node
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh | bash
 RUN . $SHELL_CONF && nvm install $NODE_VERSION && nvm use $NODE_VERSION && node --version || echo 'Could not find node version';
