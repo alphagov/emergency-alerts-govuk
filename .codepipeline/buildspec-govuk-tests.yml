@@ -1,10 +1,6 @@
 version: 0.2
 
 phases:
-  install:
-    commands:
-      - apt-get update
-      - apt-get -y install python3-dev --fix-missing
   pre_build:
     commands:
       - echo "" > environment.sh
@@ -12,6 +8,3 @@ phases:
     commands:
       - make bootstrap
       - cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && make test
-  post_build:
-    commands:
-      - echo "No post build commands"
