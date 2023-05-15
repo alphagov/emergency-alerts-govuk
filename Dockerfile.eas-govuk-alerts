@@ -2,19 +2,15 @@ ARG ECS_ACCOUNT_NUMBER
 FROM ${ECS_ACCOUNT_NUMBER}.dkr.ecr.eu-west-2.amazonaws.com/eas-app-base:latest
 
 ENV SERVICE=govuk-alerts
-ENV VENV_GOVUK=/venv/govuk-alerts
-ENV GOVUK_DIR=/eas/emergency-alerts-govuk
 
 # Create root directory and copy repo
-COPY . $GOVUK_DIR
+COPY . $DIR_GOVUK
 
 # Build emergency-alerts-api
-RUN cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && python$PYTHON_VERSION -m pip install --upgrade pip wheel setuptools && python$PYTHON_VERSION -m pip install pycurl && make bootstrap
+RUN cd $DIR_GOVUK && . $VENV_GOVUK/bin/activate && python$PYTHON_VERSION -m pip install --upgrade pip wheel setuptools && python$PYTHON_VERSION -m pip install pycurl && make bootstrap
 
 # Create a blank configuration file
-RUN echo "" > $GOVUK_DIR/environment.sh
-
-RUN useradd -ms /bin/bash easuser && chown -R easuser:easuser $GOVUK_DIR && chown -R easuser:easuser $UTILS_DIR
+RUN echo "" > $DIR_GOVUK/environment.sh
 
 COPY scripts/start-govuk.sh /
 CMD bash /start-govuk.sh
