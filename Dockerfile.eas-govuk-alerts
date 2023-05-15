@@ -77,6 +77,9 @@ RUN python$PYTHON_VERSION -m venv $VENV_GOVUK && . $VENV_GOVUK/bin/activate && p
 
 RUN useradd -ms /bin/bash easuser && chown -R easuser:easuser $GOVUK_DIR
 
+# Create a blank configuration file
+RUN echo "" > $GOVUK_DIR/environment.sh
+
 CMD cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && export FLASK_ENV=development && flask run -p 6017 --host=0.0.0.0
 
 EXPOSE 6017
