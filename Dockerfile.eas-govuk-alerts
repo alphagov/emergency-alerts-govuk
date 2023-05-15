@@ -1,85 +1,20 @@
-FROM ubuntu:20.04
+ARG ECS_ACCOUNT_NUMBER
+FROM ${ECS_ACCOUNT_NUMBER}.dkr.ecr.eu-west-2.amazonaws.com/eas-app-base:latest
 
-# Build the image with the following commands
-# gds aws cell-broadcast-development-admin bash ./scripts/docker-build.sh --IMAGE <image-name> --ARGS '--load'
-# where <args> can be '--load' (import built image into local docker cache) or '--push' (push built image out to AWS ECR)
-
-ARG DEBIAN_FRONTEND='noninteractive'
-ARG ENVIRONMENT='development'
-ARG PIP_DEFAULT_TIMEOUT=1000
-
-ENV VENV_ROOT=/venv
-ENV SHELL_CONF=/root/.bashrc
-ENV PYTHON_VERSION='3.9'
-ENV PYTHON_FULL_VERSION=$PYTHON_VERSION'.16'
-ENV NODE_VERSION='v16.14.0'
-ENV NVM_VERSION='v0.39.1'
-
+ENV SERVICE=govuk-alerts
 ENV VENV_GOVUK=/venv/govuk-alerts
 ENV GOVUK_DIR=/eas/emergency-alerts-govuk
 
-# Copy the bashrc file and replace existing.
-RUN mv $SHELL_CONF $SHELL_CONF.bak; cat $SHELL_CONF.bak | sed 's/\[ -z "$PS1" \] && return//' > $SHELL_CONF;
-
-# Update OS to latest.
-RUN apt-get update -y
-
-# Install OS tools
-RUN apt-get install build-essential \
-                    libssl-dev \
-                    zlib1g-dev \
-                    libbz2-dev \
-                    libreadline-dev \
-                    libsqlite3-dev \
-                    llvm \
-                    libncurses5-dev \
-                    libncursesw5-dev \
-                    xz-utils \
-                    tk-dev \
-                    libffi-dev \
-                    liblzma-dev \
-                    python-openssl \
-                    libcurl4-openssl-dev \
-                    dnsutils \
-                    telnet \
-                    apt-utils \
-                    make \
-                    vim \
-                    unzip \
-                    git \
-                    curl \
-                    wget \
-                    ca-certificates -y --no-install-recommends && \
-                    update-ca-certificates
-
-# Install Python.
-RUN cd /opt && \
-    wget https://www.python.org/ftp/python/$PYTHON_FULL_VERSION/Python-$PYTHON_FULL_VERSION.tgz --no-check-certificate && \
-    tar xzvf Python-$PYTHON_FULL_VERSION.tgz && \
-    cd Python-$PYTHON_FULL_VERSION && \
-    ./configure && \
-    make && \
-    make install && \
-    ln -fs /opt/Python-$PYTHON_FULL_VERSION/Python /usr/bin/python$PYTHON_VERSION
-
-# Install VENV.
-RUN apt-get install python$PYTHON_VERSION-venv python3-pip libpython$PYTHON_VERSION-dev -y --no-install-recommends && mkdir $VENV_ROOT
-
-# Install NVM and node
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh | bash
-RUN . $SHELL_CONF && nvm install $NODE_VERSION && nvm use $NODE_VERSION && node --version || echo 'Could not find node version';
-
-# Copy repo
+# Create root directory and copy repo
 COPY . $GOVUK_DIR
 
 # Build emergency-alerts-api
-RUN python$PYTHON_VERSION -m venv $VENV_GOVUK && . $VENV_GOVUK/bin/activate && python$PYTHON_VERSION -m pip install --upgrade pip wheel setuptools && pip install pycurl && cd $GOVUK_DIR && make bootstrap
-
-RUN useradd -ms /bin/bash easuser && chown -R easuser:easuser $GOVUK_DIR
+RUN cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && python$PYTHON_VERSION -m pip install --upgrade pip wheel setuptools && python$PYTHON_VERSION -m pip install pycurl && make bootstrap
 
 # Create a blank configuration file
 RUN echo "" > $GOVUK_DIR/environment.sh
 
-CMD cd $GOVUK_DIR && . $VENV_GOVUK/bin/activate && export FLASK_ENV=development && flask run -p 6017 --host=0.0.0.0
+RUN useradd -ms /bin/bash easuser && chown -R easuser:easuser $GOVUK_DIR && chown -R easuser:easuser $UTILS_DIR
 
-EXPOSE 6017
+COPY scripts/start-govuk.sh /
+CMD bash /start-govuk.sh
