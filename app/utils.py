@@ -62,14 +62,18 @@ def upload_html_to_s3(rendered_pages):
             region_name=current_app.config["BROADCASTS_AWS_REGION"],
         )
 
-    s3 = session.resource('s3')
+    s3 = session.client('s3')
 
     bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME', "test-bucket")
 
     for path, content in rendered_pages.items():
         current_app.logger.info("Uploading " + path)
-        item = s3.Object(bucket_name, path)
-        item.put(Body=content, ContentType="text/html")
+        s3.put_object(
+            Body=content,
+            Bucket=bucket_name,
+            ContentType='text/html',
+            Key=path
+        )
 
 
 def upload_assets_to_s3():
@@ -89,7 +93,7 @@ def upload_assets_to_s3():
             aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
             region_name=current_app.config["BROADCASTS_AWS_REGION"],
         )
-    s3 = session.resource('s3')
+    s3 = session.client('s3')
 
     bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME', "test-bucket")
 
