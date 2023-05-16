@@ -52,8 +52,8 @@ def is_in_uk(simple_polygons):
 def upload_html_to_s3(rendered_pages):
     notify_environment = os.environ.get('NOTIFY_ENVIRONMENT')
 
-    if (notify_environment == "decoupled"):
-        session = boto3.Session()
+    if (notify_environment != "development"):
+        session = boto3.Session(region_name=os.environ.get("AWS_REGION", "eu-west-2"))
 
     else:
         session = boto3.Session(
@@ -80,8 +80,8 @@ def upload_assets_to_s3():
 
     notify_environment = os.environ.get('NOTIFY_ENVIRONMENT')
 
-    if (notify_environment == "decoupled"):
-        session = boto3.Session()
+    if (notify_environment != "development"):
+        session = boto3.Session(region_name=os.environ.get("AWS_REGION", "eu-west-2"))
 
     else:
         session = boto3.Session(
