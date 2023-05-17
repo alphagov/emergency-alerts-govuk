@@ -1,5 +1,4 @@
 import click
-# from app.celery.tasks import publish_govuk_alerts
 from flask import cli, current_app
 
 from app.models.alerts import Alerts
