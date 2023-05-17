@@ -1,3 +1,4 @@
+import mimetypes
 import os
 import re
 from pathlib import Path
@@ -80,8 +81,6 @@ def upload_assets_to_s3():
     if not Path(DIST).exists():
         raise FileExistsError(f'Folder {DIST} not found.')
 
-    assets = get_assets(DIST)
-
     notify_environment = os.environ.get('NOTIFY_ENVIRONMENT')
 
     if (notify_environment == "decoupled"):
@@ -97,9 +96,15 @@ def upload_assets_to_s3():
 
     bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME', "test-bucket")
 
-    for localfile, s3path in assets.items():
-        with open(localfile, 'rb') as data:
-            s3.upload_fileobj(data, bucket_name, s3path)
+    assets = get_asset_files(DIST)
+    for filename, (content, mimetype) in assets.items():
+        current_app.logger.info("Uploading " + filename)
+        s3.put_object(
+            Body=content,
+            Bucket=bucket_name,
+            ContentType=mimetype,
+            Key=filename
+        )
 
 
 def purge_fastly_cache():
@@ -118,18 +123,21 @@ def purge_fastly_cache():
     resp.raise_for_status()
 
 
-def get_assets(folder):
+def get_asset_files(folder):
     assets = {}
 
     for root, _, files in os.walk(folder):
         s3path = root[root.find("alerts/"):]
 
-        # ignore hidden files and folders
-        files = [f for f in files if not f[0] == '.']
+        # ignore hidden files and folders and javascript debug maps
+        files = [f for f in files if (not f[0] == '.' and not f[-6:] == 'js.map')]
 
         for file in files:
-            rootname = root + "/" + file
+            filename = root + "/" + file
             s3name = s3path + "/" + file
-            assets[rootname] = s3name
+            with open(filename, "rb") as f:
+                contents = f.read()
+                mime_type, _ = mimetypes.guess_type(filename)
+                assets[s3name] = (contents, mime_type)
 
     return assets
