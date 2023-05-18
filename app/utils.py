@@ -128,8 +128,8 @@ def get_asset_files(folder):
     for root, _, files in os.walk(folder):
         s3path = root[root.find("alerts/"):]
 
-        # ignore hidden files and folders and javascript debug maps
-        files = [f for f in files if (not f[0] == "." and not f[-6:] == "js.map")]
+        # ignore hidden files and folders
+        files = [f for f in files if not f[0] == "."]
 
         for file in files:
             filename = root + "/" + file
@@ -137,7 +137,7 @@ def get_asset_files(folder):
             mode = "r" if file[-3:] == "css" or file[-2:] == "js" else "rb"
             with open(filename, mode) as f:
                 contents = f.read()
-                mime_type = mimetype_from_extension(file.split(".")[-1])
+                mime_type = mimetype_from_extension[file.split(".")[-1]]
                 assets[s3name] = (contents, mime_type)
 
     return assets
