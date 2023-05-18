@@ -1,4 +1,3 @@
-import mimetypes
 import os
 import re
 from pathlib import Path
@@ -138,9 +137,22 @@ def get_asset_files(folder):
             mode = "r" if file[-3:] == "css" or file[-2:] == "js" else "rb"
             with open(filename, mode) as f:
                 contents = f.read()
-                mime_type, _ = mimetypes.guess_type(filename)
-                if mime_type == "application/javascript":
-                    mime_type = "text/javascript"
+                mime_type = mimetype_from_extension(file.split(".")[-1])
                 assets[s3name] = (contents, mime_type)
 
     return assets
+
+
+mimetype_from_extension = {
+    "html": "text/html",
+    "css": "text/css",
+    "ico": "image/x-icon",
+    "jpg": "image/jpeg",
+    "js": "application/javascript",
+    "map": "application/javascript",
+    "png": "image/png",
+    "svg": "image/svg+xml",
+    "webp": "image/webp",
+    "woff": "font/woff",
+    "woff2": "font/woff2",
+}
