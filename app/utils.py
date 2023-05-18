@@ -65,14 +65,14 @@ def upload_html_to_s3(rendered_pages):
 
     s3 = session.client('s3')
 
-    bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME', "test-bucket")
+    bucket_name = os.environ.get("GOVUK_ALERTS_S3_BUCKET_NAME", "test-bucket")
 
     for path, content in rendered_pages.items():
         current_app.logger.info("Uploading " + path)
         s3.put_object(
             Body=content,
             Bucket=bucket_name,
-            ContentType='text/html',
+            ContentType="text/html",
             Key=path
         )
 
@@ -99,8 +99,6 @@ def upload_assets_to_s3():
     assets = get_asset_files(DIST)
     for filename, (content, mimetype) in assets.items():
         current_app.logger.info("Uploading " + filename)
-        if mimetype == "application/javascript":
-            mimetype = "text/javascript"
         s3.put_object(
             Body=content,
             Bucket=bucket_name,
@@ -141,6 +139,10 @@ def get_asset_files(folder):
             with open(filename, mode) as f:
                 contents = f.read()
                 mime_type, _ = mimetypes.guess_type(filename)
+                if mime_type == "application/javascript":
+                    mime_type = "text/javascript"
+                if mode == "r":
+                    contents = bytearray(contents, "utf8")
                 assets[s3name] = (contents, mime_type)
 
     return assets
