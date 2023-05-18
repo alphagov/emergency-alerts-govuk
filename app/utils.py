@@ -99,6 +99,8 @@ def upload_assets_to_s3():
     assets = get_asset_files(DIST)
     for filename, (content, mimetype) in assets.items():
         current_app.logger.info("Uploading " + filename)
+        if mimetype == "application/javascript":
+            mimetype = "text/javascript"
         s3.put_object(
             Body=content,
             Bucket=bucket_name,
@@ -130,12 +132,13 @@ def get_asset_files(folder):
         s3path = root[root.find("alerts/"):]
 
         # ignore hidden files and folders and javascript debug maps
-        files = [f for f in files if (not f[0] == '.' and not f[-6:] == 'js.map')]
+        files = [f for f in files if (not f[0] == "." and not f[-6:] == "js.map")]
 
         for file in files:
             filename = root + "/" + file
             s3name = s3path + "/" + file
-            with open(filename, "rb") as f:
+            mode = "r" if file[-3:] == "css" or file[-2:] == "js" else "rb"
+            with open(filename, mode) as f:
                 contents = f.read()
                 mime_type, _ = mimetypes.guess_type(filename)
                 assets[s3name] = (contents, mime_type)
