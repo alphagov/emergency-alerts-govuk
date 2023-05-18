@@ -141,8 +141,6 @@ def get_asset_files(folder):
                 mime_type, _ = mimetypes.guess_type(filename)
                 if mime_type == "application/javascript":
                     mime_type = "text/javascript"
-                if mode == "r":
-                    contents = bytearray(contents, "utf8")
                 assets[s3name] = (contents, mime_type)
 
     return assets
