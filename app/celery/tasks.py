@@ -1,3 +1,5 @@
+import time
+
 from flask import current_app
 
 from app import notify_celery
@@ -17,3 +19,14 @@ def publish_govuk_alerts(self):
     except Exception:
         current_app.logger.exception("Failed to publish content to gov.uk/alerts")
         self.retry(queue=current_app.config['QUEUE_NAME'])
+
+
+@notify_celery.task(name="trigger-govuk-alerts-healthcheck")
+def trigger_govuk_alerts_healthcheck(self):
+    try:
+        time_stamp = int(time.time())
+        with open("/eas/emergency-alerts-govuk/celery-beat-healthcheck", mode="w") as file:
+            file.write(str(time_stamp))
+    except Exception:
+        current_app.logger.exception("Unable to generate health-check timestamp")
+        raise
