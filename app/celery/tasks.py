@@ -22,7 +22,7 @@ def publish_govuk_alerts(self):
 
 
 @notify_celery.task(name="trigger-govuk-alerts-healthcheck")
-def trigger_govuk_alerts_healthcheck(self):
+def trigger_govuk_alerts_healthcheck():
     try:
         time_stamp = int(time.time())
         with open("/eas/emergency-alerts-govuk/celery-beat-healthcheck", mode="w") as file:
