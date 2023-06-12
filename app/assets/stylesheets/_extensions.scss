@@ -20,3 +20,11 @@
   margin-bottom: 30px;
   margin-top: 30px;
 }
+
+.govuk-body-metadata {
+  @include govuk-text-colour;
+  @include govuk-font($size: 16);
+
+  margin-bottom: 50px;
+  margin-top: -30px;
+}
