@@ -73,7 +73,7 @@ class Decoupled(Config):
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
     CELERY = {
-        "broker_url": "https://sqs.eu-west-2.amazonaws.com",
+        "broker_url": "sqs://",
         "broker_transport": "sqs",
         "broker_transport_options": {
             "region": "eu-west-2",
