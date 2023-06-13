@@ -5,10 +5,8 @@ from kombu import Exchange, Queue
 
 class Config():
     # Prefix to identify queues in SQS
-    NOTIFICATION_QUEUE_PREFIX = f"{os.getenv('ENVIRONMENT')}-"
-    SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
+    NOTIFICATION_QUEUE_PREFIX = os.getenv("NOTIFICATION_QUEUE_PREFIX")
     QUEUE_NAME = "govuk-alerts"
-    SQS_QUEUE_BACKOFF_POLICY = {1: 1, 2: 2, 3: 4, 4: 8, 5: 16, 6: 32, 7: 64, 8: 128}
 
     NOTIFY_APP_NAME = "govuk-alerts"
     NOTIFY_LOG_PATH = os.getenv("NOTIFY_LOG_PATH", "application.log")
@@ -29,13 +27,9 @@ class Config():
     CELERY = {
         "broker_url": "sqs://",
         "broker_transport_options": {
-            "region": "eu-west-2",
-            "predefined_queues": {
-                QUEUE_NAME: {
-                    "url": f"{SQS_QUEUE_BASE_URL}/{NOTIFICATION_QUEUE_PREFIX}govuk-alerts",
-                    "backoff_policy": SQS_QUEUE_BACKOFF_POLICY
-                }
-            },
+            "region": "eu-west-1",
+            "visibility_timeout": 310,
+            "queue_name_prefix": NOTIFICATION_QUEUE_PREFIX,
             "wait_time_seconds": 20,  # enable long polling, with a wait time of 20 seconds
         },
         "timezone": "Europe/London",
@@ -59,7 +53,9 @@ class Config():
 class Decoupled(Config):
     # Prefix to identify queues in SQS
     NOTIFICATION_QUEUE_PREFIX = f"{os.getenv('ENVIRONMENT')}-"
+    SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
     QUEUE_NAME = "govuk-alerts"
+    SQS_QUEUE_BACKOFF_POLICY = {1: 1, 2: 2, 3: 4, 4: 8, 5: 16, 6: 32, 7: 64, 8: 128}
 
     NOTIFY_APP_NAME = "govuk-alerts"
     NOTIFY_LOG_PATH = os.getenv("NOTIFY_LOG_PATH", "application.log")
@@ -82,10 +78,12 @@ class Decoupled(Config):
         "broker_transport": "sqs",
         "broker_transport_options": {
             "region": "eu-west-2",
-            "visibility_timeout": 310,
-            "queue_name_prefix": NOTIFICATION_QUEUE_PREFIX,
-            "is_secure": True,
-            "task_acks_late": True,
+            "predefined_queues": {
+                QUEUE_NAME: {
+                    "url": f"{SQS_QUEUE_BASE_URL}/{NOTIFICATION_QUEUE_PREFIX}govuk-alerts",
+                    "backoff_policy": SQS_QUEUE_BACKOFF_POLICY
+                }
+            }
         },
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
