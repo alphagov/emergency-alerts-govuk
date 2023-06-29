@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytz
 from emergency_alerts_utils.serialised_model import SerialisedModel
@@ -93,7 +93,8 @@ class Alert(SerialisedModel):
     def is_active_test(self):
         # An alert is considered active if it started in the last hour.
         now = datetime.now(pytz.utc)
-        return self.expires_date.as_utc_datetime >= now \
+        hour_old = (datetime.now(pytz.utc) - timedelta(hours=1))
+        return self.starts_at_date.as_utc_datetime >= hour_old \
             and self.starts_at_date.as_utc_datetime <= now \
             and not self.is_public
 
