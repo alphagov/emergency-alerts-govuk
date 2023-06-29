@@ -11,7 +11,9 @@ def test_system_testing_page(mocker, client_get):
     mocker.patch('app.models.alerts.PlannedTests.from_yaml', return_value=[])
     html = client_get("alerts/system-testing")
     assert html.select_one('h1').text.strip() == "Testing the Emergency Alerts service"
-    assert html.select_one('main p').text.strip() == "Following the successful national test of the UK Emergency Alerts system on 23 April 2023, the government and mobile network operators will be carrying out occasional ‘operator’ tests to assess improvements that have been made to the service."
+    assert html.select_one('main p').text.strip() == "Following the successful national test of the UK Emergency " \
+        "Alerts system on 23 April 2023, the government and mobile network operators will be carrying out " \
+        "occasional ‘operator’ tests to assess improvements that have been made to the service."
 
 
 @pytest.mark.parametrize('extra_json_fields', (
