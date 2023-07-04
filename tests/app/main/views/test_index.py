@@ -26,7 +26,6 @@ def test_index_page_shows_current_alerts(
     planned_tests,
 ):
     mocker.patch('app.models.alerts.Alerts.current_and_public', ['alert'])
-    mocker.patch('app.models.alerts.Alerts.current_and_planned_test_alerts', planned_tests)
     mocker.patch('app.models.alerts.Alerts.last_updated_date')
     html = client_get("alerts")
     assert '1 current alert' in html.text

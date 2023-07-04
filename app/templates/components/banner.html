@@ -13,12 +13,18 @@
 {% endmacro %}
 
 
-{% macro national_test_banner(dates_of_test_alerts, lang='en') %}
+{% macro announcement_banner(dates_of_test_alerts, lang='en') %}
 
   {% set title %}
-    {% for alert_date in dates_of_test_alerts|sort %}
+    {% for alert in dates_of_test_alerts|sort(attribute='starts_at_date') %}
       {% if loop.index == 1 %}
-        On {{ alert_date.datetime_as_lang }}, there will be a national test of the UK Emergency Alerts service.
+        {% if lang == 'cy' and alert.welsh_status_box_content %}
+          {{ alert.welsh_status_box_content }}
+        {% elif alert.status_box_content %}
+          {{ alert.status_box_content }}
+        {% else %}
+          On {{ alert.starts_at_date.datetime_as_lang }}, there will be a test of the UK Emergency Alerts service.
+        {% endif %}
       {% endif %}
     {% endfor %}
   {% endset %}
@@ -51,7 +57,7 @@
   <div class="alerts-notification-banner alerts-icon__container alerts-icon__container--48" role="region" aria-labelledby="alerts-notification-banner__title">
     {{ alerts_icon(height=48, alert_active=False) }}
     <h2 class="alerts-notification-banner__title govuk-heading-m govuk-!-margin-bottom-1" id="alerts-notification-banner__title">
-      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/service-tests{% if lang == 'cy' %}.cy{% endif %}">{{ number_of_test_alerts }} service {% if number_of_test_alerts == 1 %}test{% else %}tests{% endif %}</a>
+      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/system-testing{% if lang == 'cy' %}.cy{% endif %}">{{ number_of_test_alerts }} service {% if number_of_test_alerts == 1 %}test{% else %}tests{% endif %}</a>
     </h2>
     <p class="alerts-notification-banner__age govuk-body">
       {{ subtitle }}

@@ -117,9 +117,6 @@ def test_public_alerts_dont_get_listed_as_tests(mocker):
     assert len(alerts) == 2
     assert len(alerts.current_and_public) == 2
     assert len(alerts.test_alerts_today) == 0
-    assert len(alerts.planned) == 0
-    assert len(alerts.current_and_planned_test_alerts) == 0
-    assert alerts.dates_of_current_and_planned_test_alerts == set()
 
 
 @freeze_time('2021-01-01T02:00:00Z')
@@ -139,5 +136,3 @@ def test_multiple_test_alerts_on_the_same_day_are_aggregated(mocker):
     assert len(alerts) == 2
     assert len(alerts.current_and_public) == 0
     assert len(alerts.test_alerts_today) == 1
-    assert len(alerts.planned) == 1
-    assert len(alerts.current_and_planned_test_alerts) == 1

@@ -57,8 +57,8 @@
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% if alerts.planned_non_public_grouped_by_date %}
-        {% for _date, alerts_or_planned_tests in alerts.planned_non_public_grouped_by_date | sort %}
+      {% if alerts.test_alerts_today_grouped %}
+        {% for _date, alerts_or_planned_tests in alerts.test_alerts_today_grouped | sort %}
           {% set date_loop = loop %}
           {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
         {% endfor %}
@@ -68,7 +68,19 @@
         </h2>
       {% endif %}
       <p class="govuk-body">
-        Yn dilyn prawf cenedlaethol llwyddiannus system Rhybuddion Argyfwng y DU ar 23 Ebrill 2023, bydd y llywodraeth a gweithredwyr rhwydweithiau symudol yn cynnal profion 'gweithredwr' achlysurol.
+        {% if alerts.planned_non_public_test_alerts %}
+          {% for alert in alerts.planned_non_public_test_alerts|sort(attribute='starts_at_date') %}
+            {% if loop.index == 1 %}
+              {% if alert.welsh_summary %}
+                {{ alert.welsh_summary }}
+              {% else %}
+                Yn dilyn prawf cenedlaethol llwyddiannus system Rhybuddion Argyfwng y DU ar 23 Ebrill 2023, bydd y llywodraeth a gweithredwyr rhwydweithiau symudol yn cynnal profion 'gweithredwr' achlysurol.
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          Yn dilyn prawf cenedlaethol llwyddiannus system Rhybuddion Argyfwng y DU ar 23 Ebrill 2023, bydd y llywodraeth a gweithredwyr rhwydweithiau symudol yn cynnal profion 'gweithredwr' achlysurol.
+        {% endif %}
       </p>
       <p class="govuk-body">
         Mae hyn er mwyn asesu gwelliannau sydd wedi'u gwneud i'r gwasanaeth Rhybuddion Argyfwng.
