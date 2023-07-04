@@ -138,6 +138,6 @@ def test_multiple_test_alerts_on_the_same_day_are_aggregated(mocker):
 
     assert len(alerts) == 2
     assert len(alerts.current_and_public) == 0
-    assert len(alerts.test_alerts_today) == 0
+    assert len(alerts.test_alerts_today) == 1
     assert len(alerts.planned) == 1
-    assert len(alerts.current_and_planned_test_alerts) == 0
+    assert len(alerts.current_and_planned_test_alerts) == 1

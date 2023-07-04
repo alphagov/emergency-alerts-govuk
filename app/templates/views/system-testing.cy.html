@@ -57,23 +57,53 @@
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+      {% if alerts.planned_non_public_grouped_by_date %}
+        {% for _date, alerts_or_planned_tests in alerts.planned_non_public_grouped_by_date | sort %}
+          {% set date_loop = loop %}
+          {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
+        {% endfor %}
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        <h2 class="govuk-heading-l">
+          Profion gweithredwyr
+        </h2>
+      {% endif %}
       <p class="govuk-body">
-        O bryd i'w gilydd bydd y llywodraeth a gweithredwyr rhwydweithiau ffonau symudol yn cynnal profion ar y gwasanaeth rhybuddion argyfwng ar draws y DU.
+        Yn dilyn prawf cenedlaethol llwyddiannus system Rhybuddion Argyfwng y DU ar 23 Ebrill 2023, bydd y llywodraeth a gweithredwyr rhwydweithiau symudol yn cynnal profion 'gweithredwr' achlysurol.
       </p>
       <p class="govuk-body">
-        Cewch chi rybuddion profion gwasanaeth yn unig os bydd gennych chi ffôn Android neu lechen hŷn sydd â'r rhybuddion profion gweithredwr ymlaen.
+        Mae hyn er mwyn asesu gwelliannau sydd wedi'u gwneud i'r gwasanaeth Rhybuddion Argyfwng.
       </p>
       <p class="govuk-body">
-        Efallai y bydd eich dyfais yn gwneud sŵn uchel tebyg i seiren am ryw 10 eiliad. Does dim angen i chi wneud dim.
+        Gallwch gael y rhybudd hwn os oes gennych ffôn Android sydd â rhybuddion prawf gweithredwr wedi'u troi ymlaen.
+      </p>
+      <p class="govuk-body">
+        Nid yw'r profion gweithredwr hyn yn eich rhybuddio am berygl gwirioneddol. Bydd gan y rhybuddion hyn 'weithredwr' bob amser yn y teitl a byddant yn cadarnhau nad oes angen gweithredu.
+      </p>
+      <p class="govuk-body">
+        Os cewch rybudd prawf gweithredwr, gall eich ffôn wneud sain debyg i seiren uchel am tua 10 eiliad, oni bai ei fod ar ddull tawel.
       </p>
       <h2 class="govuk-heading-l">
-        Optio allan o rhybuddion prawf y gwasanaeth
+        Optio allan o hysbysiadau prawf gweithredwr
       </h2>
       <p class="govuk-body">
-        I optio allan, diffoddwch y 'rhybuddion prawf' yn eich gosodiadau. Os byddwch chi'n dal i dderbyn rhybuddion, cysylltwch â gwneuthurwr eich dyfais i gael cymorth.
+        I atal derbyn rhybuddion profion gweithredwyr, chwiliwch osodiadau eich ffôn am 'rybuddion argyfwng' a diffoddwch 'rybuddion prawf' a 'rhybuddion gweithredwyr'.
       </p>
-      <p class="govuk-inset-text">
-        Yn achos y rhan fwyaf o bobl, ychydig iawn o debygrwydd sydd o gael rhybudd prawf gwasanaeth.
+      <p class="govuk-body">
+        Os na allwch weld rhybuddion neu hysbysiadau gan y gweithredwr:
+      </p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>
+          agorwch eich ap galw ffôn
+        </li>
+        <li>
+          defnyddiwch y bysellbad i fynd i mewn *#*#2627#*#*
+        </li>
+        <li>
+          chwiliwch eich gosodiadau am 'rybuddion argyfwng' a diffoddwch 'rybuddion prawf' a 'rhybuddion gweithredwyr'
+        </li>
+      </ul>
+      <p class="govuk-body">
+        Os ydych chi'n parhau i gael rhybuddion prawf gweithredwr, cysylltwch â'ch gwneuthurwr ffôn am help.
       </p>
     </div>
 
@@ -102,3 +132,35 @@
     </div>
   </div>
 {% endblock %}
+
+{% macro planned_tests_by_date(date_loop, alerts_or_planned_tests) %}
+  {% for alert_or_planned_test in alerts_or_planned_tests | sort %}
+    {% if not loop.first %}
+      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    {% endif %}
+    {% if loop.first %}
+      <h2 class="govuk-heading-m {% if not date_loop.first %}govuk-!-margin-top-9{% endif %}">
+        {{ alert_or_planned_test.starts_at_date.date_as_lang }}
+      </h2>
+    {% endif %}
+    <h2 class="govuk-heading-m govuk-!-margin-top-6">
+      {% if alert_or_planned_test.is_public %}
+        {{ alert_or_planned_test.display_areas | formatted_list(before_each='', after_each='') }}
+      {% endif %}
+    </h2>
+    {% if not alert_or_planned_test.is_public %}
+      <p class="govuk-body">
+        Bydd prawf gwasanaeth ar system Rhybuddion Argyfwng y DU heddiw.
+      </p>
+      <p class="govuk-body">
+        Ni chaiff y rhan fwyaf o ffonau symudol a llechi rybudd prawf.
+      </p>
+    {% endif %}
+    <p class="govuk-body">
+      Bydd y rhybudd yn dweud:
+    </p>
+    <div class="govuk-inset-text govuk-!-margin-top-2">
+      {{ alert_or_planned_test.content | paragraphize(classes="govuk-body") }}
+    </div>
+  {% endfor %}
+{% endmacro %}
