@@ -3,7 +3,7 @@
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 {%- from "govuk_frontend_jinja_overrides/templates/components/language-select/macro.html" import hmrcLanguageSelect -%}
-{%- from "components/banner.html" import banner, national_test_banner, service_tests_banner -%}
+{%- from "components/banner.html" import banner, announcement_banner, service_tests_banner -%}
 {%- from "components/image.html" import image -%}
 {%- from "components/example.html" import example -%}
 {%- from "components/meta_tags.html" import metaTags -%}
@@ -54,18 +54,18 @@
       }) }}
     </div>
   </div>
-  {% if alerts.current_and_public or alerts.dates_of_planned_test_alerts %}
+  {% if alerts.current_and_public or alerts.status_box_announcements %}
     {% if alerts.current_and_public %}
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
       {{ banner(alerts.current_and_public | length, alerts.last_updated_date, lang='cy') }}
-    {% elif alerts.dates_of_planned_test_alerts %}
+    {% elif alerts.status_box_announcements %}
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-      {{ national_test_banner(alerts.dates_of_planned_test_alerts, lang='cy') }}
+      {{ announcement_banner(alerts.status_box_announcements, lang='cy') }}
     {% endif %}
   {% else %}
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
     <h2 class="govuk-heading-m" id="subsection-title">
-      There are no current alerts
+      Does dim rhybuddion argyfwng ar hyn o bryd
     </h2>
   {% endif %}
 

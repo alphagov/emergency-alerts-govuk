@@ -40,8 +40,14 @@ def create_planned_test_dict(
     starts_at=None,
     cancelled_at=None,
     finishes_at=None,
+    display_in_status_box=None,
+    status_box_content=None,
+    welsh_status_box_content=None,
+    summary=None,
+    welsh_summary=None,
+    content=None,
+    welsh_content=None,
     areas=None,
-    content=None
 ):
     return {
         'id': id or uuid.uuid4(),
@@ -51,7 +57,13 @@ def create_planned_test_dict(
         'cancelled_at': cancelled_at or None,
         'finishes_at': finishes_at or dt_parse('2021-04-21T13:30:00Z'),
         'areas': areas or [],
+        'display_in_status_box': display_in_status_box,
+        'status_box_content': status_box_content,
+        'welsh_status_box_content': welsh_status_box_content,
+        'summary': summary,
+        'welsh_summary': welsh_summary,
         'content': content,
+        'welsh_content': welsh_content
     }
 
 

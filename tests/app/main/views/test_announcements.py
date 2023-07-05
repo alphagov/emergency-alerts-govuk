@@ -15,9 +15,15 @@ from tests import normalize_spaces
             'starts_at': dt_parse('2021-02-03T20:00:00Z'),
             'cancelled_at': None,
             'finishes_at': dt_parse('2021-02-03T22:00:00Z'),
+            'display_in_status_box': False,
+            'status_box_content': None,
+            'welsh_status_box_content': None,
+            'summary': None,
+            'welsh_summary': None,
             'content': 'This is a mobile network operator test of the Emergency Alerts '
                        'service. You do not need to take any action. To find out more, '
                        'search for gov.uk/alerts',
+            'welsh_content': None,
             'areas': {'names': ['Ibiza']}
         })],
         ['Wednesday 3 February 2021 at 8pm', 'Ibiza'],
@@ -39,7 +45,13 @@ from tests import normalize_spaces
             'starts_at': dt_parse('2021-02-03T20:00:00Z'),
             'cancelled_at': None,
             'finishes_at': dt_parse('2021-02-03T22:00:00Z'),
+            'display_in_status_box': False,
+            'status_box_content': None,
+            'welsh_status_box_content': None,
+            'summary': None,
+            'welsh_summary': None,
             'content': 'Paragraph 1\n\nParagraph 2',
+            'welsh_content': None,
             'areas': {'names': ['Ibiza', 'The Norfolk Broads']}
         })],
         ['Wednesday 3 February 2021 at 8pm', 'Ibiza and The Norfolk Broads'],
@@ -59,7 +71,13 @@ from tests import normalize_spaces
                 'starts_at': dt_parse('2021-02-03T20:00:00Z'),
                 'cancelled_at': None,
                 'finishes_at': dt_parse('2021-02-03T22:00:00Z'),
+                'display_in_status_box': False,
+                'status_box_content': None,
+                'welsh_status_box_content': None,
+                'summary': None,
+                'welsh_summary': None,
                 'content': 'Paragraph 1\n\nParagraph 2',
+                'welsh_content': None,
                 'areas': {'names': ['Ibiza']}
             }),
             PlannedTest({
@@ -69,28 +87,21 @@ from tests import normalize_spaces
                 'starts_at': dt_parse('2021-02-03T20:00:00Z'),
                 'cancelled_at': None,
                 'finishes_at': dt_parse('2021-02-03T22:00:00Z'),
+                'display_in_status_box': False,
+                'status_box_content': None,
+                'welsh_status_box_content': None,
+                'summary': None,
+                'welsh_summary': None,
                 'content': 'Paragraph 3\n\nParagraph 4',
+                'welsh_content': None,
                 'areas': {'names': ['The Norfolk Broads']}
             }),
         ],
-        [
-            'Wednesday 3 February 2021 at 8pm', '', ''
-        ],
+        [],
         [],
         [
-            'There will be a service test of the UK Emergency Alerts system today.',
-            'Most mobile phones and tablets will not get a test alert.',
-            'Find out more about testing the Emergency Alerts service.',
-            'The alert will say:',
-            'Paragraph 1',
-            'Paragraph 2',
-            'There will be a service test of the UK Emergency Alerts system today.',
-            'Most mobile phones and tablets will not get a test alert.',
-            'Find out more about testing the Emergency Alerts service.',
-            "The alert will say:",
-            'Paragraph 3',
-            'Paragraph 4',
-        ]
+            'There are currently no announcements.'
+        ]  # Operator tests should not be displayed on this page
     ),
 ))
 @freeze_time('2021-01-01T11:00:00Z')

@@ -52,8 +52,8 @@
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% if alerts.planned_grouped_by_date %}
-        {% for _date, alerts_or_planned_tests in alerts.planned_grouped_by_date | sort %}
+      {% if alerts.planned_public_grouped_by_date %}
+        {% for _date, alerts_or_planned_tests in alerts.planned_public_grouped_by_date | sort %}
           {% set date_loop = loop %}
           {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
         {% endfor %}
@@ -123,7 +123,11 @@
       Bydd y rhybudd yn dweud:
     </p>
     <div class="govuk-inset-text govuk-!-margin-top-2">
+      {% if alert_or_planned_test.welsh_content %}
+        {{ alert_or_planned_test.welsh_content | paragraphize(classes="govuk-body") }}
+      {% else %}
         {{ alert_or_planned_test.content | paragraphize(classes="govuk-body") }}
+      {% endif %}
     </div>
   {% endfor %}
 {% endmacro %}

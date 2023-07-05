@@ -15,7 +15,13 @@ class PlannedTest(SerialisedModel):
         'cancelled_at',
         'finishes_at',
         'areas',
+        'display_in_status_box',
+        'status_box_content',
+        'welsh_status_box_content',
+        'summary',
+        'welsh_summary',
         'content',
+        'welsh_content',
     }
 
     def __lt__(self, other):

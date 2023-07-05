@@ -52,8 +52,8 @@
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% if alerts.planned_grouped_by_date %}
-        {% for _date, alerts_or_planned_tests in alerts.planned_grouped_by_date | sort %}
+      {% if alerts.planned_public_grouped_by_date %}
+        {% for _date, alerts_or_planned_tests in alerts.planned_public_grouped_by_date | sort %}
           {% set date_loop = loop %}
           {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
         {% endfor %}

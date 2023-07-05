@@ -3,6 +3,7 @@ from dateutil.parser import parse as dt_parse
 from freezegun import freeze_time
 
 from app.models.alerts import Alerts
+from app.models.planned_test import PlannedTest
 from tests import normalize_spaces
 from tests.conftest import create_alert_dict
 
@@ -14,6 +15,60 @@ def test_system_testing_page(mocker, client_get):
     assert html.select_one('main p').text.strip() == "Following the successful national test of the UK Emergency " \
         "Alerts system on 23 April 2023, the government and mobile network operators will be carrying out " \
         "occasional ‘operator’ tests."
+
+
+@freeze_time('2021-01-01T11:30:00Z')
+@pytest.mark.parametrize('planned_tests,expected_p', [
+    [
+        [PlannedTest({
+            'id': '1513b353-685e-488e-9547-4e1ce7359051',
+            'channel': 'operator',
+            'approved_at': dt_parse('2020-02-01T23:00:00Z'),
+            'starts_at': dt_parse('2020-04-21T13:00:00Z'),
+            'cancelled_at': None,
+            'finishes_at': dt_parse('2020-04-21T14:00:00Z'),
+            'display_in_status_box': None,
+            'status_box_content': None,
+            'welsh_status_box_content': None,
+            'summary': 'This summary should not be displayed',
+            'welsh_summary': None,
+            'content': 'This is a mobile network operator test of the Emergency Alerts '
+                       'service. You do not need to take any action. To find out more, '
+                       'search for gov.uk/alerts',
+            'welsh_content': None,
+            'areas': {'names': ['Ibiza']}
+        })],
+        'Following the successful national test of the UK Emergency '
+        'Alerts system on 23 April 2023, the government and mobile network operators will be carrying out '
+        'occasional ‘operator’ tests.'
+    ],
+    [
+        [PlannedTest({
+            'id': '1513b353-685e-488e-9547-4e1ce7359051',
+            'channel': 'operator',
+            'approved_at': dt_parse('2021-02-01T23:00:00Z'),
+            'starts_at': dt_parse('2021-04-21T13:00:00Z'),
+            'cancelled_at': None,
+            'finishes_at': dt_parse('2021-04-21T14:00:00Z'),
+            'display_in_status_box': None,
+            'status_box_content': 'Status box content',
+            'welsh_status_box_content': None,
+            'summary': 'This summary should be displayed',
+            'welsh_summary': None,
+            'content': 'This is a mobile network operator test of the Emergency Alerts '
+                       'service. You do not need to take any action. To find out more, '
+                       'search for gov.uk/alerts',
+            'welsh_content': None,
+            'areas': {'names': ['Ibiza']}
+        })],
+        'This summary should be displayed'
+    ]
+])
+def test_planned_test_summary(planned_tests, expected_p, mocker, client_get):
+    mocker.patch('app.models.alerts.PlannedTests.from_yaml', return_value=planned_tests)
+    html = client_get("alerts/system-testing")
+    assert html.select_one('h1').text.strip() == "Testing the Emergency Alerts service"
+    assert html.select_one('main p').text.strip() == expected_p
 
 
 @pytest.mark.parametrize('extra_json_fields', (

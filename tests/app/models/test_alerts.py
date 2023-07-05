@@ -60,26 +60,26 @@ def test_current_and_public_alerts(alert_dict, mocker):
     assert len(Alerts([alert_dict]).current_and_public) == 0
 
 
-def test_planned_alerts(alert_dict, planned_test_dict, mocker):
+def test_non_public_alerts(alert_dict, planned_test_dict, mocker):
     mocker.patch(__name__ + '.PlannedTest.is_planned', False)
-    assert len(Alerts([alert_dict]).planned) == 0
+    assert len(Alerts([alert_dict]).non_public) == 0
 
     mocker.patch(__name__ + '.Alert.is_planned', True)
     mocker.patch(__name__ + '.Alert.is_public', False)
-    assert len(Alerts([alert_dict]).planned) == 1
+    assert len(Alerts([alert_dict]).non_public) == 1
 
     mocker.patch(__name__ + '.Alert.is_planned', True)
     mocker.patch(__name__ + '.Alert.is_public', True)
-    assert len(Alerts([alert_dict]).planned) == 0
+    assert len(Alerts([alert_dict]).non_public) == 0
 
     mocker.patch(__name__ + '.PlannedTest.is_planned', False)
     mocker.patch(__name__ + '.Alert.is_planned', False)
-    assert len(Alerts([alert_dict] + [planned_test_dict]).planned) == 0
+    assert len(Alerts([alert_dict] + [planned_test_dict]).non_public) == 0
 
     mocker.patch(__name__ + '.PlannedTest.is_planned', True)
     mocker.patch(__name__ + '.Alert.is_planned', True)
     mocker.patch(__name__ + '.Alert.is_public', False)
-    assert len(Alerts([alert_dict] + [planned_test_dict]).planned) == 2
+    assert len(Alerts([alert_dict] + [planned_test_dict]).non_public) == 2
 
 
 def test_past_alerts(alert_dict, mocker):
@@ -117,9 +117,7 @@ def test_public_alerts_dont_get_listed_as_tests(mocker):
     assert len(alerts) == 2
     assert len(alerts.current_and_public) == 2
     assert len(alerts.test_alerts_today) == 0
-    assert len(alerts.planned) == 0
-    assert len(alerts.current_and_planned_test_alerts) == 0
-    assert alerts.dates_of_current_and_planned_test_alerts == set()
+    assert len(alerts.non_public) == 0
 
 
 @freeze_time('2021-01-01T02:00:00Z')
@@ -139,5 +137,3 @@ def test_multiple_test_alerts_on_the_same_day_are_aggregated(mocker):
     assert len(alerts) == 2
     assert len(alerts.current_and_public) == 0
     assert len(alerts.test_alerts_today) == 1
-    assert len(alerts.planned) == 1
-    assert len(alerts.current_and_planned_test_alerts) == 1

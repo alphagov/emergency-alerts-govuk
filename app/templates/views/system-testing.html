@@ -57,8 +57,8 @@
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% if alerts.planned_non_public_grouped_by_date %}
-        {% for _date, alerts_or_planned_tests in alerts.planned_non_public_grouped_by_date | sort %}
+      {% if alerts.test_alerts_today_grouped %}
+        {% for _date, alerts_or_planned_tests in alerts.test_alerts_today_grouped | sort %}
           {% set date_loop = loop %}
           {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
         {% endfor %}
@@ -68,7 +68,19 @@
         </h2>
       {% endif %}
       <p class="govuk-body">
-        Following the successful national test of the UK Emergency Alerts system on 23 April 2023, the government and mobile network operators will be carrying out occasional ‘operator’ tests.
+        {% if alerts.planned_non_public_test_alerts %}
+          {% for alert in alerts.planned_non_public_test_alerts|sort(attribute='starts_at_date') %}
+            {% if loop.index == 1 %}
+              {% if alert.summary %}
+                {{ alert.summary }}
+              {% else %}
+                Following the successful national test of the UK Emergency Alerts system on 23 April 2023, the government and mobile network operators will be carrying out occasional ‘operator’ tests.
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          Following the successful national test of the UK Emergency Alerts system on 23 April 2023, the government and mobile network operators will be carrying out occasional ‘operator’ tests.
+        {% endif %}
       </p>
       <p class="govuk-body">
         This is to assess improvements that have been made to the Emergency Alerts service.

@@ -1,4 +1,5 @@
 import os
+from collections import defaultdict
 
 import yaml
 from emergency_alerts_utils.serialised_model import SerialisedModelCollection
@@ -10,6 +11,7 @@ from app.utils import REPO
 
 class PlannedTests(SerialisedModelCollection):
     model = PlannedTest
+    planned_tests = defaultdict()
     environment = os.getenv('NOTIFY_ENVIRONMENT', 'development')
     yaml_filename = (configs[environment].PLANNED_TESTS_YAML_FILE_NAME)
 

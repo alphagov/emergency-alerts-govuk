@@ -14,11 +14,15 @@ class Alerts(SerialisedModelCollection):
     model = Alert
 
     @property
+    def public(self):
+        return [alert for alert in self if alert.is_public]
+
+    @property
     def current_and_public(self):
         return [alert for alert in self if alert.is_current_and_public]
 
     @property
-    def planned(self):
+    def non_public(self):
         return [
             alert for alert in self if alert.is_planned and not alert.is_public
             ]
@@ -40,22 +44,22 @@ class Alerts(SerialisedModelCollection):
         return [alert for alert in self if alert.is_past]
 
     @property
-    def planned_grouped_by_date(self):
-        alerts_by_date = defaultdict(list)
-        for planned_test in self.planned_tests:
-            if planned_test.is_planned:
-                alerts_by_date[planned_test.starts_at_date.as_local_date].append(planned_test)
-        return alerts_by_date.items()
+    def last_updated(self):
+        return max(alert.starts_at for alert in self.current_and_public)
 
     @property
-    def planned_non_public_grouped_by_date(self):
+    def last_updated_date(self):
+        return AlertDate(self.last_updated)
+
+    @property
+    def test_alerts_today_grouped(self):
         alerts_by_date = defaultdict(list)
         for alert in self.test_alerts_today:
             alerts_by_date[alert.starts_at_date.as_local_date].append(alert)
         return alerts_by_date.items()
 
     @property
-    def past_grouped_by_date(self):
+    def past_alerts_grouped_by_date(self):
         alerts_by_date = defaultdict(list)
         for alert in self.past:
             if alert.is_public or all(
@@ -66,30 +70,7 @@ class Alerts(SerialisedModelCollection):
         return alerts_by_date.items()
 
     @property
-    def public(self):
-        return [alert for alert in self if alert.is_public]
-
-    @property
-    def planned_tests(self):
-        return PlannedTests.from_yaml()
-
-    @property
-    def planned_test_alerts(self):
-        return [
-            planned_test for planned_test
-            in self.planned_tests
-            if planned_test.is_planned
-        ]
-
-    @property
-    def dates_of_planned_test_alerts(self):
-        return {
-            planned_test.starts_at_date
-            for planned_test in self.planned_test_alerts
-        }
-
-    @property
-    def current_and_planned_test_alerts(self):
+    def active_tests(self):
         return [
             alert for alert
             in self
@@ -97,19 +78,56 @@ class Alerts(SerialisedModelCollection):
         ]
 
     @property
-    def dates_of_current_and_planned_test_alerts(self):
-        return {
-            alert.starts_at_date.at_midday
-            for alert in self.current_and_planned_test_alerts
-        }
+    def planned_tests(self):
+        return PlannedTests.from_yaml()
 
     @property
-    def last_updated(self):
-        return max(alert.starts_at for alert in self.current_and_public)
+    def planned_tests_in_future(self):
+        return [
+            planned_test for planned_test
+            in self.planned_tests
+            if planned_test.is_planned
+        ]
 
     @property
-    def last_updated_date(self):
-        return AlertDate(self.last_updated)
+    def status_box_announcements(self):
+        return [
+            planned_test for planned_test
+            in self.planned_tests_in_future
+            if planned_test.display_in_status_box
+        ]
+
+    @property
+    def planned_non_public_test_alerts(self):
+        return [
+            planned_test for planned_test
+            in self.planned_tests_in_future
+            if not planned_test.is_public
+        ]
+
+    @property
+    def planned_grouped_by_date(self):
+        alerts_by_date = defaultdict(list)
+        for planned_test in self.planned_tests:
+            if planned_test.is_planned:
+                alerts_by_date[planned_test.starts_at_date.as_local_date].append(planned_test)
+        return alerts_by_date.items()
+
+    @property
+    def planned_public_grouped_by_date(self):
+        alerts_by_date = defaultdict(list)
+        for planned_test in self.planned_tests:
+            if planned_test.is_planned and planned_test.is_public:
+                alerts_by_date[planned_test.starts_at_date.as_local_date].append(planned_test)
+        return alerts_by_date.items()
+
+    @property
+    def planned_non_public_grouped_by_date(self):
+        alerts_by_date = defaultdict(list)
+        for planned_test in self.planned_tests:
+            if planned_test.is_planned and not planned_test.is_public:
+                alerts_by_date[planned_test.starts_at_date.as_local_date].append(planned_test)
+        return alerts_by_date.items()
 
     @classmethod
     def load(cls):
