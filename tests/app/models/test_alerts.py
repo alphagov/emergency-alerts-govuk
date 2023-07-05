@@ -60,28 +60,6 @@ def test_current_and_public_alerts(alert_dict, mocker):
     assert len(Alerts([alert_dict]).current_and_public) == 0
 
 
-def test_planned_alerts(alert_dict, planned_test_dict, mocker):
-    mocker.patch(__name__ + '.PlannedTest.is_planned', False)
-    assert len(Alerts([alert_dict]).planned) == 0
-
-    mocker.patch(__name__ + '.Alert.is_planned', True)
-    mocker.patch(__name__ + '.Alert.is_public', False)
-    assert len(Alerts([alert_dict]).planned) == 1
-
-    mocker.patch(__name__ + '.Alert.is_planned', True)
-    mocker.patch(__name__ + '.Alert.is_public', True)
-    assert len(Alerts([alert_dict]).planned) == 0
-
-    mocker.patch(__name__ + '.PlannedTest.is_planned', False)
-    mocker.patch(__name__ + '.Alert.is_planned', False)
-    assert len(Alerts([alert_dict] + [planned_test_dict]).planned) == 0
-
-    mocker.patch(__name__ + '.PlannedTest.is_planned', True)
-    mocker.patch(__name__ + '.Alert.is_planned', True)
-    mocker.patch(__name__ + '.Alert.is_public', False)
-    assert len(Alerts([alert_dict] + [planned_test_dict]).planned) == 2
-
-
 def test_past_alerts(alert_dict, mocker):
     mocker.patch(__name__ + '.Alert.is_past', True)
     assert len(Alerts([alert_dict]).past) == 1

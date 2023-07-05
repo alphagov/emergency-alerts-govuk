@@ -1,15 +1,20 @@
 planned_tests: []
   # - id: dd5af9c4-849a-4c23-a523-d6cbda2557d9
-  #   channel: government
+  #   channel: operator
   #   approved_at: 2021-07-02T09:00:00Z
   #   starts_at: 2023-02-19T18:00:00Z
   #   cancelled_at:
-  #   finishes_at: 2023-02-19T23:00:00Z
+  #   finishes_at: 2023-07-20T23:00:00Z
+  #   display_in_status_box: True
+  #   status_box_content: ~
+  #   welsh_status_box_content: ~
+  #   summary: ~
+  #   welsh_summary: ~
   #   content: |
-  #     This is a test of Emergency Alerts, a new UK government service that will warn you if there’s a life-threatening emergency nearby.
-  #     In an actual emergency, follow the instructions in the alert to keep yourself and others safe.
-  #     Visit gov.uk/alerts for more information.
-  #     This is a test. You do not need to take any action.
+  #     This is a mobile network operator test of the UK Emergency Alerts service.
+  #     You do not need to take any action.
+  #     If you want to stop receiving operator test alerts, visit gov.uk/alerts to find out how to opt out.
+  #   welsh_content: ~
   #   areas: {
   #     names: [
   #       "England",

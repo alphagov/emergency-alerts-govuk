@@ -44,6 +44,14 @@ class Alerts(SerialisedModelCollection):
         return [alert for alert in self if alert.is_past]
 
     @property
+    def last_updated(self):
+        return max(alert.starts_at for alert in self.current_and_public)
+
+    @property
+    def last_updated_date(self):
+        return AlertDate(self.last_updated)
+
+    @property
     def test_alerts_today_grouped(self):
         alerts_by_date = defaultdict(list)
         for alert in self.test_alerts_today:
@@ -60,6 +68,14 @@ class Alerts(SerialisedModelCollection):
             ):
                 alerts_by_date[alert.starts_at_date.as_local_date].append(alert)
         return alerts_by_date.items()
+
+    @property
+    def active_tests(self):
+        return [
+            alert for alert
+            in self
+            if alert.is_active_test
+        ]
 
     @property
     def planned_tests(self):
@@ -112,22 +128,6 @@ class Alerts(SerialisedModelCollection):
             if planned_test.is_planned and not planned_test.is_public:
                 alerts_by_date[planned_test.starts_at_date.as_local_date].append(planned_test)
         return alerts_by_date.items()
-
-    @property
-    def active_tests(self):
-        return [
-            alert for alert
-            in self
-            if alert.is_active_test
-        ]
-
-    @property
-    def last_updated(self):
-        return max(alert.starts_at for alert in self.current_and_public)
-
-    @property
-    def last_updated_date(self):
-        return AlertDate(self.last_updated)
 
     @classmethod
     def load(cls):
