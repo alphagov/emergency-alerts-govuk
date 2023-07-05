@@ -115,4 +115,3 @@ def test_system_testing_page_with_current_operator_test(
             'search for gov.uk/alerts'
         )
     ]
-
