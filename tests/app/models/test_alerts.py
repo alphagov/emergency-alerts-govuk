@@ -60,6 +60,28 @@ def test_current_and_public_alerts(alert_dict, mocker):
     assert len(Alerts([alert_dict]).current_and_public) == 0
 
 
+def test_non_public_alerts(alert_dict, planned_test_dict, mocker):
+    mocker.patch(__name__ + '.PlannedTest.is_planned', False)
+    assert len(Alerts([alert_dict]).non_public) == 0
+
+    mocker.patch(__name__ + '.Alert.is_planned', True)
+    mocker.patch(__name__ + '.Alert.is_public', False)
+    assert len(Alerts([alert_dict]).non_public) == 1
+
+    mocker.patch(__name__ + '.Alert.is_planned', True)
+    mocker.patch(__name__ + '.Alert.is_public', True)
+    assert len(Alerts([alert_dict]).non_public) == 0
+
+    mocker.patch(__name__ + '.PlannedTest.is_planned', False)
+    mocker.patch(__name__ + '.Alert.is_planned', False)
+    assert len(Alerts([alert_dict] + [planned_test_dict]).non_public) == 0
+
+    mocker.patch(__name__ + '.PlannedTest.is_planned', True)
+    mocker.patch(__name__ + '.Alert.is_planned', True)
+    mocker.patch(__name__ + '.Alert.is_public', False)
+    assert len(Alerts([alert_dict] + [planned_test_dict]).non_public) == 2
+
+
 def test_past_alerts(alert_dict, mocker):
     mocker.patch(__name__ + '.Alert.is_past', True)
     assert len(Alerts([alert_dict]).past) == 1
@@ -95,6 +117,7 @@ def test_public_alerts_dont_get_listed_as_tests(mocker):
     assert len(alerts) == 2
     assert len(alerts.current_and_public) == 2
     assert len(alerts.test_alerts_today) == 0
+    assert len(alerts.non_public) == 0
 
 
 @freeze_time('2021-01-01T02:00:00Z')
