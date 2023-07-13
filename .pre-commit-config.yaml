@@ -10,7 +10,7 @@ repos:
   rev: 6.0.0
   hooks:
   - id: flake8
-    filename: "*.py app/ tests/"
+    files: '^(app|tests)/.*\.py$'
     name: flake8 (python)
 - repo: https://github.com/PyCQA/isort
   rev: 5.12.0
