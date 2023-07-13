@@ -22,12 +22,9 @@ jobs:
         with:
           node-version: 16.14.0
 
-      - name: Upgrade Prerequisites
-        run: |
-          python3.9 -m pip install --upgrade pip wheel setuptools
-
       - name: Bootstrap Python app and run tests
         run: |
+          python3.9 -m pip install --upgrade pip wheel setuptools
           export ENVIRONMENT='development'
           set -eu
           make bootstrap
