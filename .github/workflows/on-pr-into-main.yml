@@ -1,0 +1,41 @@
+name: on-pr-into-main
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-pr-checks:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.0
+
+      - name: Verify Node and Npm
+        run: |
+          node --version || echo 'Could not find node'
+          npm --version || echo 'Could not find npm'
+
+      - name: Install and upgrade pre-requisites
+        run: |
+          python3.9 -m pip install --upgrade pip wheel setuptools
+          sudo apt-get install -y libcurl4-openssl-dev
+          sudo apt-get install -y libssl-dev
+
+      - name: Bootstrap Python app and run tests
+        run: |
+          export ENVIRONMENT='development'
+          set -eu
+          make bootstrap
+          make test
