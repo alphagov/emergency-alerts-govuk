@@ -22,9 +22,18 @@ jobs:
         with:
           node-version: 16.14.0
 
-      - name: Bootstrap Python app and run tests
+      - name: Verify Node and Npm
+        run: |
+          node --version || echo 'Could not find node'
+          npm --version || echo 'Could not find npm'
+
+      - name: Install and upgrade pre-requisites
         run: |
           python3.9 -m pip install --upgrade pip wheel setuptools
+          sudo apt install libcurl4-openssl-dev libssl-dev
+
+      - name: Bootstrap Python app and run tests
+        run: |
           export ENVIRONMENT='development'
           set -eu
           make bootstrap
