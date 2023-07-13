@@ -1,4 +1,4 @@
-name: pr-checks
+name: on-pr-into-main
 
 on:
   pull_request:
@@ -30,7 +30,8 @@ jobs:
       - name: Install and upgrade pre-requisites
         run: |
           python3.9 -m pip install --upgrade pip wheel setuptools
-          sudo apt install libcurl4-openssl-dev libssl-dev
+          apt-get install -y libcurl4-openssl-dev
+          apt-get install -y libssl-dev
 
       - name: Bootstrap Python app and run tests
         run: |
