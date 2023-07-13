@@ -17,11 +17,13 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Install Prerequisites
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.0
+
+      - name: Upgrade Prerequisites
         run: |
-          curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip'; unzip 'awscliv2.zip' && ./aws/install
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh | bash
-          nvm install v16.14.0 && nvm use v16.14.0
           python3.9 -m pip install --upgrade pip wheel setuptools
 
       - name: Bootstrap Python app and run tests
