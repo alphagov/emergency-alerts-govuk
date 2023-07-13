@@ -19,7 +19,7 @@ jobs:
 
       - name: Install pycurl
         run: |
-          python -m pip install pycurl
+          pip3 install pycurl
 
       - name: Bootstrap Python app and run tests
         run: |
