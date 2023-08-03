@@ -38,6 +38,15 @@ brew install proj
 brew install geos
 ```
 
+### Pre-commit
+
+- If `pre-commit` is not already installed on your machine, run
+`brew install pre-commit`
+
+- In this repository’s folder, run
+`pre-commit install` and 
+`pre-commit install-hooks`
+
 ## To run the application
 
 ```shell
