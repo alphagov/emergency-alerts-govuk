@@ -1,6 +1,5 @@
 #! /bin/sh
 CLUSTER_NAME=$RESOURCE_PREFIX-cluster
-SERVICE_NAME=$RESOURCE_PREFIX-$SERVICE
 
 while [ $# -gt 0 ]; do
     if [[ $1 == *"--"* ]]; then
@@ -10,13 +9,14 @@ while [ $# -gt 0 ]; do
     shift
 done
 
+SERVICE_NAME=$RESOURCE_PREFIX-$SERVICE
+
 function update_task_defintion(){
     if [ -z "$SERVICE" ]; then
         echo "SERVICE is required."
         exit
     fi;
     echo $SERVICE_NAME
-    echo $CLUSTER_NAME
     echo "=============== GETTING LATEST TASK DEFINITION ==============="
     latest_task_def=$(aws ecs list-task-definitions \
         --status ACTIVE \
