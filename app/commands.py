@@ -30,7 +30,8 @@ def publish_with_assets():
     try:
         _publish_html()
         _publish_assets()
-        purge_fastly_cache()
+        if os.environ.get('ENVIRONMENT') != 'development' or os.environ.get('ENVIRONMENT') != 'preview':
+            purge_fastly_cache()
     except FileExistsError as e:
         current_app.logger.exception(f"Publish assets FAILED: {e}")
     except Exception as e:
