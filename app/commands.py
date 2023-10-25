@@ -1,4 +1,6 @@
 import click
+import os
+
 from flask import cli, current_app
 
 from app.models.alerts import Alerts
@@ -16,7 +18,8 @@ def setup_commands(app):
 def publish():
     try:
         _publish_html()
-        purge_fastly_cache()
+        if os.environ.get('ENVIRONMENT') != 'development' or 'preview':
+            purge_fastly_cache()
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
 
