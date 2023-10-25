@@ -72,6 +72,8 @@ class Decoupled(Config):
     NOTIFY_API_CLIENT_SECRET = os.environ.get("NOTIFY_API_CLIENT_SECRET")
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
+    ENVIRONMENT = os.getenv('ENVIRONMENT')
+
     CELERY = {
         "broker_url": "sqs://",
         "broker_transport": "sqs",

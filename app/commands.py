@@ -1,5 +1,4 @@
 import click
-import os
 
 from flask import cli, current_app
 
@@ -18,7 +17,7 @@ def setup_commands(app):
 def publish():
     try:
         _publish_html()
-        if os.environ.get('ENVIRONMENT') == 'staging' or os.environ.get('ENVIRONMENT') == 'production':
+        if current_app.config['ENVIRONMENT'] == 'staging' or current_app.config['ENVIRONMENT'] == 'production':
             purge_fastly_cache()
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
@@ -30,7 +29,7 @@ def publish_with_assets():
     try:
         _publish_html()
         _publish_assets()
-        if os.environ.get('ENVIRONMENT') == 'staging' or os.environ.get('ENVIRONMENT') == 'production':
+        if current_app.config['ENVIRONMENT'] == 'staging' or current_app.config['ENVIRONMENT'] == 'production':
             purge_fastly_cache()
     except FileExistsError as e:
         current_app.logger.exception(f"Publish assets FAILED: {e}")
