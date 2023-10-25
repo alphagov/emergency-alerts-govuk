@@ -16,7 +16,7 @@ function update_task_defintion(){
         echo "SERVICE is required."
         exit
     fi;
-    echo $SERVICE_NAME
+    
     echo "=============== GETTING LATEST TASK DEFINITION ==============="
     latest_task_def=$(aws ecs list-task-definitions \
         --status ACTIVE \

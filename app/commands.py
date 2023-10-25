@@ -18,7 +18,7 @@ def setup_commands(app):
 def publish():
     try:
         _publish_html()
-        if os.environ.get('ENVIRONMENT') != 'development' or 'preview':
+        if os.environ.get('ENVIRONMENT') != 'development' or os.environ.get('ENVIRONMENT') != 'preview':
             purge_fastly_cache()
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
