@@ -8,7 +8,7 @@ function configure_container_role(){
 
 function run_celery(){
     cd $DIR_GOVUK;
-    . $VENV_GOVUK/bin/activate && make run-celery
+    . $VENV_GOVUK/bin/activate && make run-celery &
 }
 
 function flask_publish(){
@@ -21,6 +21,6 @@ if [[ ! -z $DEBUG ]]; then
     while true; do echo 'Debug mode active..'; sleep 30; done
 else
     configure_container_role
-    flask_publish
     run_celery
+    flask_publish
 fi
