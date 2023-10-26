@@ -14,6 +14,7 @@ function run_celery(){
 function flask_publish(){
     cd $DIR_GOVUK;
     . $VENV_GOVUK/bin/activate && flask publish-with-assets
+    fg
 }
 
 if [[ ! -z $DEBUG ]]; then
