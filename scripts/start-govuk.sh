@@ -22,7 +22,7 @@ function update_timestamp(){
 
 if [[ ! -z $DEBUG ]]; then
     echo "Starting in debug mode.."
-    while true;
+    while true; do
         echo 'Debug mode active..';
         update_timestamp
         sleep 10;
