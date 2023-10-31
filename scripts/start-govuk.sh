@@ -1,5 +1,5 @@
 #! /bin/sh
-
+timestamp_filename='/eas/emergency-alerts-govuk/celery-beat-healthcheck'
 echo "Start script executing for govuk-alerts celery worker..."
 
 function configure_container_role(){
@@ -16,9 +16,17 @@ function flask_publish(){
     . $VENV_GOVUK/bin/activate && flask publish-with-assets &
 }
 
+function update_timestamp(){
+    echo $(date +%s) > $timestamp_filename
+}
+
 if [[ ! -z $DEBUG ]]; then
     echo "Starting in debug mode.."
-    while true; do echo 'Debug mode active..'; sleep 30; done
+    while true; do
+        echo 'Debug mode active..';
+        update_timestamp
+        sleep 10;
+    done
 else
     configure_container_role
     flask_publish
