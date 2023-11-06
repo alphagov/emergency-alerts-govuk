@@ -110,16 +110,16 @@ class Development(Config):
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests-dev.yaml"
 
 
-# class Test(Config):
-#     DEBUG = True
+class Test(Config):
+    DEBUG = True
 
-#     FASTLY_SERVICE_ID = "test-service-id"
-#     FASTLY_API_KEY = "test-api-key"
-#     FASTLY_SURROGATE_KEY = "test-surrogate-key"
+    FASTLY_SERVICE_ID = "test-service-id"
+    FASTLY_API_KEY = "test-api-key"
+    FASTLY_SURROGATE_KEY = "test-surrogate-key"
 
-#     BROADCASTS_AWS_ACCESS_KEY_ID = "test-key-id"
-#     BROADCASTS_AWS_SECRET_ACCESS_KEY = "test-secret-key"
-#     GOVUK_ALERTS_S3_BUCKET_NAME = "test-bucket-name"
+    BROADCASTS_AWS_ACCESS_KEY_ID = "test-key-id"
+    BROADCASTS_AWS_SECRET_ACCESS_KEY = "test-secret-key"
+    GOVUK_ALERTS_S3_BUCKET_NAME = "test-bucket-name"
 
 
 # class Staging(Config):
@@ -133,7 +133,7 @@ class Development(Config):
 configs = {
     "development": Development,
     "hosted": Hosted,
-    # "test": Test,
+    "test": Test,
     # "staging": Staging,
     # "preview": Preview,
     # "production": Config,
