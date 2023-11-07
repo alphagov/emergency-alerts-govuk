@@ -12,7 +12,7 @@ from app.utils import REPO
 class PlannedTests(SerialisedModelCollection):
     model = PlannedTest
     planned_tests = defaultdict()
-    environment = os.getenv('NOTIFY_ENVIRONMENT', 'development')
+    environment = os.getenv('HOST', 'local')
     yaml_filename = (configs[environment].PLANNED_TESTS_YAML_FILE_NAME)
 
     @classmethod

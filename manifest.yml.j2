@@ -29,7 +29,7 @@ applications:
     env:
       # Logging and metrics
       LOGGING_STDOUT_JSON: '1'
-      NOTIFY_ENVIRONMENT: '{{ environment }}'
+      HOST: '{{ environment }}'
       NOTIFY_LOG_PATH: '/home/vcap/logs/app.log'
       STATSD_HOST: "notify-statsd-exporter-{{ environment }}.apps.internal"
 

@@ -20,7 +20,7 @@ def create_app():
     )
 
     from app.config import configs
-    environment = os.getenv('NOTIFY_ENVIRONMENT', 'development')
+    environment = os.getenv('HOST', 'development')
     application.config.from_object(configs[environment])
 
     from app.main import bp as main
