@@ -19,8 +19,8 @@ class Config():
     FASTLY_API_KEY = os.getenv("FASTLY_API_KEY")
     FASTLY_SURROGATE_KEY = "notify-emergency-alerts"
 
-    NOTIFY_API_HOST_NAME = os.environ.get("NOTIFY_API_HOST_NAME")
-    NOTIFY_API_CLIENT_SECRET = os.environ.get("NOTIFY_API_CLIENT_SECRET")
+    NOTIFY_API_HOST_NAME = "http://localhost:6011"
+    NOTIFY_API_CLIENT_SECRET = "govuk-alerts-secret-key"
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
     CELERY = {
@@ -49,7 +49,7 @@ class Config():
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
 
 
-class Decoupled(Config):
+class Hosted(Config):
     # Prefix to identify queues in SQS
     NOTIFICATION_QUEUE_PREFIX = f"{os.getenv('ENVIRONMENT')}-"
     SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
@@ -103,13 +103,6 @@ class Decoupled(Config):
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
 
 
-class Development(Config):
-    NOTIFY_API_CLIENT_SECRET = "govuk-alerts-secret-key"
-    NOTIFY_API_HOST_NAME = "http://localhost:6011"
-
-    PLANNED_TESTS_YAML_FILE_NAME = "planned-tests-dev.yaml"
-
-
 class Test(Config):
     DEBUG = True
 
@@ -122,19 +115,8 @@ class Test(Config):
     GOVUK_ALERTS_S3_BUCKET_NAME = "test-bucket-name"
 
 
-class Staging(Config):
-    PLANNED_TESTS_YAML_FILE_NAME = "planned-tests-staging.yaml"
-
-
-class Preview(Config):
-    PLANNED_TESTS_YAML_FILE_NAME = "planned-tests-preview.yaml"
-
-
 configs = {
-    "development": Development,
-    "decoupled": Decoupled,
+    "local": Config,
+    "hosted": Hosted,
     "test": Test,
-    "staging": Staging,
-    "preview": Preview,
-    "production": Config,
 }
