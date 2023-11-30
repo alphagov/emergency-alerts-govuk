@@ -20,7 +20,7 @@ def create_app():
     )
 
     from app.config import configs
-    environment = os.getenv('HOST', 'development')
+    environment = os.getenv('HOST', 'local')
     application.config.from_object(configs[environment])
 
     from app.main import bp as main
