@@ -97,7 +97,7 @@ orderedset==2.0.3
     # via emergency-alerts-utils
 packaging==21.3
     # via redis
-phonenumbers==8.12.40
+phonenumbers>=8.13.20
     # via emergency-alerts-utils
 prompt-toolkit==3.0.24
     # via click-repl
