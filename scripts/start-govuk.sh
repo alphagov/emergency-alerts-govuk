@@ -20,7 +20,7 @@ function update_timestamp(){
     echo $(date +%s) > $timestamp_filename
 }
 
-if [[ ! -z $DEBUG ]]; then
+if [[ $DEBUG == "true" ]]; then
     echo "Starting in debug mode.."
     while true; do
         echo 'Debug mode active..';
