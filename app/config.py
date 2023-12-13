@@ -30,7 +30,6 @@ class Config():
             "visibility_timeout": 310,
             "queue_name_prefix": NOTIFICATION_QUEUE_PREFIX,
             "wait_time_seconds": 20,  # enable long polling, with a wait time of 20 seconds
-            "task_acks_late": True,
         },
         "timezone": "Europe/London",
         "imports": ["app.celery.tasks"],
