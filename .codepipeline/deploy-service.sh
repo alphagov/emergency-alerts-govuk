@@ -21,7 +21,7 @@ update_task_definition(){
         --status ACTIVE \
         --sort DESC \
         --max-items 1 \
-        --family-prefix ${RESOURCE_PREFIX}-${SERVICE} \
+        --family-prefix "${RESOURCE_PREFIX}-${SERVICE}" \
         --output json \
     | jq '.taskDefinitionArns[0]' | tr -d '"')
 
@@ -33,9 +33,9 @@ update_task_definition(){
         echo ""
         echo "=============== UPDATING SERVICE ==============="
         aws ecs update-service \
-        --cluster $CLUSTER_NAME \
-        --service ${RESOURCE_PREFIX}-${SERVICE} \
-        --task-definition $latest_task_def \
+        --cluster "$CLUSTER_NAME" \
+        --service "${RESOURCE_PREFIX}-${SERVICE}" \
+        --task-definition "$latest_task_def" \
         --force-new-deployment
     fi
 }
