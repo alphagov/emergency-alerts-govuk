@@ -51,6 +51,7 @@ class Config():
 
 class Hosted(Config):
     # Prefix to identify queues in SQS
+    TENANT = f"{os.environ.get('TENANT')}." if os.environ.get("TENANT") is not None else ""
     NOTIFICATION_QUEUE_PREFIX = f"{os.getenv('ENVIRONMENT')}-"
     SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
     QUEUE_NAME = "govuk-alerts"
@@ -68,7 +69,7 @@ class Hosted(Config):
     FASTLY_API_KEY = os.getenv("FASTLY_API_KEY")
     FASTLY_SURROGATE_KEY = "notify-emergency-alerts"
 
-    NOTIFY_API_HOST_NAME = "http://api.ecs.local:6011"
+    NOTIFY_API_HOST_NAME = f"http://api.{TENANT}ecs.local:6011"
     NOTIFY_API_CLIENT_SECRET = os.environ.get("NOTIFY_API_CLIENT_SECRET")
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
