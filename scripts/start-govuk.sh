@@ -29,6 +29,7 @@ if [[ ! -z $DEBUG ]]; then
     done
 else
     configure_container_role
+    update_timestamp
     flask_publish
     run_celery
 fi
