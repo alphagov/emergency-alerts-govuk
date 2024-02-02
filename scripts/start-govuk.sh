@@ -18,6 +18,7 @@ function flask_publish(){
 
 function update_timestamp(){
     echo $(date +%s) > $timestamp_filename
+    chown easuser:easuser $timestamp_filename
 }
 
 if [[ ! -z $DEBUG ]]; then
