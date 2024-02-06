@@ -53,7 +53,8 @@ class Hosted(Config):
     # Prefix to identify queues in SQS
     TENANT = f"{os.environ.get('TENANT')}." if os.environ.get("TENANT") is not None else ""
     TENANT_PREFIX = f"{os.environ.get('TENANT')}-" if os.environ.get("TENANT") is not None else ""
-    NOTIFICATION_QUEUE_PREFIX = f"{os.getenv('ENVIRONMENT')}-{TENANT_PREFIX}"
+    NOTIFICATION_QUEUE_PREFIX = f"{os.getenv('ENVIRONMENT') if os.getenv('ENVIRONMENT') != 'development' else 'dev'} \
+        -{TENANT_PREFIX}"
     SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
     QUEUE_NAME = "govuk-alerts"
     SQS_QUEUE_BACKOFF_POLICY = {1: 1, 2: 2, 3: 4, 4: 8, 5: 16, 6: 32, 7: 64, 8: 128}
