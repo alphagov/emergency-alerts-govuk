@@ -65,7 +65,7 @@ geojson==2.5.0
     # via emergency-alerts-utils
 govuk-bank-holidays==0.10
     # via emergency-alerts-utils
-govuk-frontend-jinja==2.8.0
+govuk-frontend-jinja==2.0.0
     # via -r requirements.in
 idna==3.3
     # via requests
