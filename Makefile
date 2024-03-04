@@ -48,8 +48,7 @@ run-celery: ## Run celery
 		--prefetch-multiplier=1 \
 		--loglevel=WARNING \
 		--concurrency=1 \
-		--autoscale=1,1
-		--hostname=0.0.0.0
+		--autoscale=8,1
 
 .PHONY: cf-login
 cf-login: ## Log in to Cloud Foundry
