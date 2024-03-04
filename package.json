@@ -22,7 +22,7 @@
   "license": "MIT",
   "homepage": "https://github.com/alphagov/emergency-alerts-govuk#readme",
   "dependencies": {
-    "govuk-frontend": "^4.0.1",
+    "govuk-frontend": "^4.8.0",
     "html5shiv": "^3.7.3",
     "timeago.js": "^4.0.2"
   },
