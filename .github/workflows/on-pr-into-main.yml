@@ -37,5 +37,5 @@ jobs:
         run: |
           export ENVIRONMENT='local'
           set -eu
-          make bootstrap
+          make bootstrap-for-tests
           make test
