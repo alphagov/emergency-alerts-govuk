@@ -18,6 +18,7 @@ function flask_publish(){
 
 function update_timestamp(){
     echo $(date +%s) > $timestamp_filename
+    chown easuser:easuser $timestamp_filename
 }
 
 if [[ ! -z $DEBUG ]]; then
@@ -29,6 +30,7 @@ if [[ ! -z $DEBUG ]]; then
     done
 else
     configure_container_role
+    update_timestamp
     flask_publish
     run_celery
 fi
