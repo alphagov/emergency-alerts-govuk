@@ -8,11 +8,14 @@ Website for emergency alerts, hosted under /alerts on GOV.UK.
 
 \* Note that, even when connected to the VPN, you may see a 403 Forbidden page due to [an issue with the way GOV.UK Fastly is configured with Fastly shielding](https://github.com/alphagov/govuk-cdn-config/pull/362).
 
-## Setting up
+## Setting up to run the gov.uk/alerts locally
+
+### Local Development Environment Setup
+Ensure that you have first followed all of the local development environment setup steps, that can be found [here](https://gds-ea.atlassian.net/wiki/spaces/EA/pages/3211265/Mac+Setup), before attempting to run the gov.uk/alerts locally.
 
 ### Python version
 
-We run Python 3.9 in production.
+You can find instructions on setting the correct Python version [here](https://gds-ea.atlassian.net/wiki/spaces/EA/pages/192217089/Setting+up+Local+Development+Environment#Setting-Python-Version).
 
 ### NodeJS & NPM
 
@@ -44,20 +47,12 @@ brew install geos
 `brew install pre-commit`
 
 - In this repository’s folder, run
-`pre-commit install` and 
+`pre-commit install` and
 `pre-commit install-hooks`
 
 ## To run the application
 
-```shell
-# install dependencies, etc.
-make bootstrap
-
-# run the web app
-make run-flask
-```
-
-Then visit [localhost:6017/alerts](http://localhost:6017/alerts).
+The instructions to run the gov.uk/alerts server can be found [here](https://gds-ea.atlassian.net/wiki/spaces/EA/pages/192217089/Setting+up+Local+Development+Environment#Run-the-Gov.uk%2FAlerts-Website).
 
 We aim to match the [browsers supported by GOVUK Frontend](https://github.com/alphagov/govuk-frontend#browser-and-assistive-technology-support) (includes Internet Explorer 8-10).
 
@@ -67,18 +62,11 @@ Any Python code changes you make should be picked up automatically in developmen
 
 ## To test the application
 
-```
-# install dependencies, etc.
-make bootstrap
+The instructions for running the unit tests for gov.uk/alerts server can be found [here](https://gds-ea.atlassian.net/wiki/spaces/EA/pages/192217089/Setting+up+Local+Development+Environment#Running-the-Unit-Tests).
 
-# run all the tests
-make test
+To continuously run js tests, run `npm run test-watch`.
 
-# continuously run js tests
-npm run test-watch
-```
-
-To run a specific JavaScript test, you'll need to copy the full command from `package.json`.o run a specific JavaScript test, you'll need to copy the full command from `package.json`.
+To run a specific JavaScript test, you'll need to copy the full command from `package.json`.
 
 ## Further documentation
 

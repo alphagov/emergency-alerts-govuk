@@ -20,7 +20,12 @@ run-flask:
 
 .PHONY: bootstrap
 bootstrap:
-	pip3 install -r requirements_for_test.txt
+	pip3 install -r requirements_local_utils.txt
+	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm run build
+
+.PHONY: bootstrap-for-tests
+bootstrap-for-tests:
+	pip3 install -r requirements_github_utils.txt
 	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm run build
 
 .PHONY: npm-audit
