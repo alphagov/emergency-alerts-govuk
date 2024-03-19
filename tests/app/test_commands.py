@@ -9,7 +9,9 @@ def test_publish(mocker, govuk_alerts):
 def test_publish_with_assets(mocker, govuk_alerts):
     _ = mocker.patch('app.commands._publish_html')
     publish_with_assets_mock = mocker.patch('app.commands._publish_assets')
+    publish_atom_feed = mocker.patch('app.commands._publish_atom_feed')
     runner = govuk_alerts.test_cli_runner()
 
     runner.invoke(args=['publish-with-assets'])
     publish_with_assets_mock.assert_called_once()
+    publish_atom_feed.assert_called_once()
