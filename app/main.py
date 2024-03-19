@@ -13,7 +13,6 @@ def show_page(key):
 
     if key == "alerts.atom":
         ret = Alerts.get_atom_feed()
-        print(ret)
         return ret
 
     if key in rendered_pages:
