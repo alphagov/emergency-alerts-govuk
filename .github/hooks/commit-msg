@@ -1,0 +1,27 @@
+#!/bin/bash
+
+COMMIT_MSG="$(cat "$1")"
+STAGED_FILES=$(git diff-index --name-only --cached --diff-filter=ACMR HEAD -- )
+CONFIRM_TXT="--confirm-requirements"
+REQS_SPEC_FILE=0
+REQS_FROZEN_FILE=0
+
+if [[ "$STAGED_FILES" == "" ]]; then
+    exit 0
+fi
+
+# If requirements.in file has changed, look for requirements.txt file
+for FILE in $STAGED_FILES
+do
+    if [[ "$FILE" == "requirements.in" ]]; then
+        REQS_SPEC_FILE=1
+    elif [[ "$FILE" == "requirements.text" ]]; then
+        REQS_FROZEN_FILE=1
+    fi
+done
+
+if [[ ("$REQS_SPEC_FILE" -eq 1 && "$REQS_FROZEN_FILE" -eq 0) && "$COMMIT_MSG" != *"$CONFIRM_TXT"* ]]; then
+    echo "Commiting changes to requirements.in without freezing requirements needs explicit confirmation. Add $CONFIRM_TXT to your commit message to explicitly commit the requirements.in file."
+elif [[ ("$REQS_SPEC_FILE" -eq 0 && "$REQS_FROZEN_FILE" -eq 1) && "$COMMIT_MSG" != *"$CONFIRM_TXT"* ]]; then
+    echo "Commiting changes to requirements.txt that aren't generated from requirements.in needs explicit confirmation. Add $CONFIRM_TXT to your commit message to explicitly commit the requirements.txt file."
+fi
