@@ -6,7 +6,7 @@ boto3==1.20.26
 celery==5.2.7
 Flask==1.1.2
 pycurl==7.43.0.6
-notifications-python-client==8.0.0
+notifications-python-client==888.0.0
 
 # Packages for testing
 isort==5.13.2
