@@ -21,7 +21,9 @@ do
 done
 
 if [[ ("$REQS_SPEC_FILE" -eq 1 && "$REQS_FROZEN_FILE" -eq 0) && "$COMMIT_MSG" != *"$CONFIRM_TXT"* ]]; then
-    echo "Commiting changes to requirements.in without freezing requirements needs explicit confirmation. Add $CONFIRM_TXT to your commit message to explicitly commit the requirements.in file."
+    echo "Commiting changes to requirements.in without freezing requirements needs explicit confirmation. \
+    Add $CONFIRM_TXT to your commit message to explicitly commit the requirements.in file."
 elif [[ ("$REQS_SPEC_FILE" -eq 0 && "$REQS_FROZEN_FILE" -eq 1) && "$COMMIT_MSG" != *"$CONFIRM_TXT"* ]]; then
-    echo "Commiting changes to requirements.txt that aren't generated from requirements.in needs explicit confirmation. Add $CONFIRM_TXT to your commit message to explicitly commit the requirements.txt file."
+    echo "Commiting changes to requirements.txt that aren't generated from requirements.in needs explicit confirmation. \
+    Add $CONFIRM_TXT to your commit message to explicitly commit the requirements.txt file."
 fi
