@@ -1,11 +1,19 @@
-govuk-frontend-jinja==2.0.0
+govuk-frontend-jinja==2.8.0
 Jinja2==2.11.3
 MarkupSafe==1.1.1
-PyYAML==5.4.1
+PyYAML==6.0.1
 boto3==1.20.26
 celery==5.2.7
 Flask==1.1.2
 pycurl==7.43.0.6
-awscli-cwlogs>=1.4,<1.5
-notifications-python-client==6.2.1
-git+https://github.com/alphagov/emergency-alerts-utils.git
+notifications-python-client==8.0.0
+
+# Packages for testing
+isort==5.12.0
+flake8==6.0.0
+freezegun==1.1.0
+pytest==8.0.2
+pytest-mock==3.12.0
+beautifulsoup4==4.9.3
+pytest-env==1.1.3
+moto==2.2.3

@@ -16,11 +16,16 @@ clean:
 
 .PHONY: run-flask
 run-flask:
-	FLASK_ENV=development flask run -p 6017
+	. environment.sh && flask run -p 6017
 
 .PHONY: bootstrap
 bootstrap:
-	pip3 install -r requirements_for_test.txt
+	pip3 install -r requirements_local_utils.txt
+	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm run build
+
+.PHONY: bootstrap-for-tests
+bootstrap-for-tests:
+	pip3 install -r requirements_github_utils.txt
 	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm run build
 
 .PHONY: npm-audit
@@ -48,8 +53,7 @@ run-celery: ## Run celery
 		--prefetch-multiplier=1 \
 		--loglevel=WARNING \
 		--concurrency=1 \
-		--autoscale=1,1
-		--hostname=0.0.0.0
+		--autoscale=8,1
 
 .PHONY: cf-login
 cf-login: ## Log in to Cloud Foundry

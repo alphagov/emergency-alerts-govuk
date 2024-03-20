@@ -1,8 +1,13 @@
 -r requirements.txt
 
 isort==5.12.0
+<<<<<<< HEAD
 flake8==7.0.0
 freezegun==1.1.0
+=======
+flake8==6.0.0
+freezegun==1.4.0
+>>>>>>> main
 pytest==6.2.3
 pytest-mock==3.6.1
 beautifulsoup4==4.9.3

@@ -19,14 +19,14 @@ class Config():
     FASTLY_API_KEY = os.getenv("FASTLY_API_KEY")
     FASTLY_SURROGATE_KEY = "notify-emergency-alerts"
 
-    NOTIFY_API_HOST_NAME = "http://localhost:6011"
+    NOTIFY_API_HOST_NAME = os.environ.get("API_HOST_NAME", "http://localhost:6011")
     NOTIFY_API_CLIENT_SECRET = "govuk-alerts-secret-key"
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
     CELERY = {
         "broker_url": "sqs://",
         "broker_transport_options": {
-            "region": "eu-west-1",
+            "region": "eu-west-2",
             "visibility_timeout": 310,
             "queue_name_prefix": NOTIFICATION_QUEUE_PREFIX,
             "wait_time_seconds": 20,  # enable long polling, with a wait time of 20 seconds
@@ -51,7 +51,10 @@ class Config():
 
 class Hosted(Config):
     # Prefix to identify queues in SQS
-    NOTIFICATION_QUEUE_PREFIX = f"{os.getenv('ENVIRONMENT')}-"
+    TENANT = f"{os.environ.get('TENANT')}." if os.environ.get("TENANT") is not None else ""
+    TENANT_PREFIX = f"{os.environ.get('TENANT')}-" if os.environ.get("TENANT") is not None else ""
+    ENVIRONMENT_PREFIX = os.getenv('ENVIRONMENT') if os.getenv('ENVIRONMENT') != 'development' else 'dev'
+    NOTIFICATION_QUEUE_PREFIX = f"{ENVIRONMENT_PREFIX}-{TENANT_PREFIX}"
     SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
     QUEUE_NAME = "govuk-alerts"
     SQS_QUEUE_BACKOFF_POLICY = {1: 1, 2: 2, 3: 4, 4: 8, 5: 16, 6: 32, 7: 64, 8: 128}
@@ -68,7 +71,7 @@ class Hosted(Config):
     FASTLY_API_KEY = os.getenv("FASTLY_API_KEY")
     FASTLY_SURROGATE_KEY = "notify-emergency-alerts"
 
-    NOTIFY_API_HOST_NAME = "http://api.ecs.local:6011"
+    NOTIFY_API_HOST_NAME = f"http://api.{TENANT}ecs.local:6011"
     NOTIFY_API_CLIENT_SECRET = os.environ.get("NOTIFY_API_CLIENT_SECRET")
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
