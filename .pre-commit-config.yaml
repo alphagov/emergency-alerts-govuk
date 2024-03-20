@@ -13,7 +13,7 @@ repos:
     files: '(app|tests)/.*\.py'
     name: flake8 (python)
 - repo: https://github.com/PyCQA/isort
-  rev: 5.12.0
+  rev: 5.13.2
   hooks:
     - id: isort
       name: isort (python)
