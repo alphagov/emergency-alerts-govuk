@@ -26,7 +26,7 @@ class Config():
     CELERY = {
         "broker_url": "sqs://",
         "broker_transport_options": {
-            "region": "eu-west-1",
+            "region": "eu-west-2",
             "visibility_timeout": 310,
             "queue_name_prefix": NOTIFICATION_QUEUE_PREFIX,
             "wait_time_seconds": 20,  # enable long polling, with a wait time of 20 seconds
