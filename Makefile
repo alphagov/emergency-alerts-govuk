@@ -24,7 +24,6 @@ run-flask:
 
 .PHONY: bootstrap
 bootstrap: git-init
-    git config core.hooksPath .githooks
 	pip3 install -r requirements_local_utils.txt
 	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm run build
 
