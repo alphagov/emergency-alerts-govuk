@@ -17,3 +17,9 @@ repos:
   hooks:
     - id: isort
       name: isort (python)
+- repo: local
+  hooks:
+    - id: check-requirements
+      name: check-requirements
+      entry: ./scripts/check-requirements.sh
+      language: script

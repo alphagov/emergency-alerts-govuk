@@ -10,10 +10,6 @@ CF_MANIFEST_PATH ?= /tmp/manifest.yml
 NOTIFY_CREDENTIALS ?= ~/.notify-credentials
 $(eval export CF_HOME)
 
-.PHONY: git-init
-git-init:
-	git config core.hooksPath .githooks
-
 .PHONY: clean
 clean:
 	rm -rf dist/*
@@ -23,7 +19,7 @@ run-flask:
 	. environment.sh && flask run -p 6017
 
 .PHONY: bootstrap
-bootstrap: git-init
+bootstrap:
 	pip3 install -r requirements_local_utils.txt
 	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm run build
 
