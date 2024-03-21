@@ -87,7 +87,7 @@ more-itertools==10.2.0
     # via moto
 moto==2.2.3
     # via -r requirements.in
-notifications-python-client==28.0.0
+notifications-python-client==8.0.0
     # via -r requirements.in
 packaging==21.3
     # via pytest
