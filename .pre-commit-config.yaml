@@ -23,4 +23,3 @@ repos:
       name: check-requirements
       entry: ./scripts/check-requirements.sh
       language: script
-      pass_filenames: false
