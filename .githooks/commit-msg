@@ -1,10 +1,7 @@
 #!/bin/sh
 
-COMMIT_MSG="$(cat "$1")"
 STAGED_FILES=$(git diff-index --name-only --cached --diff-filter=ACMR HEAD -- )
-CONFIRM_TXT="+confirm-requirements"
-REQS_SPEC_FILE=0
-REQS_FROZEN_FILE=0
+STAGED_REQ_FILES=0
 
 if [ "$STAGED_FILES" = "" ]; then
     exit 0
@@ -13,21 +10,14 @@ fi
 for FILE in $STAGED_FILES
 do
     if [ "$FILE" = "requirements.in" ]; then
-        REQS_SPEC_FILE=1
+        STAGED_REQ_FILES=$((STAGED_REQ_FILES+1))
     elif [ "$FILE" = "requirements.txt" ]; then
-        REQS_FROZEN_FILE=1
+        STAGED_REQ_FILES=$((STAGED_REQ_FILES+1))
     fi
 done
 
-if [ "$REQS_SPEC_FILE" -eq 1 ] && \
-    [ "$REQS_FROZEN_FILE" -eq 0 ] && \
-    ! echo "$COMMIT_MSG" | grep -q "$CONFIRM_TXT"; then
-    printf "\e[37;41mCommiting changes to requirements.in without freezing requirements needs explicit confirmation. Add %s to your commit message to explicitly commit the requirements.in file.\e[0m\n" "$CONFIRM_TXT"
-    exit 1
-elif [ "$REQS_SPEC_FILE" -eq 0 ] && \
-    [ "$REQS_FROZEN_FILE" -eq 1 ] && \
-    ! echo "$COMMIT_MSG" | grep -q "$CONFIRM_TXT"; then
-    printf "\e[37;41mCommiting changes to requirements.txt that aren't generated from requirements.in needs explicit confirmation. Add %s to your commit message to explicitly commit the requirements.txt file.\e[0m" "$CONFIRM_TXT"
+if [ "$STAGED_REQ_FILES" -eq 1 ]; then
+    printf "\e[37;41mChanges to requirements.in should be compiled to requirements.txt by running 'make freeze-requirements'. The file requirements.txt file should not be edited manually.\e[0m\n"
     exit 1
 fi
 exit 0
