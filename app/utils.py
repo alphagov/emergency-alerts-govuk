@@ -11,6 +11,10 @@ REPO = Path(__file__).parent.parent
 DIST = REPO / 'dist'
 
 
+def capitalise(value):
+    return value[0].upper() + value[1:]
+
+
 def paragraphize(value, classes="govuk-body-l govuk-!-margin-bottom-4"):
     paragraphs = [
         f'<p class="{classes}">{line}</p>'
