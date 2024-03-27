@@ -8,7 +8,7 @@ from jinja2 import (
     contextfilter,
 )
 
-from app.utils import DIST, REPO, file_fingerprint, paragraphize
+from app.utils import DIST, REPO, capitalise, file_fingerprint, paragraphize
 
 TEMPLATES = REPO / 'app' / 'templates'
 VIEWS = TEMPLATES / 'views'
@@ -67,6 +67,7 @@ def setup_jinja_environment(alerts):
     env.filters['file_fingerprint'] = file_fingerprint
     env.filters['formatted_list'] = formatted_list
     env.filters['paragraphize'] = paragraphize
+    env.filters['capitalise'] = capitalise
     env.filters['get_url_for_alert'] = jinja_filter_get_url_for_alert
     env.globals = {
         'font_paths': [

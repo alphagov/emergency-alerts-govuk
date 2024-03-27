@@ -8,6 +8,7 @@ from jinja2 import Markup
 from moto import mock_s3
 
 from app.utils import (
+    capitalise,
     file_fingerprint,
     is_in_uk,
     paragraphize,
@@ -24,6 +25,12 @@ def test_file_fingerprint_gets_variant_of_path_with_hash_in():
 def test_file_fingerprint_raises_for_file_not_found():
     with pytest.raises(OSError):
         file_fingerprint('/tests/test_files/doesnt-exist.txt', root=Path('.'))
+
+
+def test_capitalise_capitalises_first_letter():
+    text = "this is SoMe TeXt"
+    expected = 'This is SoMe TeXt'
+    assert capitalise(text) == expected
 
 
 def test_paragraphize_converts_newlines_to_paragraphs():
