@@ -21,5 +21,5 @@ def test_current_alerts_page_shows_alerts(
     link = html.select_one('a.govuk-body')
 
     assert len(titles) == 1
-    assert titles[0].text.strip() == 'Emergency alert sent to foo'
+    assert titles[0].text.strip() == 'Emergency alert sent to Foo'
     assert 'More information about this alert' in link.text
