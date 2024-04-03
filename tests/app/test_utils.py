@@ -4,8 +4,8 @@ from unittest.mock import patch
 
 import boto3
 import pytest
-from jinja2 import Markup
-from moto import mock_s3
+from markupsafe import Markup
+from moto import mock_aws
 
 from app.utils import (
     file_fingerprint,
@@ -45,7 +45,7 @@ def test_is_in_uk_returns_polygons_in_uk_bounding_box(alert_dict, lat, lon, in_u
     assert is_in_uk(simple_polygons) == in_uk
 
 
-@mock_s3
+@mock_aws
 def test_upload_to_s3(govuk_alerts):
     client = boto3.client('s3')
     client.create_bucket(Bucket='test-bucket', CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})

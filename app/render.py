@@ -5,7 +5,7 @@ from jinja2 import (
     FileSystemLoader,
     PackageLoader,
     PrefixLoader,
-    contextfilter,
+    pass_context,
 )
 
 from app.utils import DIST, REPO, file_fingerprint, paragraphize
@@ -18,7 +18,7 @@ all_view_paths = [
 ]
 
 
-@contextfilter
+@pass_context
 def jinja_filter_get_url_for_alert(jinja_context, alert):
     alerts = jinja_context['alerts']
     return get_url_for_alert(alert, alerts)
