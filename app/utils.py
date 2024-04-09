@@ -5,7 +5,7 @@ from pathlib import Path
 import boto3
 import requests
 from flask import current_app
-from jinja2 import Markup, escape
+from markupsafe import Markup, escape
 
 REPO = Path(__file__).parent.parent
 DIST = REPO / 'dist'
