@@ -47,6 +47,9 @@
     "stylelint": "^13.13.1",
     "stylelint-config-gds": "^0.1.0"
   },
+  "overrides": {
+    "minimist": "1.2.6"
+  },
   "stylelint": {
     "extends": "stylelint-config-gds/scss"
   },
