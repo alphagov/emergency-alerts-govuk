@@ -47,6 +47,10 @@
     "stylelint": "^13.13.1",
     "stylelint-config-gds": "^0.1.0"
   },
+  "overrides": {
+    "minimist": "1.2.8",
+    "@babel/traverse": "7.24.1"
+  },
   "stylelint": {
     "extends": "stylelint-config-gds/scss"
   },
