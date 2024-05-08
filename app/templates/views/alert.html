@@ -9,7 +9,7 @@
 {%- from "components/meta_tags.html" import metaTags -%}
 
 {% set pageTitle = "Emergency alert" %}
-{% set alertAreaNames = alert_data.display_areas | formatted_list(before_each='', after_each='') %}
+{% set alertAreaNames = alert_data.display_areas | formatted_list(before_each='', after_each='') | simplify_custom_area_name %}
 
 {% block metaTags %}
   {{ metaTags(
