@@ -13,8 +13,8 @@ from app.utils import (
     is_in_uk,
     paragraphize,
     purge_fastly_cache,
+    simplify_custom_area_name,
     upload_html_to_s3,
-    simplify_custom_area_name
 )
 
 
