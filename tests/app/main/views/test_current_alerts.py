@@ -44,7 +44,7 @@ def test_current_alerts_page_shows_postcode_area_alerts(
     link = html.select_one("a.govuk-body")
 
     assert len(titles) == 1
-    assert titles[0].text.strip() == "Emergency alert sent to an area in Bradford"
+    assert titles[0].text.strip() == "Emergency alert sent to An area in Bradford"
     assert "More information about this alert" in link.text
 
 
@@ -67,7 +67,7 @@ def test_current_alerts_page_shows_decimal_coordinate_area_alerts(
     link = html.select_one("a.govuk-body")
 
     assert len(titles) == 1
-    assert titles[0].text.strip() == "Emergency alert sent to an area in Craven"
+    assert titles[0].text.strip() == "Emergency alert sent to An area in Craven"
     assert "More information about this alert" in link.text
 
 
@@ -90,5 +90,5 @@ def test_current_alerts_page_shows_cartesian_coordinate_area_alerts(
     link = html.select_one("a.govuk-body")
 
     assert len(titles) == 1
-    assert titles[0].text.strip() == "Emergency alert sent to an area in Lambeth"
+    assert titles[0].text.strip() == "Emergency alert sent to An area in Lambeth"
     assert "More information about this alert" in link.text
