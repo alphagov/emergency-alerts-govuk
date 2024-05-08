@@ -8,7 +8,14 @@ from jinja2 import (
     pass_context,
 )
 
-from app.utils import DIST, REPO, capitalise, file_fingerprint, paragraphize
+from app.utils import (
+    DIST,
+    REPO,
+    capitalise,
+    file_fingerprint,
+    paragraphize,
+    simplify_custom_area_name,
+)
 
 TEMPLATES = REPO / 'app' / 'templates'
 VIEWS = TEMPLATES / 'views'
@@ -69,6 +76,7 @@ def setup_jinja_environment(alerts):
     env.filters['paragraphize'] = paragraphize
     env.filters['capitalise'] = capitalise
     env.filters['get_url_for_alert'] = jinja_filter_get_url_for_alert
+    env.filters['simplify_custom_area_name'] = simplify_custom_area_name
     env.globals = {
         'font_paths': [
             item.relative_to(DIST)

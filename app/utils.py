@@ -15,6 +15,17 @@ def capitalise(value):
     return value[0].upper() + value[1:]
 
 
+def simplify_custom_area_name(value):
+    if (
+        'postcode' not in value
+        and 'easting' not in value
+        and 'latitude' not in value
+    ):
+        return value
+    local_authority = value.split(", in ")[1]
+    return f"an area in {local_authority}"
+
+
 def paragraphize(value, classes="govuk-body-l govuk-!-margin-bottom-4"):
     paragraphs = [
         f'<p class="{classes}">{line}</p>'
