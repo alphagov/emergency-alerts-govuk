@@ -16,13 +16,15 @@ def capitalise(value):
 
 
 def simplify_custom_area_name(value):
+    # Checking for words indicating that it is a
+    # custom area OR that is has a local authority in the name
     if (
         'postcode' not in value
         and 'easting' not in value
         and 'latitude' not in value
-    ):
+    ) or (" in " not in value):
         return value
-    local_authority = value.split(", in ")[1]
+    local_authority = value.split(" in ")[1]
     return f"an area in {local_authority}"
 
 
