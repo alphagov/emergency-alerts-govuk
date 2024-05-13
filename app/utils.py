@@ -15,17 +15,29 @@ def capitalise(value):
     return value[0].upper() + value[1:]
 
 
-def simplify_custom_area_name(value):
-    # Checking for words indicating that it is a
-    # custom area OR that is has a local authority in the name
-    if (
-        'postcode' not in value
-        and 'easting' not in value
-        and 'latitude' not in value
-    ) or (" in " not in value):
+def simplify_custom_area_name(value, language):
+    if not is_custom_area_with_local_authority(value):
         return value
-    local_authority = value.split(" in ")[1]
-    return f"an area in {local_authority}"
+    local_authority = get_local_authority_from_custom_area(value)
+    if language == 'cy':
+        return f"ardal yn {local_authority}"
+    elif language == 'en':
+        return f"an area in {local_authority}"
+
+
+def get_local_authority_from_custom_area(value):
+    if is_custom_area_with_local_authority(value):
+        return value.split(" in ")[1]
+
+
+def is_custom_area_with_local_authority(value):
+    return (
+        (
+            'postcode' in value
+            or 'easting' in value
+            or 'latitude' in value
+        ) and (" in " in value)
+    )
 
 
 def paragraphize(value, classes="govuk-body-l govuk-!-margin-bottom-4"):
