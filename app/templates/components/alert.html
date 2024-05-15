@@ -11,7 +11,7 @@
           </h{{ heading_level }}>
         {% else %}
           <h{{ heading_level }} class="alerts-alert__title govuk-heading-s govuk-!-margin-bottom-3">
-            <span class="govuk-visually-hidden">Emergency alert sent to </span>{{ alert.display_areas | formatted_list(before_each='', after_each='') | capitalise }}
+            <span class="govuk-visually-hidden">Emergency alert sent to </span>{{ alert.display_areas | formatted_list(before_each='', after_each='') | simplify_custom_area_name('en') |capitalise }}
           </h{{ heading_level }}>
         {% endif %}
         {{ alert_body(alert) }}
@@ -19,24 +19,24 @@
           {% if language == 'cy' %}
             <a href="/alerts/{{ alert | get_url_for_alert }}.cy" class="govuk-link govuk-body">
               Rhagor o wybodaeth am y rhybudd hwn
-              <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
+              <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') | simplify_custom_area_name('cy') }}</span>
             </a>
           {% else %}
             <a href="/alerts/{{ alert | get_url_for_alert }}" class="govuk-link govuk-body">
               More information about this alert
-              <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
+              <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') | simplify_custom_area_name('en') }}</span>
             </a>
           {% endif %}
         {% else %}
           {% if language == 'cy' %}
             <a href="/alerts/system-testing.cy" class="govuk-link govuk-body">
               Dysgwch ragor am profi'r gwasanaeth Rhybuddion Argyfwng
-              <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
+              <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') | simplify_custom_area_name('cy')}}</span>
             </a>
           {% else %}
             <a href="/alerts/system-testing" class="govuk-link govuk-body">
               Find out more about testing the Emergency Alerts service
-              <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') }}</span>
+              <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') | simplify_custom_area_name('en') }}</span>
             </a>
           {% endif %}
         {% endif %}

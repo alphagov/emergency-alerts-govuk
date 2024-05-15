@@ -15,6 +15,31 @@ def capitalise(value):
     return value[0].upper() + value[1:]
 
 
+def simplify_custom_area_name(value, language):
+    if not is_custom_area_with_local_authority(value):
+        return value
+    local_authority = get_local_authority_from_custom_area(value)
+    if language == 'cy':
+        return f"ardal yn {local_authority}"
+    elif language == 'en':
+        return f"an area in {local_authority}"
+
+
+def get_local_authority_from_custom_area(value):
+    if is_custom_area_with_local_authority(value):
+        return value.split(" in ")[1]
+
+
+def is_custom_area_with_local_authority(value):
+    return (
+        (
+            'postcode' in value
+            or 'easting' in value
+            or 'latitude' in value
+        ) and (" in " in value)
+    )
+
+
 def paragraphize(value, classes="govuk-body-l govuk-!-margin-bottom-4"):
     paragraphs = [
         f'<p class="{classes}">{line}</p>'

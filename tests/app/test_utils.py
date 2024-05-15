@@ -13,6 +13,7 @@ from app.utils import (
     is_in_uk,
     paragraphize,
     purge_fastly_cache,
+    simplify_custom_area_name,
     upload_html_to_s3,
 )
 
@@ -31,6 +32,34 @@ def test_capitalise_capitalises_first_letter():
     text = "this is SoMe TeXt"
     expected = 'This is SoMe TeXt'
     assert capitalise(text) == expected
+
+
+def test_simplify_simplifies_custom_area_name_in_english():
+    postcode_text = "12km around the postcode HU5 5NT, in City of Kingston upon Hull"
+    postcode_expected = 'an area in City of Kingston upon Hull'
+
+    cartesian_text = "10km around the easting of 500000.0 and the northing of 180000.0, in Buckinghamshire"
+    cartesian_expected = 'an area in Buckinghamshire'
+
+    decimal_text = "10km around 52.14738 latitude, -2.803112 longitude, in County of Herefordshire"
+    decimal_expected = 'an area in County of Herefordshire'
+    assert simplify_custom_area_name(postcode_text, 'en') == postcode_expected
+    assert simplify_custom_area_name(cartesian_text, 'en') == cartesian_expected
+    assert simplify_custom_area_name(decimal_text, 'en') == decimal_expected
+
+
+def test_simplify_simplifies_custom_area_name_in_welsh():
+    postcode_text = "12km around the postcode HU5 5NT, in City of Kingston upon Hull"
+    postcode_expected = 'ardal yn City of Kingston upon Hull'
+
+    cartesian_text = "10km around the easting of 500000.0 and the northing of 180000.0, in Buckinghamshire"
+    cartesian_expected = 'ardal yn Buckinghamshire'
+
+    decimal_text = "10km around 52.14738 latitude, -2.803112 longitude, in County of Herefordshire"
+    decimal_expected = 'ardal yn County of Herefordshire'
+    assert simplify_custom_area_name(postcode_text, 'cy') == postcode_expected
+    assert simplify_custom_area_name(cartesian_text, 'cy') == cartesian_expected
+    assert simplify_custom_area_name(decimal_text, 'cy') == decimal_expected
 
 
 def test_paragraphize_converts_newlines_to_paragraphs():
