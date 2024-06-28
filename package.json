@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "description": "Static pages for GOVUK alerts",
   "engines": {
-    "node": ">=12.0.0",
-    "npm": "<7.0.0"
+    "node": ">=16.14.0",
+    "npm": ">=8.3.1"
   },
   "scripts": {
     "lint:scss": "stylelint -i app/assets/stylesheets/_govuk_frontend.scss app/assets/stylesheets/",
