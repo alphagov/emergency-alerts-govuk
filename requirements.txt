@@ -141,7 +141,7 @@ responses==0.25.3
     # via
     #   -r requirements.in
     #   moto
-s3transfer==0.10.2
+s3transfer==0.5.2
     # via boto3
 six==1.16.0
     # via
