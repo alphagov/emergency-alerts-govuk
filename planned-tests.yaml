@@ -1,4 +1,4 @@
-planned_tests: []
+planned_tests: [] # Test
   # - id: dd5af9c4-849a-4c23-a523-d6cbda2557d9
   #   channel: operator
   #   approved_at: 2021-07-02T09:00:00Z
