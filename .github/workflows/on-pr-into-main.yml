@@ -29,8 +29,6 @@ jobs:
 
       - name: Bootstrap Python app and run tests
         run: |
-          source ~/.non-interactive
-
           export ENVIRONMENT='local'
           set -eu
           make bootstrap-for-tests
