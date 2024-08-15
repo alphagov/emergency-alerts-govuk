@@ -102,22 +102,22 @@ run-flask:
 .PHONY: bootstrap
 bootstrap: install-node
 	pip3 install -r requirements_local_utils.txt
-	npm ci --no-audit && npm run build
+	. ~/.nvm-source && npm ci --no-audit && npm run build
 
 .PHONY: bootstrap-for-tests
 bootstrap-for-tests: install-node
 	pip3 install -r requirements_github_utils.txt
-	npm ci --no-audit && npm run build
+	. ~/.nvm-source && npm ci --no-audit && npm run build
 
 .PHONY: npm-audit
 npm-audit:  ## Check for vulnerabilities in NPM packages
-	npm run audit
+	. ~/.nvm-source && npm run audit
 
 .PHONY: test
 test:
 	isort --check-only *.py app tests
 	flake8 .
-	npm run lint && npm test
+	. ~/.nvm-source npm run lint && npm test
 	pytest tests/
 
 .PHONY: freeze-requirements
