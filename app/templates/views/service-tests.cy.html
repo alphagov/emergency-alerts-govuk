@@ -20,6 +20,8 @@
 {%- endblock %}
 
 {% block beforeContent %}
+<div class="govuk-grid-row" style="display: flex; align-items: center; padding: 0 15px;">
+  <div style="margin-right: 10px;">
   {{ govukBreadcrumbs({
     "items": [
       {
@@ -32,6 +34,17 @@
       }
     ]
   }) }}
+</div>
+<div style="flex-grow: 1;"></div>
+<div style="margin-left: 10px;">
+  {{ hmrcLanguageSelect({
+    'language': 'cy',
+    'en': {
+      'href': '/alerts/service-tests'
+    }
+  }) }}
+</div>
+</div>
 {% endblock %}
 
 {% block mainContent %}
@@ -40,14 +53,6 @@
       <h1 class="govuk-heading-xl">
         {{ pageTitle }}
       </h1>
-    </div>
-    <div class="govuk-grid-column-one-third">
-      {{ hmrcLanguageSelect({
-        'language': 'cy',
-        'en': {
-          'href': '/alerts/service-tests'
-        }
-      }) }}
     </div>
   </div>
   <div class="govuk-grid-row">

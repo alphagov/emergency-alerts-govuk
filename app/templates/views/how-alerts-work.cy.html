@@ -20,6 +20,8 @@
 {%- endblock %}
 
 {% block beforeContent %}
+<div class="govuk-grid-row" style="display: flex; align-items: center; padding: 0 15px;">
+  <div style="margin-right: 10px;">
   {{ govukBreadcrumbs({
     "items": [
       {
@@ -32,6 +34,17 @@
       }
     ]
   }) }}
+</div>
+<div style="flex-grow: 1;"></div>
+<div style="margin-left: 10px;">
+  {{ hmrcLanguageSelect({
+    'language': 'cy',
+    'en': {
+      'href': '/alerts/how-alerts-work'
+    }
+  }) }}
+</div>
+</div>
 {% endblock %}
 
 {% block mainContent %}
@@ -40,14 +53,6 @@
       <h1 class="govuk-heading-xl">
         {{ pageTitle }}
       </h1>
-    </div>
-    <div class="govuk-grid-column-one-third">
-      {{ hmrcLanguageSelect({
-        'language': 'cy',
-        'en': {
-          'href': '/alerts/how-alerts-work'
-        }
-      }) }}
     </div>
   </div>
   <div class="govuk-grid-row">
@@ -129,12 +134,10 @@
       <p class="govuk-body" id="opt-out">
         I optio allan:
       </p>
-      <ul class="govuk-list">
-        <ol type="1">
-          <li>Chwiliwch am ‘rybuddion argyfwng’ yn eich gosodiadau.</li>
-          <li>Diffoddwch ‘rybuddion difrifol’ a ‘rhybuddion eithafol’.</li>
-        </ol>
-      </ul>
+      <ol class="govuk-list govuk-list--bullet">
+        <li>Chwiliwch am ‘rybuddion argyfwng’ yn eich gosodiadau.</li>
+        <li>Diffoddwch ‘rybuddion difrifol’ a ‘rhybuddion eithafol’.</li>
+      </ol>
       <p class="govuk-body">
         Os byddwch chi'n dal i dderbyn rhybuddion, cysylltwch â gwneuthurwr eich dyfais i gael cymorth.
       </p>

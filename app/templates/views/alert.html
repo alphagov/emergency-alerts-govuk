@@ -30,6 +30,8 @@
 {% endif %}
 
 {% block beforeContent %}
+<div class="govuk-grid-row" style="display: flex; align-items: center; padding: 0 15px;">
+  <div style="margin-right: 10px;">
   {{ govukBreadcrumbs({
     "items": [
       {
@@ -43,6 +45,17 @@
       parentBreadcrumb,
     ]
   }) }}
+</div>
+<div style="flex-grow: 1;"></div>
+<div style="margin-left: 10px;">
+  {{ hmrcLanguageSelect({
+    'language': 'en',
+    'cy': {
+      'href': '/alerts/' ~ (alert_data | get_url_for_alert) ~ '.cy'
+    }
+  }) }}
+</div>
+</div>
 {% endblock %}
 
 {% block mainContent %}
@@ -52,14 +65,6 @@
         {{ alerts_icon(height=48, alert_active=alert_data.is_current) }}
         Emergency Alert
       </h1>
-    </div>
-    <div class="govuk-grid-column-one-third">
-      {{ hmrcLanguageSelect({
-        'language': 'en',
-        'cy': {
-          'href': '/alerts/' ~ (alert_data | get_url_for_alert) ~ '.cy'
-        }
-      }) }}
     </div>
   </div>
   <div class="govuk-grid-row">
