@@ -27,15 +27,29 @@
 {%- endblock %}
 
 {% block beforeContent %}
-  {{ govukBreadcrumbs({
-    "items": [
-      {
-        "text": "Home",
-        "href": "https://www.gov.uk/"
-      }
-    ]
-  }) }}
+  <div class="govuk-grid-row" style="display: flex; align-items: center; padding: 0 15px;">
+    <div style="margin-right: 10px;">
+      {{ govukBreadcrumbs({
+        "items": [
+          {
+            "text": "Home",
+            "href": "https://www.gov.uk/"
+          }
+        ]
+      }) }}
+    </div>
+    <div style="flex-grow: 1;"></div>
+    <div style="margin-left: 10px;">
+      {{ hmrcLanguageSelect({
+        'language': 'en',
+        'cy': {
+          'href': '/alerts/about.cy'
+        }
+      }) }}
+    </div>
+  </div>
 {% endblock %}
+
 
 {% block mainContent %}
   <div class="govuk-grid-row">
@@ -43,14 +57,6 @@
       <h1 class="govuk-heading-xl">
         {{ pageTitle }}
       </h1>
-    </div>
-    <div class="govuk-grid-column-one-third">
-      {{ hmrcLanguageSelect({
-        'language': 'en',
-        'cy': {
-          'href': '/alerts/about.cy'
-        }
-      }) }}
     </div>
   </div>
   {% if alerts.current_and_public or alerts.status_box_announcements %}

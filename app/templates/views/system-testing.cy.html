@@ -25,6 +25,8 @@
 {%- endblock %}
 
 {% block beforeContent %}
+<div class="govuk-grid-row" style="display: flex; align-items: center; padding: 0 15px;">
+  <div style="margin-right: 10px;">
   {{ govukBreadcrumbs({
     "items": [
       {
@@ -37,6 +39,17 @@
       }
     ]
   }) }}
+</div>
+<div style="flex-grow: 1;"></div>
+<div style="margin-left: 10px;">
+  {{ hmrcLanguageSelect({
+    'language': 'cy',
+    'en': {
+      'href': '/alerts/system-testing'
+    }
+  }) }}
+</div>
+</div>
 {% endblock %}
 
 {% block content %}
