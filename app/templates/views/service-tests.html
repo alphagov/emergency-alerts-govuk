@@ -20,18 +20,31 @@
 {%- endblock %}
 
 {% block beforeContent %}
-  {{ govukBreadcrumbs({
-    "items": [
-      {
-        "text": "Home",
-        "href": "https://www.gov.uk/"
-      },
-      {
-        "text": "About Emergency Alerts",
-        "href": "/alerts"
-      }
-    ]
-  }) }}
+  <div class="govuk-grid-row" style="display: flex; align-items: center; padding: 0 15px;">
+    <div style="margin-right: 10px;">
+      {{ govukBreadcrumbs({
+        "items": [
+          {
+            "text": "Home",
+            "href": "https://www.gov.uk/"
+          },
+          {
+            "text": "About Emergency Alerts",
+            "href": "/alerts"
+          }
+        ]
+      }) }}
+    </div>
+    <div style="flex-grow: 1;"></div>
+    <div style="margin-left: 10px;">
+      {{ hmrcLanguageSelect({
+        'language': 'en',
+        'cy': {
+          'href': '/alerts/service-tests.cy'
+        }
+      }) }}
+    </div>
+    </div>
 {% endblock %}
 
 {% block mainContent %}
@@ -40,14 +53,6 @@
       <h1 class="govuk-heading-xl">
         {{ pageTitle }}
       </h1>
-    </div>
-    <div class="govuk-grid-column-one-third">
-      {{ hmrcLanguageSelect({
-        'language': 'en',
-        'cy': {
-          'href': '/alerts/service-tests.cy'
-        }
-      }) }}
     </div>
   </div>
   <div class="govuk-grid-row">

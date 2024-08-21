@@ -20,18 +20,31 @@
 {%- endblock %}
 
 {% block beforeContent %}
-  {{ govukBreadcrumbs({
-    "items": [
-      {
-        "text": "Home",
-        "href": "https://www.gov.uk/"
-      },
-      {
-        "text": "About Emergency Alerts",
-        "href": "/alerts"
-      }
-    ]
-  }) }}
+  <div class="govuk-grid-row" style="display: flex; align-items: center; padding: 0 15px;">
+    <div style="margin-right: 10px;">
+      {{ govukBreadcrumbs({
+        "items": [
+          {
+            "text": "Home",
+            "href": "https://www.gov.uk/"
+          },
+          {
+            "text": "About Emergency Alerts",
+            "href": "/alerts"
+          }
+        ]
+      }) }}
+    </div>
+    <div style="flex-grow: 1;"></div>
+    <div style="margin-left: 10px;">
+      {{ hmrcLanguageSelect({
+        'language': 'en',
+        'cy': {
+          'href': '/alerts/how-alerts-work.cy'
+        }
+      }) }}
+    </div>
+    </div>
 {% endblock %}
 
 {% block mainContent %}
@@ -40,14 +53,6 @@
       <h1 class="govuk-heading-xl">
         {{ pageTitle }}
       </h1>
-    </div>
-    <div class="govuk-grid-column-one-third">
-      {{ hmrcLanguageSelect({
-        'language': 'en',
-        'cy': {
-          'href': '/alerts/how-alerts-work.cy'
-        }
-      }) }}
     </div>
   </div>
   <div class="govuk-grid-row">
@@ -129,12 +134,10 @@
       <p class="govuk-body" id="opt-out">
         To opt out:
       </p>
-      <ul class="govuk-list">
-        <ol type="1">
-          <li>Search your settings for ‘emergency alerts’.</li>
-          <li>Turn off ‘severe alerts’ and ‘extreme alerts’.</li>
-        </ol>
-      </ul>
+      <ol class="govuk-list govuk-list--bullet">
+        <li>Search your settings for ‘emergency alerts’.</li>
+        <li>Turn off ‘severe alerts’ and ‘extreme alerts’.</li>
+      </ol>
       <p class="govuk-body">
         If you still get alerts, contact your device manufacturer for help.
       </p>
