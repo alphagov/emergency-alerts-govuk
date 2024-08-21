@@ -28,8 +28,8 @@
 {%- endblock %}
 
 {% block beforeContent %}
-<div class="govuk-grid-row" style="display: flex; align-items: center; padding: 0 15px;">
-  <div style="margin-right: 10px;">
+<div class="govuk-grid-row govuk-subheader">
+  <div class="govuk-breadcrumbs">
   {{ govukBreadcrumbs({
     "items": [
       {
@@ -39,8 +39,8 @@
     ]
   }) }}
 </div>
-<div style="flex-grow: 1;"></div>
-<div style="margin-left: 10px;">
+<div class="govuk-separator"></div>
+<div class="govuk-language-select">
   {{ hmrcLanguageSelect({
     'language': 'cy',
     'en': {

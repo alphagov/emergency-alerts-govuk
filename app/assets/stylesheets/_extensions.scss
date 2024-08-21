@@ -20,3 +20,21 @@
   margin-bottom: 30px;
   margin-top: 30px;
 }
+
+.govuk-subheader {
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+}
+
+.govuk-breadcrumbs {
+  margin-right: 10px;
+}
+
+.govuk-language-select {
+  margin-left: 10px;
+}
+
+.govuk-separator {
+  flex-grow: 1;
+}
