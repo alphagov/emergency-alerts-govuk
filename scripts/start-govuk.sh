@@ -3,7 +3,7 @@ timestamp_filename='/eas/emergency-alerts-govuk/celery-beat-healthcheck'
 echo "Start script executing for govuk-alerts celery worker..."
 
 function configure_container_role(){
-    aws configure set default.region eu-west-2
+    aws configure set default.region ${AWS_REGION}
 }
 
 function run_celery(){

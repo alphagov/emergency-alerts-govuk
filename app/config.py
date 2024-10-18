@@ -12,7 +12,7 @@ class Config():
 
     BROADCASTS_AWS_ACCESS_KEY_ID = os.getenv("BROADCASTS_AWS_ACCESS_KEY_ID")
     BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
-    BROADCASTS_AWS_REGION = "eu-west-2"
+    BROADCASTS_AWS_REGION = os.getenv("AWS_REGION", "eu-west-2")
     GOVUK_ALERTS_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_S3_BUCKET_NAME")
 
     FASTLY_SERVICE_ID = os.getenv("FASTLY_SERVICE_ID")
@@ -26,7 +26,7 @@ class Config():
     CELERY = {
         "broker_url": "sqs://",
         "broker_transport_options": {
-            "region": "eu-west-2",
+            "region": BROADCASTS_AWS_REGION,
             "visibility_timeout": 310,
             "queue_name_prefix": NOTIFICATION_QUEUE_PREFIX,
             "wait_time_seconds": 20,  # enable long polling, with a wait time of 20 seconds
@@ -64,7 +64,7 @@ class Hosted(Config):
 
     BROADCASTS_AWS_ACCESS_KEY_ID = os.getenv("BROADCASTS_AWS_ACCESS_KEY_ID")
     BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
-    BROADCASTS_AWS_REGION = "eu-west-2"
+    BROADCASTS_AWS_REGION = os.getenv("AWS_REGION", "eu-west-2")
     GOVUK_ALERTS_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_S3_BUCKET_NAME")
 
     FASTLY_SERVICE_ID = os.getenv("FASTLY_SERVICE_ID")
@@ -79,7 +79,7 @@ class Hosted(Config):
         "broker_url": "sqs://",
         "broker_transport": "sqs",
         "broker_transport_options": {
-            "region": "eu-west-2",
+            "region": BROADCASTS_AWS_REGION,
             "predefined_queues": {
                 QUEUE_NAME: {
                     "url": f"{SQS_QUEUE_BASE_URL}/{NOTIFICATION_QUEUE_PREFIX}govuk-alerts",
