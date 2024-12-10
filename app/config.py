@@ -7,8 +7,7 @@ class Config():
     NOTIFICATION_QUEUE_PREFIX = os.getenv("NOTIFICATION_QUEUE_PREFIX")
     QUEUE_NAME = "govuk-alerts"
 
-    NOTIFY_APP_NAME = "govuk-alerts"
-    NOTIFY_LOG_PATH = os.getenv("NOTIFY_LOG_PATH", "application.log")
+    EAS_APP_NAME = "govuk-alerts"
 
     BROADCASTS_AWS_ACCESS_KEY_ID = os.getenv("BROADCASTS_AWS_ACCESS_KEY_ID")
     BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
@@ -59,8 +58,7 @@ class Hosted(Config):
     QUEUE_NAME = "govuk-alerts"
     SQS_QUEUE_BACKOFF_POLICY = {1: 1, 2: 2, 3: 4, 4: 8, 5: 16, 6: 32, 7: 64, 8: 128}
 
-    NOTIFY_APP_NAME = "govuk-alerts"
-    NOTIFY_LOG_PATH = os.getenv("NOTIFY_LOG_PATH", "application.log")
+    EAS_APP_NAME = "govuk-alerts"
 
     BROADCASTS_AWS_ACCESS_KEY_ID = os.getenv("BROADCASTS_AWS_ACCESS_KEY_ID")
     BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
