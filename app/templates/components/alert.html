@@ -46,5 +46,5 @@
 {% endmacro %}
 
 {% macro alert_body(alert) %}
-  {{ alert.content | paragraphize | autolink_urls(classes='govuk-link') }}
+  {{ alert.content | string | autolink_urls(classes='govuk-link') | paragraphize }}
 {% endmacro %}
