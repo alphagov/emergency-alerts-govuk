@@ -80,8 +80,8 @@ def test_alert_says_active_alert_is_active(client_get, mocker):
         'http://gov.uk/alerts',
     ),
     (
-        'https://example.com/?a=foo&b="bar"#baz',
-        'https://example.com/?a=foo&b="bar"#baz',
+        'https://example.com/?a=foo&b=%22bar%22#baz',
+        'https://example.com/?a=foo&b=%22bar%22#baz',
     ),
 ))
 def test_urls_in_alerts_are_clickable(client_get, mocker, url, expected_href_attribute):
