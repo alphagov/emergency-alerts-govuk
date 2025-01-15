@@ -12,6 +12,7 @@ responses==0.25.3
 Werkzeug==3.0.3
 certifi==2023.7.22
 pyjwt==2.8.0
+feedgen==1.0.0
 
 # Packages for testing
 isort==5.13.2
