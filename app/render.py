@@ -144,6 +144,8 @@ def _get_feed_generator():
         title="GOV.UK Emergency Alerts Feed",
         type="application/atom+xml"
     )
+    icon_file = file_fingerprint("/alerts/assets/images/favicon.ico")
+    fg.icon(icon=f"{host_url}{icon_file}")
     fg.subtitle("Emergency Alerts Feed")
     fg.link(href=f"{host_url}/alerts.atom", rel="self")
     fg.language("en")
