@@ -1,4 +1,6 @@
 from emergency_alerts_utils.formatters import autolink_urls, formatted_list
+from feedgen.feed import FeedGenerator
+from flask import current_app
 from jinja2 import (
     ChoiceLoader,
     Environment,
@@ -92,6 +94,8 @@ def get_rendered_pages(alerts):
     env = setup_jinja_environment(alerts)
     rendered = {}
 
+    fg = _get_feed_generator()
+
     for path in all_view_paths:
         template = env.get_template(path)
         target = path.replace(".html", "")
@@ -101,6 +105,7 @@ def get_rendered_pages(alerts):
             for alert in alerts.public:
                 alert_url = get_url_for_alert(alert, alerts)
                 rendered["alerts/" + alert_url] = template.render({'alert_data': alert})
+                _add_feed_entry(fg, alert, alert_url)
             continue
 
         # Render each alert's page in Welsh
@@ -120,4 +125,46 @@ def get_rendered_pages(alerts):
 
         rendered["alerts/" + target] = template.render()
 
+    rendered['alerts.atom'] = fg.atom_str(pretty=False)
+
     return rendered
+
+
+def _get_feed_generator():
+
+    host_url = current_app.config["HOST_URL"]
+
+    fg = FeedGenerator()
+    fg.id(f"{host_url}/alerts.atom")
+    fg.title("GOV.UK Emergency Alerts Service")
+    fg.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
+    fg.link(
+        href=f"{host_url}/alerts.atom",
+        rel="alternate",
+        title="GOV.UK Emergency Alerts Feed",
+        type="application/atom+xml"
+    )
+    fg.subtitle("Emergency Alerts Feed")
+    fg.link(href=f"{host_url}/alerts.atom", rel="self")
+    fg.language("en")
+    fg.rights(
+        "Released under the Open Government Licence (OGL), "
+        "citation of publisher and online resource required on reuse."
+    )
+
+    return fg
+
+
+def _add_feed_entry(fg, alert, alert_url):
+
+    host_url = current_app.config["HOST_URL"]
+
+    fe = fg.add_entry()
+    fe.id(alert.id)
+    fe.title(", ".join(alert.areas["aggregate_names"]))
+    fe.updated(alert.cancelled_at if alert.is_past else alert.approved_at)
+    fe.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
+    fe.content(alert.content)
+    fe.link(href=f"{host_url}/alerts/" + alert_url)
+    fe.summary(alert.content[:40] + "...")
+    fe.published(alert.approved_at)

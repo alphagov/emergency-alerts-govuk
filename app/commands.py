@@ -16,6 +16,7 @@ def setup_commands(app):
 def publish():
     try:
         _publish_html()
+        _publish_feed()
         purge_fastly_cache()
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
@@ -26,6 +27,7 @@ def publish():
 def publish_with_assets():
     try:
         _publish_html()
+        _publish_feed()
         _publish_assets()
         purge_fastly_cache()
     except FileExistsError as e:
@@ -38,6 +40,11 @@ def _publish_html():
     alerts = Alerts.load()
     rendered_pages = get_rendered_pages(alerts)
     upload_html_to_s3(rendered_pages)
+
+
+def _publish_feed():
+    atom_feed = Alerts.get_atom_feed()
+    upload_html_to_s3(atom_feed)
 
 
 def _publish_assets():

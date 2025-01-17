@@ -27,3 +27,8 @@ class AlertsApiClient(BaseAPIClient):
                     alert_dict[field] = dt_parse(alert_dict[field])
 
         return data
+
+    def get_atom_feed(self):
+        url, kwargs = self._create_request_objects('/govuk-atom', data=None, params=None)
+        response = self._perform_request("GET", url, kwargs)
+        return response.content

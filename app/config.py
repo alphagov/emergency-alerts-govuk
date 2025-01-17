@@ -4,6 +4,8 @@ from kombu import Exchange, Queue
 
 
 class Config():
+    HOST_URL = "http://localhost:6017"
+
     NOTIFICATION_QUEUE_PREFIX = os.getenv("NOTIFICATION_QUEUE_PREFIX")
     QUEUE_NAME = "govuk-alerts"
 
@@ -41,10 +43,6 @@ class Config():
         "worker_max_tasks_per_child": 20
     }
 
-    STATSD_HOST = os.getenv("STATSD_HOST")
-    STATSD_PORT = 8125
-    STATSD_ENABLED = bool(STATSD_HOST)
-
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
 
 
@@ -52,7 +50,19 @@ class Hosted(Config):
     # Prefix to identify queues in SQS
     TENANT = f"{os.environ.get('TENANT')}." if os.environ.get("TENANT") is not None else ""
     TENANT_PREFIX = f"{os.environ.get('TENANT')}-" if os.environ.get("TENANT") is not None else ""
-    ENVIRONMENT_PREFIX = os.getenv('ENVIRONMENT') if os.getenv('ENVIRONMENT') != 'development' else 'dev'
+    ENVIRONMENT = os.getenv('ENVIRONMENT')
+    ENVIRONMENT_PREFIX = ENVIRONMENT if ENVIRONMENT != 'development' else 'dev'
+
+    # If on hosted dev environment, open a bash session on the govuk-alerts instance
+    # and run `export HOST_URL=https://<your-cf-distribution-id>.cloudfront.net`
+    HOST_URL = os.environ.get("HOST_URL", "")
+    if ENVIRONMENT == "preview":
+        HOST_URL = "https://www.integration.publishing.service.gov.uk"
+    elif ENVIRONMENT == "staging":
+        HOST_URL = "https://www.staging.publishing.service.gov.uk"
+    elif ENVIRONMENT == "production":
+        HOST_URL = "https://www.gov.uk"
+
     NOTIFICATION_QUEUE_PREFIX = f"{ENVIRONMENT_PREFIX}-{TENANT_PREFIX}"
     SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
     QUEUE_NAME = "govuk-alerts"
@@ -96,10 +106,6 @@ class Hosted(Config):
         # we don't expect to get them in quick succession, so a small restart delay is acceptable.
         "worker_max_tasks_per_child": 10
     }
-
-    STATSD_HOST = os.getenv("STATSD_HOST")
-    STATSD_PORT = 8125
-    STATSD_ENABLED = bool(STATSD_HOST)
 
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
 
