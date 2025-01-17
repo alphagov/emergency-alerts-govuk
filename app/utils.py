@@ -97,10 +97,11 @@ def upload_html_to_s3(rendered_pages):
 
     for path, content in rendered_pages.items():
         current_app.logger.info("Uploading " + path)
+        content_type = "text/xml" if path.endswith(".atom") else "text/html"
         s3.put_object(
             Body=content,
             Bucket=bucket_name,
-            ContentType="text/html",
+            ContentType=content_type,
             Key=path
         )
 

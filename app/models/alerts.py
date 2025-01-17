@@ -146,7 +146,3 @@ class Alerts(SerialisedModelCollection):
     def from_yaml(cls, path=REPO / 'data.yaml'):
         with path.open() as stream:
             return yaml.safe_load(stream)['alerts']
-
-    @classmethod
-    def get_atom_feed(cls):
-        return alerts_api_client.get_atom_feed()

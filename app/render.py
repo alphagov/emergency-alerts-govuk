@@ -159,9 +159,15 @@ def _add_feed_entry(fg, alert, alert_url):
 
     host_url = current_app.config["HOST_URL"]
 
+    title = alert_url
+    if alert.areas.get("aggregate_names"):
+        title = ", ".join(alert.areas["custom_names"])
+    else:
+        title = ", ".join(alert.areas["names"])
+
     fe = fg.add_entry()
     fe.id(alert.id)
-    fe.title(", ".join(alert.areas["aggregate_names"]))
+    fe.title(title)
     fe.updated(alert.cancelled_at if alert.is_past else alert.approved_at)
     fe.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
     fe.content(alert.content)
