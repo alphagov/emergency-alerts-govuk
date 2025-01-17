@@ -125,7 +125,7 @@ def get_rendered_pages(alerts):
 
         rendered["alerts/" + target] = template.render()
 
-    rendered['alerts.atom'] = fg.atom_str(pretty=False)
+    rendered['alerts.atom'] = fg.atom_str(pretty=True)
 
     return rendered
 
