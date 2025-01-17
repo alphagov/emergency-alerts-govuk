@@ -161,7 +161,7 @@ def _add_feed_entry(fg, alert, alert_url):
 
     title = alert_url
     if alert.areas.get("aggregate_names"):
-        title = ", ".join(alert.areas["custom_names"])
+        title = ", ".join(alert.areas["aggregate_names"])
     else:
         title = ", ".join(alert.areas["names"])
 
