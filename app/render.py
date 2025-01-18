@@ -140,14 +140,15 @@ def _get_feed_generator():
     fg.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
     fg.link(
         href=f"{host_url}/alerts.atom",
-        rel="alternate",
-        title="GOV.UK Emergency Alerts Feed",
-        type="application/atom+xml"
+        rel="self",
+        hreflang="en",
+        title="Emergency Alerts Feed"
     )
-    icon_file = file_fingerprint("/alerts/assets/images/favicon.ico")
+    icon_file = file_fingerprint("/alerts/assets/images/govuk-apple-touch-icon.png")
     fg.icon(icon=f"{host_url}{icon_file}")
+    logo_file = file_fingerprint("/alerts/assets/images/govuk-opengraph-image.png")
+    fg.logo(logo=f"{host_url}{logo_file}")
     fg.subtitle("Emergency Alerts Feed")
-    fg.link(href=f"{host_url}/alerts.atom", rel="self")
     fg.language("en")
     fg.rights(
         "Released under the Open Government Licence (OGL), "
@@ -168,7 +169,7 @@ def _add_feed_entry(fg, alert, alert_url):
         title = ", ".join(alert.areas["names"])
 
     fe = fg.add_entry()
-    fe.id(alert.id)
+    fe.id(f"{host_url}/alerts/" + alert_url)
     fe.title(title)
     fe.updated(alert.cancelled_at if alert.is_past else alert.approved_at)
     fe.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
