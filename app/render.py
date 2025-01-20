@@ -143,16 +143,13 @@ def _get_feed_generator():
     fg.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
     fg.link(
         href=f"{host_url}/alerts/atom",
+        type="application/atom+xml",
         rel="self",
         hreflang="en",
         title="Emergency Alerts Feed"
     )
-    icon_file = file_fingerprint("/alerts/assets/images/favicon.ico")
-    # fg.icon(icon=f"{host_url}{icon_file}")
-    fg.icon(icon=icon_file)
-    logo_file = file_fingerprint("/alerts/assets/images/govuk-opengraph-image.png")
-    # fg.logo(logo=f"{host_url}{logo_file}")
-    fg.logo(logo=logo_file)
+    fg.icon(icon=file_fingerprint("/alerts/assets/images/favicon.ico"))
+    fg.logo(logo=file_fingerprint("/alerts/assets/images/govuk-opengraph-image.png"))
     fg.subtitle("Emergency Alerts Feed")
     fg.language("en")
     fg.rights(
