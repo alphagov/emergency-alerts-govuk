@@ -14,10 +14,12 @@
         {% for item in params['items'] %}
           {% if item.href.endswith("atom") %}
             <li>
-              {{ feed_icon(height=24) }}
-              <a class="govuk-link govuk-feed" href="{{item.href}}">
-                {{item.text}}
-              </a>
+              <div class="govuk-feed">
+                {{ feed_icon(height=22) }}
+                <a class="govuk-link" href="{{item.href}}">
+                  {{item.text}}
+                </a>
+              </div>
             </li>
           {% else %}
             <li>
