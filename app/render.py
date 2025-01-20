@@ -147,10 +147,12 @@ def _get_feed_generator():
         hreflang="en",
         title="Emergency Alerts Feed"
     )
-    icon_file = file_fingerprint("/alerts/assets/images/govuk-apple-touch-icon.png")
-    fg.icon(icon=f"{host_url}{icon_file}")
+    icon_file = file_fingerprint("/alerts/assets/images/favicon.ico")
+    # fg.icon(icon=f"{host_url}{icon_file}")
+    fg.icon(icon=icon_file)
     logo_file = file_fingerprint("/alerts/assets/images/govuk-opengraph-image.png")
-    fg.logo(logo=f"{host_url}{logo_file}")
+    # fg.logo(logo=f"{host_url}{logo_file}")
+    fg.logo(logo=logo_file)
     fg.subtitle("Emergency Alerts Feed")
     fg.language("en")
     fg.rights(
