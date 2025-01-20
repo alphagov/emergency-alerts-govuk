@@ -95,6 +95,7 @@ def get_rendered_pages(alerts):
     rendered = {}
 
     fg = _get_feed_generator()
+    feed_item_count = 0
 
     for path in all_view_paths:
         template = env.get_template(path)
@@ -105,7 +106,9 @@ def get_rendered_pages(alerts):
             for alert in alerts.public:
                 alert_url = get_url_for_alert(alert, alerts)
                 rendered["alerts/" + alert_url] = template.render({'alert_data': alert})
-                _add_feed_entry(fg, alert, alert_url)
+                if feed_item_count < 20:
+                    _add_feed_entry(fg, alert, alert_url)
+                    feed_item_count += 1
             continue
 
         # Render each alert's page in Welsh
