@@ -128,7 +128,7 @@ def get_rendered_pages(alerts):
 
         rendered["alerts/" + target] = template.render()
 
-    rendered['alerts.atom'] = fg.atom_str(pretty=True)
+    rendered['alerts/atom'] = fg.atom_str(pretty=True)
 
     return rendered
 
@@ -138,11 +138,11 @@ def _get_feed_generator():
     host_url = current_app.config["HOST_URL"]
 
     fg = FeedGenerator()
-    fg.id(f"{host_url}/alerts.atom")
+    fg.id(f"{host_url}/alerts/atom")
     fg.title("GOV.UK Emergency Alerts Service")
     fg.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
     fg.link(
-        href=f"{host_url}/alerts.atom",
+        href=f"{host_url}/alerts/atom",
         rel="self",
         hreflang="en",
         title="Emergency Alerts Feed"
