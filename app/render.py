@@ -179,7 +179,7 @@ def _add_feed_entry(fg, alert, alert_url):
     fe = fg.add_entry()
     fe.id(f"{host_url}/alerts/" + alert_url)
     fe.title(title)
-    fe.updated(alert.cancelled_at if alert.is_past else alert.approved_at)
+    # fe.updated(alert.approved_at)
     fe.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
     fe.content(alert.content)
     fe.link(href=f"{host_url}/alerts/" + alert_url)
