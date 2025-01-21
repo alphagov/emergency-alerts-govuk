@@ -148,12 +148,12 @@ def _get_feed_generator():
         hreflang="en",
         title="Emergency Alerts Feed"
     )
-    # fg.link(
-    #     href=f"{host_url}/alerts",
-    #     type="application/html",
-    #     rel="via",
-    #     title="Emergency Alerts"
-    # )
+    fg.link(
+        href=f"{host_url}/alerts",
+        type="application/html",
+        rel="via",
+        title="Emergency Alerts"
+    )
     fg.icon(icon=file_fingerprint("/alerts/assets/images/favicon.ico"))
     fg.logo(logo=file_fingerprint("/alerts/assets/images/govuk-opengraph-image.png"))
     fg.subtitle("Emergency Alerts Feed")
