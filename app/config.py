@@ -4,7 +4,7 @@ from kombu import Exchange, Queue
 
 
 class Config():
-    HOST_URL = os.environ.get("HOST_URL", "http://localhost:6017")
+    HOST_URL = os.environ.get("HOST_URL", "")
 
     NOTIFICATION_QUEUE_PREFIX = os.getenv("NOTIFICATION_QUEUE_PREFIX")
     QUEUE_NAME = "govuk-alerts"
@@ -102,6 +102,7 @@ class Hosted(Config):
 
 class Test(Config):
     DEBUG = True
+    HOST_URL = os.environ.get("HOST_URL", "http://localhost:6017")
 
     FASTLY_SERVICE_ID = "test-service-id"
     FASTLY_API_KEY = "test-api-key"
