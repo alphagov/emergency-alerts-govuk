@@ -13,7 +13,7 @@ def create_alert_dict(
     *,
     id=None,
     content=None,
-    areas=None,
+    areas={"aggregate_names": ['England']},
     channel=None,
     starts_at=None,
     approved_at=None,
