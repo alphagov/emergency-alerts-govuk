@@ -4,7 +4,7 @@ from kombu import Exchange, Queue
 
 
 class Config():
-    HOST_URL = "http://localhost:6017"
+    HOST_URL = os.environ.get("HOST_URL", "")
 
     NOTIFICATION_QUEUE_PREFIX = os.getenv("NOTIFICATION_QUEUE_PREFIX")
     QUEUE_NAME = "govuk-alerts"
@@ -52,16 +52,6 @@ class Hosted(Config):
     TENANT_PREFIX = f"{os.environ.get('TENANT')}-" if os.environ.get("TENANT") is not None else ""
     ENVIRONMENT = os.getenv('ENVIRONMENT')
     ENVIRONMENT_PREFIX = ENVIRONMENT if ENVIRONMENT != 'development' else 'dev'
-
-    # If on hosted dev environment, open a bash session on the govuk-alerts instance
-    # and run `export HOST_URL=https://<your-cf-distribution-id>.cloudfront.net`
-    HOST_URL = os.environ.get("HOST_URL", "")
-    if ENVIRONMENT == "preview":
-        HOST_URL = "https://www.integration.publishing.service.gov.uk"
-    elif ENVIRONMENT == "staging":
-        HOST_URL = "https://www.staging.publishing.service.gov.uk"
-    elif ENVIRONMENT == "production":
-        HOST_URL = "https://www.gov.uk"
 
     NOTIFICATION_QUEUE_PREFIX = f"{ENVIRONMENT_PREFIX}-{TENANT_PREFIX}"
     SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
