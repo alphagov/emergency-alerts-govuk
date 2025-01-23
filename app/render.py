@@ -183,5 +183,6 @@ def _add_feed_entry(fg, alert, alert_url):
     fe.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
     fe.content(alert.content)
     fe.link(href=f"{host_url}/alerts/" + alert_url)
-    fe.summary(alert.content[:40] + "...")
+    content = alert.content if len(alert.content) <= 40 else alert.content[:36] + "..."
+    fe.summary(content)
     fe.published(alert.approved_at)
