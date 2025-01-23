@@ -135,7 +135,7 @@ def get_rendered_pages(alerts):
 
 def _get_feed_generator():
 
-    host_url = current_app.config["HOST_URL"]
+    host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
 
     fg = FeedGenerator()
     fg.id(f"{host_url}/alerts/feed.atom")
@@ -168,7 +168,7 @@ def _get_feed_generator():
 
 def _add_feed_entry(fg, alert, alert_url):
 
-    host_url = current_app.config["HOST_URL"]
+    host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
 
     title = alert_url
     if alert.areas.get("aggregate_names"):
