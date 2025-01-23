@@ -4,7 +4,7 @@ from kombu import Exchange, Queue
 
 
 class Config():
-    HOST_URL = os.environ.get("HOST_URL", "")
+    HOST_URL = os.environ.get("HOST_URL", "http://localhost:6017")
 
     NOTIFICATION_QUEUE_PREFIX = os.getenv("NOTIFICATION_QUEUE_PREFIX")
     QUEUE_NAME = "govuk-alerts"
