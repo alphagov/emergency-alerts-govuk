@@ -37,7 +37,6 @@ def publish_with_assets():
 def _publish_html():
     alerts = Alerts.load()
     rendered_pages = get_rendered_pages(alerts)
-    current_app.logger.info("Uploading HTML to S3\n" + alerts)
     upload_html_to_s3(rendered_pages)
 
 
