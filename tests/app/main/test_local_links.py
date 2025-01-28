@@ -24,6 +24,7 @@ local_routes_except_alerts = [
     for template_path in all_view_paths
     if template_path != 'alert.html' and template_path != 'alert.cy.html'
 ]
+local_routes_except_alerts.append('/alerts/feed.atom')
 
 
 def test_local_links_lead_to_existing_routes_in_pages_with_no_alerts(client_get):
@@ -40,12 +41,14 @@ def test_local_links_lead_to_existing_routes_in_pages_with_no_alerts(client_get)
     {  # current alert
         "starts_at": dt_parse('2021-04-21T11:25:00Z'),
         "approved_at": dt_parse('2021-04-21T11:30:00Z'),
-        "cancelled_at": dt_parse('2021-04-21T12:30:00Z')
+        "cancelled_at": dt_parse('2021-04-21T12:30:00Z'),
+        "areas": {"aggregate_names": ['England']}
     },
     {  # past alert
         "starts_at": dt_parse('2021-04-20T11:25:00Z'),
         "approved_at": dt_parse('2021-04-20T11:30:00Z'),
-        "cancelled_at": dt_parse('2021-04-20T12:30:00Z')
+        "cancelled_at": dt_parse('2021-04-20T12:30:00Z'),
+        "areas": {"aggregate_names": ['England']}
     }
 ])
 @freeze_time('2021-04-21T11:30:00Z')
@@ -57,6 +60,7 @@ def test_local_links_lead_to_existing_routes_in_pages_with_alerts(
 ):
     # fake an alert existing in the routes and data
     local_routes = local_routes_except_alerts + ['/alerts/some-alert-slug'] + ['/alerts/some-alert-slug.cy']
+    local_routes += ['/alerts/feed.atom']
     mocker.patch('app.render.get_url_for_alert', return_value='some-alert-slug')
 
     alert_dict.update(alert_timings)

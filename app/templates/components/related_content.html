@@ -1,3 +1,5 @@
+{%- from "components/feed_icon.html" import feed_icon -%}
+
 {% macro related_content(params) -%}
   <aside class="app-related-items" role="complementary">
     <h2 class="govuk-heading-m" id="related-content">
@@ -10,11 +12,22 @@
     <nav role="navigation" aria-labelledby="related-content">
       <ul class="govuk-list govuk-!-font-size-16">
         {% for item in params['items'] %}
-          <li>
-            <a class="govuk-link" href="{{item.href}}">
-              {{item.text}}
-            </a>
-          </li>
+          {% if item.href.endswith("atom") %}
+            <li>
+              <div class="govuk-feed">
+                {{ feed_icon(height=22) }}
+                <a class="govuk-link" href="{{item.href}}">
+                  {{item.text}}
+                </a>
+              </div>
+            </li>
+          {% else %}
+            <li>
+              <a class="govuk-link" href="{{item.href}}">
+                {{item.text}}
+              </a>
+            </li>
+          {% endif %}
         {% endfor %}
       </ul>
     </nav>

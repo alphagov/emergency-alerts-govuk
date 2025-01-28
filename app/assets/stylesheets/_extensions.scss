@@ -38,3 +38,11 @@
 .govuk-separator {
   flex-grow: 1;
 }
+
+.govuk-feed {
+  display: flex;
+  align-items: flex-end;
+  .govuk-link {
+    margin-left: 5px;
+  }
+}

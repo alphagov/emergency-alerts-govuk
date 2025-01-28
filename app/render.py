@@ -1,4 +1,6 @@
 from emergency_alerts_utils.formatters import autolink_urls, formatted_list
+from feedgen.feed import FeedGenerator
+from flask import current_app
 from jinja2 import (
     ChoiceLoader,
     Environment,
@@ -92,6 +94,9 @@ def get_rendered_pages(alerts):
     env = setup_jinja_environment(alerts)
     rendered = {}
 
+    fg = _get_feed_generator()
+    feed_item_count = 0
+
     for path in all_view_paths:
         template = env.get_template(path)
         target = path.replace(".html", "")
@@ -101,6 +106,9 @@ def get_rendered_pages(alerts):
             for alert in alerts.public:
                 alert_url = get_url_for_alert(alert, alerts)
                 rendered["alerts/" + alert_url] = template.render({'alert_data': alert})
+                if feed_item_count < 20:
+                    _add_feed_entry(fg, alert, alert_url)
+                    feed_item_count += 1
             continue
 
         # Render each alert's page in Welsh
@@ -120,4 +128,61 @@ def get_rendered_pages(alerts):
 
         rendered["alerts/" + target] = template.render()
 
+    rendered['alerts/feed.atom'] = fg.atom_str(pretty=True)
+
     return rendered
+
+
+def _get_feed_generator():
+
+    host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
+
+    fg = FeedGenerator()
+    fg.id(f"{host_url}/alerts/feed.atom")
+    fg.title("GOV.UK Emergency Alerts Service")
+    fg.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
+    fg.link(
+        href=f"{host_url}/alerts/feed.atom",
+        type="application/atom+xml",
+        rel="self",
+        hreflang="en",
+        title="Emergency Alerts Feed"
+    )
+    fg.link(
+        href=f"{host_url}/alerts",
+        type="application/html",
+        rel="via",
+        title="Emergency Alerts"
+    )
+    fg.icon(icon=file_fingerprint("/alerts/assets/images/favicon.ico"))
+    fg.logo(logo=file_fingerprint("/alerts/assets/images/govuk-opengraph-image.png"))
+    fg.subtitle("Emergency Alerts Feed")
+    fg.language("en")
+    fg.rights(
+        "Released under the Open Government Licence (OGL), "
+        "citation of publisher and online resource required on reuse."
+    )
+
+    return fg
+
+
+def _add_feed_entry(fg, alert, alert_url):
+
+    host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
+
+    title = alert_url
+    if alert.areas.get("aggregate_names"):
+        title = ", ".join(alert.areas["aggregate_names"])
+    else:
+        title = ", ".join(alert.areas["names"])
+
+    fe = fg.add_entry()
+    fe.id(f"{host_url}/alerts/" + alert_url)
+    fe.title(title)
+    fe.updated(alert.approved_at)
+    fe.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
+    fe.content(alert.content)
+    fe.link(href=f"{host_url}/alerts/" + alert_url)
+    content = alert.content if len(alert.content) <= 40 else alert.content[:36] + "..."
+    fe.summary(content)
+    fe.published(alert.approved_at)

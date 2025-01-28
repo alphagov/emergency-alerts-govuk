@@ -24,7 +24,7 @@ def create_alert_dict(
     return {
         'id': str(id or uuid.UUID(int=0)),
         'content': content or 'Something',
-        'areas': areas or dict(),
+        'areas': areas or {"aggregate_names": ['England']},
         'channel': channel or 'severe',
         'starts_at': starts_at or dt_parse('2021-04-21T11:30:00Z'),
         'approved_at': approved_at or dt_parse('2021-04-21T11:25:00Z'),

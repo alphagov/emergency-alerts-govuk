@@ -4,6 +4,8 @@ from kombu import Exchange, Queue
 
 
 class Config():
+    GOVUK_ALERTS_HOST_URL = os.environ.get("GOVUK_ALERTS_HOST_URL", "")
+
     NOTIFICATION_QUEUE_PREFIX = os.getenv("NOTIFICATION_QUEUE_PREFIX")
     QUEUE_NAME = "govuk-alerts"
 
@@ -41,10 +43,6 @@ class Config():
         "worker_max_tasks_per_child": 20
     }
 
-    STATSD_HOST = os.getenv("STATSD_HOST")
-    STATSD_PORT = 8125
-    STATSD_ENABLED = bool(STATSD_HOST)
-
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
 
 
@@ -52,7 +50,9 @@ class Hosted(Config):
     # Prefix to identify queues in SQS
     TENANT = f"{os.environ.get('TENANT')}." if os.environ.get("TENANT") is not None else ""
     TENANT_PREFIX = f"{os.environ.get('TENANT')}-" if os.environ.get("TENANT") is not None else ""
-    ENVIRONMENT_PREFIX = os.getenv('ENVIRONMENT') if os.getenv('ENVIRONMENT') != 'development' else 'dev'
+    ENVIRONMENT = os.getenv('ENVIRONMENT')
+    ENVIRONMENT_PREFIX = ENVIRONMENT if ENVIRONMENT != 'development' else 'dev'
+
     NOTIFICATION_QUEUE_PREFIX = f"{ENVIRONMENT_PREFIX}-{TENANT_PREFIX}"
     SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
     QUEUE_NAME = "govuk-alerts"
@@ -97,15 +97,12 @@ class Hosted(Config):
         "worker_max_tasks_per_child": 10
     }
 
-    STATSD_HOST = os.getenv("STATSD_HOST")
-    STATSD_PORT = 8125
-    STATSD_ENABLED = bool(STATSD_HOST)
-
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
 
 
 class Test(Config):
     DEBUG = True
+    GOVUK_ALERTS_HOST_URL = os.environ.get("GOVUK_ALERTS_HOST_URL", "http://localhost:6017")
 
     FASTLY_SERVICE_ID = "test-service-id"
     FASTLY_API_KEY = "test-api-key"
