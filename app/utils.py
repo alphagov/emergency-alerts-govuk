@@ -78,7 +78,7 @@ def is_in_uk(simple_polygons):
     )
 
 
-def upload_html_to_s3(rendered_pages):
+def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
     host_environment = os.environ.get('HOST')
 
     if (host_environment == "hosted"):
@@ -96,7 +96,12 @@ def upload_html_to_s3(rendered_pages):
     bucket_name = os.environ.get("GOVUK_ALERTS_S3_BUCKET_NAME", "test-bucket")
 
     for path, content in rendered_pages.items():
-        current_app.logger.info("Uploading " + path)
+        current_app.logger.info(
+            "Uploading " + path,
+            extra={
+                "broadcast_event_id": broadcast_event_id
+            }
+        )
         content_type = "text/xml" if path.endswith(".atom") else "text/html"
         s3.put_object(
             Body=content,
