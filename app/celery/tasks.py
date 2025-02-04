@@ -9,7 +9,7 @@ from app.utils import purge_fastly_cache, upload_html_to_s3
 
 
 @notify_celery.task(bind=True, name="publish-govuk-alerts", max_retries=20, retry_backoff=True, retry_backoff_max=300)
-def publish_govuk_alerts(self, broadcast_event_id):
+def publish_govuk_alerts(self, broadcast_event_id=""):
     try:
         alerts = Alerts.load()
         rendered_pages = get_rendered_pages(alerts)
