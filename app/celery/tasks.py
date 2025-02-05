@@ -9,12 +9,12 @@ from app.utils import purge_fastly_cache, upload_html_to_s3
 
 
 @notify_celery.task(bind=True, name="publish-govuk-alerts", max_retries=20, retry_backoff=True, retry_backoff_max=300)
-def publish_govuk_alerts(self):
+def publish_govuk_alerts(self, broadcast_event_id=""):
     try:
         alerts = Alerts.load()
         rendered_pages = get_rendered_pages(alerts)
 
-        upload_html_to_s3(rendered_pages)
+        upload_html_to_s3(rendered_pages, broadcast_event_id)
         purge_fastly_cache()
     except Exception:
         current_app.logger.exception("Failed to publish content to gov.uk/alerts")

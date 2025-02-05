@@ -19,7 +19,7 @@ def test_publish_govuk_alerts(
     publish_govuk_alerts()
     mock_Alerts_load.assert_called_once()
     mock_get_rendered_pages.assert_called_once_with(mock_Alerts_load.return_value)
-    mock_upload_to_s3.assert_called_once_with(mock_get_rendered_pages.return_value)
+    mock_upload_to_s3.assert_called_once_with(mock_get_rendered_pages.return_value, "")
     mock_purge_fastly_cache.assert_called_once()
 
 
