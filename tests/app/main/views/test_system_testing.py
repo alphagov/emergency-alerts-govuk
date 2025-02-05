@@ -102,7 +102,6 @@ def test_system_testing_page_with_current_operator_test(
     ] == [
         'Wednesday 21 April 2021', '', 'Operator tests', 'Opt out of operator test alerts'
     ]
-    # assert not html.select('main h3')
     assert [
         normalize_spaces(p.text) for p in html.select('.govuk-grid-column-two-thirds p')[:4]
     ] == [
