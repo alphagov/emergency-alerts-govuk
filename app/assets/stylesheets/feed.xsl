@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <xsl:stylesheet
-    version="1.0"
+    version="2.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:atom="http://www.w3.org/2005/Atom"
     exclude-result-prefixes="atom"
@@ -12,43 +12,41 @@
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
                 <title>Web Feed • <xsl:value-of select="atom:feed/atom:title" /></title>
+                <!-- <link rel="stylesheet" type="text/css" href="/alerts/assets/stylesheets/main-776ef017.css"/> -->
                 <style type="text/css">
-                    body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 0;
-                    background-color: #f9f9f9;
-                    }
-                    .container {
+                    .feed {
                     width: 80%;
                     margin: 0 auto;
                     padding: 20px;
                     background-color: #fff;
                     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
                     }
-                    h1, h2, h3 {
-                    color: #333;
-                    }
+
                     .entry {
                     border-bottom: 1px solid #ddd;
                     padding: 10px 0;
                     }
+
                     .entry:last-child {
                     border-bottom: none;
                     }
+
                     .entry h3 {
                     margin: 0;
                     }
+
                     .entry p {
                     margin: 5px 0;
                     }
+
                     .entry small {
                     color: #666;
                     }
+
                 </style>
             </head>
             <body>
-                <div class="container">
+                <div class="feed">
                     <h1>
                         <xsl:value-of select="atom:feed/atom:title" />
                     </h1>
@@ -66,7 +64,7 @@
             <h3>
                 <a target="_blank">
                     <xsl:attribute name="href">
-                        <xsl:value-of select="atom:link[@rel='alternate']/@href" />
+                        <xsl:value-of select="atom:link/@href" />
                     </xsl:attribute>
                     <xsl:value-of select="atom:title" />
                 </a>

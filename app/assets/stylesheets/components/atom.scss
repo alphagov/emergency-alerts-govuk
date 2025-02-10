@@ -1,0 +1,28 @@
+.feed {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.entry {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.entry:last-child {
+  border-bottom: none;
+}
+
+.entry h3 {
+  margin: 0;
+}
+
+.entry p {
+  margin: 5px 0;
+}
+
+.entry small {
+  color: #666;
+}
