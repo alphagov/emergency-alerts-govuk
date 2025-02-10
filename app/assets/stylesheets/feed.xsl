@@ -12,11 +12,11 @@
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
                 <title><xsl:value-of select="atom:feed/atom:title" /> Web Feed</title>
-                <link rel="stylesheet" type="text/css" href="/alerts/assets/stylesheets/main-57e6db9e.css"/>
+                <link rel="stylesheet" type="text/css" href="/alerts/assets/stylesheets/main-2aabca4b.css"/>
             </head>
             <body>
                 <section>
-                    <div class="banner">
+                    <div class="govuk-inset-text">
                         <p>
                             Subscribe to this ATOM feed by copying the URL from the address bar into your
                             feed reader app. Share this feed with your Slack team by messaging:
@@ -37,8 +37,8 @@
         </html>
     </xsl:template>
     <xsl:template match="atom:feed">
-        <div class="logo">
-            <img class="logo">
+        <div class="feed-logo">
+            <img class="feed-logo">
                 <xsl:attribute name="src">
                     <xsl:value-of select="atom:icon" />
                 </xsl:attribute>
@@ -51,7 +51,7 @@
             This feed provides the latest posts from <xsl:value-of select="atom:title" />.
             <a class="head_link" target="_blank">
                 <xsl:attribute name="href">
-                    <xsl:value-of select="atom:link[@rel='alternate' and @type='text/html']/@href" />
+                    <xsl:value-of select="atom:link[@rel='alternate' and @type='application/html']/@href" />
                 </xsl:attribute>
                 Visit Website &#x2192;
             </a>
