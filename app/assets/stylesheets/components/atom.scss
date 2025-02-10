@@ -1,28 +1,50 @@
-.feed {
-  width: 80%;
+body {
+  max-width: 768px;
   margin: 0 auto;
-  padding: 20px;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 16px;
+  line-height: 1.5em;
 }
 
-.entry {
-  border-bottom: 1px solid #ddd;
-  padding: 10px 0;
+section {
+  margin: 30px 15px;
 }
 
-.entry:last-child {
-  border-bottom: none;
+div.logo {
+  text-align: center;
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+  line-height: 1.125em;
+}
+
+h2 {
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.3em;
+}
+
+.banner {
+  background: #fff5b1;
+  padding: 4px 12px;
+  margin: 0 -12px;
+}
+
+a {
+  text-decoration: none;
 }
 
 .entry h3 {
-  margin: 0;
+  margin-bottom: 0;
 }
 
 .entry p {
-  margin: 5px 0;
+  margin: 4px 0;
 }
 
-.entry small {
-  color: #666;
+code {
+  font-family: monospace;
+  background: lightgray;
 }

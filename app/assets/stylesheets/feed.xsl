@@ -11,60 +11,59 @@
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-                <title>Web Feed • <xsl:value-of select="atom:feed/atom:title" /></title>
-                <!-- <link rel="stylesheet" type="text/css" href="/alerts/assets/stylesheets/main-776ef017.css"/> -->
-                <style type="text/css">
-                    .feed {
-                    width: 80%;
-                    margin: 0 auto;
-                    padding: 20px;
-                    background-color: #fff;
-                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                    }
-
-                    .entry {
-                    border-bottom: 1px solid #ddd;
-                    padding: 10px 0;
-                    }
-
-                    .entry:last-child {
-                    border-bottom: none;
-                    }
-
-                    .entry h3 {
-                    margin: 0;
-                    }
-
-                    .entry p {
-                    margin: 5px 0;
-                    }
-
-                    .entry small {
-                    color: #666;
-                    }
-
-                </style>
+                <title><xsl:value-of select="atom:feed/atom:title" /> Web Feed</title>
+                <link rel="stylesheet" type="text/css" href="/alerts/assets/stylesheets/main-57e6db9e.css"/>
             </head>
             <body>
-                <div class="feed">
-                    <h1>
-                        <xsl:value-of select="atom:feed/atom:title" />
-                    </h1>
-                    <p>
-                        <xsl:value-of select="atom:feed/atom:subtitle" />
-                    </p>
+                <section>
+                    <div class="banner">
+                        <p>
+                            Subscribe to this ATOM feed by copying the URL from the address bar into your
+                            feed reader app. Share this feed with your Slack team by messaging:
+                            <code>
+                                /feed subscribe <xsl:value-of select="atom:feed/atom:link[@rel='self']/@href" />
+                            </code>
+                        </p>
+                    </div>
+                </section>
+                <section>
+                    <xsl:apply-templates select="atom:feed" />
+                </section>
+                <section>
+                    <h2>Recent Items</h2>
                     <xsl:apply-templates select="atom:feed/atom:entry" />
-                </div>
+                </section>
             </body>
         </html>
     </xsl:template>
-
+    <xsl:template match="atom:feed">
+        <div class="logo">
+            <img class="logo">
+                <xsl:attribute name="src">
+                    <xsl:value-of select="atom:icon" />
+                </xsl:attribute>
+            </img>
+        </div>
+        <h1>
+            <xsl:value-of select="atom:title" /> Web Feed Preview
+        </h1>
+        <p>
+            This feed provides the latest posts from <xsl:value-of select="atom:title" />.
+            <a class="head_link" target="_blank">
+                <xsl:attribute name="href">
+                    <xsl:value-of select="atom:link[@rel='alternate' and @type='text/html']/@href" />
+                </xsl:attribute>
+                Visit Website &#x2192;
+            </a>
+        </p>
+    </xsl:template>
     <xsl:template match="atom:entry">
         <div class="entry">
             <h3>
                 <a target="_blank">
                     <xsl:attribute name="href">
-                        <xsl:value-of select="atom:link/@href" />
+                        <xsl:value-of
+                            select="atom:link/@href" />
                     </xsl:attribute>
                     <xsl:value-of select="atom:title" />
                 </a>
@@ -72,7 +71,8 @@
             <p>
                 <xsl:value-of select="atom:summary" disable-output-escaping="yes" />
             </p>
-            <small>Published: <xsl:value-of select="atom:updated" /></small>
+            <small> Published: <xsl:value-of select="atom:updated" />
+            </small>
         </div>
     </xsl:template>
 </xsl:stylesheet>
