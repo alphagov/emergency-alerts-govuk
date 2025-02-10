@@ -128,7 +128,11 @@ def get_rendered_pages(alerts):
 
         rendered["alerts/" + target] = template.render()
 
-    rendered['alerts/feed.atom'] = fg.atom_str(pretty=True)
+    rendered['alerts/feed.atom'] = _add_stylesheet_attribute_to_atom(fg.atom_str(pretty=True).decode("utf-8"))
+
+    with open(REPO / 'app/assets/stylesheets/feed.xsl', "r", encoding="utf-8") as file:
+        xsl_content = file.read()
+        rendered['alerts/feed.xsl'] = xsl_content
 
     return rendered
 
@@ -141,23 +145,30 @@ def _get_feed_generator():
     fg.id(f"{host_url}/alerts/feed.atom")
     fg.title("GOV.UK Emergency Alerts Service")
     fg.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
+    fg.generator("gov.uk")
     fg.link(
         href=f"{host_url}/alerts/feed.atom",
         type="application/atom+xml",
         rel="self",
-        hreflang="en",
-        title="Emergency Alerts Feed"
+        # hreflang="en",
+        # title="Emergency Alerts Feed"
     )
     fg.link(
         href=f"{host_url}/alerts",
         type="application/html",
         rel="via",
-        title="Emergency Alerts"
+        # title="Emergency Alerts",
+    )
+    fg.link(
+        href=f"{host_url}/alerts",
+        type="application/html",
+        rel="alternate",
+        # title="GOV.UK Emergency Alerts",
     )
     fg.icon(icon=file_fingerprint("/alerts/assets/images/favicon.ico"))
     fg.logo(logo=file_fingerprint("/alerts/assets/images/govuk-opengraph-image.png"))
     fg.subtitle("Emergency Alerts Feed")
-    fg.language("en")
+    fg.language("en-US")
     fg.rights(
         "Released under the Open Government Licence (OGL), "
         "citation of publisher and online resource required on reuse."
@@ -182,7 +193,23 @@ def _add_feed_entry(fg, alert, alert_url):
     fe.updated(alert.approved_at)
     fe.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
     fe.content(alert.content)
-    fe.link(href=f"{host_url}/alerts/" + alert_url)
+    fe.link(href=f"{host_url}/alerts/" + alert_url, rel="alternate")
     content = alert.content if len(alert.content) <= 40 else alert.content[:36] + "..."
     fe.summary(content)
     fe.published(alert.approved_at)
+
+
+def _add_stylesheet_attribute_to_atom(
+    feed_string,
+    style_path="feed.xsl"
+):
+    xml_tag = '<?xml version="1.0" encoding="utf-8"?>'
+    stylesheet_tag = f'<?xml-stylesheet href="{style_path}" type="text/xsl"?>'
+
+    if feed_string.startswith("<?xml"):
+        end_of_xml_declaration = feed_string.find("?>") + 2
+        new_content = xml_tag + "\n" + stylesheet_tag + feed_string[end_of_xml_declaration:]
+    else:
+        new_content = stylesheet_tag + feed_string
+
+    return new_content
