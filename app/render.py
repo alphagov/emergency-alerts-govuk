@@ -132,6 +132,7 @@ def get_rendered_pages(alerts):
 
     with open(REPO / 'app/assets/stylesheets/feed.xsl', "r", encoding="utf-8") as file:
         xsl_content = file.read()
+        xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
         rendered['alerts/feed.xsl'] = xsl_content
 
     return rendered
@@ -143,31 +144,27 @@ def _get_feed_generator():
 
     fg = FeedGenerator()
     fg.id(f"{host_url}/alerts/feed.atom")
-    fg.title("GOV.UK Emergency Alerts Service")
+    fg.title("Emergency Alerts")
     fg.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
     fg.generator("gov.uk")
     fg.link(
         href=f"{host_url}/alerts/feed.atom",
         type="application/atom+xml",
         rel="self",
-        # hreflang="en",
-        # title="Emergency Alerts Feed"
     )
     fg.link(
         href=f"{host_url}/alerts",
         type="application/html",
         rel="via",
-        # title="Emergency Alerts",
     )
     fg.link(
         href=f"{host_url}/alerts",
         type="application/html",
         rel="alternate",
-        # title="GOV.UK Emergency Alerts",
     )
     fg.icon(icon=file_fingerprint("/alerts/assets/images/favicon.ico"))
     fg.logo(logo=file_fingerprint("/alerts/assets/images/govuk-opengraph-image.png"))
-    fg.subtitle("Emergency Alerts Feed")
+    fg.subtitle("GOV.UK Emergency Alerts")
     fg.language("en-US")
     fg.rights(
         "Released under the Open Government Licence (OGL), "
@@ -212,4 +209,10 @@ def _add_stylesheet_attribute_to_atom(
     else:
         new_content = stylesheet_tag + feed_string
 
+    return new_content
+
+
+def _add_stylesheet_link_to_xsl(xsl_content):
+    stylesheet_href = file_fingerprint("/alerts/assets/stylesheets/main.css")
+    new_content = xsl_content.replace("main.css", stylesheet_href)
     return new_content
