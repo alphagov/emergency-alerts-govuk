@@ -14,7 +14,7 @@
                 <title><xsl:value-of select="atom:feed/atom:title" /> Web Feed</title>
                 <link rel="stylesheet" type="text/css" href="main.css"/>
             </head>
-            <body>
+            <body class="govuk-template__body">
                 <header class="govuk-header" role="banner">
                     <div class="govuk-header__container govuk-width-container">
                         <div class="govuk-header__logo">
