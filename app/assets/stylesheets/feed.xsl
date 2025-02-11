@@ -17,7 +17,7 @@
             <body class="govuk-template__body">
                 <header class="govuk-header" role="banner">
                     <div class="govuk-header__container govuk-width-container">
-                        <div class="govuk-header__logo">
+                        <div class="govuk-header__logo atom-feed-height-adjust">
                             <a href="{{ params.homepageUrl | default('/') }}" class="govuk-header__link govuk-header__link--homepage">
                                 <span class="govuk-header__logotype">
                                     <svg
@@ -89,8 +89,7 @@
             <xsl:value-of select="atom:content" disable-output-escaping="yes" />
         </p>
         <p class="govuk-body-s">
-            Published: <xsl:value-of select="atom:updated" />
-            <xsl:apply-templates select="atom:updated"/>
+            Published: <xsl:apply-templates select="atom:updated"/>
         </p>
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
     </xsl:template>
