@@ -59,7 +59,7 @@
     </xsl:template>
 
     <xsl:template match="atom:feed">
-        <h1 class="govuk-heading-xl">
+        <h1 class="govuk-heading-l">
             <xsl:value-of select="atom:title" /> Web Feed Preview
         </h1>
         <p class="govuk-body">
@@ -76,7 +76,7 @@
                 Subscribe to this ATOM feed by copying the URL from the address bar into your
                 feed reader app. Share this feed with your Slack team by messaging:
                 <code>
-                    /feed subscribe <xsl:value-of select="atom:feed/atom:link[@rel='self']/@href" />
+                    /feed subscribe <xsl:value-of select="atom:link[@rel='self']/@href" />
                 </code>
             </p>
         </div>
