@@ -47,7 +47,7 @@
                     <main class="govuk-main-wrapper" role="main">
                         <xsl:apply-templates select="atom:feed" />
                         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
-                        <h2 class="govuk-heading-m">Recent Items</h2>
+                        <h2 class="govuk-heading-m">Recent Alerts</h2>
                         <xsl:apply-templates select="atom:feed/atom:entry" />
                     </main>
                 </div>
@@ -90,7 +90,17 @@
         </p>
         <p class="govuk-body-s">
             Published: <xsl:value-of select="atom:updated" />
+            <xsl:apply-templates select="atom:updated"/>
         </p>
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
     </xsl:template>
+
+    <xsl:template match="atom:updated">
+        <xsl:variable name="datetime" select="."/>
+        <xsl:variable name="date" select="substring-before($datetime, 'T')"/>
+        <xsl:variable name="time" select="substring-before(substring-after($datetime, 'T'), ':')"/>
+        <xsl:variable name="minute" select="substring(substring-after($datetime, ':'), 1, 2)"/>
+        <xsl:value-of select="concat($date, ' ', $time, ':', $minute)"/>
+    </xsl:template>
+
 </xsl:stylesheet>
