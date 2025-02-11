@@ -47,20 +47,17 @@
                     <main class="govuk-main-wrapper" role="main">
                         <xsl:apply-templates select="atom:feed" />
                         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
-                        <h2 class="govuk-heading-l">Recent Items</h2>
+                        <h2 class="govuk-heading-m">Recent Items</h2>
                         <xsl:apply-templates select="atom:feed/atom:entry" />
                     </main>
                 </div>
-
-
-
             </body>
         </html>
     </xsl:template>
 
     <xsl:template match="atom:feed">
-        <h1 class="govuk-heading-l">
-            <xsl:value-of select="atom:title" /> Web Feed Preview
+        <h1 class="govuk-heading-xl">
+            <xsl:value-of select="atom:title" /> Web Feed
         </h1>
         <p class="govuk-body">
             This feed provides the latest posts from
@@ -73,11 +70,7 @@
         </p>
         <div class="govuk-inset-text">
             <p class="govuk-body">
-                Subscribe to this ATOM feed by copying the URL from the address bar into your
-                feed reader app. Share this feed with your Slack team by messaging:
-                <code>
-                    /feed subscribe <xsl:value-of select="atom:link[@rel='self']/@href" />
-                </code>
+                Subscribe to this ATOM feed by copying the URL from the address bar into your feed reader app.
             </p>
         </div>
     </xsl:template>
@@ -98,5 +91,6 @@
         <p class="govuk-body-s">
             Published: <xsl:value-of select="atom:updated" />
         </p>
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
     </xsl:template>
 </xsl:stylesheet>
