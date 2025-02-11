@@ -48,7 +48,6 @@
                         <xsl:apply-templates select="atom:feed" />
                         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
                         <h2 class="govuk-heading-l">Recent Items</h2>
-                        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8" />
                         <xsl:apply-templates select="atom:feed/atom:entry" />
                     </main>
                 </div>
@@ -64,13 +63,13 @@
             <xsl:value-of select="atom:title" /> Web Feed Preview
         </h1>
         <p class="govuk-body">
-            This feed provides the latest posts from <xsl:value-of select="atom:subtitle" />.
+            This feed provides the latest posts from
             <a class="head_link" target="_blank">
                 <xsl:attribute name="href">
                     <xsl:value-of select="atom:link[@rel='alternate' and @type='application/html']/@href" />
                 </xsl:attribute>
-                Visit Website &#x2192;
-            </a>
+                <xsl:value-of select="atom:subtitle" />
+            </a>.
         </p>
         <div class="govuk-inset-text">
             <p class="govuk-body">
@@ -94,7 +93,7 @@
             </a>
         </h3>
         <p class="govuk-body">
-            <xsl:value-of select="atom:summary" disable-output-escaping="yes" />
+            <xsl:value-of select="atom:content" disable-output-escaping="yes" />
         </p>
         <p class="govuk-body-s">
             Published: <xsl:value-of select="atom:updated" />
