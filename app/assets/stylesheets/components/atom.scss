@@ -2,14 +2,13 @@
   padding-left: 0;
 }
 
-.atom-feed__logo-height {
+.atom-feed__logo {
+  width: auto;
   height: 34.55px;
 }
 
-.atom-feed__logo-width {
-  width: auto;
-}
-
-.atom-feed__service-font-size {
-  font-size: 1.75rem;
+.govuk-header__service-name {
+  .atom-feed__service-font-size {
+    font-size: 1.75rem;
+  }
 }
