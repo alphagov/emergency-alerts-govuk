@@ -97,7 +97,7 @@
     <xsl:template match="atom:updated">
         <xsl:variable name="datetime" select="normalize-space(.)"/>
         <xsl:variable name="date" select="substring-before($datetime, 'T')"/>
-        <xsl:variable name="time" select="substring-before(substring-after($datetime, 'T'), 'Z')"/>
+        <xsl:variable name="time" select="substring-after($datetime, 'T')"/>
         <xsl:value-of select="concat($date, ' ', substring($time, 1, 5))"/>
     </xsl:template>
 
