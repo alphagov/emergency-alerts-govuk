@@ -15,9 +15,9 @@
                 <link rel="stylesheet" type="text/css" href="main.css"/>
             </head>
             <body class="govuk-template__body">
-                <header class="govuk-header" role="banner">
+                <header class="govuk-header atom-feed__header-height" role="banner">
                     <div class="govuk-header__container govuk-width-container">
-                        <div class="govuk-header__logo atom-feed-height-adjust">
+                        <div class="govuk-header__logo atom-feed__logo-width">
                             <a href="{{ params.homepageUrl | default('/') }}" class="govuk-header__link govuk-header__link--homepage">
                                 <span class="govuk-header__logotype">
                                     <svg
@@ -36,8 +36,8 @@
                                 </span>
                             </a>
                         </div>
-                        <div class="govuk-header__content">
-                            <span class="govuk-header__service-name">
+                        <div class="govuk-header__content atom-feed__header-content-padding">
+                            <span class="govuk-header__service-name atom-feed__service-font-size">
                                 <xsl:value-of select="atom:feed/atom:title" />
                             </span>
                         </div>
