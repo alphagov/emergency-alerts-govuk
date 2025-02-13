@@ -36,8 +36,8 @@
                                 </span>
                             </a>
                         </div>
-                        <div class="govuk-header__content atom-feed__header-content-padding">
-                            <span class="govuk-header__service-name atom-feed__service-font-size">
+                        <div class="govuk-header__contenr">
+                            <span class="govuk-header__service-name">
                                 <xsl:value-of select="atom:feed/atom:title" />
                             </span>
                         </div>
