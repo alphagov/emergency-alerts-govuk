@@ -240,26 +240,14 @@ def _add_stylesheet_attribute_to_atom(
     feed_string,
     style_path="feed.xsl"
 ):
-    # stylesheet_tag = f'<?xml-stylesheet href="{style_path}" type="text/xsl"?>'
-
-    # if feed_string.startswith("<?xml"):
-    #     end_of_xml_declaration = feed_string.find("?>") + 2
-    #     new_content = feed_string[:end_of_xml_declaration] \
-    #         + "\n" + stylesheet_tag + feed_string[end_of_xml_declaration:]
-    # else:
-    #     new_content = stylesheet_tag + feed_string
-
-    # stylesheet_declaration = ET.ProcessingInstruction("xml-stylesheet", text=f'href="{style_path}" type="text/xsl"')
-    tree = ET.fromstring(feed_string.encode("utf-8"))
-    new_content = ET.tostring(
-        tree,
+    feed = ET.fromstring(feed_string.encode("utf-8"))
+    return ET.tostring(
+        feed,
         doctype=f'<?xml-stylesheet href="{style_path}" type="text/xsl"?>',
         encoding="utf-8",
         xml_declaration=True,
         pretty_print=True
     ).decode("utf-8")
-
-    return new_content
 
 
 def _add_stylesheet_link_to_xsl(xsl_content):
