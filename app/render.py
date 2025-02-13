@@ -131,7 +131,9 @@ def get_rendered_pages(alerts):
 
         rendered["alerts/" + target] = template.render()
 
-    rendered['alerts/feed.atom'] = _add_stylesheet_attribute_to_atom(fg.atom_str(pretty=True).decode("utf-8"))
+    rendered['alerts/feed.atom'] = _add_stylesheet_attribute_to_atom(
+        fg.atom_str(pretty=True).decode("utf-8")
+    )
     with open(REPO / 'app/assets/stylesheets/feed.xsl', "r", encoding="utf-8") as file:
         xsl_content = file.read()
         xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
@@ -139,7 +141,8 @@ def get_rendered_pages(alerts):
 
     rendered['alerts/feed_cy.atom'] = _add_stylesheet_attribute_to_atom(
         fg_cy.atom_str(pretty=True).decode("utf-8"),
-        style_path="feed_cy.xsl")
+        style_path="feed_cy.xsl"
+    )
     with open(REPO / 'app/assets/stylesheets/feed_cy.xsl', "r", encoding="utf-8") as file:
         xsl_content = file.read()
         xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
@@ -236,10 +239,7 @@ def _add_feed_entry(fg, alert, alert_url):
     fe.published(alert.approved_at)
 
 
-def _add_stylesheet_attribute_to_atom(
-    feed_string,
-    style_path="feed.xsl"
-):
+def _add_stylesheet_attribute_to_atom(feed_string, style_path="feed.xsl"):
     feed = ET.fromstring(feed_string.encode("utf-8"))
     return ET.tostring(
         feed,
