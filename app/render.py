@@ -94,7 +94,8 @@ def get_rendered_pages(alerts):
     env = setup_jinja_environment(alerts)
     rendered = {}
 
-    fg = _get_feed_generator()
+    fg = _get_feed_generator("EN")
+    fg_cy = _get_feed_generator("CY")
     feed_item_count = 0
 
     for path in all_view_paths:
@@ -129,47 +130,82 @@ def get_rendered_pages(alerts):
         rendered["alerts/" + target] = template.render()
 
     rendered['alerts/feed.atom'] = _add_stylesheet_attribute_to_atom(fg.atom_str(pretty=True).decode("utf-8"))
-
     with open(REPO / 'app/assets/stylesheets/feed.xsl', "r", encoding="utf-8") as file:
         xsl_content = file.read()
         xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
         rendered['alerts/feed.xsl'] = xsl_content
 
+    rendered['alerts/feed_cy.atom'] = _add_stylesheet_attribute_to_atom(fg_cy.atom_str(pretty=True).decode("utf-8"))
+    with open(REPO / 'app/assets/stylesheets/feed_cy.xsl', "r", encoding="utf-8") as file:
+        xsl_content = file.read()
+        xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
+        rendered['alerts/feed_cy.xsl'] = xsl_content
+
     return rendered
 
 
-def _get_feed_generator():
+def _get_feed_generator(lang="EN"):
 
     host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
 
     fg = FeedGenerator()
-    fg.id(f"{host_url}/alerts/feed.atom")
-    fg.title("Emergency Alerts")
-    fg.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
-    fg.generator("gov.uk")
-    fg.link(
-        href=f"{host_url}/alerts/feed.atom",
-        type="application/atom+xml",
-        rel="self",
-    )
-    fg.link(
-        href=f"{host_url}/alerts",
-        type="application/html",
-        rel="via",
-    )
-    fg.link(
-        href=f"{host_url}/alerts",
-        type="application/html",
-        rel="alternate",
-    )
-    fg.icon(icon=file_fingerprint("/alerts/assets/images/favicon.ico"))
-    fg.logo(logo=file_fingerprint("/alerts/assets/images/govuk-opengraph-image.png"))
-    fg.subtitle("GOV.UK Emergency Alerts")
-    fg.language("en-US")
-    fg.rights(
-        "Released under the Open Government Licence (OGL), "
-        "citation of publisher and online resource required on reuse."
-    )
+
+    if lang == "EN":
+        fg.id(f"{host_url}/alerts/feed.atom")
+        fg.title("Emergency Alerts")
+        fg.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
+        fg.generator("gov.uk")
+        fg.link(
+            href=f"{host_url}/alerts/feed.atom",
+            type="application/atom+xml",
+            rel="self",
+        )
+        fg.link(
+            href=f"{host_url}/alerts",
+            type="application/html",
+            rel="via",
+        )
+        fg.link(
+            href=f"{host_url}/alerts",
+            type="application/html",
+            rel="alternate",
+        )
+        fg.icon(icon=file_fingerprint("/alerts/assets/images/favicon.ico"))
+        fg.logo(logo=file_fingerprint("/alerts/assets/images/govuk-opengraph-image.png"))
+        fg.subtitle("GOV.UK Emergency Alerts")
+        fg.language("en-US")
+        fg.rights(
+            "Released under the Open Government Licence (OGL), "
+            "citation of publisher and online resource required on reuse."
+        )
+    elif lang == "CY":
+        fg.id(f"{host_url}/alerts/feed.atom.cy")
+        fg.title("Rhybuddion Argyfwng")
+        fg.author(name="Gwasanaeth Rhybuddion Argyfwng", uri="https://www.gov.uk/contact/govuk")
+        fg.generator("gov.uk")
+        fg.link(
+            href=f"{host_url}/alerts/feed.atom.cy",
+            type="application/atom+xml",
+            rel="self",
+        )
+        fg.link(
+            href=f"{host_url}/alerts/about.cy",
+            type="application/html",
+            rel="via",
+        )
+        fg.link(
+            href=f"{host_url}/alerts/about.cy",
+            type="application/html",
+            rel="alternate",
+        )
+        fg.icon(icon=file_fingerprint("/alerts/assets/images/favicon.ico"))
+        fg.logo(logo=file_fingerprint("/alerts/assets/images/govuk-opengraph-image.png"))
+        fg.subtitle("GOV.UK Rhybuddion Argyfwng")
+        fg.language("en-US")
+        fg.rights(
+            "Rhyddhawyd o dan y Drwydded Llywodraeth Agored (OGL), "
+            "dyfynnu cyhoeddwr ac adnodd ar-lein sydd ei angen ar ailddefnyddio."
+        )
 
     return fg
 
