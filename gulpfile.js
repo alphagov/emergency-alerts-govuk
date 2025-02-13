@@ -60,7 +60,7 @@ const copy = {
       return src(paths.src + 'images/**/*')
         .pipe(plugins.hash(hashOptions))
         .pipe(dest(paths.dist + 'images/'));
-  },
+  }
 };
 
 const rollupTask = (fileName) => () => {
