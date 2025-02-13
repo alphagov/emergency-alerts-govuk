@@ -187,7 +187,7 @@ def _get_feed_generator(lang="EN"):
         )
     elif lang == "CY":
         fg.id(f"{host_url}/alerts/feed.atom.cy")
-        fg.title("Rhybuddion Argyfwng")
+        fg.title("Emergency Alerts")
         fg.author(name="Gwasanaeth Rhybuddion Argyfwng", uri="https://www.gov.uk/contact/govuk")
         fg.generator("gov.uk")
         fg.link(
