@@ -109,6 +109,7 @@ def get_rendered_pages(alerts):
                 rendered["alerts/" + alert_url] = template.render({'alert_data': alert})
                 if feed_item_count < 20:
                     _add_feed_entry(fg, alert, alert_url)
+                    _add_feed_entry(fg_cy, alert, alert_url)
                     feed_item_count += 1
             continue
 
@@ -135,7 +136,9 @@ def get_rendered_pages(alerts):
         xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
         rendered['alerts/feed.xsl'] = xsl_content
 
-    rendered['alerts/feed_cy.atom'] = _add_stylesheet_attribute_to_atom(fg_cy.atom_str(pretty=True).decode("utf-8"))
+    rendered['alerts/feed_cy.atom'] = _add_stylesheet_attribute_to_atom(
+        fg_cy.atom_str(pretty=True).decode("utf-8"),
+        style_path="feed_cy.xsl")
     with open(REPO / 'app/assets/stylesheets/feed_cy.xsl', "r", encoding="utf-8") as file:
         xsl_content = file.read()
         xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
