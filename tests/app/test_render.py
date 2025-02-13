@@ -143,7 +143,7 @@ def test_get_rendered_pages_generates_atom_feed(govuk_alerts):
     assert len(pages) > 0
     assert 'alerts/feed.atom' in pages
 
-    feed_str = pages['alerts/feed.atom'].decode('utf-8').replace("\'", '"').replace("\n", "")
+    feed_str = pages['alerts/feed.atom'].replace("\'", '"').replace("\n", "")
     root = ET.fromstring(feed_str)
     namespace = {'atom': 'http://www.w3.org/2005/Atom'}
     entries = root.findall('atom:entry', namespace)
