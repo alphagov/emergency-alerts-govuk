@@ -61,11 +61,6 @@ const copy = {
         .pipe(plugins.hash(hashOptions))
         .pipe(dest(paths.dist + 'images/'));
   },
-  // xlst: () => {
-  //   return src(paths.src + 'stylesheets/feed.xsl')
-  //     .pipe(plugins.hash(hashOptions))
-  //     .pipe(dest(paths.dist + 'stylesheets/'));
-  // },
 };
 
 const rollupTask = (fileName) => () => {
@@ -131,7 +126,6 @@ const defaultTask = parallel(
   copy.govuk_frontend.images,
   copy.html5shiv,
   copy.images,
-  // copy.xlst,
   scss.compile,
   rollupTask('govuk-frontend-skip-link'),
   rollupTask('govuk-frontend-details'),
