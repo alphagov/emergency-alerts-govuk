@@ -142,25 +142,31 @@ def test_get_rendered_pages_generates_atom_feed(govuk_alerts):
     pages = get_rendered_pages(Alerts(the_days_alerts))
     assert len(pages) > 0
     assert 'alerts/feed.atom' in pages
+    assert 'alerts/feed_cy.atom' in pages
+
+    namespace = {'atom': 'http://www.w3.org/2005/Atom'}
 
     feed_str = pages['alerts/feed.atom'].replace("\'", '"').replace("\n", "")
+    assert '<?xml-stylesheet href="feed.xsl" type="text/xsl"?>' in feed_str
     root = ET.fromstring(feed_str)
-    namespace = {'atom': 'http://www.w3.org/2005/Atom'}
     entries = root.findall('atom:entry', namespace)
     assert len(entries) == 5
 
-    entry_data = []
-    for entry in entries:
-        data = {
-            'id': entry.find('atom:id', namespace).text,
-            'title': entry.find('atom:title', namespace).text,
-            'published': entry.find('atom:published', namespace).text
-        }
-        entry_data.append(data)
+    _verify_entries(entries, namespace, expected_feed_items)
 
-    assert len(entry_data) == 5
+    feed_str = pages['alerts/feed_cy.atom'].replace("\'", '"').replace("\n", "")
+    assert '<?xml-stylesheet href="feed_cy.xsl" type="text/xsl"?>' in feed_str
+    root = ET.fromstring(feed_str)
+    entries = root.findall('atom:entry', namespace)
+    assert len(entries) == 5
 
-    for i in range(0, 5):
-        assert entry_data[i]['id'] == expected_feed_items[i]['id']
-        assert entry_data[i]['title'] == expected_feed_items[i]['title']
-        assert entry_data[i]['published'] == expected_feed_items[i]['published']
+    _verify_entries(entries, namespace, expected_feed_items)
+
+
+def _verify_entries(entries, namespace, expected):
+    for i, entry in enumerate(entries):
+        assert entry.find('atom:id', namespace).text == expected[i]['id']
+        assert entry.find('atom:title', namespace).text == expected[i]['title']
+        assert entry.find('atom:published', namespace).text == expected[i]['published']
+
+    assert len(entries) == 5
