@@ -135,4 +135,5 @@ run-celery: ## Run celery
 		--pidfile=/tmp/celery.pid \
 		--prefetch-multiplier=1 \
 		--loglevel=WARNING \
-		--autoscale=8,1
+		--concurrency=1 \
+		--autoscale=1,1
