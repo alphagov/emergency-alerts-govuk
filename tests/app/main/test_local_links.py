@@ -25,6 +25,7 @@ local_routes_except_alerts = [
     if template_path != 'alert.html' and template_path != 'alert.cy.html'
 ]
 local_routes_except_alerts.append('/alerts/feed.atom')
+local_routes_except_alerts.append('/alerts/feed_cy.atom')
 
 
 def test_local_links_lead_to_existing_routes_in_pages_with_no_alerts(client_get):
@@ -60,7 +61,7 @@ def test_local_links_lead_to_existing_routes_in_pages_with_alerts(
 ):
     # fake an alert existing in the routes and data
     local_routes = local_routes_except_alerts + ['/alerts/some-alert-slug'] + ['/alerts/some-alert-slug.cy']
-    local_routes += ['/alerts/feed.atom']
+    local_routes += ['/alerts/feed.atom', '/alerts/feed_cy.atom']
     mocker.patch('app.render.get_url_for_alert', return_value='some-alert-slug')
 
     alert_dict.update(alert_timings)
