@@ -85,7 +85,7 @@
                 <xsl:value-of select="atom:title" />
             </a>
         </h3>
-        <p class="govuk-body">
+        <p class="govuk-body atom-feed__word-wrap">
             <xsl:value-of select="atom:content" disable-output-escaping="yes" />
         </p>
         <p class="govuk-body-s">
