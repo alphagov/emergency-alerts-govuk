@@ -60,7 +60,7 @@
             Porthiant Gwe <xsl:value-of select="atom:title" />
         </h1>
         <p class="govuk-body">
-            Mae'r porthwr hwn yn darparu'r postiadau diweddaraf gan
+            Mae'r porthiant hwn yn darparu'r postiadau diweddaraf gan
             <a class="head_link" target="_blank">
                 <xsl:attribute name="href">
                     <xsl:value-of select="atom:link[@rel='alternate' and @type='application/html']/@href" />
@@ -70,7 +70,7 @@
         </p>
         <div class="govuk-inset-text">
             <p class="govuk-body">
-                Tanysgrifiwch i'r porthwr ATOM hwn trwy gopïo'r URL o'r bar cyfeiriad i'ch app darllenydd porthiant.
+                Tanysgrifiwch i'r porthiant ATOM hwn trwy gopïo'r URL o'r bar cyfeiriad i'ch ap darllen porthiant.
             </p>
         </div>
     </xsl:template>
