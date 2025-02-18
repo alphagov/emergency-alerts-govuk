@@ -207,7 +207,7 @@ def _get_feed_generator(lang="EN"):
         )
         fg.icon(icon=file_fingerprint("/alerts/assets/images/favicon.ico"))
         fg.logo(logo=file_fingerprint("/alerts/assets/images/govuk-opengraph-image.png"))
-        fg.subtitle("GOV.UK Rhybuddion Argyfwng")
+        fg.subtitle("Rybuddion Argyfwng GOV.UK")
         fg.language("en-US")
         fg.rights(
             "Rhyddhawyd o dan y Drwydded Llywodraeth Agored (OGL), "
