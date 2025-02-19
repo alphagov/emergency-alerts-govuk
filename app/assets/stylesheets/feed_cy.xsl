@@ -18,7 +18,10 @@
                 <header class="govuk-header" role="banner">
                     <div class="govuk-header__container govuk-width-container">
                         <div class="govuk-header__logo atom-feed__logo-width atom-feed__logo">
-                            <a href="{{ params.homepageUrl | default('https://www.gov.uk') }}" class="govuk-header__link govuk-header__link--homepage">
+                            <a class="govuk-header__link govuk-header__link--homepage">
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="substring-before(atom:feed/atom:link[@rel='alternate' and @type='application/html']/@href, '/alerts')" />
+                                </xsl:attribute>
                                 <span class="govuk-header__logotype">
                                     <svg
                                         focusable="false"
