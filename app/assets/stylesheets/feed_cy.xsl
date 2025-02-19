@@ -57,7 +57,7 @@
 
     <xsl:template match="atom:feed">
         <h1 class="govuk-heading-xl">
-            Porthiant Gwe <xsl:value-of select="atom:title" />
+            Porthiant Gwe Rhybuddion Argyfwng
         </h1>
         <p class="govuk-body">
             Mae'r porthiant hwn yn darparu'r postiadau diweddaraf gan
