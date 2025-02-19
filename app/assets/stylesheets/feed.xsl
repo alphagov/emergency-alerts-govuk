@@ -57,7 +57,7 @@
 
     <xsl:template match="atom:feed">
         <h1 class="govuk-heading-xl">
-            <xsl:value-of select="atom:title" /> Web Feed
+            Emergency Alerts Web Feed
         </h1>
         <p class="govuk-body">
             This feed provides the latest posts from
