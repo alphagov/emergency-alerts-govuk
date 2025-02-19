@@ -48,7 +48,9 @@
                         <xsl:apply-templates select="atom:feed" />
                         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
                         <h2 class="govuk-heading-m">Recent Alerts</h2>
-                        <xsl:apply-templates select="atom:feed/atom:entry" />
+                        <xsl:apply-templates select="atom:feed/atom:entry">
+                            <xsl:sort select="atom:published" data-type="text()" order="descending"/>
+                        </xsl:apply-templates>
                     </main>
                 </div>
             </body>
