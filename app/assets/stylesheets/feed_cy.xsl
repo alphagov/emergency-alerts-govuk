@@ -18,7 +18,7 @@
                 <header class="govuk-header" role="banner">
                     <div class="govuk-header__container govuk-width-container">
                         <div class="govuk-header__logo atom-feed__logo-width atom-feed__logo">
-                            <a href="{{ params.homepageUrl | default('/') }}" class="govuk-header__link govuk-header__link--homepage">
+                            <a href="{{ params.homepageUrl | default('https://www.gov.uk') }}" class="govuk-header__link govuk-header__link--homepage">
                                 <span class="govuk-header__logotype">
                                     <svg
                                         focusable="false"
