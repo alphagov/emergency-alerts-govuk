@@ -6,11 +6,11 @@
 {%- from "components/meta_tags.html" import metaTags -%}
 {%- from "components/related_content.html" import related_content -%}
 
-{% set pageTitle = "Profi'r gwasanaeth Rhybuddion Argyfwng" %}
+{% set pageTitle = "Profi'r gwasanaeth rhybuddion argyfwng" %}
 
 {% block metaTags %}
   {{ metaTags(
-    description="About Emergency Alerts System testing",
+    description="About emergency alerts system testing",
     title=pageTitle,
     url="https://www.gov.uk/alerts/system-testing.cy"
   ) }}
@@ -165,6 +165,10 @@
           {
             "text": "Rhybuddion yn y gorffennol",
             "href": "/alerts/past-alerts.cy"
+          },
+          {
+            "text": "Optio allan o rybuddion argyfwng",
+            "href": "/alerts/opt-out.cy"
           },
           {
             "text": "Porthiant",

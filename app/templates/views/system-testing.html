@@ -6,11 +6,11 @@
 {%- from "components/meta_tags.html" import metaTags -%}
 {%- from "components/related_content.html" import related_content -%}
 
-{% set pageTitle = "Testing the Emergency Alerts service" %}
+{% set pageTitle = "Testing the emergency alerts service" %}
 
 {% block metaTags %}
   {{ metaTags(
-    description="About Emergency Alerts service testing",
+    description="About emergency alerts service testing",
     title=pageTitle,
     url="https://www.gov.uk/alerts/system-testing"
   ) }}
@@ -165,6 +165,10 @@
           {
             "text": "Past alerts",
             "href": "/alerts/past-alerts"
+          },
+          {
+            "text": "Opting out of emergency alerts",
+            "href": "/alerts/opt-out"
           },
           {
             "text": "Feed",
