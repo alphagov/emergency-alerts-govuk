@@ -11,7 +11,7 @@ from tests.conftest import create_alert_dict
 def test_system_testing_page(mocker, client_get):
     mocker.patch('app.models.alerts.PlannedTests.from_yaml', return_value=[])
     html = client_get("alerts/system-testing")
-    assert html.select_one('h1').text.strip() == "Testing the Emergency Alerts service"
+    assert html.select_one('h1').text.strip() == "Testing the emergency alerts service"
     assert html.select_one('main p').text.strip() == "Following the successful national test of the UK Emergency " \
         "Alerts system on 23 April 2023, the government and mobile network operators will be carrying out " \
         "occasional ‘operator’ tests."
@@ -67,7 +67,7 @@ def test_system_testing_page(mocker, client_get):
 def test_planned_test_summary(planned_tests, expected_p, mocker, client_get):
     mocker.patch('app.models.alerts.PlannedTests.from_yaml', return_value=planned_tests)
     html = client_get("alerts/system-testing")
-    assert html.select_one('h1').text.strip() == "Testing the Emergency Alerts service"
+    assert html.select_one('h1').text.strip() == "Testing the emergency alerts service"
     assert html.select_one('main p').text.strip() == expected_p
 
 

@@ -1,0 +1,132 @@
+{% extends "content.html" %}
+
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "govuk_frontend_jinja_overrides/templates/components/language-select/macro.html" import hmrcLanguageSelect -%}
+{%- from "components/meta_tags.html" import metaTags -%}
+{%- from "components/related_content.html" import related_content -%}
+
+{% set pageTitle = "Optio allan o rybuddion argyfwng" %}
+
+{% block metaTags %}
+  {{ metaTags(
+    description="Optio allan o rybuddion argyfwng",
+    title=pageTitle,
+    url="https://www.gov.uk/alerts/opting-out.cy"
+  ) }}
+{% endblock %}
+
+{% block pageTitleCurrent -%}
+  {{ pageTitle }}
+{%- endblock %}
+
+{% block beforeContent %}
+  <div class="govuk-grid-row govuk-subheader">
+    <div class="govuk-breadcrumbs">
+      {{ govukBreadcrumbs({
+        "items": [
+          {
+            "text": "Home",
+            "href": "https://www.gov.uk/"
+          },
+          {
+            "text": "Am Rybuddion Argyfwng",
+            "href": "/alerts/about.cy"
+          }
+        ]
+      }) }}
+    </div>
+    <div class="govuk-separator"></div>
+    <div class="govuk-language-select">
+      {{ hmrcLanguageSelect({
+        'language': 'cy',
+        'en': {
+          'href': '/alerts/opting-out'
+        }
+      }) }}
+    </div>
+  </div>
+{% endblock %}
+
+{% block mainContent %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+        {{ pageTitle }}
+      </h1>
+    </div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <p class="govuk-body">
+        Gallwch optio allan o rybuddion argyfwng, ond dylech eu cadw ymlaen er eich diogelwch eich hun. Os byddwch chi'n dal i dderbyn rhybuddion ar ôl optio allan, cysylltwch â gwneuthurwr eich dyfais i gael cymorth.
+      </p>
+      <div class="govuk-inset-text">
+        Mae ffordd wahanol o <a class="govuk-link" href="/alerts/system-testing.cy#opt-out">optio allan o rybuddion prawf gweithredydd</a>.
+      </div>
+      <h3 class="govuk-heading-l">
+        Ffonau iPhone ac Android
+      </h3>
+      <p class="govuk-body" id="opt-out">
+        I optio allan:
+      </p>
+      <ol class="govuk-list govuk-list--bullet">
+        <li>Chwiliwch am ‘rybuddion argyfwng’ yn eich gosodiadau.</li>
+        <li>Diffoddwch ‘rybuddion difrifol’ a ‘rhybuddion eithafol’.</li>
+      </ol>
+      <h3 class="govuk-heading-l">
+        Ffonau symudol eraill
+      </h3>
+      <p class="govuk-body">
+        Yn dibynnu ar fersiwn gwneuthurwr a meddalwedd eich ffôn, gellir galw gosodiadau rhybuddion brys yn enwau gwahanol, megis ‘rhybuddion argyfwng diwifr’ neu ‘ddarllediadau argyfwng’.
+      </p>
+      <p class="govuk-body">
+        Gellir dod o hyd i’r gosodiadau fel arfer mewn un o’r ffyrdd canlynol. Ewch i:
+      </p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>
+          ‘neges’, wedyn ‘gosodiadau negeseuon’, wedyn ‘rhybuddion argyfwng diwifr’, wedyn ‘rhybudd’
+        </li>
+        <li>
+          ‘gosodiadau’, wedyn ‘synau’, yna ‘uwch’, yna ‘darllediadau argyfwng’
+        </li>
+        <li>
+          ‘gosodiadau’, wedyn ‘gosodiadau cyffredinol’, wedyn ‘rhybuddion argyfwng’
+        </li>
+      </ul>
+      <p class="govuk-body">
+        Diffoddwch ‘rhybuddion difrifol’, ‘rhybuddion eithafol’ a ‘rhybuddion prawf’.
+      </p>
+    </div>
+    <div class="govuk-grid-column-one-third">
+      {{ related_content({
+        "items": [
+          {
+            "text": "Am Rybuddion Argyfwng",
+            "href": "/alerts/about.cy"
+          },
+          {
+            "text": "Sut mae'r rhybuddion argyfwng yn gweithio",
+            "href": "/alerts/how-alerts-work.cy"
+          },
+          {
+            "text": "Rhybuddion ar hyn o bryd",
+            "href": "/alerts/current-alerts.cy"
+          },
+          {
+            "text": "Rhybuddion yn y gorffennol",
+            "href": "/alerts/past-alerts.cy"
+          },
+          {
+            "text": "Profi'r gwasanaeth Rhybuddion Argyfwng",
+            "href": "/alerts/system-testing.cy"
+          },
+          {
+            "text": "Porthiant",
+            "href": "/alerts/feed_cy.atom"
+          }
+        ],
+        "language": "cy"
+      }) }}
+    </div>
+  </div>
+{% endblock %}
