@@ -10,6 +10,9 @@ CF_MANIFEST_PATH ?= /tmp/manifest.yml
 NOTIFY_CREDENTIALS ?= ~/.notify-credentials
 $(eval export CF_HOME)
 
+VIRTUALENV_ROOT := $(shell [ -z $$VIRTUAL_ENV ] && echo $$(pwd)/venv || echo $$VIRTUAL_ENV)
+PYTHON_EXECUTABLE_PREFIX := $(shell test -d "$${VIRTUALENV_ROOT}" && echo "$${VIRTUALENV_ROOT}/bin/" || echo "")
+
 NVM_VERSION := 0.39.7
 NODE_VERSION := 16.14.0
 
@@ -124,8 +127,8 @@ test:
 
 .PHONY: freeze-requirements
 freeze-requirements: ## create static requirements.txt
-	pip3 install --upgrade pip-tools
-	pip-compile requirements.in
+	${PYTHON_EXECUTABLE_PREFIX}pip3 install --upgrade setuptools pip-tools
+	${PYTHON_EXECUTABLE_PREFIX}pip-compile --strip-extras requirements.in
 
 .PHONY: run-celery
 run-celery: ## Run celery
