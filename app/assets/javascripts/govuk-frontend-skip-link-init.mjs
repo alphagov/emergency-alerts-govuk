@@ -1,3 +1,3 @@
-import govukFrontendSkipLink from './govuk-frontend-skip-link.mjs'
+import { createAll, SkipLink } from 'govuk-frontend'
 
-govukFrontendSkipLink()
+createAll(SkipLink);
