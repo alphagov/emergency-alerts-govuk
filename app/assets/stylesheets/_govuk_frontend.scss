@@ -23,5 +23,5 @@ $govuk-new-typography-scale: true;
 @import "govuk/components/inset-text/index";
 @import "govuk/components/phase-banner/index";
 
-@import "govuk/utilities/all";
-@import "govuk/overrides/all";
+@import "govuk/utilities/index";
+@import "govuk/overrides/index";
