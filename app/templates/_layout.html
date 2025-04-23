@@ -6,12 +6,10 @@
 {% block pageTitle %}{% block pageTitleCurrent %}{% endblock %} - GOV.UK{% endblock %}
 
 {% block headIcons %}
-  <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="{{ '/alerts/assets/images/favicon.ico' | file_fingerprint }}" type="image/x-icon" />
-  <link rel="mask-icon" href="{{ '/alerts/assets/images/govuk-mask-icon.svg' | file_fingerprint }}" color="#0b0c0c"> {# Hardcoded value of $govuk-black #}
-  <link rel="apple-touch-icon" sizes="180x180" href="{{ '/alerts/assets/images/govuk-apple-touch-icon-180x180.png' | file_fingerprint }}">
-  <link rel="apple-touch-icon" sizes="167x167" href="{{ '/alerts/assets/images/govuk-apple-touch-icon-167x167.png' | file_fingerprint }}">
-  <link rel="apple-touch-icon" sizes="152x152" href="{{ '/alerts/assets/images/govuk-apple-touch-icon-152x152.png' | file_fingerprint }}">
-  <link rel="apple-touch-icon" href="{{ '/alerts/assets/images/govuk-apple-touch-icon.png' | file_fingerprint }}">
+  <link rel="icon" sizes="48x48"  href="{{ '/alerts/assets/images/favicon.ico' | file_fingerprint }}">
+  <link rel="icon" sizes="any"  href="{{ '/alerts/assets/images/favicon.svg' | file_fingerprint }}" type="image/svg+xml">
+  <link rel="mask-icon" href="{{ '/alerts/assets/images/govuk-icon-mask.svg' | file_fingerprint }}"  color="#0b0c0c">
+  <link rel="apple-touch-icon" href="{{ '/alerts/assets/images/govuk-icon-180.png' | file_fingerprint }}" >
   <link rel="alternate" type="application/atom+rss" href="/alerts/feed.atom" title="GOV.UK Emergency Alerts feed">
 {% endblock %}
 
@@ -38,7 +36,6 @@
 {% endblock %}
 
 {% block header %}
-  <script async type="text/javascript" src="{{ '/alerts/assets/javascripts/govuk-frontend-skip-link.js' | file_fingerprint }}"></script>
   {{ govukHeaderOverride({
     'assetsPath': '/alerts/assets/images',
     "serviceName": "Emergency Alerts"
