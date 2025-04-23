@@ -22,7 +22,7 @@
   "license": "MIT",
   "homepage": "https://github.com/alphagov/emergency-alerts-govuk#readme",
   "dependencies": {
-    "govuk-frontend": "^4.8.0",
+    "govuk-frontend": "^5.10.0-internal.1",
     "html5shiv": "^3.7.3",
     "timeago.js": "^4.0.2"
   },
@@ -30,6 +30,7 @@
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^13.1.3",
     "better-npm-audit": "^3.7.3",
+    "braces": ">=3.0.3",
     "gulp": "^4.0.2",
     "gulp-if": "^3.0.0",
     "gulp-postcss": "^9.0.1",
@@ -46,8 +47,7 @@
     "sass": "^1.49.7",
     "standardx": "^7.0.0",
     "stylelint": "^13.13.1",
-    "stylelint-config-gds": "^0.1.0",
-    "braces": ">=3.0.3"
+    "stylelint-config-gds": "^0.1.0"
   },
   "overrides": {
     "minimist": "1.2.8",
