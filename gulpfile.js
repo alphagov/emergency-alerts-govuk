@@ -106,7 +106,8 @@ const scss = {
       .pipe(plugins.sass.sync(
         {
           includePaths: [paths.govuk_frontend],
-          outputStyle: 'compressed'
+          outputStyle: 'compressed',
+          quietDeps: true
         })
         .on('error', plugins.sass.logError))
         .pipe(plugins.gulpif(
