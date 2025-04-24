@@ -128,7 +128,6 @@ const defaultTask = parallel(
   copy.images,
   scss.compile,
   rollupTask('govuk-frontend-skip-link'),
-  rollupTask('sharing-button'),
   rollupTask('relative-dates')
 );
 
