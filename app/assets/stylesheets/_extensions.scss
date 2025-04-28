@@ -3,11 +3,46 @@
     font-weight: 700;
     font-size: 1.5rem;
   }
+  height: 60px;
+  border-bottom: none;
+  background-color: #1d70b8;
+  vertical-align: baseline;
+  border-bottom: none;
+}
+
+.govuk-header__logotype {
+  margin-top: 5px;
+  width: 158px;
+  height: auto;
+}
+
+.govuk-header-container-refresh {
+  position: relative;
+  margin-bottom: -10px;
+  padding-top: 10px
 }
 
 .govuk-footer {
   border-top: govuk-spacing(2) solid govuk-colour('blue');
 }
+
+.refresh-footer {
+  border-top: 10px solid #1d70b8;
+}
+
+.refresh-footer-crown {
+  margin-bottom: 0px;
+  color: #0b0c0c;
+}
+@media (min-width: 40.0625em) {
+  .refresh-footer-crown {
+    margin-bottom: 50px;
+  }
+}
+.refresh-footer-crown > p {
+  text-wrap: balance;
+}
+
 
 .govuk-\!-font-numeric {
   @include govuk-font($size: false, $tabular: true);
