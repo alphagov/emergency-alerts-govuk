@@ -28,6 +28,12 @@ all_view_paths = [
 ]
 
 
+def namespace(**kwargs):
+    class Namespace:
+        def __init__(self, **entries):
+            self.__dict__.update(entries)
+    return Namespace(**kwargs)
+
 @pass_context
 def jinja_filter_get_url_for_alert(jinja_context, alert):
     alerts = jinja_context['alerts']
@@ -86,6 +92,7 @@ def setup_jinja_environment(alerts):
             for item in DIST.glob('alerts/assets/fonts/*.woff2')
         ],
         'alerts': alerts,
+        "namespace": namespace
     }
 
     return env
