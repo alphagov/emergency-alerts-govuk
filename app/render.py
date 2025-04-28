@@ -34,6 +34,7 @@ def namespace(**kwargs):
             self.__dict__.update(entries)
     return Namespace(**kwargs)
 
+
 @pass_context
 def jinja_filter_get_url_for_alert(jinja_context, alert):
     alerts = jinja_context['alerts']
