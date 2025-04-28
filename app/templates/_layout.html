@@ -1,6 +1,7 @@
 {% extends "govuk_frontend_jinja/template.html" %}
 
 {%- from "govuk_frontend_jinja_overrides/templates/components/header/macro.html" import govukHeaderOverride -%}
+{%- from "govuk_frontend_jinja_overrides/templates/components/footer/macro.html" import govukFooterOverride -%}
 {%- from "govuk_frontend_jinja/components/phase-banner/macro.html" import govukPhaseBanner -%}
 
 {% block pageTitle %}{% block pageTitleCurrent %}{% endblock %} - GOV.UK{% endblock %}
@@ -43,7 +44,7 @@
   <div class="govuk-width-container">
     {{ govukPhaseBanner({
       'tag': {
-        'text': "beta"
+        'text': "BETA"
       },
       'html': 'This is a new service that is being trialled – your <a class="govuk-link" href="https://surveys.publishing.service.gov.uk/s/5M75HQ/">feedback</a> will help us to improve it.'
     }) }}
@@ -55,7 +56,7 @@
 {% endblock %}
 
 {% block footer %}
-  {{ govukFooter({
+  {{ govukFooterOverride({
     'meta': {
       'items': [
         {
