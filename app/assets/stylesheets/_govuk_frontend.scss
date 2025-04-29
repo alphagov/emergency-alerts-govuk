@@ -14,13 +14,13 @@ $govuk-new-organisation-colours: true;
 @import "govuk/objects";
 
 // section replacing @import "components/all", specifying which components to include
-@import "govuk/components/skip-link/index";
-@import "govuk/components/header/index";
-@import "govuk/components/footer/index";
-@import "govuk/components/breadcrumbs/index";
-@import "govuk/components/button/index";
-@import "govuk/components/inset-text/index";
-@import "govuk/components/phase-banner/index";
+@import "govuk/components/skip-link";
+@import "govuk/components/header";
+@import "govuk/components/footer";
+@import "govuk/components/breadcrumbs";
+@import "govuk/components/button";
+@import "govuk/components/inset-text";
+@import "govuk/components/phase-banner";
 
-@import "govuk/utilities/index";
-@import "govuk/overrides/index";
+@import "govuk/utilities";
+@import "govuk/overrides";
