@@ -93,7 +93,7 @@ def test_index_page_shows_announcements(
 
 
 def test_index_page_content_security_policy_sha(client_get):
-    script_sha256_base64_encoded = b"+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU="
+    script_sha256_base64_encoded = b"GUQ5ad8JK5KmEWmROf3LZd9ge94daqNvd8xy9YS1iDw="
 
     html = client_get("alerts")
     inline_script = html.select_one('body > script')
