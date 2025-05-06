@@ -44,8 +44,10 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-cryptography==44.0.3
-    # via moto
+cryptography==43.0.3
+    # via
+    #   moto
+    #   pyopenssl
 docopt==0.6.2
     # via notifications-python-client
 feedgen==1.0.0
@@ -109,6 +111,8 @@ pyjwt==2.8.0
     # via
     #   -r requirements.in
     #   notifications-python-client
+pyopenssl==24.2.1
+    # via -r requirements.in
 pytest==8.2.2
     # via
     #   -r requirements.in
