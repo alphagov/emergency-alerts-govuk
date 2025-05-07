@@ -140,3 +140,8 @@ run-celery: ## Run celery
 		--loglevel=WARNING \
 		--concurrency=1 \
 		--autoscale=1,1
+
+.PHONY: uninstall-packages
+uninstall-packages:
+	python -m pip uninstall emergency-alerts-utils -y
+	python -m pip freeze | xargs python -m pip uninstall -y
