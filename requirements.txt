@@ -45,9 +45,7 @@ click-plugins==1.1.1
 click-repl==0.3.0
     # via celery
 cryptography==44.0.3
-    # via
-    #   moto
-    #   pyopenssl
+    # via moto
 docopt==0.6.2
     # via notifications-python-client
 feedgen==1.0.0
@@ -113,8 +111,6 @@ pyjwt==2.8.0
     # via
     #   -r requirements.in
     #   notifications-python-client
-pyopenssl==25.0.0
-    # via -r requirements.in
 pytest==8.2.2
     # via
     #   -r requirements.in
@@ -151,8 +147,6 @@ six==1.17.0
     # via python-dateutil
 soupsieve==2.7
     # via beautifulsoup4
-typing-extensions==4.13.2
-    # via pyopenssl
 tzdata==2025.2
     # via kombu
 urllib3==2.4.0
