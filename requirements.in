@@ -14,6 +14,7 @@ certifi==2025.4.26
 pyjwt==2.8.0
 feedgen==1.0.0
 pyOpenSSL==25.0.0
+lxml==5.2.2
 
 # Packages for testing
 isort==5.13.2
