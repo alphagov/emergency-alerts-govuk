@@ -4,6 +4,8 @@
 {%- from "govuk_frontend_jinja_overrides/templates/components/footer/macro.html" import govukFooterOverride -%}
 {%- from "govuk_frontend_jinja/components/phase-banner/macro.html" import govukPhaseBanner -%}
 
+{% set govukRebrand = true %}
+
 {% block pageTitle %}{% block pageTitleCurrent %}{% endblock %} - GOV.UK{% endblock %}
 
 {% block headIcons %}
