@@ -137,9 +137,8 @@ run-celery: ## Run celery
 		--uid=$(shell id -u easuser) \
 		--pidfile=/tmp/celery.pid \
 		--prefetch-multiplier=1 \
-		--loglevel=WARNING \
-		--concurrency=1 \
-		--autoscale=1,1
+		--loglevel=INFO \
+		--autoscale=8,1
 
 .PHONY: uninstall-packages
 uninstall-packages:
