@@ -29,7 +29,7 @@ class Config():
         # "broker_url": f"https://sqs.{BROADCASTS_AWS_REGION}.amazonaws.com",
         "broker_transport": "sqs",
         "broker_transport_options": {
-            # "region": BROADCASTS_AWS_REGION,
+            "region": BROADCASTS_AWS_REGION,
             # "queue_name_prefix": NOTIFICATION_QUEUE_PREFIX,
             "predefined_queues": {
                 QUEUE_NAME: {
@@ -46,7 +46,7 @@ class Config():
         # Restart workers after a few tasks have been executed - this will help prevent any memory leaks
         # (not that we should be encouraging sloppy memory management). Although the tasks are time-critical,
         # we don't expect to get them in quick succession, so a small restart delay is acceptable.
-        "worker_max_tasks_per_child": 20
+        "worker_max_tasks_per_child": 10
     }
 
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
@@ -80,22 +80,24 @@ class Hosted(Config):
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
     CELERY = {
-        "broker_url": "sqs://",
+        # "broker_url": "sqs://",
         "broker_transport": "sqs",
         "broker_transport_options": {
             "region": BROADCASTS_AWS_REGION,
             "predefined_queues": {
                 QUEUE_NAME: {
                     "url": f"{SQS_QUEUE_BASE_URL}/{NOTIFICATION_QUEUE_PREFIX}govuk-alerts",
-                    "backoff_policy": SQS_QUEUE_BACKOFF_POLICY
-                }
-            }
+                    # "backoff_policy": SQS_QUEUE_BACKOFF_POLICY
+                },
+            },
+            "is_secure": True,
+            "task_acks_late": True,
         },
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
-        "task_queues": [
-            Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)
-        ],
+        # "task_queues": [
+        #     Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)
+        # ],
         "worker_log_format": "[%(levelname)s] %(message)s",
         # Restart workers after a few tasks have been executed - this will help prevent any memory leaks
         # (not that we should be encouraging sloppy memory management). Although the tasks are time-critical,
