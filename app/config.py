@@ -25,20 +25,24 @@ class Config():
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
     CELERY = {
-        "broker":"sqs://",
-        "broker_url": f"https://sqs.{BROADCASTS_AWS_REGION}.amazonaws.com",
+        # "broker":"sqs://",
+        # "broker_url": f"https://sqs.{BROADCASTS_AWS_REGION}.amazonaws.com",
         "broker_transport": "sqs",
         "broker_transport_options": {
-            "region": BROADCASTS_AWS_REGION,
-            "visibility_timeout": 310,
-            "queue_name_prefix": NOTIFICATION_QUEUE_PREFIX,
-            "wait_time_seconds": 20,  # enable long polling, with a wait time of 20 seconds
+            # "region": BROADCASTS_AWS_REGION,
+            # "queue_name_prefix": NOTIFICATION_QUEUE_PREFIX,
+            "predefined_queues": {
+                QUEUE_NAME: {
+                    "url": f"https://sqs.{BROADCASTS_AWS_REGION}.amazonaws.com/{NOTIFICATION_QUEUE_PREFIX}-{QUEUE_NAME}",
+                }
+            },
+            "is_secure": True,
+            "task_acks_late": True,
+            # "wait_time_seconds": 20,  # enable long polling, with a wait time of 20 seconds
         },
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
-        "task_queues": [
-            Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)
-        ],
+        # "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
         # Restart workers after a few tasks have been executed - this will help prevent any memory leaks
         # (not that we should be encouraging sloppy memory management). Although the tasks are time-critical,
         # we don't expect to get them in quick succession, so a small restart delay is acceptable.
