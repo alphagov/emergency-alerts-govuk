@@ -25,14 +25,16 @@ class Config():
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
     CELERY = {
-        "broker_url": "sqs://",
+        "broker":"sqs://",
+        "broker_url": f"https://sqs.{BROADCASTS_AWS_REGION}.amazonaws.com",
+        "broker_transport": "sqs",
         "broker_transport_options": {
             "region": BROADCASTS_AWS_REGION,
             "visibility_timeout": 310,
             "queue_name_prefix": NOTIFICATION_QUEUE_PREFIX,
             "wait_time_seconds": 20,  # enable long polling, with a wait time of 20 seconds
         },
-        "timezone": "Europe/London",
+        "timezone": "UTC",
         "imports": ["app.celery.tasks"],
         "task_queues": [
             Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)
