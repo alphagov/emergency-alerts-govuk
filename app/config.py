@@ -86,8 +86,8 @@ class Hosted(Config):
             "region": BROADCASTS_AWS_REGION,
             "predefined_queues": {
                 QUEUE_NAME: {
-                    "url": f"{SQS_QUEUE_BASE_URL}/{NOTIFICATION_QUEUE_PREFIX}govuk-alerts",
-                    # "backoff_policy": SQS_QUEUE_BACKOFF_POLICY
+                    # "url": f"{SQS_QUEUE_BASE_URL}/{NOTIFICATION_QUEUE_PREFIX}govuk-alerts",
+                    "url": f"https://sqs.{BROADCASTS_AWS_REGION}.amazonaws.com/{NOTIFICATION_QUEUE_PREFIX}-{QUEUE_NAME}",
                 },
             },
             "is_secure": True,
