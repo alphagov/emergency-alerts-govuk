@@ -42,7 +42,7 @@ class Config():
         },
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
-        # "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
+        "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
         # Restart workers after a few tasks have been executed - this will help prevent any memory leaks
         # (not that we should be encouraging sloppy memory management). Although the tasks are time-critical,
         # we don't expect to get them in quick succession, so a small restart delay is acceptable.
