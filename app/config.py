@@ -6,14 +6,14 @@ from kombu import Exchange, Queue
 class Config():
     GOVUK_ALERTS_HOST_URL = os.environ.get("GOVUK_ALERTS_HOST_URL", "")
 
-    NOTIFICATION_QUEUE_PREFIX = os.getenv("NOTIFICATION_QUEUE_PREFIX")
+    QUEUE_PREFIX = os.getenv("NOTIFICATION_QUEUE_PREFIX")
     QUEUE_NAME = "govuk-alerts"
 
     EAS_APP_NAME = "govuk-alerts"
 
     BROADCASTS_AWS_ACCESS_KEY_ID = os.getenv("BROADCASTS_AWS_ACCESS_KEY_ID")
     BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
-    BROADCASTS_AWS_REGION = os.getenv("AWS_REGION", "eu-west-2")
+    AWS_REGION = os.getenv("AWS_REGION", "eu-west-2")
     GOVUK_ALERTS_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_S3_BUCKET_NAME")
 
     FASTLY_SERVICE_ID = os.getenv("FASTLY_SERVICE_ID")
@@ -26,14 +26,14 @@ class Config():
 
     CELERY = {
         "broker":"sqs://",
-        # "broker_url": f"https://sqs.{BROADCASTS_AWS_REGION}.amazonaws.com",
+        # "broker_url": f"https://sqs.{AWS_REGION}.amazonaws.com",
         "broker_transport": "sqs",
         "broker_transport_options": {
-            "region": BROADCASTS_AWS_REGION,
-            # "queue_name_prefix": NOTIFICATION_QUEUE_PREFIX,
+            "region": AWS_REGION,
+            # "queue_name_prefix": QUEUE_PREFIX,
             "predefined_queues": {
                 QUEUE_NAME: {
-                    "url": f"https://sqs.{BROADCASTS_AWS_REGION}.amazonaws.com/{NOTIFICATION_QUEUE_PREFIX}-{QUEUE_NAME}",
+                    "url": f"https://sqs.{AWS_REGION}.amazonaws.com/{QUEUE_PREFIX}-{QUEUE_NAME}",
                 }
             },
             # "wait_time_seconds": 20,  # enable long polling, with a wait time of 20 seconds
@@ -57,7 +57,7 @@ class Hosted(Config):
     ENVIRONMENT = os.getenv('ENVIRONMENT')
     ENVIRONMENT_PREFIX = ENVIRONMENT if ENVIRONMENT != 'development' else 'dev'
 
-    NOTIFICATION_QUEUE_PREFIX = f"{ENVIRONMENT_PREFIX}-{TENANT_PREFIX}"
+    QUEUE_PREFIX = f"{ENVIRONMENT_PREFIX}-{TENANT_PREFIX}"
     SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
     QUEUE_NAME = "govuk-alerts"
     SQS_QUEUE_BACKOFF_POLICY = {1: 1, 2: 2, 3: 4, 4: 8, 5: 16, 6: 32, 7: 64, 8: 128}
@@ -66,7 +66,7 @@ class Hosted(Config):
 
     BROADCASTS_AWS_ACCESS_KEY_ID = os.getenv("BROADCASTS_AWS_ACCESS_KEY_ID")
     BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
-    BROADCASTS_AWS_REGION = os.getenv("AWS_REGION", "eu-west-2")
+    AWS_REGION = os.getenv("AWS_REGION", "eu-west-2")
     GOVUK_ALERTS_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_S3_BUCKET_NAME")
 
     FASTLY_SERVICE_ID = os.getenv("FASTLY_SERVICE_ID")
@@ -82,10 +82,10 @@ class Hosted(Config):
         "broker":"sqs://",
         "broker_transport": "sqs",
         "broker_transport_options": {
-            "region": BROADCASTS_AWS_REGION,
+            "region": AWS_REGION,
             "predefined_queues": {
                 QUEUE_NAME: {
-                    "url": f"{SQS_QUEUE_BASE_URL}/{NOTIFICATION_QUEUE_PREFIX}{QUEUE_NAME}",
+                    "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}{QUEUE_NAME}",
                     "backoff_policy": SQS_QUEUE_BACKOFF_POLICY
                 },
             },

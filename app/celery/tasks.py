@@ -27,6 +27,7 @@ def trigger_govuk_alerts_healthcheck():
         time_stamp = int(time.time())
         with open("/eas/emergency-alerts-govuk/celery-beat-healthcheck", mode="w") as file:
             file.write(str(time_stamp))
+        current_app.logger.info(f"Health-check timestamp written ({time_stamp})")
     except Exception:
         current_app.logger.exception("Unable to generate health-check timestamp")
         raise
