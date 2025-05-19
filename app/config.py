@@ -81,13 +81,14 @@ class Hosted(Config):
 
     CELERY = {
         # "broker_url": "sqs://",
+        "broker":"sqs://",
         "broker_transport": "sqs",
         "broker_transport_options": {
             "region": BROADCASTS_AWS_REGION,
             "predefined_queues": {
                 QUEUE_NAME: {
                     # "url": f"{SQS_QUEUE_BASE_URL}/{NOTIFICATION_QUEUE_PREFIX}govuk-alerts",
-                    "url": f"https://sqs.{BROADCASTS_AWS_REGION}.amazonaws.com/{NOTIFICATION_QUEUE_PREFIX}-{QUEUE_NAME}",
+                    "url": f"https://sqs.{BROADCASTS_AWS_REGION}.amazonaws.com/{NOTIFICATION_QUEUE_PREFIX}{QUEUE_NAME}",
                 },
             },
             "is_secure": True,
