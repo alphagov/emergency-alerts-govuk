@@ -95,9 +95,7 @@ class Hosted(Config):
         },
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
-        # "task_queues": [
-        #     Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)
-        # ],
+        "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
         "worker_log_format": "[%(levelname)s] %(message)s",
         # Restart workers after a few tasks have been executed - this will help prevent any memory leaks
         # (not that we should be encouraging sloppy memory management). Although the tasks are time-critical,
