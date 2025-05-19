@@ -138,8 +138,7 @@ run-celery: ## Run celery
 		--pidfile=/tmp/celery_worker.pid \
 		--prefetch-multiplier=1 \
 		--loglevel=INFO \
-		--autoscale=8,1 \
-		--hostname=0.0.0.0
+		--autoscale=8,1
 
 .PHONY: uninstall-packages
 uninstall-packages:
