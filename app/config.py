@@ -36,8 +36,6 @@ class Config():
                     "url": f"https://sqs.{BROADCASTS_AWS_REGION}.amazonaws.com/{NOTIFICATION_QUEUE_PREFIX}-{QUEUE_NAME}",
                 }
             },
-            "is_secure": True,
-            "task_acks_late": True,
             # "wait_time_seconds": 20,  # enable long polling, with a wait time of 20 seconds
         },
         "timezone": "UTC",
@@ -87,12 +85,10 @@ class Hosted(Config):
             "region": BROADCASTS_AWS_REGION,
             "predefined_queues": {
                 QUEUE_NAME: {
-                    # "url": f"{SQS_QUEUE_BASE_URL}/{NOTIFICATION_QUEUE_PREFIX}govuk-alerts",
-                    "url": f"https://sqs.{BROADCASTS_AWS_REGION}.amazonaws.com/{NOTIFICATION_QUEUE_PREFIX}{QUEUE_NAME}",
+                    "url": f"{SQS_QUEUE_BASE_URL}/{NOTIFICATION_QUEUE_PREFIX}{QUEUE_NAME}",
+                    "backoff_policy": SQS_QUEUE_BACKOFF_POLICY
                 },
             },
-            "is_secure": True,
-            "task_acks_late": True,
         },
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
