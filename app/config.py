@@ -30,16 +30,10 @@ class Config():
             "region": AWS_REGION,
             "visibility_timeout": 310,
             "queue_name_prefix": QUEUE_PREFIX,
-            "wait_time_seconds": 20,  # enable long polling, with a wait time of 20 seconds
         },
         "timezone": "Europe/London",
         "imports": ["app.celery.tasks"],
-        "task_queues": [
-            Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)
-        ],
-        # Restart workers after a few tasks have been executed - this will help prevent any memory leaks
-        # (not that we should be encouraging sloppy memory management). Although the tasks are time-critical,
-        # we don't expect to get them in quick succession, so a small restart delay is acceptable.
+        "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
         "worker_max_tasks_per_child": 20
     }
 
@@ -56,7 +50,7 @@ class Hosted(Config):
     QUEUE_PREFIX = f"{ENVIRONMENT_PREFIX}-{TENANT_PREFIX}"
     SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
     QUEUE_NAME = "govuk-alerts"
-    SQS_QUEUE_BACKOFF_POLICY = {1: 1, 2: 2, 3: 4, 4: 8, 5: 16, 6: 32, 7: 64, 8: 128}
+    # SQS_QUEUE_BACKOFF_POLICY = {1: 1, 2: 2, 3: 4, 4: 8, 5: 16, 6: 32, 7: 64, 8: 128}
 
     EAS_APP_NAME = "govuk-alerts"
 
@@ -73,25 +67,24 @@ class Hosted(Config):
     NOTIFY_API_CLIENT_SECRET = os.environ.get("NOTIFY_API_CLIENT_SECRET")
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
+    PREDEFINED_SQS_QUEUES = {
+        QUEUE_NAME: {
+            "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}{QUEUE_NAME}"
+            # "backoff_policy": SQS_QUEUE_BACKOFF_POLICY
+        }
+    }    
+
     CELERY = {
         # "broker_url": "sqs://", # 1. looked ok
         "broker_transport": "sqs",
         "broker_transport_options": {
             "region": AWS_REGION,
-            "predefined_queues": {
-                QUEUE_NAME: {
-                    "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}{QUEUE_NAME}",
-                    "backoff_policy": SQS_QUEUE_BACKOFF_POLICY
-                }
-            }
+            "predefined_queues": PREDEFINED_SQS_QUEUES,
         },
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
         "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
-        "worker_log_format": "[%(levelname)s/%(processName)s] %(message)s",
-        # Restart workers after a few tasks have been executed - this will help prevent any memory leaks
-        # (not that we should be encouraging sloppy memory management). Although the tasks are time-critical,
-        # we don't expect to get them in quick succession, so a small restart delay is acceptable.
+        "worker_hijack_root_logger": False,
         "worker_max_tasks_per_child": 10
     }
 
