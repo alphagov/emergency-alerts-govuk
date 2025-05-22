@@ -138,7 +138,8 @@ run-celery: ## Run celery
 		--pidfile=/tmp/celery.pid \
 		--prefetch-multiplier=1 \
 		--loglevel=INFO \
-		--autoscale=8,1
+		--autoscale=8,1 \
+		--hostname='eas-govuk-alerts@%h'
 
 .PHONY: uninstall-packages
 uninstall-packages:
