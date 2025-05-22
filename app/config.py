@@ -74,7 +74,8 @@ class Hosted(Config):
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
     CELERY = {
-        "broker_url": "sqs://",
+        # "broker_url": "sqs://", # 1. looked ok
+        "broker_url": f"sqs://sqs.{AWS_REGION}.amazonaws.com",
         "broker_transport": "sqs",
         "broker_transport_options": {
             "region": AWS_REGION,
