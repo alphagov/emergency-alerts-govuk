@@ -80,17 +80,15 @@ class Hosted(Config):
             "region": AWS_REGION,
             "predefined_queues": {
                 QUEUE_NAME: {
-                    "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}govuk-alerts",
+                    "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}{QUEUE_NAME}",
                     "backoff_policy": SQS_QUEUE_BACKOFF_POLICY
                 }
             }
         },
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
-        "task_queues": [
-            Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)
-        ],
-        "worker_log_format": "[%(levelname)s] %(message)s",
+        "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
+        "worker_log_format": "[%(levelname)s/%(processName)s] %(message)s",
         # Restart workers after a few tasks have been executed - this will help prevent any memory leaks
         # (not that we should be encouraging sloppy memory management). Although the tasks are time-critical,
         # we don't expect to get them in quick succession, so a small restart delay is acceptable.
