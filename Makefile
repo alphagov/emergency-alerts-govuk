@@ -139,7 +139,7 @@ run-celery: ## Run celery
 		--prefetch-multiplier=1 \
 		--loglevel=DEBUG \
 		--autoscale=8,1 \
-		--hostname='eas-govuk-alerts@%h'
+		--hostname='celery@%h'
 
 .PHONY: uninstall-packages
 uninstall-packages:
