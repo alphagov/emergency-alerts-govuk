@@ -75,12 +75,14 @@ class Hosted(Config):
     }    
 
     CELERY = {
-        # "broker_url": "sqs://", # 1. looked ok
+        # "broker_url": "sqs://", # 1. looked ok, but comment out and try 2.
         "broker_url": f"sqs://sqs.{AWS_REGION}.amazonaws.com", # 2. try this
         "broker_transport": "sqs",
         "broker_transport_options": {
             "region": AWS_REGION,
             "predefined_queues": PREDEFINED_SQS_QUEUES,
+            "is_secure": True,                                 # 2. also this
+            "task_acks_late": True,                            # 2. and this
         },
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
