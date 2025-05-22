@@ -1,5 +1,6 @@
 import os
 
+from flask import current_app
 from kombu import Exchange, Queue
 
 
@@ -70,19 +71,30 @@ class Hosted(Config):
     PREDEFINED_SQS_QUEUES = {
         QUEUE_NAME: {
             "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}{QUEUE_NAME}"
-            # "backoff_policy": SQS_QUEUE_BACKOFF_POLICY
         }
     }    
 
+    from kombu.utils.url import safequote
+    aws_access_key = safequote(BROADCASTS_AWS_ACCESS_KEY_ID)
+    aws_secret_key = safequote(BROADCASTS_AWS_SECRET_ACCESS_KEY)
+
+    BROKER_URL = "sqs://{aws_access_key}:{aws_secret_key}@".format(
+        aws_access_key=aws_access_key, aws_secret_key=aws_secret_key,
+    )
+    current_app.logger.info(
+        "Celery config",
+        extra={"broker_url": BROKER_URL},
+    )
+
     CELERY = {
-        # "broker_url": "sqs://", # 1. looked ok, but comment out and try 2.
-        "broker_url": f"sqs://sqs.{AWS_REGION}.amazonaws.com", # 2. try this
+        # "broker_url": f"sqs://sqs.{AWS_REGION}.amazonaws.com", # try this
+        "broker_url": BROKER_URL,
         "broker_transport": "sqs",
         "broker_transport_options": {
             "region": AWS_REGION,
             "predefined_queues": PREDEFINED_SQS_QUEUES,
-            "is_secure": True,                                 # 2. also this
-            "task_acks_late": True,                            # 2. and this
+            "is_secure": True,
+            "task_acks_late": True,
         },
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
