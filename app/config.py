@@ -83,6 +83,7 @@ class Hosted(Config):
         "broker_transport": "sqs",
         "broker_transport_options": {
             "region": AWS_REGION,
+            "queue_name_prefix": QUEUE_PREFIX,
             # "predefined_queues": {
             #     QUEUE_NAME: {
             #         "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}{QUEUE_NAME}",
