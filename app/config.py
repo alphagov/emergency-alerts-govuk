@@ -76,6 +76,7 @@ class Hosted(Config):
 
     CELERY = {
         # "broker_url": "sqs://", # 1. looked ok
+        "broker_url": f"sqs://sqs.{AWS_REGION}.amazonaws.com", # 2. try this
         "broker_transport": "sqs",
         "broker_transport_options": {
             "region": AWS_REGION,
