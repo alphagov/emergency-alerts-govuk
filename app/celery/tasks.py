@@ -21,8 +21,8 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
         self.retry(queue=current_app.config['QUEUE_NAME'])
 
 
-@notify_celery.task(bind=True, name="trigger-govuk-alerts-healthcheck")
-def trigger_govuk_alerts_healthcheck(self):
+@notify_celery.task(name="trigger-govuk-alerts-healthcheck")
+def trigger_govuk_alerts_healthcheck():
     try:
         time_stamp = int(time.time())
         with open("/eas/emergency-alerts-govuk/celery-beat-healthcheck", mode="w") as file:

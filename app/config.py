@@ -25,26 +25,22 @@ class Config():
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
     CELERY = {
-        # "broker":"sqs://",
-        "broker_url": f"https://sqs.{AWS_REGION}.amazonaws.com",
-        "broker_transport": "sqs",
+        "broker_url": "sqs://",
         "broker_transport_options": {
             "region": AWS_REGION,
+            "visibility_timeout": 310,
             "queue_name_prefix": QUEUE_PREFIX,
-            # "predefined_queues": {
-            #     QUEUE_NAME: {
-            #         "url": f"https://sqs.{AWS_REGION}.amazonaws.com/{QUEUE_PREFIX}-{QUEUE_NAME}",
-            #     }
-            # },
-            # "wait_time_seconds": 20,  # enable long polling, with a wait time of 20 seconds
+            "wait_time_seconds": 20,  # enable long polling, with a wait time of 20 seconds
         },
-        "timezone": "UTC",
+        "timezone": "Europe/London",
         "imports": ["app.celery.tasks"],
-        "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
+        "task_queues": [
+            Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)
+        ],
         # Restart workers after a few tasks have been executed - this will help prevent any memory leaks
         # (not that we should be encouraging sloppy memory management). Although the tasks are time-critical,
         # we don't expect to get them in quick succession, so a small restart delay is acceptable.
-        "worker_max_tasks_per_child": 10
+        "worker_max_tasks_per_child": 20
     }
 
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
@@ -78,22 +74,22 @@ class Hosted(Config):
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
     CELERY = {
-        # "broker":"sqs://",
-        "broker_url": f"https://sqs.{AWS_REGION}.amazonaws.com",
+        "broker_url": "sqs://",
         "broker_transport": "sqs",
         "broker_transport_options": {
             "region": AWS_REGION,
-            "queue_name_prefix": QUEUE_PREFIX,
-            # "predefined_queues": {
-            #     QUEUE_NAME: {
-            #         "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}{QUEUE_NAME}",
-            #         "backoff_policy": SQS_QUEUE_BACKOFF_POLICY
-            #     },
-            # },
+            "predefined_queues": {
+                QUEUE_NAME: {
+                    "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}govuk-alerts",
+                    "backoff_policy": SQS_QUEUE_BACKOFF_POLICY
+                }
+            }
         },
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
-        "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
+        "task_queues": [
+            Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)
+        ],
         "worker_log_format": "[%(levelname)s] %(message)s",
         # Restart workers after a few tasks have been executed - this will help prevent any memory leaks
         # (not that we should be encouraging sloppy memory management). Although the tasks are time-critical,
