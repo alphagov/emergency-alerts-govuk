@@ -136,6 +136,7 @@ run-celery: ## Run celery
 		-A run_celery.notify_celery worker \
 		--uid=$(shell id -u easuser) \
 		--pidfile=/tmp/celery_worker.pid \
+		--queues=govuk-alerts \
 		--prefetch-multiplier=1 \
 		--loglevel=DEBUG \
 		--autoscale=8,1 \
