@@ -84,7 +84,7 @@ class Hosted(Config):
         },
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
-        # "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
+        "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
         "worker_hijack_root_logger": False,
         "worker_max_tasks_per_child": 10
     }
