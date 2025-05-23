@@ -79,13 +79,12 @@ class Hosted(Config):
         "broker_transport_options": {
             "region": AWS_REGION,
             "predefined_queues": PREDEFINED_SQS_QUEUES,
-            "queue_name_prefix": QUEUE_PREFIX,
             "is_secure": True,
             "task_acks_late": True,
         },
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
-        "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
+        # "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
         "worker_hijack_root_logger": False,
         "worker_max_tasks_per_child": 10
     }
