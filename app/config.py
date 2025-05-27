@@ -72,7 +72,7 @@ class Hosted(Config):
         QUEUE_NAME: {
             "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}{QUEUE_NAME}"
         }
-    }    
+    }
 
     CELERY = {
         "broker_transport": "sqs",

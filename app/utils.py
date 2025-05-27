@@ -88,7 +88,7 @@ def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
         session = boto3.Session(
             aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
             aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
-            region_name=current_app.config["BROADCASTS_AWS_REGION"],
+            region_name=current_app.config["AWS_REGION"],
         )
 
     s3 = session.client('s3')
