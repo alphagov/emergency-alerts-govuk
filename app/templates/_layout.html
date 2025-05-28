@@ -1,7 +1,7 @@
 {% extends "govuk_frontend_jinja/template.html" %}
 
-{%- from "govuk_frontend_jinja_overrides/templates/components/header/macro.html" import govukHeaderOverride -%}
-{%- from "govuk_frontend_jinja_overrides/templates/components/footer/macro.html" import govukFooterOverride -%}
+{%- from "govuk_frontend_jinja/components/header/macro.html" import govukHeader -%}
+{%- from "govuk_frontend_jinja/components/footer/macro.html" import govukFooter -%}
 {%- from "govuk_frontend_jinja/components/phase-banner/macro.html" import govukPhaseBanner -%}
 
 {% set govukRebrand = true %}
@@ -39,9 +39,10 @@
 {% endblock %}
 
 {% block header %}
-  {{ govukHeaderOverride({
+  {{ govukHeader({
     'assetsPath': '/alerts/assets/images',
-    "serviceName": "Emergency Alerts"
+    "serviceName": "Emergency Alerts",
+    'rebrand': "true"
   }) }}
   <div class="govuk-width-container">
     {{ govukPhaseBanner({
@@ -58,7 +59,8 @@
 {% endblock %}
 
 {% block footer %}
-  {{ govukFooterOverride({
+  {{ govukFooter({
+    'rebrand': "true",
     'meta': {
       'items': [
         {
