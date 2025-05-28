@@ -137,9 +137,9 @@ run-celery: ## Run celery
 		--uid=$(shell id -u easuser) \
 		--pidfile=/tmp/celery_worker.pid \
 		--prefetch-multiplier=1 \
-		--loglevel=INFO \
+		--loglevel=WARNING \
 		--autoscale=8,1 \
-		--hostname='celery@%h'
+		--hostname='govuk-alerts@%h'
 
 .PHONY: uninstall-packages
 uninstall-packages:
