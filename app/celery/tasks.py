@@ -1,3 +1,4 @@
+import os
 import time
 
 from flask import current_app
@@ -13,7 +14,9 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
     try:
         alerts = Alerts.load()
         rendered_pages = get_rendered_pages(alerts)
-
+        if os.environ.get("ENVIRONMENT") == "local":
+            current_app.logger.info("Skipping upload to S3 in local environment")
+            return
         upload_html_to_s3(rendered_pages, broadcast_event_id)
         purge_fastly_cache()
     except Exception:

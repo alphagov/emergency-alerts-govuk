@@ -81,9 +81,8 @@ def is_in_uk(simple_polygons):
 def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
     host_environment = os.environ.get('HOST')
 
-    if (host_environment == "hosted"):
+    if host_environment == "hosted":
         session = boto3.Session()
-
     else:
         session = boto3.Session(
             aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
@@ -117,7 +116,7 @@ def upload_assets_to_s3():
 
     host_environment = os.environ.get('HOST')
 
-    if (host_environment == "hosted"):
+    if host_environment == "hosted":
         session = boto3.Session()
 
     else:

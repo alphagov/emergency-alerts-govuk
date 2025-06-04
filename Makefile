@@ -135,7 +135,7 @@ run-celery: ## Run celery
 	. environment.sh && celery \
 		-A run_celery.notify_celery worker \
 		--uid=$(shell id -u easuser) \
-		--pidfile=/tmp/celery_worker.pid \
+		--pidfile=/tmp/govuk_celery_worker.pid \
 		--prefetch-multiplier=1 \
 		--loglevel=WARNING \
 		--autoscale=8,1 \

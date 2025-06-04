@@ -7,9 +7,6 @@ from kombu import Exchange, Queue
 class Config():
     GOVUK_ALERTS_HOST_URL = os.environ.get("GOVUK_ALERTS_HOST_URL", "")
 
-    QUEUE_PREFIX = os.getenv("NOTIFICATION_QUEUE_PREFIX")
-    QUEUE_NAME = "govuk-alerts"
-
     EAS_APP_NAME = "govuk-alerts"
 
     BROADCASTS_AWS_ACCESS_KEY_ID = os.getenv("BROADCASTS_AWS_ACCESS_KEY_ID")
@@ -25,17 +22,17 @@ class Config():
     NOTIFY_API_CLIENT_SECRET = "govuk-alerts-secret-key"
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
+    QUEUE_NAME = "govuk-alerts"
+
     CELERY = {
-        "broker_url": "sqs://",
+        "broker_url": "filesystem://",
         "broker_transport_options": {
-            "region": AWS_REGION,
-            "visibility_timeout": 310,
-            "queue_name_prefix": QUEUE_PREFIX,
+            "data_folder_in": "/tmp/.data/broker",
+            "data_folder_out": "/tmp/.data/broker/",
         },
         "timezone": "Europe/London",
         "imports": ["app.celery.tasks"],
         "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
-        "worker_max_tasks_per_child": 20
     }
 
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
@@ -51,7 +48,6 @@ class Hosted(Config):
     QUEUE_PREFIX = f"{ENVIRONMENT_PREFIX}-{TENANT_PREFIX}"
     SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
     QUEUE_NAME = "govuk-alerts"
-    # SQS_QUEUE_BACKOFF_POLICY = {1: 1, 2: 2, 3: 4, 4: 8, 5: 16, 6: 32, 7: 64, 8: 128}
 
     EAS_APP_NAME = "govuk-alerts"
 
@@ -85,7 +81,6 @@ class Hosted(Config):
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
         "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
-        "worker_hijack_root_logger": False,
         "worker_max_tasks_per_child": 10
     }
 
