@@ -33,6 +33,7 @@ class Config():
         "timezone": "Europe/London",
         "imports": ["app.celery.tasks"],
         "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
+        "worker_max_tasks_per_child": 2,
     }
 
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
@@ -65,8 +66,8 @@ class Hosted(Config):
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
     PREDEFINED_SQS_QUEUES = {
-        QUEUE_NAME: {
-            "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}{QUEUE_NAME}"
+        "govuk-alerts": {
+            "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}govuk-alerts"
         }
     }
 
@@ -81,7 +82,7 @@ class Hosted(Config):
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
         "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
-        "worker_max_tasks_per_child": 10
+        "worker_max_tasks_per_child": 10,
     }
 
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
