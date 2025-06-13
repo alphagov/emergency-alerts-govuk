@@ -22,7 +22,7 @@
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="substring-before(atom:feed/atom:link[@rel='alternate' and @type='application/html']/@href, '/alerts')" />
                                 </xsl:attribute>
-                            
+                                
                                 <svg focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 324 60" height="30" width="162" class="govuk-header__logotype" aria-label="GOV.UK">
                                     <title>GOV.UK</title>
                                     <g>
@@ -49,6 +49,24 @@
                     </div>
                 </header>
                 <div class="govuk-width-container">
+                    <div class="govuk-grid-row govuk-subheader">
+                        <div class="govuk-separator"></div>
+                            <div class="govuk-language-select">
+                                <nav class="govuk-body hmrc-language-select" aria-label="Language switcher">
+                                    <ul class="hmrc-language-select__list">
+                                    <li class="hmrc-language-select__list-item">
+                                        <span aria-current="true">English</span>
+                                    </li>
+                                    <li class="hmrc-language-select__list-item">
+                                        <a href="/alerts/feed_cy.atom" hreflang="cy" lang="cy" rel="alternate" class="govuk-link" data-journey-click="link - click:lang-select:Cymraeg">
+                                        <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
+                                        <span aria-hidden="true">Cymraeg</span>
+                                        </a>
+                                    </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                    </div>
                     <main class="govuk-main-wrapper" role="main">
                         <xsl:apply-templates select="atom:feed" />
                         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />

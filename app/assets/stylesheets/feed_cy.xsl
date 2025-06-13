@@ -48,6 +48,24 @@
                     </div>
                 </header>
                 <div class="govuk-width-container">
+                    <div class="govuk-grid-row govuk-subheader">
+                        <div class="govuk-separator"></div>
+                        <div class="govuk-language-select">
+                            <nav class="govuk-body hmrc-language-select" aria-label="Switcher iaith">
+                                <ul class="hmrc-language-select__list">
+                                <li class="hmrc-language-select__list-item">
+                                    <a href="/alerts/feed.atom" hreflang="en" lang="en" rel="alternate" class="govuk-link" data-journey-click="link - click:lang-select:English">
+                                    <span class="govuk-visually-hidden">Change the language to English</span>
+                                    <span aria-hidden="true">English</span>
+                                    </a>
+                                </li>
+                                <li class="hmrc-language-select__list-item">
+                                    <span aria-current="true">Cymraeg</span>
+                                </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
                     <main class="govuk-main-wrapper" role="main">
                         <xsl:apply-templates select="atom:feed" />
                         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
