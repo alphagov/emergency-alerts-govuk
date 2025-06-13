@@ -29,6 +29,9 @@ all_view_paths = [
 
 
 def namespace(**kwargs):
+    """Creates namespace, to be added as a jinja environment global to avoid `'namespace' is undefined"`
+    error when using govuk-frontend-jinja templates, as they use namespace to store attributes.
+    """
     class Namespace:
         def __init__(self, **entries):
             self.__dict__.update(entries)
