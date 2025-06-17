@@ -1,3 +1,4 @@
+import os
 import time
 
 from flask import current_app
@@ -13,7 +14,9 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
     try:
         alerts = Alerts.load()
         rendered_pages = get_rendered_pages(alerts)
-
+        if os.environ.get("HOST") == "local":
+            current_app.logger.info("Skipping upload to S3 in local environment")
+            return
         upload_html_to_s3(rendered_pages, broadcast_event_id)
         purge_fastly_cache()
     except Exception:
@@ -27,6 +30,7 @@ def trigger_govuk_alerts_healthcheck():
         time_stamp = int(time.time())
         with open("/eas/emergency-alerts-govuk/celery-beat-healthcheck", mode="w") as file:
             file.write(str(time_stamp))
+        current_app.logger.debug(f"file.write successful - govuk-alerts health check timestamp: {time_stamp}")
     except Exception:
         current_app.logger.exception("Unable to generate health-check timestamp")
         raise

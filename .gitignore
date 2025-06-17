@@ -138,3 +138,6 @@ dist
 
 # Mac
 environment.sh
+
+# Local celery control files
+control/
