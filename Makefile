@@ -137,7 +137,7 @@ run-celery: ## Run celery
 		--uid=$(shell id -u easuser) \
 		--pidfile=/tmp/govuk_celery_worker.pid \
 		--prefetch-multiplier=1 \
-		--loglevel=WARNING \
+		--loglevel=INFO \
 		--autoscale=8,1 \
 		--hostname='govuk-alerts@%h'
 
