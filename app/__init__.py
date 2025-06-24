@@ -71,4 +71,3 @@ def clear_task_context(*args, **kwargs):
         )
     except Exception as e:
         current_app.logger.error(f"Error logging task_postrun: {e}")
-

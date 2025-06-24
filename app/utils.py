@@ -81,6 +81,11 @@ def is_in_uk(simple_polygons):
 def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
     host_environment = os.environ.get('HOST')
 
+    bucket_name = os.environ.get("GOVUK_ALERTS_S3_BUCKET_NAME")
+    if not bucket_name:
+        current_app.logger.info("Target S3 bucket not specified: Skipping upload")
+        return
+
     if host_environment == "hosted":
         session = boto3.Session()
     else:
@@ -91,8 +96,6 @@ def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
         )
 
     s3 = session.client('s3')
-
-    bucket_name = os.environ.get("GOVUK_ALERTS_S3_BUCKET_NAME", "test-bucket")
 
     for path, content in rendered_pages.items():
         current_app.logger.info(
@@ -114,6 +117,11 @@ def upload_assets_to_s3():
     if not Path(DIST).exists():
         raise FileExistsError(f'Folder {DIST} not found.')
 
+    bucket_name = os.environ.get("GOVUK_ALERTS_S3_BUCKET_NAME")
+    if not bucket_name:
+        current_app.logger.info("Target S3 bucket not specified: Skipping upload")
+        return
+
     host_environment = os.environ.get('HOST')
 
     if host_environment == "hosted":
@@ -126,8 +134,6 @@ def upload_assets_to_s3():
             region_name=current_app.config["BROADCASTS_AWS_REGION"],
         )
     s3 = session.client('s3')
-
-    bucket_name = os.environ.get('GOVUK_ALERTS_S3_BUCKET_NAME', "test-bucket")
 
     assets = get_asset_files(DIST)
     for filename, (content, mimetype) in assets.items():
