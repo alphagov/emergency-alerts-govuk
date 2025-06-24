@@ -106,10 +106,6 @@ bootstrap: install-node
 	pip3 install -r requirements_local_utils.txt
 	. ~/.nvm-source && npm ci --no-audit && npm run build
 
-.PHONY: generate-govuk-sha
-generate-govuk-sha:
-	python scripts/generate_govuk_hash.py $(GOVUK_ALERTS_HOST_URL)/alerts | aws s3 cp - s3://govuk-test-sha/test.sha
-
 .PHONY: bootstrap-for-tests
 bootstrap-for-tests: install-node
 	pip3 install -r requirements_github_utils.txt

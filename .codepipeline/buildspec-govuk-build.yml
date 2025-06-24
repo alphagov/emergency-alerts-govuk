@@ -25,4 +25,3 @@ phases:
       - echo Building complete on `date`
       - echo Pushing the Docker image...
       - docker push --all-tags $REPOSITORY_URI
-      - make generate-govuk-sha
