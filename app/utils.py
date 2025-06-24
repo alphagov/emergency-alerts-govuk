@@ -79,9 +79,9 @@ def is_in_uk(simple_polygons):
 
 
 def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
-    host_environment = os.environ.get('HOST')
+    host_environment = current_app.config["HOST"]
 
-    bucket_name = os.environ.get("GOVUK_ALERTS_S3_BUCKET_NAME")
+    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
@@ -117,7 +117,8 @@ def upload_assets_to_s3():
     if not Path(DIST).exists():
         raise FileExistsError(f'Folder {DIST} not found.')
 
-    bucket_name = os.environ.get("GOVUK_ALERTS_S3_BUCKET_NAME")
+    # bucket_name = os.environ.get("GOVUK_ALERTS_S3_BUCKET_NAME")
+    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
@@ -147,9 +148,9 @@ def upload_assets_to_s3():
 
 
 def purge_fastly_cache():
-    fastly_service_id = current_app.config['FASTLY_SERVICE_ID']
-    fastly_api_key = current_app.config['FASTLY_API_KEY']
-    surrogate_key = current_app.config['FASTLY_SURROGATE_KEY']
+    fastly_service_id = current_app.config["FASTLY_SERVICE_ID"]
+    fastly_api_key = current_app.config["FASTLY_API_KEY"]
+    surrogate_key = current_app.config["FASTLY_SURROGATE_KEY"]
     fastly_url = f"https://api.fastly.com/service/{fastly_service_id}/purge/{surrogate_key}"
 
     headers = {

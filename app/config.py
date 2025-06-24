@@ -5,6 +5,7 @@ from kombu import Exchange, Queue
 
 
 class Config():
+    HOST = os.environ.get('HOST')
     GOVUK_ALERTS_HOST_URL = os.environ.get("GOVUK_ALERTS_HOST_URL", "")
 
     EAS_APP_NAME = "govuk-alerts"
@@ -40,6 +41,8 @@ class Config():
 
 
 class Hosted(Config):
+    HOST = os.environ.get('HOST')
+
     # Prefix to identify queues in SQS
     TENANT = f"{os.environ.get('TENANT')}." if os.environ.get("TENANT") is not None else ""
     TENANT_PREFIX = f"{os.environ.get('TENANT')}-" if os.environ.get("TENANT") is not None else ""
@@ -89,6 +92,7 @@ class Hosted(Config):
 
 
 class Test(Config):
+    HOST = os.environ.get('HOST')
     DEBUG = True
     GOVUK_ALERTS_HOST_URL = os.environ.get("GOVUK_ALERTS_HOST_URL", "http://localhost:6017")
 
@@ -98,7 +102,7 @@ class Test(Config):
 
     BROADCASTS_AWS_ACCESS_KEY_ID = "test-key-id"
     BROADCASTS_AWS_SECRET_ACCESS_KEY = "test-secret-key"
-    GOVUK_ALERTS_S3_BUCKET_NAME = "test-bucket-name"
+    GOVUK_ALERTS_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_S3_BUCKET_NAME")
 
 
 configs = {
