@@ -12,6 +12,7 @@ $(eval export CF_HOME)
 
 NVM_VERSION := 0.39.7
 NODE_VERSION := 16.14.0
+GOVUK_ALERTS_URL = ${GOVUK_ALERTS_HOST_URL}
 
 write-source-file:
 	@if [ -f ~/.zshrc ]; then \
