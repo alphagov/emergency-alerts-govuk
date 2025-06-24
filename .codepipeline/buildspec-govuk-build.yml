@@ -20,7 +20,7 @@ phases:
         --build-arg ECS_ACCOUNT_NUMBER=$ACCOUNT_NUMBER
         --build-arg AWS_REGION=${AWS_REGION:-eu-west-2}
         --build-arg RESOURCE_PREFIX=${RESOURCE_PREFIX:-eas-app} --no-cache .
-      - make generate-govuk-sha
+      - GOVUK_ALERTS_URL=${GOVUK_ALERTS_HOST_URL} make generate-govuk-sha
   post_build:
     commands:
       - echo Building complete on `date`
