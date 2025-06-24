@@ -82,7 +82,6 @@ def govuk_alerts():
     app = create_app()
 
     ctx = app.app_context()
-
     ctx.push()
 
     yield app
