@@ -108,7 +108,7 @@ bootstrap: install-node
 
 .PHONY: generate-govuk-sha
 generate-govuk-sha:
-	. environment.sh && pip3 install beautifulsoup4 requests && python scripts/generate_govuk_hash.py $(GOVUK_ALERTS_URL)/alerts | aws s3 cp - s3://govuk-sha-test/test.sha
+	pip3 install beautifulsoup4 requests && python scripts/generate_govuk_hash.py $(GOVUK_ALERTS_URL)/alerts | aws s3 cp - s3://govuk-sha-test/test.sha
 
 .PHONY: bootstrap-for-tests
 bootstrap-for-tests: install-node
