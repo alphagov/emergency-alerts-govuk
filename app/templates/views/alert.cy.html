@@ -1,7 +1,6 @@
 {% extends "content.html" %}
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
-{%- from "govuk_frontend_jinja/components/details/macro.html" import govukDetails -%}
 {%- from "govuk_frontend_jinja_overrides/templates/components/language-select/macro.html" import hmrcLanguageSelect -%}
 {%- from "components/alert.html" import alert_body -%}
 {%- from "components/alerts_icon.html" import alerts_icon -%}
@@ -91,10 +90,4 @@
       <p>{{ alertAreas }}</p>
     </div>
   </div>
-{% endblock %}
-
-{% block bodyEnd %}
-  <script type="text/javascript" src="{{ '/alerts/assets/javascripts/govuk-frontend-details.js' | file_fingerprint }}"></script>
-  <!--[if gt IE 8]><!--><script type="text/javascript" src="{{ '/alerts/assets/javascripts/sharing-button.js' | file_fingerprint }}"></script><!--<![endif]-->
-
 {% endblock %}

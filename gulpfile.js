@@ -20,7 +20,7 @@ const paths = {
   src: 'app/assets/',
   node_modules: 'node_modules/',
   dist: 'dist/alerts/assets/',
-  govuk_frontend: 'node_modules/govuk-frontend/',
+  govuk_frontend: 'node_modules/govuk-frontend/dist/',
   assetsUrl: '/alerts/assets/'
 };
 
@@ -35,14 +35,13 @@ const copy = {
         // our own
     },
     images: () => {
-      return src(paths.govuk_frontend + 'govuk/assets/images/**/*')
+      return src(paths.govuk_frontend + 'govuk/assets/rebrand/images/**/*')
         // A few images used by GOVUK Frontend components can't have hashes added to their
         // URLs so we can't change their filenames
         .pipe(plugins.gulpif(
           (file) => {
             return [
-              'govuk-crest-2x.png',
-              'govuk-crest.png',
+              'govuk-crest.svg',
               'govuk-logotype-crown.png'
             ].includes(path.basename(file.path)) === false;
           },
@@ -107,7 +106,8 @@ const scss = {
       .pipe(plugins.sass.sync(
         {
           includePaths: [paths.govuk_frontend],
-          outputStyle: 'compressed'
+          outputStyle: 'compressed',
+          quietDeps: true
         })
         .on('error', plugins.sass.logError))
         .pipe(plugins.gulpif(
@@ -128,8 +128,6 @@ const defaultTask = parallel(
   copy.images,
   scss.compile,
   rollupTask('govuk-frontend-skip-link'),
-  rollupTask('govuk-frontend-details'),
-  rollupTask('sharing-button'),
   rollupTask('relative-dates')
 );
 
