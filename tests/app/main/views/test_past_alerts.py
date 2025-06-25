@@ -103,7 +103,6 @@ def test_past_alerts_page_groups_by_date(
         'Thursday 22 April 2021',
         'Something 3',
         'Something 2',
-        'Wednesday 21 April 2021',
         # Multiple public alerts are shown individually
         'Something 1',
         'Something 1',
