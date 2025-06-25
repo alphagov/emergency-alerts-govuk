@@ -19,7 +19,7 @@ html {
 }
 
 body {
-  @include govuk-font($size: 14);
+  @include govuk-font($size: 16);
   margin: 0;
   padding: 0;
   width: 100%;

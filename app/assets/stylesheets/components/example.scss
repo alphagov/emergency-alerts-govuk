@@ -1,5 +1,7 @@
-@import "govuk/settings/all";
-@import "govuk/helpers/all";
+$govuk-new-organisation-colours: true;
+
+@import "govuk/settings";
+@import "govuk/helpers";
 
 .example {
   display: block;

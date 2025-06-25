@@ -1,4 +1,6 @@
-@import "govuk/settings/all";
+$govuk-new-organisation-colours: true;
+
+@import "govuk/settings";
 
 .alerts-notification-banner__age {
   color: $govuk-secondary-text-colour;
