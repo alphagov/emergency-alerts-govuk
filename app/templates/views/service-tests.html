@@ -100,7 +100,7 @@
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
     {% endif %}
     {% if loop.first %}
-      <h2 class="govuk-heading-m {% if not date_loop.first %}govuk-!-margin-top-9{% endif %}">
+      <h2 class="{% if not date_loop.first %}date-margin-top {% else %} govuk-heading-m {% endif %}">
         {{ alert_or_planned_test.starts_at_date.date_as_lang }}
       </h2>
     {% endif %}
