@@ -117,7 +117,6 @@ def upload_assets_to_s3():
     if not Path(DIST).exists():
         raise FileExistsError(f'Folder {DIST} not found.')
 
-    # bucket_name = os.environ.get("GOVUK_ALERTS_S3_BUCKET_NAME")
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
