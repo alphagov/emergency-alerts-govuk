@@ -41,8 +41,6 @@ class Config():
 
 
 class Hosted(Config):
-    HOST = os.environ.get('HOST')
-
     # Prefix to identify queues in SQS
     TENANT = f"{os.environ.get('TENANT')}." if os.environ.get("TENANT") is not None else ""
     TENANT_PREFIX = f"{os.environ.get('TENANT')}-" if os.environ.get("TENANT") is not None else ""
@@ -92,7 +90,6 @@ class Hosted(Config):
 
 
 class Test(Config):
-    HOST = os.environ.get('HOST')
     DEBUG = True
     GOVUK_ALERTS_HOST_URL = os.environ.get("GOVUK_ALERTS_HOST_URL", "http://localhost:6017")
 
