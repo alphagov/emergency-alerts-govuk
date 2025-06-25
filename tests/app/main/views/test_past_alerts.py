@@ -85,6 +85,8 @@ def test_past_alerts_page_groups_by_date(
         create_alert_dict(id=UUID(int=2), content='Something 1', starts_at=dt_parse('2021-04-21T11:00:00Z')),
         create_alert_dict(id=UUID(int=3), content='Something 2', starts_at=dt_parse('2021-04-22T00:00:00Z')),
         create_alert_dict(id=UUID(int=4), content='Something 3', starts_at=dt_parse('2021-04-22T22:59:00Z')),
+        create_alert_dict(id=UUID(int=3), content='Something 4', starts_at=dt_parse('2021-04-23T00:00:00Z')),
+        create_alert_dict(id=UUID(int=4), content='Something 5', starts_at=dt_parse('2021-04-23T22:59:00Z')),
         create_alert_dict(id=UUID(int=5), channel='operator', starts_at=dt_parse('2021-04-21T12:00:00Z'), content='Operator test'),  # noqa
         create_alert_dict(id=UUID(int=6), channel='operator', starts_at=dt_parse('2021-04-21T12:00:00Z'), content='Operator test'),  # noqa
     ]
@@ -100,11 +102,18 @@ def test_past_alerts_page_groups_by_date(
     assert [
         element.text.strip() for element in titles_and_paragraphs
     ] == [
-        'Thursday 22 April 2021',
+        'Friday 23 April 2021',
+        'Something 4',  # Only alert that day that appears before test timestamp
         'Something 3',
         'Something 2',
-        'Wednesday 21 April 2021',
         # Multiple public alerts are shown individually
         'Something 1',
         'Something 1',
     ]
+
+    older_dates = html.select('main .govuk-grid-column-two-thirds h2.date-margin-top')
+    # Asserts that the older dates that appear on past alert page have date-margin-top class,
+    # a custom class that ensures margin-top is applied, if date isn't most recent
+    assert [
+        element.text.strip() for element in older_dates
+    ] == ['Thursday 22 April 2021', 'Wednesday 21 April 2021']
