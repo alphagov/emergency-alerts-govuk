@@ -1,19 +1,18 @@
 import os
 
+# from flask import current_app
 from kombu import Exchange, Queue
 
 
 class Config():
+    HOST = os.environ.get('HOST')
     GOVUK_ALERTS_HOST_URL = os.environ.get("GOVUK_ALERTS_HOST_URL", "")
-
-    NOTIFICATION_QUEUE_PREFIX = os.getenv("NOTIFICATION_QUEUE_PREFIX")
-    QUEUE_NAME = "govuk-alerts"
 
     EAS_APP_NAME = "govuk-alerts"
 
     BROADCASTS_AWS_ACCESS_KEY_ID = os.getenv("BROADCASTS_AWS_ACCESS_KEY_ID")
     BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
-    BROADCASTS_AWS_REGION = os.getenv("AWS_REGION", "eu-west-2")
+    AWS_REGION = os.getenv("AWS_REGION", "eu-west-2")
     GOVUK_ALERTS_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_S3_BUCKET_NAME")
 
     FASTLY_SERVICE_ID = os.getenv("FASTLY_SERVICE_ID")
@@ -24,23 +23,18 @@ class Config():
     NOTIFY_API_CLIENT_SECRET = "govuk-alerts-secret-key"
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
+    QUEUE_NAME = "govuk-alerts"
+
     CELERY = {
-        "broker_url": "sqs://",
+        "broker_url": "filesystem://",
         "broker_transport_options": {
-            "region": BROADCASTS_AWS_REGION,
-            "visibility_timeout": 310,
-            "queue_name_prefix": NOTIFICATION_QUEUE_PREFIX,
-            "wait_time_seconds": 20,  # enable long polling, with a wait time of 20 seconds
+            "data_folder_in": "/tmp/.data/broker",
+            "data_folder_out": "/tmp/.data/broker/",
         },
         "timezone": "Europe/London",
         "imports": ["app.celery.tasks"],
-        "task_queues": [
-            Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)
-        ],
-        # Restart workers after a few tasks have been executed - this will help prevent any memory leaks
-        # (not that we should be encouraging sloppy memory management). Although the tasks are time-critical,
-        # we don't expect to get them in quick succession, so a small restart delay is acceptable.
-        "worker_max_tasks_per_child": 20
+        "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
+        "worker_max_tasks_per_child": 2,
     }
 
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
@@ -53,16 +47,15 @@ class Hosted(Config):
     ENVIRONMENT = os.getenv('ENVIRONMENT')
     ENVIRONMENT_PREFIX = ENVIRONMENT if ENVIRONMENT != 'development' else 'dev'
 
-    NOTIFICATION_QUEUE_PREFIX = f"{ENVIRONMENT_PREFIX}-{TENANT_PREFIX}"
+    QUEUE_PREFIX = f"{ENVIRONMENT_PREFIX}-{TENANT_PREFIX}"
     SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
     QUEUE_NAME = "govuk-alerts"
-    SQS_QUEUE_BACKOFF_POLICY = {1: 1, 2: 2, 3: 4, 4: 8, 5: 16, 6: 32, 7: 64, 8: 128}
 
     EAS_APP_NAME = "govuk-alerts"
 
     BROADCASTS_AWS_ACCESS_KEY_ID = os.getenv("BROADCASTS_AWS_ACCESS_KEY_ID")
     BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
-    BROADCASTS_AWS_REGION = os.getenv("AWS_REGION", "eu-west-2")
+    AWS_REGION = os.getenv("AWS_REGION", "eu-west-2")
     GOVUK_ALERTS_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_S3_BUCKET_NAME")
 
     FASTLY_SERVICE_ID = os.getenv("FASTLY_SERVICE_ID")
@@ -73,28 +66,24 @@ class Hosted(Config):
     NOTIFY_API_CLIENT_SECRET = os.environ.get("NOTIFY_API_CLIENT_SECRET")
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
+    PREDEFINED_SQS_QUEUES = {
+        "govuk-alerts": {
+            "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}govuk-alerts"
+        }
+    }
+
     CELERY = {
-        "broker_url": "sqs://",
         "broker_transport": "sqs",
         "broker_transport_options": {
-            "region": BROADCASTS_AWS_REGION,
-            "predefined_queues": {
-                QUEUE_NAME: {
-                    "url": f"{SQS_QUEUE_BASE_URL}/{NOTIFICATION_QUEUE_PREFIX}govuk-alerts",
-                    "backoff_policy": SQS_QUEUE_BACKOFF_POLICY
-                }
-            }
+            "region": AWS_REGION,
+            "predefined_queues": PREDEFINED_SQS_QUEUES,
+            "is_secure": True,
+            "task_acks_late": True,
         },
         "timezone": "UTC",
         "imports": ["app.celery.tasks"],
-        "task_queues": [
-            Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)
-        ],
-        "worker_log_format": "[%(levelname)s] %(message)s",
-        # Restart workers after a few tasks have been executed - this will help prevent any memory leaks
-        # (not that we should be encouraging sloppy memory management). Although the tasks are time-critical,
-        # we don't expect to get them in quick succession, so a small restart delay is acceptable.
-        "worker_max_tasks_per_child": 10
+        "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
+        "worker_max_tasks_per_child": 10,
     }
 
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
@@ -110,7 +99,7 @@ class Test(Config):
 
     BROADCASTS_AWS_ACCESS_KEY_ID = "test-key-id"
     BROADCASTS_AWS_SECRET_ACCESS_KEY = "test-secret-key"
-    GOVUK_ALERTS_S3_BUCKET_NAME = "test-bucket-name"
+    GOVUK_ALERTS_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_S3_BUCKET_NAME")
 
 
 configs = {

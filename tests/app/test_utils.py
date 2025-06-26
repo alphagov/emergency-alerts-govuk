@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import boto3
 import pytest
+from flask import current_app
 from markupsafe import Markup
 from moto import mock_aws
 
@@ -83,20 +84,22 @@ def test_is_in_uk_returns_polygons_in_uk_bounding_box(alert_dict, lat, lon, in_u
 
 @mock_aws
 def test_upload_to_s3(govuk_alerts):
+    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+
     client = boto3.client('s3')
-    client.create_bucket(Bucket='test-bucket', CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
+    client.create_bucket(Bucket=bucket_name, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
 
     pages = {"alerts": "<p>this is some test content</p>"}
     upload_html_to_s3(pages)
 
     object_keys = [
         obj['Key'] for obj in
-        client.list_objects(Bucket='test-bucket')['Contents']
+        client.list_objects(Bucket=bucket_name)['Contents']
     ]
 
     assert object_keys == ['alerts']
 
-    alerts_object = client.get_object(Bucket='test-bucket', Key='alerts')
+    alerts_object = client.get_object(Bucket=bucket_name, Key='alerts')
     assert alerts_object['Body'].read().decode('utf-8') == pages['alerts']
     assert alerts_object['ContentType'] == 'text/html'
 
