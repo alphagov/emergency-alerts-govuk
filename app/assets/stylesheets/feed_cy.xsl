@@ -11,9 +11,10 @@
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+                <meta property="og:image" content="{atom:feed/atom:logo}"/>
                 <title><xsl:value-of select="atom:feed/atom:title" /> Web Feed</title>
                 <link rel="stylesheet" type="text/css" href="main.css"/>
-                <link rel="icon" sizes="48x48"  href="/alerts/assets/images/favicon-dcd99aa1.ico"/>
+                <link rel="icon" sizes="48x48"  href="{atom:feed/atom:icon}"/>
                 <link rel="icon" sizes="any"  href="/alerts/assets/images/favicon-2ed10a55.svg" type="image/svg+xml"/>
             </head>
             <body class="govuk-template__body">
