@@ -12,6 +12,7 @@
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
                 <meta property="og:image" content="{atom:feed/atom:logo}"/>
+                <meta property="og:title" content="{atom:feed/atom:title}"/>
                 <title><xsl:value-of select="atom:feed/atom:title" /> Web Feed</title>
                 <link rel="stylesheet" type="text/css" href="main.css"/>
                 <link rel="icon" sizes="48x48"  href="{atom:feed/atom:icon}"/>
