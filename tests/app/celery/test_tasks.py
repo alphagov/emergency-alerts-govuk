@@ -15,6 +15,7 @@ def test_publish_govuk_alerts(
     mock_upload_to_s3,
     mock_get_rendered_pages,
     mock_Alerts_load,
+    govuk_alerts,
 ):
     publish_govuk_alerts()
     mock_Alerts_load.assert_called_once()
