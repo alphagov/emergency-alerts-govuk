@@ -12,9 +12,8 @@ def test_system_testing_page(mocker, client_get):
     mocker.patch('app.models.alerts.PlannedTests.from_yaml', return_value=[])
     html = client_get("alerts/operator-testing")
     assert html.select_one('h1').text.strip() == "Operator tests"
-    assert html.select_one('main p').text.strip() == "Following the successful national test of the UK Emergency " \
-        "Alerts system on 23 April 2023, the government and mobile network operators will be carrying out " \
-        "occasional ‘operator’ tests."
+    assert html.select_one('main p').text.strip() == "The government and mobile network operators will be carrying out " \
+        "occasional operator tests."
 
 
 @freeze_time('2021-01-01T11:30:00Z')
@@ -38,9 +37,8 @@ def test_system_testing_page(mocker, client_get):
             'welsh_content': None,
             'areas': {'names': ['Ibiza']}
         })],
-        'Following the successful national test of the UK Emergency '
-        'Alerts system on 23 April 2023, the government and mobile network operators will be carrying out '
-        'occasional ‘operator’ tests.'
+        'The government and mobile network operators will be carrying out '
+        'occasional operator tests.'
     ],
     [
         [PlannedTest({
