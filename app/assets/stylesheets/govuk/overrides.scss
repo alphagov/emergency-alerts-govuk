@@ -1,3 +1,12 @@
 .govuk-template--rebranded .govuk-header__service-name {
         margin:15px 0 11px;
 }
+
+.govuk-notification-banner__content>* {
+        max-width: 100%;
+}
+
+
+.govuk-notification-banner {
+        margin-bottom: 10px;
+}
