@@ -13,6 +13,7 @@ certifi==2025.4.26
 pyjwt==2.8.0
 feedgen==1.0.0
 lxml==5.4.0
+celery[sqs]==5.5.3
 
 # Packages for testing
 isort==5.13.2
