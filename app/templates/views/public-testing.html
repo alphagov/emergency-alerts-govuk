@@ -6,7 +6,7 @@
 {%- from "components/meta_tags.html" import metaTags -%}
 {%- from "components/related_content.html" import related_content -%}
 
-{% set pageTitle = "Public tests" %}
+{% set pageTitle = "Public testing of the Emergency Alerts system" %}
 
 {% block metaTags %}
   {{ metaTags(
@@ -59,88 +59,41 @@
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% if alerts.test_alerts_today_grouped %}
-        {% for _date, alerts_or_planned_tests in alerts.test_alerts_today_grouped | sort %}
-          {% set date_loop = loop %}
-          {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
-        {% endfor %}
-        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        <h2 class="govuk-heading-l">
-          Operator tests
-        </h2>
-      {% endif %}
-      <p class="govuk-body">
-        {% if alerts.planned_non_public_test_alerts %}
-          {% for alert in alerts.planned_non_public_test_alerts|sort(attribute='starts_at_date') %}
-            {% if loop.index == 1 %}
-              {% if alert.summary %}
-                {{ alert.summary }}
-              {% else %}
-                Following the successful national test of the UK Emergency Alerts system on 23 April 2023, the government and mobile network operators will be carrying out occasional ‘operator’ tests.
-              {% endif %}
-            {% endif %}
-          {% endfor %}
-        {% else %}
-          Following the successful national test of the UK Emergency Alerts system on 23 April 2023, the government and mobile network operators will be carrying out occasional ‘operator’ tests.
-        {% endif %}
-      </p>
-      <p class="govuk-body">
-        This is to assess improvements that have been made to the Emergency Alerts service.
-      </p>
-      <p class="govuk-body">
-        You may get this alert if you have a phone that has operator test alerts turned on.
-      </p>
-      <p class="govuk-body">
-        These operator tests are not alerting you of real danger. These alerts will always have ‘operator’ in the title and will confirm that no action is needed.
-      </p>
-      <p class="govuk-body">
-        If you get an operator test alert, your phone may make a loud siren-like sound for about 10 seconds, unless it’s on silent.
-      </p>
-      <h2 id="opt-out" class="govuk-heading-l">
-        Opt out of operator test alerts
+      <h2 class="govuk-heading-l">
+          Upcoming national test on 7 September 2025
       </h2>
       <p class="govuk-body">
-        How you opt out depends on what phone you have. If you continue getting operator test alerts after opting out, contact your phone manufacturer for help.
-      </p>
-      <h3 class="govuk-heading-m">
-        Android phones
-      </h3>
-      <p class="govuk-body">
-        To stop receiving operator test alerts, search your phone’s settings for ‘emergency alerts’ and turn off ‘test alerts’, ‘exercise alerts’, ‘operator defined’ and ‘operator alerts’. If you cannot see them in your settings:
-      </p>
-      <ul class="govuk-list govuk-list--bullet">
-        <li>
-          open your phone calling app
-        </li>
-        <li>
-          use the keypad to enter *#*#2627#*#*
-        </li>
-        <li>
-          search your settings for ‘emergency alerts’ and turn off ‘test alerts’, ‘exercise alerts’, ‘operator defined’ and ‘operator alerts’
-        </li>
-      </ul>
-      <h3 class="govuk-heading-m">
-        Other mobile phones
-      </h3>
-      <p class="govuk-body">
-        Depending on the manufacturer and software version of your phone, emergency alerts settings may be called different names, such as ‘wireless emergency alerts’ or ‘emergency broadcasts’.
+        The government will be carrying out a national test of the UK Emergency Alerts system on <strong>7 September 2025 at 3pm</strong>.
       </p>
       <p class="govuk-body">
-        The settings can usually be found in one of the following ways. Go to:
+        The test alert will be sent to all compatible 4G and 5G mobile phones and compatible tablets across the UK.
       </p>
-      <ul class="govuk-list govuk-list--bullet">
-        <li>
-          ‘message’, then ‘message settings, then ‘wireless emergency alerts’, then ‘alert’
-        </li>
-        <li>
-          ‘settings’, then ‘sounds’, then ‘advanced’, then ‘emergency broadcasts’
-        </li>
-        <li>
-          ‘settings’, then ‘general settings’, then ‘emergency alerts’
-        </li>
-      </ul>
       <p class="govuk-body">
-        Then turn off ‘test alerts’, ‘exercise alerts’, ‘operator defined’ and ‘operator alerts’.
+        This follows the first successful national test in April 2023.
+      </p>
+      <h2 class="govuk-heading-l">
+          Why the test is taking place
+      </h2>
+      <p class="govuk-body">
+        Regular testing ensures the system is functioning correctly, should it be needed in an emergency.
+      </p>
+      <p class="govuk-body">
+        The test is not intended to alert you to real danger and you will not need to take any further action.
+      </p>
+      <h2 class="govuk-heading-l">
+          What the test will look and sound like
+      </h2>
+      <p class="govuk-body">
+        An emergency alert looks and sounds very different to other types of messages you might receive on your phone. You’ll hear a loud, siren-like sound and your phone or tablet will vibrate.
+      </p>
+      <p class="govuk-body">
+        If you have a vision or hearing impairment, audio and vibration attention signals will let you know you have received the test.
+      </p>
+      <h2 class="govuk-heading-l">
+          Opt out of the test
+      </h2>
+      <p class="govuk-body">
+        You can opt out of emergency alerts, including the national test, but you should keep them switched on for your own safety. Learn more about how to <a class="govuk-link" href="/alerts/opting-out">opt out of emergency alerts</a>.
       </p>
     </div>
 
