@@ -12,7 +12,8 @@ def test_system_testing_page(mocker, client_get):
     mocker.patch('app.models.alerts.PlannedTests.from_yaml', return_value=[])
     html = client_get("alerts/operator-testing")
     assert html.select_one('h1').text.strip() == "Operator tests"
-    assert html.select_one('main p').text.strip() == "The government and mobile network operators will be carrying out " \
+    assert html.select_one('main p').text.strip() == "The government and mobile network operators" \
+        " will be carrying out " \
         "occasional operator tests."
 
 
