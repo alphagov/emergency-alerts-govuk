@@ -115,7 +115,7 @@ def get_rendered_pages(alerts):
         target = path.replace(".html", "")
 
         if target.endswith('.cy'):
-            notification_banner_text = "WELSH ANNOUNCEMENT CONTENT"
+            notification_banner_text = "Byddwn yn profi system Rhybuddion Argyfwng y DU ddydd Sul 7 Medi am 3pm."
         else:
             notification_banner_text = "We are testing the UK’s Emergency Alerts system on Sunday 7 September at 3pm."
 
