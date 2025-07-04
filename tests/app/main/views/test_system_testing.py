@@ -35,7 +35,8 @@ def test_system_testing_page(mocker, client_get):
                        'service. You do not need to take any action. To find out more, '
                        'search for gov.uk/alerts',
             'welsh_content': None,
-            'areas': {'names': ['Ibiza']}
+            'areas': {'names': ['Ibiza']},
+            'display_as_link': True
         })],
         'The government and mobile network operators occasionally carry out operator tests.'
     ],
@@ -56,7 +57,8 @@ def test_system_testing_page(mocker, client_get):
                        'service. You do not need to take any action. To find out more, '
                        'search for gov.uk/alerts',
             'welsh_content': None,
-            'areas': {'names': ['Ibiza']}
+            'areas': {'names': ['Ibiza']},
+            'display_as_link': True
         })],
         'This summary should be displayed'
     ]
