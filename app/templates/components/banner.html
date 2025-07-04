@@ -31,7 +31,11 @@
 
   <div class="alerts-notification-banner" role="region" aria-labelledby="alerts-national-test-banner__title">
     <h2 class="alerts-notification-banner__title govuk-heading-m govuk-!-margin-bottom-1" id="alerts-national-test-banner__title">
-      <a class="govuk-link govuk-link--no-visited-state" href="/alerts/announcements{% if lang == 'cy' %}.cy{% endif %}">{{ title }}</a>
+      {% if display_as_link %}
+        <a class="govuk-link govuk-link--no-visited-state" href="/alerts/announcements{% if lang == 'cy' %}.cy{% endif %}">{{ title }}</a>
+      {% else %}
+        {{ title }}
+      {% endif %}
     </h2>
   </div>
 
