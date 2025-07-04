@@ -133,35 +133,3 @@
     </div>
   </div>
 {% endblock %}
-
-{% macro planned_tests_by_date(date_loop, alerts_or_planned_tests) %}
-  {% for alert_or_planned_test in alerts_or_planned_tests | sort %}
-    {% if not loop.first %}
-      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-    {% endif %}
-    {% if loop.first %}
-      <h2 class="{% if not date_loop.first %}date-margin-top {% else %} govuk-heading-m {% endif %}">
-        {{ alert_or_planned_test.starts_at_date.date_as_lang }}
-      </h2>
-    {% endif %}
-    <h2 class="govuk-heading-m govuk-!-margin-top-6">
-      {% if alert_or_planned_test.is_public %}
-        {{ alert_or_planned_test.display_areas | formatted_list(before_each='', after_each='') }}
-      {% endif %}
-    </h2>
-    {% if not alert_or_planned_test.is_public %}
-      <p class="govuk-body">
-        There will be an operator test of the UK Emergency Alerts system today.
-      </p>
-      <p class="govuk-body">
-        Most mobile phones and tablets will not get a test alert.
-      </p>
-    {% endif %}
-    <p class="govuk-body">
-      The alert will say:
-    </p>
-    <div class="govuk-inset-text govuk-!-margin-top-2">
-      {{ alert_or_planned_test.content | paragraphize(classes="govuk-body") }}
-    </div>
-  {% endfor %}
-{% endmacro %}
