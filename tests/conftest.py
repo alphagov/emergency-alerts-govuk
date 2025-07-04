@@ -63,7 +63,8 @@ def create_planned_test_dict(
         'summary': summary,
         'welsh_summary': welsh_summary,
         'content': content,
-        'welsh_content': welsh_content
+        'welsh_content': welsh_content,
+        'display_as_link': True
     }
 
 

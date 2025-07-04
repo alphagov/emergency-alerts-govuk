@@ -10,11 +10,10 @@ from tests.conftest import create_alert_dict
 
 def test_system_testing_page(mocker, client_get):
     mocker.patch('app.models.alerts.PlannedTests.from_yaml', return_value=[])
-    html = client_get("alerts/system-testing")
-    assert html.select_one('h1').text.strip() == "Testing the emergency alerts service"
-    assert html.select_one('main p').text.strip() == "Following the successful national test of the UK Emergency " \
-        "Alerts system on 23 April 2023, the government and mobile network operators will be carrying out " \
-        "occasional ‘operator’ tests."
+    html = client_get("alerts/operator-testing")
+    assert html.select_one('h1').text.strip() == "Operator tests"
+    assert html.select_one('main p').text.strip() == "The government and mobile network operators" \
+        " occasionally carry out operator tests."
 
 
 @freeze_time('2021-01-01T11:30:00Z')
@@ -36,11 +35,10 @@ def test_system_testing_page(mocker, client_get):
                        'service. You do not need to take any action. To find out more, '
                        'search for gov.uk/alerts',
             'welsh_content': None,
-            'areas': {'names': ['Ibiza']}
+            'areas': {'names': ['Ibiza']},
+            'display_as_link': True
         })],
-        'Following the successful national test of the UK Emergency '
-        'Alerts system on 23 April 2023, the government and mobile network operators will be carrying out '
-        'occasional ‘operator’ tests.'
+        'The government and mobile network operators occasionally carry out operator tests.'
     ],
     [
         [PlannedTest({
@@ -59,15 +57,16 @@ def test_system_testing_page(mocker, client_get):
                        'service. You do not need to take any action. To find out more, '
                        'search for gov.uk/alerts',
             'welsh_content': None,
-            'areas': {'names': ['Ibiza']}
+            'areas': {'names': ['Ibiza']},
+            'display_as_link': True
         })],
         'This summary should be displayed'
     ]
 ])
 def test_planned_test_summary(planned_tests, expected_p, mocker, client_get):
     mocker.patch('app.models.alerts.PlannedTests.from_yaml', return_value=planned_tests)
-    html = client_get("alerts/system-testing")
-    assert html.select_one('h1').text.strip() == "Testing the emergency alerts service"
+    html = client_get("alerts/operator-testing")
+    assert html.select_one('h1').text.strip() == "Operator tests"
     assert html.select_one('main p').text.strip() == expected_p
 
 
@@ -96,7 +95,7 @@ def test_system_testing_page_with_current_operator_test(
             **extra_json_fields
         )
     ]))
-    html = client_get("alerts/system-testing")
+    html = client_get("alerts/operator-testing")
     assert [
         normalize_spaces(h2.text) for h2 in html.select('.govuk-grid-column-two-thirds h2')
     ] == [

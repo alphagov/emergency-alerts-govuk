@@ -24,7 +24,8 @@ from tests import normalize_spaces
                        'service. You do not need to take any action. To find out more, '
                        'search for gov.uk/alerts',
             'welsh_content': None,
-            'areas': {'names': ['Ibiza']}
+            'areas': {'names': ['Ibiza']},
+            'display_as_link': True
         })],
         ['Wednesday 3 February 2021 at 8pm', 'Ibiza'],
         [],
@@ -52,7 +53,8 @@ from tests import normalize_spaces
             'welsh_summary': None,
             'content': 'Paragraph 1\n\nParagraph 2',
             'welsh_content': None,
-            'areas': {'names': ['Ibiza', 'The Norfolk Broads']}
+            'areas': {'names': ['Ibiza', 'The Norfolk Broads']},
+            'display_as_link': True
         })],
         ['Wednesday 3 February 2021 at 8pm', 'Ibiza and The Norfolk Broads'],
         [],
@@ -78,7 +80,8 @@ from tests import normalize_spaces
                 'welsh_summary': None,
                 'content': 'Paragraph 1\n\nParagraph 2',
                 'welsh_content': None,
-                'areas': {'names': ['Ibiza']}
+                'areas': {'names': ['Ibiza']},
+                'display_as_link': True
             }),
             PlannedTest({
                 'id': '5838d0d7-37eb-4ec9-87a7-5d9dc5b650c3',
@@ -94,7 +97,8 @@ from tests import normalize_spaces
                 'welsh_summary': None,
                 'content': 'Paragraph 3\n\nParagraph 4',
                 'welsh_content': None,
-                'areas': {'names': ['The Norfolk Broads']}
+                'areas': {'names': ['The Norfolk Broads']},
+                'display_as_link': True
             }),
         ],
         [],

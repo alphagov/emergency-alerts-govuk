@@ -6,13 +6,13 @@
 {%- from "components/meta_tags.html" import metaTags -%}
 {%- from "components/related_content.html" import related_content -%}
 
-{% set pageTitle = "Testing the emergency alerts service" %}
+{% set pageTitle = "Operator tests" %}
 
 {% block metaTags %}
   {{ metaTags(
     description="About emergency alerts service testing",
     title=pageTitle,
-    url="https://www.gov.uk/alerts/system-testing"
+    url="https://www.gov.uk/alerts/operator-testing"
   ) }}
 {% endblock %}
 
@@ -42,7 +42,7 @@
       {{ hmrcLanguageSelect({
         'language': 'en',
         'cy': {
-          'href': '/alerts/system-testing.cy'
+          'href': '/alerts/operator-testing.cy'
         }
       }) }}
     </div>
@@ -76,22 +76,22 @@
               {% if alert.summary %}
                 {{ alert.summary }}
               {% else %}
-                Following the successful national test of the UK Emergency Alerts system on 23 April 2023, the government and mobile network operators will be carrying out occasional ‘operator’ tests.
+                The government and mobile network operators occasionally carry out operator tests.
               {% endif %}
             {% endif %}
           {% endfor %}
         {% else %}
-          Following the successful national test of the UK Emergency Alerts system on 23 April 2023, the government and mobile network operators will be carrying out occasional ‘operator’ tests.
+          The government and mobile network operators occasionally carry out operator tests.
         {% endif %}
       </p>
       <p class="govuk-body">
-        This is to assess improvements that have been made to the Emergency Alerts service.
+        This is to assess improvements that have been made to the emergency alerts service.
       </p>
       <p class="govuk-body">
-        You may get this alert if you have a phone that has operator test alerts turned on.
+        Most mobile phones and tablets will not get an operator test alert.
       </p>
       <p class="govuk-body">
-        These operator tests are not alerting you of real danger. These alerts will always have ‘operator’ in the title and will confirm that no action is needed.
+        The message will always have ‘operator’ in the title and will confirm that no action is needed. Operator tests are not alerting you of real danger.
       </p>
       <p class="govuk-body">
         If you get an operator test alert, your phone may make a loud siren-like sound for about 10 seconds, unless it’s on silent.
@@ -103,7 +103,7 @@
         How you opt out depends on what phone you have. If you continue getting operator test alerts after opting out, contact your phone manufacturer for help.
       </p>
       <h3 class="govuk-heading-m">
-        Android phones
+        Android phones and tablets
       </h3>
       <p class="govuk-body">
         To stop receiving operator test alerts, search your phone’s settings for ‘emergency alerts’ and turn off ‘test alerts’, ‘exercise alerts’, ‘operator defined’ and ‘operator alerts’. If you cannot see them in your settings:
@@ -120,7 +120,7 @@
         </li>
       </ul>
       <h3 class="govuk-heading-m">
-        Other mobile phones
+        Other mobile phones and tablets
       </h3>
       <p class="govuk-body">
         Depending on the manufacturer and software version of your phone, emergency alerts settings may be called different names, such as ‘wireless emergency alerts’ or ‘emergency broadcasts’.
@@ -162,6 +162,10 @@
           {
             "text": "Past alerts",
             "href": "/alerts/past-alerts"
+          },
+          {
+            "text": "Public testing",
+            "href": "/alerts/public-testing"
           },
           {
             "text": "Opting out of emergency alerts",

@@ -6,13 +6,13 @@
 {%- from "components/meta_tags.html" import metaTags -%}
 {%- from "components/related_content.html" import related_content -%}
 
-{% set pageTitle = "Profi'r gwasanaeth rhybuddion argyfwng" %}
+{% set pageTitle = "Profion gweithredwyr" %}
 
 {% block metaTags %}
   {{ metaTags(
     description="About emergency alerts system testing",
     title=pageTitle,
-    url="https://www.gov.uk/alerts/system-testing.cy"
+    url="https://www.gov.uk/alerts/operator-testing.cy"
   ) }}
 {% endblock %}
 
@@ -42,7 +42,7 @@
   {{ hmrcLanguageSelect({
     'language': 'cy',
     'en': {
-      'href': '/alerts/system-testing'
+      'href': '/alerts/operator-testing'
     }
   }) }}
 </div>
@@ -76,22 +76,22 @@
               {% if alert.welsh_summary %}
                 {{ alert.welsh_summary }}
               {% else %}
-                Yn dilyn prawf cenedlaethol llwyddiannus system Rhybuddion Argyfwng y DU ar 23 Ebrill 2023, bydd y llywodraeth a gweithredwyr rhwydweithiau symudol yn cynnal profion 'gweithredwr' achlysurol.
+                Yn achlysurol, bydd y llywodraeth a gweithredwyr rhwydweithiau symudol yn cynnal profion gweithredwyr.
               {% endif %}
             {% endif %}
           {% endfor %}
         {% else %}
-          Yn dilyn prawf cenedlaethol llwyddiannus system Rhybuddion Argyfwng y DU ar 23 Ebrill 2023, bydd y llywodraeth a gweithredwyr rhwydweithiau symudol yn cynnal profion 'gweithredwr' achlysurol.
+          Yn achlysurol, bydd y llywodraeth a gweithredwyr rhwydweithiau symudol yn cynnal profion gweithredwyr.
         {% endif %}
       </p>
       <p class="govuk-body">
-        Mae hyn er mwyn asesu gwelliannau sydd wedi'u gwneud i'r gwasanaeth Rhybuddion Argyfwng.
+        Mae hyn er mwyn asesu gwelliannau technolegol sydd wedi eu gwneud i’r gwasanaeth rhybuddion argyfwng.
       </p>
       <p class="govuk-body">
-        Gallwch chi gael y rhybudd hwn os oes gennych chi ffôn sydd â rhybuddion prawf gweithredydd wedi'u troi ymlaen.
+        Ni fydd y rhan fwyaf o ffonau symudol a thabledi’n cael rhybudd prawf gweithredwr.
       </p>
       <p class="govuk-body">
-        Nid yw'r profion gweithredwr hyn yn eich rhybuddio am berygl gwirioneddol. Bydd gan y rhybuddion hyn 'weithredwr' bob amser yn y teitl a byddant yn cadarnhau nad oes angen gweithredu.
+        Bydd gan y rhybuddion hyn 'gweithredwr' bob amser yn y teitl a byddant yn cadarnhau nad oes angen gweithredu. Nid yw profion gweithredwr yn eich rhybuddio am berygl gwirioneddol.
       </p>
       <p class="govuk-body">
         Os cewch rybudd prawf gweithredwr, gall eich ffôn wneud sain debyg i seiren uchel am tua 10 eiliad, oni bai ei fod ar ddull tawel.
@@ -103,7 +103,7 @@
         Mae’r ffordd rydych chi’n optio allan yn dibynnu ar ba ffôn sydd gennych chi. Os ydych chi’n parhau i gael rhybuddion prawf gweithredydd ar ôl optio allan, cysylltwch â’ch gwneuthurwr ffôn am help.
       </p>
       <h3 class="govuk-heading-m">
-        Ffonau Android
+        Ffonau Android a thabledi
       </h3>
       <p class="govuk-body">
         I atal derbyn rhybuddion profion gweithredydd, chwiliwch osodiadau eich ffôn am ‘rybuddion argyfwng’ a diffoddwch ‘rybuddion prawf’, ‘rhybuddion ymarfer’, ‘wedi’u diffinio gan weithredydd’ a ‘rhybuddion gweithredydd’. Os na allwch chi eu gweld yn eich gosodiadau:
@@ -120,7 +120,7 @@
         </li>
       </ul>
       <h3 class="govuk-heading-m">
-        Ffonau symudol eraill
+        Ffonau symudol a thabledi eraill
       </h3>
       <p class="govuk-body">
         Yn dibynnu ar fersiwn gwneuthurwr a meddalwedd eich ffôn, gellir galw gosodiadau rhybuddion brys yn enwau gwahanol, megis ‘rhybuddion argyfwng diwifr’ neu ‘ddarllediadau argyfwng’.
@@ -133,14 +133,14 @@
           ‘neges’, wedyn ‘gosodiadau negeseuon’, wedyn ‘rhybuddion argyfwng diwifr’, wedyn ‘rhybudd’
         </li>
         <li>
-          ‘gosodiadau’, wedyn ‘synau’, yna ‘uwch’, yna ‘darllediadau argyfwng’
+          ‘gosodiadau’, wedyn ‘synau’, wedyn ‘uwch’, wedyn ‘darllediadau argyfwng’
         </li>
         <li>
           ‘gosodiadau’, wedyn ‘gosodiadau cyffredinol’, wedyn ‘rhybuddion argyfwng’
         </li>
       </ul>
       <p class="govuk-body">
-        Wedyn diffoddwch ‘rhybuddion prawf’, ‘rhybuddion ymarfer corff’, ‘wedi’i ddiffinio gan weithredydd’ a ‘rhybuddion gweithredydd’.
+        Wedyn diffoddwch ‘rhybuddion prawf’, ‘rhybuddion ymarfer’, ‘rhybuddion wedi’u diffinio gan weithredydd’ a ‘rhybuddion gweithredydd’.
       </p>
     </div>
 
@@ -162,6 +162,10 @@
           {
             "text": "Rhybuddion yn y gorffennol",
             "href": "/alerts/past-alerts.cy"
+          },
+          {
+            "text": "Profi cyhoeddus",
+            "href": "/alerts/public-testing.cy"
           },
           {
             "text": "Optio allan o rybuddion argyfwng",

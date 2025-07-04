@@ -29,12 +29,12 @@
           {% endif %}
         {% else %}
           {% if language == 'cy' %}
-            <a href="/alerts/system-testing.cy" class="govuk-link govuk-body">
+            <a href="/alerts/operator-testing.cy" class="govuk-link govuk-body">
               Dysgwch ragor am profi'r gwasanaeth Rhybuddion Argyfwng
               <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') | simplify_custom_area_name('cy')}}</span>
             </a>
           {% else %}
-            <a href="/alerts/system-testing" class="govuk-link govuk-body">
+            <a href="/alerts/operator-testing" class="govuk-link govuk-body">
               Find out more about testing the Emergency Alerts service
               <span class="govuk-visually-hidden">to {{ alert.display_areas | formatted_list(before_each='', after_each='') | simplify_custom_area_name('en') }}</span>
             </a>
