@@ -7,7 +7,7 @@ planned_tests:
     finishes_at: 2025-09-07T16:00:00Z
     display_in_status_box: True
     status_box_content: "We are testing the UK’s Emergency Alerts system on Sunday 7 September at 3pm."
-    welsh_status_box_content: "Byddwn yn profi system Rhybuddion Argyfwng y DU ddydd Sul 7 Medi am 3pm."
+    welsh_status_box_content: "Byddwn yn profi system Rhybuddion Argyfwng y DU ar ddydd Sul 7 Medi am 3yh."
     display_as_link: False
     summary: ~
     welsh_summary: ~
