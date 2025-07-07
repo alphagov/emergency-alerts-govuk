@@ -2,18 +2,20 @@
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 {%- from "govuk_frontend_jinja_overrides/templates/components/language-select/macro.html" import hmrcLanguageSelect -%}
+{%- from "components/alert.html" import alert -%}
 {%- from "components/meta_tags.html" import metaTags -%}
 {%- from "components/related_content.html" import related_content -%}
 
-{% set pageTitle = "Optio allan o rybuddion argyfwng" %}
+{% set pageTitle = "Profi cyhoeddus y system Rhybuddion Argyfwng" %}
 
 {% block metaTags %}
   {{ metaTags(
-    description="Optio allan o rybuddion argyfwng",
+    description="About emergency alerts service testing",
     title=pageTitle,
-    url="https://www.gov.uk/alerts/opting-out.cy"
+    url="https://www.gov.uk/alerts/public-testing.cy"
   ) }}
 {% endblock %}
+
 
 {% block pageTitleCurrent -%}
   {{ pageTitle }}
@@ -40,14 +42,14 @@
       {{ hmrcLanguageSelect({
         'language': 'cy',
         'en': {
-          'href': '/alerts/opting-out'
+          'href': '/alerts/public-testing'
         }
       }) }}
     </div>
   </div>
 {% endblock %}
 
-{% block mainContent %}
+{% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-xl">
@@ -57,52 +59,44 @@
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+      <h2 class="govuk-heading-l">
+          Prawf cenedlaethol ar ddod ar 7 Medi 2025
+      </h2>
       <p class="govuk-body">
-        Mae rhybuddion argyfwng yn cynnwys gwybodaeth sy’n achub bywyd a dylent gael eu cadw wedi eu troi ymlaen er eich diogelwch eich hun.
+        Bydd y llywodraeth yn cynnal prawf cenedlaethol o system Rhybuddion Argyfwng y DU ar <strong>7 Medi 2025 am 3yh</strong>.
       </p>
       <p class="govuk-body">
-        Gallwch optio allan o rybuddion argyfwng. Er enghraifft, gall dioddefwyr camdriniaeth yn y cartref gyda ffôn wedi ei guddio ei chael yn briodol i ddiffodd rhybuddion.
+        Anfonir y rhybudd -prawf at bob ffôn symudol 4G a 5G cydweddol a thabledi cydweddol ledled y DU.
       </p>
       <p class="govuk-body">
-        Mae sut rydych chi’n optio allan yn dibynnu ar eich dyfais. Os ydych yn parhau i gael rhybuddion ar ôl optio allan, cysylltwch â gwneuthurwr eich dyfais am gymorth.
+        Mae hyn yn dilyn y prawf cenedlaethol llwyddiannus cyntaf ym mis Ebrill 2023.
       </p>
-      <div class="govuk-inset-text">
-        Mae ffordd wahanol o <a class="govuk-link" href="/alerts/operator-testing.cy#opt-out">optio allan o rybuddion prawf gweithredydd</a>.
-      </div>
-      <h3 class="govuk-heading-l">
-        Ffonau iPhone ac Android
-      </h3>
-      <p class="govuk-body" id="opt-out">
-        I optio allan:
-      </p>
-      <ol class="govuk-list govuk-list--bullet">
-        <li>Chwiliwch am ‘rybuddion argyfwng’ yn eich gosodiadau.</li>
-        <li>Diffoddwch ‘rybuddion difrifol’ a ‘rhybuddion eithafol’.</li>
-      </ol>
-      <h3 class="govuk-heading-l">
-        Ffonau symudol eraill a thabledi
-      </h3>
+      <h2 class="govuk-heading-l">
+          Pam fod y prawf yn cymryd lle
+      </h2>
       <p class="govuk-body">
-        Yn dibynnu ar fersiwn gwneuthurwr a meddalwedd eich ffôn, gellir galw gosodiadau rhybuddion brys yn enwau gwahanol, megis ‘rhybuddion argyfwng diwifr’ neu ‘ddarllediadau argyfwng’.
+        Mae profi rheolaidd yn sicrhau bod y system yn gweithredu’n gywir, pe bai ei hangen mewn argyfwng.
       </p>
       <p class="govuk-body">
-        Gellir dod o hyd i’r gosodiadau fel arfer mewn un o’r ffyrdd canlynol. Ewch i:
+        Ni fwriedir i’r prawf eich hysbysu o berygl go iawn ac ni fydd rhaid i chi gymryd unrhyw gamau pellach.
       </p>
-      <ul class="govuk-list govuk-list--bullet">
-        <li>
-          ‘neges’, wedyn ‘gosodiadau negeseuon’, wedyn ‘rhybuddion argyfwng diwifr’, wedyn ‘rhybudd’
-        </li>
-        <li>
-          ‘gosodiadau’, wedyn ‘synau’, wedyn ‘uwch’, wedyn ‘darllediadau argyfwng’
-        </li>
-        <li>
-          ‘gosodiadau’, wedyn ‘gosodiadau cyffredinol’, wedyn ‘rhybuddion argyfwng’
-        </li>
-      </ul>
+      <h2 class="govuk-heading-l">
+          Sut bydd y prawf yn edrych ac yn swnio
+      </h2>
       <p class="govuk-body">
-        Wedyn diffoddwch ‘rhybuddion difrifol’, ‘rhybuddion eithafol’ a ‘rhybuddion prawf’.
+        Mae hysbysiad argyfwng yn edrych ac yn swnio’n dra gwahanol i fathau eraill o negeseuon y gallwch eu cael ar eich ffôn. Byddwch yn clywed sŵn uchel, tebyg i seiren a bydd eich ffôn yn dirgrynu.
+      </p>
+      <p class="govuk-body">
+        Os oes gennych nam ar eich golwg neu'ch clyw, bydd signalau sylw sain a dirgrynu yn rhoi gwybod i chi eich bod wedi cael y prawf.
+      </p>
+      <h2 class="govuk-heading-l">
+          Optio allan o’r prawf
+      </h2>
+      <p class="govuk-body">
+        Gallwch optio allan o rybuddion argyfwng, gan gynnwys y prawf cenedlaethol, ond dylech eu cadw ymlaen er eich diogelwch eich hun. Dysgwch fwy am sut i <a class="govuk-link" href="/alerts/opting-out.cy">optio allan o rybuddion argyfwng</a>.
       </p>
     </div>
+
     <div class="govuk-grid-column-one-third">
       {{ related_content({
         "items": [
@@ -123,12 +117,12 @@
             "href": "/alerts/past-alerts.cy"
           },
           {
-            "text": "Profi cyhoeddus",
-            "href": "/alerts/public-testing.cy"
-          },
-          {
             "text": "Profion gweithredwyr",
             "href": "/alerts/operator-testing.cy"
+          },
+          {
+            "text": "Optio allan o rybuddion argyfwng",
+            "href": "/alerts/opting-out.cy"
           },
           {
             "text": "Porthiant",
