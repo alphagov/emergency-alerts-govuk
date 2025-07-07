@@ -1,0 +1,215 @@
+{% extends "content.html" %}
+
+{%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
+{%- from "govuk_frontend_jinja_overrides/templates/components/language-select/macro.html" import hmrcLanguageSelect -%}
+{%- from "components/alert.html" import alert -%}
+{%- from "components/meta_tags.html" import metaTags -%}
+{%- from "components/related_content.html" import related_content -%}
+
+{% set pageTitle = "Profion gweithredwyr" %}
+
+{% block metaTags %}
+  {{ metaTags(
+    description="About emergency alerts system testing",
+    title=pageTitle,
+    url="https://www.gov.uk/alerts/operator-testing.cy"
+  ) }}
+{% endblock %}
+
+
+{% block pageTitleCurrent -%}
+  {{ pageTitle }}
+{%- endblock %}
+
+{% block beforeContent %}
+<div class="govuk-grid-row govuk-subheader">
+  <div class="govuk-breadcrumbs">
+  {{ govukBreadcrumbs({
+    "items": [
+      {
+        "text": "Home",
+        "href": "https://www.gov.uk/"
+      },
+      {
+        "text": "Am Rybuddion Argyfwng",
+        "href": "/alerts/about.cy"
+      }
+    ]
+  }) }}
+</div>
+<div class="govuk-separator"></div>
+<div class="govuk-language-select">
+  {{ hmrcLanguageSelect({
+    'language': 'cy',
+    'en': {
+      'href': '/alerts/operator-testing'
+    }
+  }) }}
+</div>
+</div>
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+        {{ pageTitle }}
+      </h1>
+    </div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if alerts.test_alerts_today_grouped %}
+        {% for _date, alerts_or_planned_tests in alerts.test_alerts_today_grouped | sort %}
+          {% set date_loop = loop %}
+          {{ planned_tests_by_date(date_loop, alerts_or_planned_tests) }}
+        {% endfor %}
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        <h2 class="govuk-heading-l">
+          Profion gweithredwyr
+        </h2>
+      {% endif %}
+      <p class="govuk-body">
+        {% if alerts.planned_non_public_test_alerts %}
+          {% for alert in alerts.planned_non_public_test_alerts|sort(attribute='starts_at_date') %}
+            {% if loop.index == 1 %}
+              {% if alert.welsh_summary %}
+                {{ alert.welsh_summary }}
+              {% else %}
+                Yn achlysurol, bydd y llywodraeth a gweithredwyr rhwydweithiau symudol yn cynnal profion gweithredwyr.
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          Yn achlysurol, bydd y llywodraeth a gweithredwyr rhwydweithiau symudol yn cynnal profion gweithredwyr.
+        {% endif %}
+      </p>
+      <p class="govuk-body">
+        Mae hyn er mwyn asesu gwelliannau technolegol sydd wedi eu gwneud i’r gwasanaeth rhybuddion argyfwng.
+      </p>
+      <p class="govuk-body">
+        Ni fydd y rhan fwyaf o ffonau symudol a thabledi’n cael rhybudd prawf gweithredwr.
+      </p>
+      <p class="govuk-body">
+        Bydd gan y rhybuddion hyn 'gweithredwr' bob amser yn y teitl a byddant yn cadarnhau nad oes angen gweithredu. Nid yw profion gweithredwr yn eich rhybuddio am berygl gwirioneddol.
+      </p>
+      <p class="govuk-body">
+        Os cewch rybudd prawf gweithredwr, gall eich ffôn wneud sain debyg i seiren uchel am tua 10 eiliad, oni bai ei fod ar ddull tawel.
+      </p>
+      <h2 id="opt-out" class="govuk-heading-l">
+        Optio allan o hysbysiadau prawf gweithredwr
+      </h2>
+      <p class="govuk-body">
+        Mae’r ffordd rydych chi’n optio allan yn dibynnu ar ba ffôn sydd gennych chi. Os ydych chi’n parhau i gael rhybuddion prawf gweithredydd ar ôl optio allan, cysylltwch â’ch gwneuthurwr ffôn am help.
+      </p>
+      <h3 class="govuk-heading-m">
+        Ffonau Android a thabledi
+      </h3>
+      <p class="govuk-body">
+        I atal derbyn rhybuddion profion gweithredydd, chwiliwch osodiadau eich ffôn am ‘rybuddion argyfwng’ a diffoddwch ‘rybuddion prawf’, ‘rhybuddion ymarfer’, ‘wedi’u diffinio gan weithredydd’ a ‘rhybuddion gweithredydd’. Os na allwch chi eu gweld yn eich gosodiadau:
+      </p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>
+          agorwch eich ap galwadau ffôn
+        </li>
+        <li>
+          defnyddiwch y bysellbad i fewngofnodi *#*#2627#*#*
+        </li>
+        <li>
+          chwiliwch osodiadau eich ffôn am ‘rybuddion argyfwng’ a diffoddwch ‘rybuddion prawf’, ‘rhybuddion ymarfer’, ‘wedi’u diffinio gan weithredydd’ a ‘rhybuddion gweithredydd’
+        </li>
+      </ul>
+      <h3 class="govuk-heading-m">
+        Ffonau symudol a thabledi eraill
+      </h3>
+      <p class="govuk-body">
+        Yn dibynnu ar fersiwn gwneuthurwr a meddalwedd eich ffôn, gellir galw gosodiadau rhybuddion brys yn enwau gwahanol, megis ‘rhybuddion argyfwng diwifr’ neu ‘ddarllediadau argyfwng’.
+      </p>
+      <p class="govuk-body">
+        Gellir dod o hyd i’r gosodiadau fel arfer mewn un o’r ffyrdd canlynol. Ewch i:
+      </p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>
+          ‘neges’, wedyn ‘gosodiadau negeseuon’, wedyn ‘rhybuddion argyfwng diwifr’, wedyn ‘rhybudd’
+        </li>
+        <li>
+          ‘gosodiadau’, wedyn ‘synau’, wedyn ‘uwch’, wedyn ‘darllediadau argyfwng’
+        </li>
+        <li>
+          ‘gosodiadau’, wedyn ‘gosodiadau cyffredinol’, wedyn ‘rhybuddion argyfwng’
+        </li>
+      </ul>
+      <p class="govuk-body">
+        Wedyn diffoddwch ‘rhybuddion prawf’, ‘rhybuddion ymarfer’, ‘rhybuddion wedi’u diffinio gan weithredydd’ a ‘rhybuddion gweithredydd’.
+      </p>
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+      {{ related_content({
+        "items": [
+          {
+            "text": "Am Rybuddion Argyfwng",
+            "href": "/alerts/about.cy"
+          },
+          {
+            "text": "Sut mae'r rhybuddion argyfwng yn gweithio",
+            "href": "/alerts/how-alerts-work.cy"
+          },
+          {
+            "text": "Rhybuddion ar hyn o bryd",
+            "href": "/alerts/current-alerts.cy"
+          },
+          {
+            "text": "Rhybuddion yn y gorffennol",
+            "href": "/alerts/past-alerts.cy"
+          },
+          {
+            "text": "Profi cyhoeddus",
+            "href": "/alerts/public-testing.cy"
+          },
+          {
+            "text": "Optio allan o rybuddion argyfwng",
+            "href": "/alerts/opting-out.cy"
+          },
+          {
+            "text": "Porthiant",
+            "href": "/alerts/feed_cy.atom"
+          }
+        ],
+        "language": "cy"
+      }) }}
+    </div>
+  </div>
+{% endblock %}
+
+{% macro planned_tests_by_date(date_loop, alerts_or_planned_tests) %}
+  {% for alert_or_planned_test in alerts_or_planned_tests | sort %}
+    {% if not loop.first %}
+      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    {% endif %}
+    {% if loop.first %}
+      <h2 class="{% if not date_loop.first %}date-margin-top {% else %} govuk-heading-m {% endif %}">
+        {{ alert_or_planned_test.starts_at_date.date_as_lang }}
+      </h2>
+    {% endif %}
+    <h2 class="govuk-heading-m govuk-!-margin-top-6">
+      {% if alert_or_planned_test.is_public %}
+        {{ alert_or_planned_test.display_areas | formatted_list(before_each='', after_each='') }}
+      {% endif %}
+    </h2>
+    {% if not alert_or_planned_test.is_public %}
+      <p class="govuk-body">
+        Bydd prawf gwasanaeth ar system Rhybuddion Argyfwng y DU heddiw.
+      </p>
+      <p class="govuk-body">
+        Ni chaiff y rhan fwyaf o ffonau symudol a llechi rybudd prawf.
+      </p>
+    {% endif %}
+    <p class="govuk-body">
+      Bydd y rhybudd yn dweud:
+    </p>
+    <div class="govuk-inset-text govuk-!-margin-top-2">
+      {{ alert_or_planned_test.content | paragraphize(classes="govuk-body") }}
+    </div>
+  {% endfor %}
+{% endmacro %}

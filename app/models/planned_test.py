@@ -22,6 +22,7 @@ class PlannedTest(SerialisedModel):
         'welsh_summary',
         'content',
         'welsh_content',
+        'display_as_link'
     }
 
     def __lt__(self, other):
