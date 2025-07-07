@@ -5,11 +5,18 @@ from flask import current_app
 from app import notify_celery
 from app.models.alerts import Alerts
 from app.render import get_rendered_pages
+from emergency_alerts_utils.celery import TaskNames
 from app.notify_client.alerts_api_client import alerts_api_client
 from app.utils import purge_fastly_cache, upload_html_to_s3
 
 
-@notify_celery.task(bind=True, name="publish-govuk-alerts", max_retries=20, retry_backoff=True, retry_backoff_max=300)
+@notify_celery.task(
+    bind=True,
+    name=TaskNames.PUBLISH_GOVUK_ALERTS,
+    max_retries=20,
+    retry_backoff=True,
+    retry_backoff_max=300,
+)
 def publish_govuk_alerts(self, broadcast_event_id=""):
     try:
         alerts = Alerts.load()
@@ -27,7 +34,7 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
         self.retry(queue=current_app.config['QUEUE_NAME'])
 
 
-@notify_celery.task(name="trigger-govuk-alerts-healthcheck")
+@notify_celery.task(name=TaskNames.TRIGGER_GOVUK_HEALTHCHECK)
 def trigger_govuk_alerts_healthcheck():
     try:
         time_stamp = int(time.time())
