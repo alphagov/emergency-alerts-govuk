@@ -81,35 +81,30 @@ def test_get_rendered_pages_generates_atom_feed(govuk_alerts):
         create_alert_dict(
             id=UUID(int=0),
             starts_at=dt_parse('2021-04-20T22:59:00Z'),
-            extra_content="",
             approved_at=dt_parse('2021-04-20T23:10:00Z'),
             areas={"aggregate_names": ['England']}
         ),
         create_alert_dict(
             id=UUID(int=1),
             starts_at=dt_parse('2021-04-20T23:00:00Z'),
-            extra_content="",
             approved_at=dt_parse('2021-04-20T23:11:00Z'),
             areas={"aggregate_names": ['Argyll and Bute']},
         ),
         create_alert_dict(
             id=UUID(int=2),
             starts_at=dt_parse('2021-04-21T12:31:00Z'),
-            extra_content="",
             approved_at=dt_parse('2021-04-21T12:35:00Z'),
             areas={"aggregate_names": ['Scotland']},
         ),
         create_alert_dict(
             id=UUID(int=3),
             starts_at=dt_parse('2021-04-21T12:31:00Z'),
-            extra_content="",
             approved_at=dt_parse('2021-04-21T12:37:00Z'),
             areas={"aggregate_names": ['Barnsley']},
         ),
         create_alert_dict(
             id=UUID(int=4),
             starts_at=dt_parse('2021-04-21T23:00:00Z'),
-            extra_content="",
             approved_at=dt_parse('2021-04-21T23:09:00Z'),
             areas={"aggregate_names": ['Wales']},
         ),
