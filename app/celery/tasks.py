@@ -1,12 +1,12 @@
 import time
 
+from emergency_alerts_utils.celery import TaskNames
 from flask import current_app
 
 from app import notify_celery
 from app.models.alerts import Alerts
-from app.render import get_rendered_pages
-from emergency_alerts_utils.celery import TaskNames
 from app.notify_client.alerts_api_client import alerts_api_client
+from app.render import get_rendered_pages
 from app.utils import purge_fastly_cache, upload_html_to_s3
 
 
