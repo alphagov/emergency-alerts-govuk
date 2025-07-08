@@ -24,7 +24,7 @@ class AlertsApiClient(BaseAPIClient):
         return data
 
     def send_publish_acknowledgement(self):
-        return self.post(url="/govuk-alerts/acknowledge")
+        return self.post(url="/govuk-alerts/acknowledge", data={})
 
 
 alerts_api_client = AlertsApiClient()
