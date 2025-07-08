@@ -6,13 +6,13 @@
 {%- from "components/meta_tags.html" import metaTags -%}
 {%- from "components/related_content.html" import related_content -%}
 
-{% set pageTitle = "Past alerts" %}
+{% set pageTitle = "Public testing of the Emergency Alerts system" %}
 
 {% block metaTags %}
   {{ metaTags(
-    description="A list of past emergency alerts that were sent in the UK",
+    description="About emergency alerts service testing",
     title=pageTitle,
-    url="https://www.gov.uk/alerts/past-alerts"
+    url="https://www.gov.uk/alerts/public-testing"
   ) }}
 {% endblock %}
 
@@ -42,7 +42,7 @@
       {{ hmrcLanguageSelect({
         'language': 'en',
         'cy': {
-          'href': '/alerts/past-alerts.cy'
+          'href': '/alerts/public-testing.cy'
         }
       }) }}
     </div>
@@ -55,31 +55,48 @@
       <h1 class="govuk-heading-xl">
         {{ pageTitle }}
       </h1>
-      <div class="govuk-inset-text">
-        Emergency Alerts can be written in English or Welsh
-      </div>
     </div>
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% for _date, past_alerts in alerts.past_alerts_grouped_by_date | sort(reverse=True) %}
-        {% set date_loop = loop %}
-        {% for past_alert in past_alerts | sort(reverse=True) %}
-          {% if loop.first %}
-            <h2 class="{% if not date_loop.first %}date-margin-top {% else %} govuk-heading-m {% endif %}">
-              {{ past_alert.starts_at_date.date_as_lang }}
-            </h2>
-          {% endif %}
-          <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-          {{ alert(alert=past_alert, heading_level=3) }}
-        {% endfor %}
-        {% if loop.last %}
-          <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        {% endif %}
-      {% else %}
-        <p class="govuk-body">There are no past emergency alerts.</p>
-      {% endfor %}
+      <h2 class="govuk-heading-l">
+          Upcoming national test on 7 September 2025
+      </h2>
+      <p class="govuk-body">
+        The government will be carrying out a national test of the UK Emergency Alerts system on <strong>7 September 2025 at 3pm</strong>.
+      </p>
+      <p class="govuk-body">
+        The test alert will be sent to all compatible 4G and 5G mobile phones and compatible tablets across the UK.
+      </p>
+      <p class="govuk-body">
+        This follows the first successful national test in April 2023.
+      </p>
+      <h2 class="govuk-heading-l">
+          Why the test is taking place
+      </h2>
+      <p class="govuk-body">
+        Regular testing ensures the system is functioning correctly, should it be needed in an emergency.
+      </p>
+      <p class="govuk-body">
+        The test is not intended to alert you to real danger and you will not need to take any further action.
+      </p>
+      <h2 class="govuk-heading-l">
+          What the test will look and sound like
+      </h2>
+      <p class="govuk-body">
+        An emergency alert looks and sounds very different to other types of messages you might receive on your phone. You’ll hear a loud, siren-like sound and your phone or tablet will vibrate.
+      </p>
+      <p class="govuk-body">
+        If you have a vision or hearing impairment, audio and vibration attention signals will let you know you have received the test.
+      </p>
+      <h2 class="govuk-heading-l">
+          Opt out of the test
+      </h2>
+      <p class="govuk-body">
+        You can opt out of emergency alerts, including the national test, but you should keep them switched on for your own safety. Learn more about how to <a class="govuk-link" href="/alerts/opting-out">opt out of emergency alerts</a>.
+      </p>
     </div>
+
     <div class="govuk-grid-column-one-third">
       {{ related_content({
         "items": [
@@ -96,11 +113,11 @@
             "href": "/alerts/current-alerts"
           },
           {
-            "text": "Public testing",
-            "href": "/alerts/public-testing"
+            "text": "Past alerts",
+            "href": "/alerts/past-alerts"
           },
           {
-            "text": "Operator tests",
+            "text": "Operator testing",
             "href": "/alerts/operator-testing"
           },
           {
