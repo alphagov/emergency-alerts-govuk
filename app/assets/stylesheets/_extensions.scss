@@ -53,3 +53,9 @@
   @extend %govuk-heading-m;
   margin-top: govuk-spacing(9);
 }
+
+
+.banner-margin-top {
+  @extend %govuk-heading-m;
+  margin-top: govuk-spacing(3);
+}
