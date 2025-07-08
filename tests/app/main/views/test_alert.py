@@ -31,12 +31,16 @@ def test_alert_links_to_correct_page_based_on_url_slug(is_expired, client_get, m
     mocker.patch('app.models.alert.Alert.is_expired', is_expired)
     mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([
         create_alert_dict(id=uuid4(), content='test 1', starts_at=dt_parse('2021-04-21T11:00:00Z')),
-        create_alert_dict(id=uuid4(), content='test 2', starts_at=dt_parse('2021-04-21T12:00:00Z')),
+        create_alert_dict(id=uuid4(), content='test 2', starts_at=dt_parse('2021-04-21T12:00:00Z'),
+                          extra_content="Test Extra Content"),
     ]))
 
     html = client_get('alerts/21-apr-2021-2')
     assert html.select('p.govuk-body-l')[0].text == 'test 2'
     assert html.select('p.govuk-body')[0].text.strip() == (
+        'Extra content: Test Extra Content'
+    )
+    assert html.select('p.govuk-body')[1].text.strip() == (
         'Sent by the UK government at 1:00pm on Wednesday 21 April 2021'
     )
 
@@ -50,11 +54,15 @@ def test_alert_says_expired_alert_stopped(client_get, mocker):
             starts_at=dt_parse('2021-04-21T11:00:00Z'),
             cancelled_at=None,
             finishes_at=dt_parse('2021-04-21T15:00:00Z'),
+            extra_content="Test Extra Content"
         )
     ]))
 
     html = client_get('alerts/21-apr-2021')
     assert html.select_one('main h2').text.strip() == 'Stopped sending at 4:00pm on Wednesday 21 April 2021'
+    assert html.select('p.govuk-body')[0].text.strip() == (
+        'Extra content: Test Extra Content'
+    )
 
 
 @freeze_time('2021-04-21T14:00:00Z')
