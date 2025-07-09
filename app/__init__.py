@@ -5,11 +5,10 @@ from emergency_alerts_utils import logging
 from emergency_alerts_utils.celery import NotifyCelery
 from flask import Flask, current_app
 
-from app.notify_client.alerts_api_client import AlertsApiClient
+from app.notify_client.alerts_api_client import alerts_api_client
 from app.utils import DIST
 
 notify_celery = NotifyCelery()
-alerts_api_client = AlertsApiClient()
 
 
 def create_app():

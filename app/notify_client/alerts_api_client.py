@@ -27,3 +27,9 @@ class AlertsApiClient(BaseAPIClient):
                     alert_dict[field] = dt_parse(alert_dict[field])
 
         return data
+
+    def send_publish_acknowledgement(self):
+        return self.post(url="/govuk-alerts/acknowledge", data={})
+
+
+alerts_api_client = AlertsApiClient()

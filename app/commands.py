@@ -2,6 +2,7 @@ import click
 from flask import cli, current_app
 
 from app.models.alerts import Alerts
+from app.notify_client.alerts_api_client import alerts_api_client
 from app.render import get_rendered_pages
 from app.utils import purge_fastly_cache, upload_assets_to_s3, upload_html_to_s3
 
@@ -17,6 +18,7 @@ def publish():
     try:
         _publish_html()
         purge_fastly_cache()
+        alerts_api_client.send_publish_acknowledgement()
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
 
@@ -28,6 +30,7 @@ def publish_with_assets():
         _publish_html()
         _publish_assets()
         purge_fastly_cache()
+        alerts_api_client.send_publish_acknowledgement()
     except FileExistsError as e:
         current_app.logger.exception(f"Publish assets FAILED: {e}")
     except Exception as e:
