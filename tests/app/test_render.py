@@ -8,6 +8,7 @@ from dateutil.parser import parse as dt_parse
 from app.models.alert import Alert
 from app.models.alerts import Alerts
 from app.render import get_rendered_pages, get_url_for_alert
+from tests import normalize_spaces
 from tests.conftest import create_alert_dict
 
 
@@ -82,7 +83,7 @@ def test_get_rendered_pages_generates_atom_feed(govuk_alerts):
             id=UUID(int=0),
             starts_at=dt_parse('2021-04-20T22:59:00Z'),
             approved_at=dt_parse('2021-04-20T23:10:00Z'),
-            areas={"aggregate_names": ['England']}
+            areas={"aggregate_names": ['England']},
         ),
         create_alert_dict(
             id=UUID(int=1),
@@ -101,12 +102,15 @@ def test_get_rendered_pages_generates_atom_feed(govuk_alerts):
             starts_at=dt_parse('2021-04-21T12:31:00Z'),
             approved_at=dt_parse('2021-04-21T12:37:00Z'),
             areas={"aggregate_names": ['Barnsley']},
+            content="Test Alert Content",
+            extra_content="Test Extra"
         ),
         create_alert_dict(
             id=UUID(int=4),
             starts_at=dt_parse('2021-04-21T23:00:00Z'),
             approved_at=dt_parse('2021-04-21T23:09:00Z'),
             areas={"aggregate_names": ['Wales']},
+            extra_content="Test Extra content"
         ),
     ]
 
@@ -115,27 +119,34 @@ def test_get_rendered_pages_generates_atom_feed(govuk_alerts):
         {
             "id": "http://localhost:6017/alerts/22-apr-2021",
             "title": "Wales",
-            "published": "2021-04-21T23:09:00+00:00"
+            "published": "2021-04-21T23:09:00+00:00",
+            "content": '<p class="govuk-body">Something</p> ' +
+            '<p class="govuk-body"><strong>Extra content: </strong>Test Extra content</p>'
         },
         {
             "id": "http://localhost:6017/alerts/21-apr-2021-3",
             "title": "Barnsley",
-            "published": "2021-04-21T12:37:00+00:00"
+            "published": "2021-04-21T12:37:00+00:00",
+            "content": '<p class="govuk-body">Test Alert Content</p> ' +
+            '<p class="govuk-body"><strong>Extra content: </strong>Test Extra</p>'
         },
         {
             "id": "http://localhost:6017/alerts/21-apr-2021-2",
             "title": "Scotland",
-            "published": "2021-04-21T12:35:00+00:00"
+            "published": "2021-04-21T12:35:00+00:00",
+            "content": "Something",
         },
         {
             "id": "http://localhost:6017/alerts/21-apr-2021",
             "title": "Argyll and Bute",
-            "published": "2021-04-20T23:11:00+00:00"
+            "published": "2021-04-20T23:11:00+00:00",
+            "content": "Something",
         },
         {
             "id": "http://localhost:6017/alerts/20-apr-2021",
             "title": "England",
-            "published": "2021-04-20T23:10:00+00:00"
+            "published": "2021-04-20T23:10:00+00:00",
+            "content": "Something",
         }
     ]
 
@@ -168,5 +179,6 @@ def _verify_entries(entries, namespace, expected):
         assert entry.find('atom:id', namespace).text == expected[i]['id']
         assert entry.find('atom:title', namespace).text == expected[i]['title']
         assert entry.find('atom:published', namespace).text == expected[i]['published']
+        assert normalize_spaces(entry.find('atom:content', namespace).text) == expected[i]['content']
 
     assert len(entries) == 5
