@@ -5,7 +5,6 @@ from dateutil.parser import parse as dt_parse
 from freezegun import freeze_time
 
 from app.models.alerts import Alerts
-from tests import normalize_spaces
 from tests.conftest import create_alert_dict
 
 
