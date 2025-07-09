@@ -255,8 +255,6 @@ def _add_feed_entry(fg, alert, alert_url):
     fe.link(href=f"{host_url}/alerts/" + alert_url, rel="alternate")
     content = alert.content if len(alert.content) <= 40 else alert.content[:36] + "..."
     fe.summary(content)
-    if alert.extra_content:
-        fe.subtitle(alert.extra_content)
     fe.published(alert.approved_at)
 
 
