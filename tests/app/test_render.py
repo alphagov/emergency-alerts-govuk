@@ -128,7 +128,7 @@ def test_get_rendered_pages_generates_atom_feed(govuk_alerts):
             "title": "Barnsley",
             "published": "2021-04-21T12:37:00+00:00",
             "content": '<p class="govuk-body">Test Alert Content</p> ' +
-            '<p class="govuk-bod-l"><strong>Additional Information: </strong>Test Extra</p>'
+            '<p class="govuk-body-l"><strong>Additional Information: </strong>Test Extra</p>'
         },
         {
             "id": "http://localhost:6017/alerts/21-apr-2021-2",
