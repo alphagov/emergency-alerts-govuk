@@ -254,7 +254,7 @@ def _add_feed_entry(fg, alert, alert_url):
 
     if alert.extra_content:
         html = f"""<p class='govuk-body'>{alert.content}</p>
-        <p class='govuk-body'><strong>Extra content: </strong>{alert.extra_content}</p>"""
+        <p class='govuk-body'><strong>Additional Information: </strong>{alert.extra_content}</p>"""
         fe.content(html, type="html")
     else:
         fe.content(alert.content)
