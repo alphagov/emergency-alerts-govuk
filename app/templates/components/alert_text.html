@@ -1,0 +1,3 @@
+{% macro alert_text(text) %}
+  {{ text | string | autolink_urls(classes='govuk-link') | paragraphize }}
+{% endmacro %}

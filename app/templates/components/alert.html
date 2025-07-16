@@ -1,4 +1,5 @@
 {%- from "components/alerts_icon.html" import alerts_icon -%}
+{%- from "components/alert_text.html" import alert_text -%}
 
 {% macro alert(alert, heading_level=2, language='en') %}
   <div class="govuk-grid-row">
@@ -14,7 +15,7 @@
             <span class="govuk-visually-hidden">Emergency alert sent to </span>{{ alert.display_areas | formatted_list(before_each='', after_each='') | simplify_custom_area_name('en') |capitalise }}
           </h{{ heading_level }}>
         {% endif %}
-        {{ alert_body(alert) }}
+        {{alert_text(alert.content)}}
         {% if alert.is_public %}
           {% if language == 'cy' %}
             <a href="/alerts/{{ alert | get_url_for_alert }}.cy" class="govuk-link govuk-body">
@@ -43,8 +44,4 @@
       </div>
     </div>
   </div>
-{% endmacro %}
-
-{% macro alert_body(alert) %}
-  {{ alert.content | string | autolink_urls(classes='govuk-link') | paragraphize }}
 {% endmacro %}
