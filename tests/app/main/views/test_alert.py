@@ -5,6 +5,7 @@ from dateutil.parser import parse as dt_parse
 from freezegun import freeze_time
 
 from app.models.alerts import Alerts
+from tests import normalize_spaces
 from tests.conftest import create_alert_dict
 
 
@@ -56,10 +57,10 @@ def test_alert_says_expired_alert_stopped(client_get, mocker):
 
     html = client_get('alerts/21-apr-2021')
     assert html.select_one('main h2').text.strip() == 'Stopped sending at 4:00pm on Wednesday 21 April 2021'
-    assert html.select('p.govuk-body-l')[0].text.strip() == "test 1"
-    assert html.select('p.govuk-body-l')[1].text.strip() == (
-        'Additional Information: Test Extra Content'
-    )
+    assert html.select_one('p.govuk-body-l').text.strip() == "test 1"
+    assert ' '.join([
+        normalize_spaces(p.text) for p in html.select('#extra-content p')
+    ]) == "Additional Information: Test Extra Content"
 
 
 @freeze_time('2021-04-21T14:00:00Z')
@@ -112,7 +113,9 @@ def test_alert_displays_extra_content_if_exists(client_get, mocker, extra_conten
 
     html = client_get('alerts/21-apr-2021')
 
-    assert html.select_one('#extra-content').text.strip() == f"Additional Information: {extra_content}"
+    assert ' '.join([
+        normalize_spaces(p.text) for p in html.select('#extra-content p')
+    ]) == f"Additional Information: {extra_content}"
 
 
 def test_alert_no_extra_content(client_get, mocker):
