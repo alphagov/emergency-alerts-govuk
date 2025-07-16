@@ -69,14 +69,15 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds alert-icon__container">
       {% if alert_data.is_expired %}
-      <h2 class="govuk-heading-s">
+      <h2 class="govuk-heading-m">
         Stopped sending <time datetime="{{ alert_data.expires_date.as_iso8601 }}">{{ alert_data.expires_date.as_lang }}</time>
       </h2>
       {% endif %}
       {{alert_text(alert_data.content)}}
 
       {% if alert_data.extra_content %}
-        <p class="govuk-body-l" id="extra-content">
+      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        <p class="govuk-heading-m" id="extra-content">
           <strong>Additional Information:</strong> {{alert_text(alert_data.extra_content)}}
         </p>
       {% endif %}
