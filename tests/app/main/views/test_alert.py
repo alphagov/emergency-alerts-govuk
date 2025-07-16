@@ -57,7 +57,7 @@ def test_alert_says_expired_alert_stopped(client_get, mocker):
     html = client_get('alerts/21-apr-2021')
     assert html.select_one('main h2').text.strip() == 'Stopped sending at 4:00pm on Wednesday 21 April 2021'
     assert html.select('p.govuk-body')[0].text.strip() == (
-        'Extra content: Test Extra Content'
+        'Additional Information: Test Extra Content'
     )
 
 
@@ -111,7 +111,7 @@ def test_alert_displays_extra_content_if_exists(client_get, mocker, extra_conten
 
     html = client_get('alerts/21-apr-2021')
 
-    assert html.select_one('#extra-content').text.strip() == f"Extra content: {extra_content}"
+    assert html.select_one('#extra-content').text.strip() == f"Additional Information: {extra_content}"
 
 
 def test_alert_no_extra_content(client_get, mocker):
