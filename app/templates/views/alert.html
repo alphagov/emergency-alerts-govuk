@@ -77,9 +77,10 @@
 
       {% if alert_data.extra_content %}
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        <p class="govuk-heading-m" id="extra-content">
-          <strong>Additional Information:</strong> {{alert_text(alert_data.extra_content)}}
-        </p>
+      <div id="extra-content">
+        <p class="govuk-heading-m">Additional Information: </p>
+        {{alert_text(alert_data.extra_content)}}
+      </div>
       {% endif %}
 
       <p class="govuk-body govuk-!-margin-bottom-0">
