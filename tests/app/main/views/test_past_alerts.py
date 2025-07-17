@@ -14,17 +14,15 @@ def test_past_alerts_page(client_get):
 
 
 @freeze_time('2021-04-23T11:00:00Z')
-@pytest.mark.parametrize('is_public,expected_title,expected_link_text', [
+@pytest.mark.parametrize('is_public,expected_title', [
     [
         True,
         'Emergency alert sent to Foo',
-        'More information about this alert',
     ]
 ])
-def test_past_alerts_page_shows_alerts(
+def test_past_alerts_page_shows_single_past_alert(
     is_public,
     expected_title,
-    expected_link_text,
     mocker,
     alert_dict,
     client_get
@@ -35,12 +33,46 @@ def test_past_alerts_page_shows_alerts(
 
     html = client_get("alerts/past-alerts")
     titles = html.select('h3.alerts-alert__title')
-    link = html.select_one('a.govuk-body')
 
     assert len(titles) == 1
     assert titles[0].text.strip() == expected_title
+
+
+@freeze_time('2021-04-23T11:00:00Z')
+@pytest.mark.parametrize('is_public,expected_title,expected_link_text', [
+    [
+        True,
+        'Emergency alert sent to Foo',
+        'More information about this alert',
+    ]
+])
+def test_past_alerts_page_shows_multiple_past_alerts(
+    is_public,
+    expected_title,
+    expected_link_text,
+    mocker,
+    alert_dict,
+    client_get
+):
+    mocker.patch('app.models.alert.Alert.display_areas', ['foo'])
+    mocker.patch('app.models.alert.Alert.is_public', is_public)
+    content = """This is a mobile network operator test of the Emergency Alerts service.
+    You do not need to take any action. To find out more, search for gov.uk/alerts"""
+    mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([create_alert_dict(content=content), alert_dict]))
+
+    html = client_get("alerts/past-alerts")
+    titles = html.select('h3.alerts-alert__title')
+    truncated_content = html.select('p.truncated-text')
+    links = html.select('a.govuk-body')
+
+    assert len(titles) == 2
+    assert titles[0].text.strip() == expected_title
+    assert truncated_content[0].text.strip() == content
+    assert truncated_content[1].text.strip() == "Something"
+    assert len(links) == 2
     if is_public:
-        assert expected_link_text in link.text
+        assert expected_link_text in links[0].text
+        assert expected_link_text in links[1].text
 
 
 @freeze_time('2021-04-24T11:00:00Z')
