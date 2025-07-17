@@ -52,13 +52,12 @@ def test_past_alerts_page_shows_multiple_past_alerts(
     expected_link_text,
     mocker,
     alert_dict,
-    client_get
+    client_get,
+    sample_content
 ):
     mocker.patch('app.models.alert.Alert.display_areas', ['foo'])
     mocker.patch('app.models.alert.Alert.is_public', is_public)
-    content = """This is a mobile network operator test of the Emergency Alerts service.
-    You do not need to take any action. To find out more, search for gov.uk/alerts"""
-    mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([create_alert_dict(content=content), alert_dict]))
+    mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([create_alert_dict(content=sample_content), alert_dict]))
 
     html = client_get("alerts/past-alerts")
     titles = html.select('h3.alerts-alert__title')
@@ -67,7 +66,7 @@ def test_past_alerts_page_shows_multiple_past_alerts(
 
     assert len(titles) == 2
     assert titles[0].text.strip() == expected_title
-    assert truncated_content[0].text.strip() == content
+    assert truncated_content[0].text.strip() == sample_content
     assert truncated_content[1].text.strip() == "Something"
     assert len(links) == 2
     if is_public:
