@@ -1,3 +1,5 @@
-{% macro alert_text(text) %}
-  {{ text | string | autolink_urls(classes='govuk-link') | paragraphize }}
+{% macro alert_text(text, truncate=False) %}
+<div>
+  {{ text | string | autolink_urls(classes='govuk-link') | paragraphize(truncate=truncate) }}
+</div>
 {% endmacro %}
