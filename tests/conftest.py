@@ -109,3 +109,9 @@ def client_get(govuk_alerts, mocker):
             return BeautifulSoup(html_text, 'html.parser')
 
     return _do_get
+
+
+@pytest.fixture()
+def sample_content():
+    return """This is a mobile network operator test of the Emergency Alerts service.
+    You do not need to take any action. To find out more, search for gov.uk/alerts"""
