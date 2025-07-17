@@ -1,4 +1,6 @@
 from app.models.alerts import Alerts
+from tests import normalize_spaces
+from tests.conftest import create_alert_dict
 
 
 def test_current_alerts_page(client_get):
@@ -6,7 +8,7 @@ def test_current_alerts_page(client_get):
     assert html.select_one("h1").text.strip() == "Current alerts"
 
 
-def test_current_alerts_page_shows_alerts(
+def test_current_alerts_page_shows_single_alert(
     alert_dict,
     client_get,
     mocker,
@@ -17,15 +19,47 @@ def test_current_alerts_page_shows_alerts(
 
     html = client_get("alerts/current-alerts")
     titles = html.select("h2.alerts-alert__title")
+    contents = html.select("p.govuk-body-l")
 
     assert len(titles) == 1
     assert titles[0].text.strip() == "Emergency alert sent to Foo"
+    assert contents[0].text.strip() == "Something"
+    assert html.select('p.govuk-body')[0].text.strip() == (
+        'Sent by the UK government at 12:30pm on Wednesday 21 April 2021'
+    )
+    assert html.select('p.govuk-body')[1].text.strip() == (
+        'This alert was sent to foo.'
+    )
+
+
+def test_current_alerts_page_shows_multiple_alerts(
+    alert_dict,
+    client_get,
+    mocker,
+    sample_content
+):
+    mocker.patch("app.models.alert.Alert.display_areas", ["foo"])
+    mocker.patch("app.models.alert.Alert.is_current_and_public", return_value=True)
+    mocker.patch("app.models.alerts.Alerts.load", return_value=Alerts([create_alert_dict(content=sample_content), 
+                                                                       alert_dict]))
+
+    html = client_get("alerts/current-alerts")
+    titles = html.select("h2.alerts-alert__title")
+    truncated_content = html.select('p.truncated-text')
+    links = html.select('a.govuk-body')
+
+    assert len(titles) == 2
+    assert titles[0].text.strip() == titles[1].text.strip() == "Emergency alert sent to Foo"
+    assert truncated_content[0].text.strip() == sample_content
+    assert truncated_content[1].text.strip() == "Something"
+    assert len(links) == 2
 
 
 def test_current_alerts_page_shows_postcode_area_alerts(
     alert_dict,
     client_get,
     mocker,
+    sample_content
 ):
     mocker.patch(
         "app.models.alert.Alert.display_areas",
@@ -34,19 +68,28 @@ def test_current_alerts_page_shows_postcode_area_alerts(
         ],
     )
     mocker.patch("app.models.alert.Alert.is_current_and_public", return_value=True)
-    mocker.patch("app.models.alerts.Alerts.load", return_value=Alerts([alert_dict]))
+    mocker.patch("app.models.alerts.Alerts.load", return_value=Alerts([create_alert_dict(content=sample_content)]))
 
     html = client_get("alerts/current-alerts")
     titles = html.select("h2.alerts-alert__title")
+    contents = html.select("p.govuk-body-l")
 
     assert len(titles) == 1
     assert titles[0].text.strip() == "Emergency alert sent to An area in Bradford"
+    assert ' '.join([normalize_spaces(p.text) for p in contents]) == normalize_spaces(sample_content)
+    assert html.select('p.govuk-body')[0].text.strip() == (
+        'Sent by the UK government at 12:30pm on Wednesday 21 April 2021'
+    )
+    assert html.select('p.govuk-body')[1].text.strip() == (
+        'This alert was sent to an area in Bradford.'
+    )
 
 
 def test_current_alerts_page_shows_decimal_coordinate_area_alerts(
     alert_dict,
     client_get,
     mocker,
+    sample_content
 ):
     mocker.patch(
         "app.models.alert.Alert.display_areas",
@@ -55,19 +98,28 @@ def test_current_alerts_page_shows_decimal_coordinate_area_alerts(
         ],
     )
     mocker.patch("app.models.alert.Alert.is_current_and_public", return_value=True)
-    mocker.patch("app.models.alerts.Alerts.load", return_value=Alerts([alert_dict]))
+    mocker.patch("app.models.alerts.Alerts.load", return_value=Alerts([create_alert_dict(content=sample_content)]))
 
     html = client_get("alerts/current-alerts")
     titles = html.select("h2.alerts-alert__title")
+    contents = html.select("p.govuk-body-l")
 
     assert len(titles) == 1
     assert titles[0].text.strip() == "Emergency alert sent to An area in Craven"
+    assert ' '.join([normalize_spaces(p.text) for p in contents]) == normalize_spaces(sample_content)
+    assert html.select('p.govuk-body')[0].text.strip() == (
+        'Sent by the UK government at 12:30pm on Wednesday 21 April 2021'
+    )
+    assert html.select('p.govuk-body')[1].text.strip() == (
+        'This alert was sent to an area in Craven.'
+    )
 
 
 def test_current_alerts_page_shows_cartesian_coordinate_area_alerts(
     alert_dict,
     client_get,
     mocker,
+    sample_content
 ):
     mocker.patch(
         "app.models.alert.Alert.display_areas",
@@ -76,19 +128,28 @@ def test_current_alerts_page_shows_cartesian_coordinate_area_alerts(
         ],
     )
     mocker.patch("app.models.alert.Alert.is_current_and_public", return_value=True)
-    mocker.patch("app.models.alerts.Alerts.load", return_value=Alerts([alert_dict]))
+    mocker.patch("app.models.alerts.Alerts.load", return_value=Alerts([create_alert_dict(content=sample_content)]))
 
     html = client_get("alerts/current-alerts")
     titles = html.select("h2.alerts-alert__title")
+    contents = html.select("p.govuk-body-l")
 
     assert len(titles) == 1
     assert titles[0].text.strip() == "Emergency alert sent to An area in Lambeth"
+    assert ' '.join([normalize_spaces(p.text) for p in contents]) == normalize_spaces(sample_content)
+    assert html.select('p.govuk-body')[0].text.strip() == (
+        'Sent by the UK government at 12:30pm on Wednesday 21 April 2021'
+    )
+    assert html.select('p.govuk-body')[1].text.strip() == (
+        'This alert was sent to an area in Lambeth.'
+    )
 
 
 def test_current_alerts_page_shows_cartesian_coordinate_area_alerts_without_local_authority(
     alert_dict,
     client_get,
     mocker,
+    sample_content
 ):
     mocker.patch(
         "app.models.alert.Alert.display_areas",
@@ -97,13 +158,21 @@ def test_current_alerts_page_shows_cartesian_coordinate_area_alerts_without_loca
         ],
     )
     mocker.patch("app.models.alert.Alert.is_current_and_public", return_value=True)
-    mocker.patch("app.models.alerts.Alerts.load", return_value=Alerts([alert_dict]))
+    mocker.patch("app.models.alerts.Alerts.load", return_value=Alerts([create_alert_dict(content=sample_content)]))
 
     html = client_get("alerts/current-alerts")
     titles = html.select("h2.alerts-alert__title")
+    contents = html.select("p.govuk-body-l")
 
     assert len(titles) == 1
     assert (
         titles[0].text.strip()
         == "Emergency alert sent to 10km around the easting of 530111.0 and the northing of 170000.0"
+    )
+    assert ' '.join([normalize_spaces(p.text) for p in contents]) == normalize_spaces(sample_content)
+    assert html.select('p.govuk-body')[0].text.strip() == (
+        'Sent by the UK government at 12:30pm on Wednesday 21 April 2021'
+    )
+    assert html.select('p.govuk-body')[1].text.strip() == (
+        'This alert was sent to 10km around the easting of 530111.0 and the northing of 170000.0.'
     )
