@@ -66,7 +66,7 @@
       {% if alerts.past|length == 1%}
         {% set alert = alerts.past | sort(reverse=True) | first %}
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-          {{ extended_alert(alert=alert) }}
+          {{ extended_alert(alert=alert, heading_level=3) }}
       {% elif alerts.past|length > 1 %}
         {% for _date, past_alerts in alerts.past_alerts_grouped_by_date | sort(reverse=True) %}
           {% set date_loop = loop %}
