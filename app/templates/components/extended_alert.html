@@ -2,6 +2,8 @@
 {%- from "components/alert_text.html" import alert_text -%}
 
 {% macro extended_alert(alert, heading_level=2, language='en') %}
+
+{% set alertAreaNames = alert.display_areas | formatted_list(before_each='', after_each='') | simplify_custom_area_name(language) %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <div class="alerts-icon__container alerts-icon__container--48">
