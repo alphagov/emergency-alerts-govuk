@@ -21,6 +21,7 @@ def create_alert_dict(
     cancelled_at=-1,
     finishes_at=None,
     extra_content=None,
+    starts_at_date=None
 ):
     return {
         'id': str(id or uuid.UUID(int=0)),
@@ -32,6 +33,7 @@ def create_alert_dict(
         'cancelled_at': cancelled_at if cancelled_at != -1 else dt_parse('2021-04-21T12:30:00Z'),
         'finishes_at': finishes_at or dt_parse('2021-04-21T15:30:00Z'),
         'extra_content': extra_content,
+        "starts_at_date": starts_at_date or dt_parse('2021-04-21T11:30:00Z')
     }
 
 
