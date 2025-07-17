@@ -31,12 +31,21 @@
         </p>
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         {% set alertAreas %}
+          {% if language == 'en' %}
             <p class="govuk-body">
             This alert was sent to {{ alertAreaNames }}.
             </p>
             <p class="govuk-body">
             Surrounding areas might also have received the alert.
             </p>
+          {% elif language == 'cy' %}
+            <p class="govuk-body">
+              Anfonwyd at {{ alertAreaNames }}.
+            </p>
+            <p class="govuk-body">
+              Efallai fod ardaloedd oddi amgylch hefyd wedi cael y rhybudd.
+            </p>
+          {% endif %}
         {% endset %}
         <p>{{ alertAreas }}</p>
       </div>
