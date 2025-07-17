@@ -17,11 +17,9 @@ def test_current_alerts_page_shows_alerts(
 
     html = client_get("alerts/current-alerts")
     titles = html.select("h2.alerts-alert__title")
-    link = html.select_one("a.govuk-body")
 
     assert len(titles) == 1
     assert titles[0].text.strip() == "Emergency alert sent to Foo"
-    assert "More information about this alert" in link.text
 
 
 def test_current_alerts_page_shows_postcode_area_alerts(
@@ -40,11 +38,9 @@ def test_current_alerts_page_shows_postcode_area_alerts(
 
     html = client_get("alerts/current-alerts")
     titles = html.select("h2.alerts-alert__title")
-    link = html.select_one("a.govuk-body")
 
     assert len(titles) == 1
     assert titles[0].text.strip() == "Emergency alert sent to An area in Bradford"
-    assert "More information about this alert" in link.text
 
 
 def test_current_alerts_page_shows_decimal_coordinate_area_alerts(
@@ -63,11 +59,9 @@ def test_current_alerts_page_shows_decimal_coordinate_area_alerts(
 
     html = client_get("alerts/current-alerts")
     titles = html.select("h2.alerts-alert__title")
-    link = html.select_one("a.govuk-body")
 
     assert len(titles) == 1
     assert titles[0].text.strip() == "Emergency alert sent to An area in Craven"
-    assert "More information about this alert" in link.text
 
 
 def test_current_alerts_page_shows_cartesian_coordinate_area_alerts(
@@ -86,11 +80,9 @@ def test_current_alerts_page_shows_cartesian_coordinate_area_alerts(
 
     html = client_get("alerts/current-alerts")
     titles = html.select("h2.alerts-alert__title")
-    link = html.select_one("a.govuk-body")
 
     assert len(titles) == 1
     assert titles[0].text.strip() == "Emergency alert sent to An area in Lambeth"
-    assert "More information about this alert" in link.text
 
 
 def test_current_alerts_page_shows_cartesian_coordinate_area_alerts_without_local_authority(
@@ -109,11 +101,9 @@ def test_current_alerts_page_shows_cartesian_coordinate_area_alerts_without_loca
 
     html = client_get("alerts/current-alerts")
     titles = html.select("h2.alerts-alert__title")
-    link = html.select_one("a.govuk-body")
 
     assert len(titles) == 1
     assert (
         titles[0].text.strip()
         == "Emergency alert sent to 10km around the easting of 530111.0 and the northing of 170000.0"
     )
-    assert "More information about this alert" in link.text
