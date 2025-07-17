@@ -57,7 +57,8 @@ def test_past_alerts_page_shows_multiple_past_alerts(
 ):
     mocker.patch('app.models.alert.Alert.display_areas', ['foo'])
     mocker.patch('app.models.alert.Alert.is_public', is_public)
-    mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([create_alert_dict(content=sample_content), alert_dict]))
+    mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([create_alert_dict(content=sample_content),
+                                                                       alert_dict]))
 
     html = client_get("alerts/past-alerts")
     titles = html.select('h3.alerts-alert__title')

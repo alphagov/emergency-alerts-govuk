@@ -40,7 +40,7 @@ def test_current_alerts_page_shows_multiple_alerts(
 ):
     mocker.patch("app.models.alert.Alert.display_areas", ["foo"])
     mocker.patch("app.models.alert.Alert.is_current_and_public", return_value=True)
-    mocker.patch("app.models.alerts.Alerts.load", return_value=Alerts([create_alert_dict(content=sample_content), 
+    mocker.patch("app.models.alerts.Alerts.load", return_value=Alerts([create_alert_dict(content=sample_content),
                                                                        alert_dict]))
 
     html = client_get("alerts/current-alerts")
