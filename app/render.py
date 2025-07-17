@@ -251,14 +251,7 @@ def _add_feed_entry(fg, alert, alert_url):
     fe.title(title)
     fe.updated(alert.approved_at)
     fe.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
-
-    if alert.extra_content:
-        html = f"""<p class='govuk-body'>{alert.content}</p>
-        <p class='govuk-body-l'><strong>Additional Information: </strong>{alert.extra_content}</p>"""
-        fe.content(html, type="html")
-    else:
-        fe.content(alert.content)
-
+    fe.content(alert.content)
     fe.link(href=f"{host_url}/alerts/" + alert_url, rel="alternate")
     content = alert.content if len(alert.content) <= 40 else alert.content[:36] + "..."
     fe.summary(content)
