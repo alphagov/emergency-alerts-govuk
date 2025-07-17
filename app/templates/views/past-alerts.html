@@ -5,6 +5,7 @@
 {%- from "components/alert.html" import alert -%}
 {%- from "components/meta_tags.html" import metaTags -%}
 {%- from "components/related_content.html" import related_content -%}
+{%- from "components/extended_alert.html" import extended_alert -%}
 
 {% set pageTitle = "Past alerts" %}
 
@@ -62,23 +63,29 @@
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% for _date, past_alerts in alerts.past_alerts_grouped_by_date | sort(reverse=True) %}
-        {% set date_loop = loop %}
-        {% for past_alert in past_alerts | sort(reverse=True) %}
-          {% if loop.first %}
-            <h2 class="{% if not date_loop.first %}date-margin-top {% else %} govuk-heading-m {% endif %}">
-              {{ past_alert.starts_at_date.date_as_lang }}
-            </h2>
+      {% if alerts.past|length == 1%}
+        {% set alert = alerts.past | sort(reverse=True) | first %}
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+          {{ extended_alert(alert=alert) }}
+      {% elif alerts.past|length > 1 %}
+        {% for _date, past_alerts in alerts.past_alerts_grouped_by_date | sort(reverse=True) %}
+          {% set date_loop = loop %}
+          {% for past_alert in past_alerts | sort(reverse=True) %}
+            {% if loop.first %}
+              <h2 class="{% if not date_loop.first %}date-margin-top {% else %} govuk-heading-m {% endif %}">
+                {{ past_alert.starts_at_date.date_as_lang }}
+              </h2>
+            {% endif %}
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+            {{ alert(alert=past_alert, heading_level=3) }}
+          {% endfor %}
+          {% if loop.last %}
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
           {% endif %}
-          <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-          {{ alert(alert=past_alert, heading_level=3) }}
+        {% else %}
+          <p class="govuk-body">There are no past emergency alerts.</p>
         {% endfor %}
-        {% if loop.last %}
-          <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        {% endif %}
-      {% else %}
-        <p class="govuk-body">There are no past emergency alerts.</p>
-      {% endfor %}
+      {% endif %}
     </div>
     <div class="govuk-grid-column-one-third">
       {{ related_content({
