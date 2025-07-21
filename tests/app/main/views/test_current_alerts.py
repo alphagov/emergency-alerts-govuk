@@ -19,15 +19,15 @@ def test_current_alerts_page_shows_single_alert(
 
     html = client_get("alerts/current-alerts")
     titles = html.select("h2.alerts-alert__title")
-    contents = html.select("p.govuk-body-l")
+    body = html.select("p.govuk-body")
 
     assert len(titles) == 1
     assert titles[0].text.strip() == "Emergency alert sent to Foo"
-    assert contents[0].text.strip() == "Something"
-    assert html.select('p.govuk-body')[0].text.strip() == (
+    assert body[0].text.strip() == "Something"
+    assert body[1].text.strip() == (
         'Sent by the UK government at 12:30pm on Wednesday 21 April 2021'
     )
-    assert html.select('p.govuk-body')[1].text.strip() == (
+    assert body[2].text.strip() == (
         'This alert was sent to foo.'
     )
 
@@ -72,16 +72,16 @@ def test_current_alerts_page_shows_postcode_area_alerts(
 
     html = client_get("alerts/current-alerts")
     titles = html.select("h2.alerts-alert__title")
-    contents = html.select("p.govuk-body-l")
+    body = html.select("p.govuk-body")
 
     assert len(titles) == 1
     assert titles[0].text.strip() == "Emergency alert sent to An area in Bradford"
-    assert ' '.join([normalize_spaces(p.text) for p in contents]) == normalize_spaces(sample_content)
-    assert html.select('p.govuk-body')[0].text.strip() == (
-        'Sent by the UK government at 12:30pm on Wednesday 21 April 2021'
-    )
-    assert html.select('p.govuk-body')[1].text.strip() == (
-        'This alert was sent to an area in Bradford.'
+    assert ' '.join(
+        [normalize_spaces(p.text) for p in body]
+    ) == normalize_spaces(
+        f"""{sample_content} Sent by the UK government at 12:30pm on Wednesday 21 April 2021
+            This alert was sent to an area in Bradford.
+            Surrounding areas might also have received the alert."""
     )
 
 
@@ -102,16 +102,16 @@ def test_current_alerts_page_shows_decimal_coordinate_area_alerts(
 
     html = client_get("alerts/current-alerts")
     titles = html.select("h2.alerts-alert__title")
-    contents = html.select("p.govuk-body-l")
+    body = html.select("p.govuk-body")
 
     assert len(titles) == 1
     assert titles[0].text.strip() == "Emergency alert sent to An area in Craven"
-    assert ' '.join([normalize_spaces(p.text) for p in contents]) == normalize_spaces(sample_content)
-    assert html.select('p.govuk-body')[0].text.strip() == (
-        'Sent by the UK government at 12:30pm on Wednesday 21 April 2021'
-    )
-    assert html.select('p.govuk-body')[1].text.strip() == (
-        'This alert was sent to an area in Craven.'
+    assert ' '.join(
+        [normalize_spaces(p.text) for p in body]
+    ) == normalize_spaces(
+        f"""{sample_content} Sent by the UK government at 12:30pm on Wednesday 21 April 2021
+            This alert was sent to an area in Craven.
+            Surrounding areas might also have received the alert."""
     )
 
 
@@ -132,16 +132,16 @@ def test_current_alerts_page_shows_cartesian_coordinate_area_alerts(
 
     html = client_get("alerts/current-alerts")
     titles = html.select("h2.alerts-alert__title")
-    contents = html.select("p.govuk-body-l")
+    body = html.select("p.govuk-body")
 
     assert len(titles) == 1
     assert titles[0].text.strip() == "Emergency alert sent to An area in Lambeth"
-    assert ' '.join([normalize_spaces(p.text) for p in contents]) == normalize_spaces(sample_content)
-    assert html.select('p.govuk-body')[0].text.strip() == (
-        'Sent by the UK government at 12:30pm on Wednesday 21 April 2021'
-    )
-    assert html.select('p.govuk-body')[1].text.strip() == (
-        'This alert was sent to an area in Lambeth.'
+    assert ' '.join(
+        [normalize_spaces(p.text) for p in body]
+    ) == normalize_spaces(
+        f"""{sample_content} Sent by the UK government at 12:30pm on Wednesday 21 April 2021
+            This alert was sent to an area in Lambeth.
+            Surrounding areas might also have received the alert."""
     )
 
 
@@ -162,17 +162,17 @@ def test_current_alerts_page_shows_cartesian_coordinate_area_alerts_without_loca
 
     html = client_get("alerts/current-alerts")
     titles = html.select("h2.alerts-alert__title")
-    contents = html.select("p.govuk-body-l")
+    body = html.select("p.govuk-body")
 
     assert len(titles) == 1
     assert (
         titles[0].text.strip()
         == "Emergency alert sent to 10km around the easting of 530111.0 and the northing of 170000.0"
     )
-    assert ' '.join([normalize_spaces(p.text) for p in contents]) == normalize_spaces(sample_content)
-    assert html.select('p.govuk-body')[0].text.strip() == (
-        'Sent by the UK government at 12:30pm on Wednesday 21 April 2021'
-    )
-    assert html.select('p.govuk-body')[1].text.strip() == (
-        'This alert was sent to 10km around the easting of 530111.0 and the northing of 170000.0.'
+    assert ' '.join(
+        [normalize_spaces(p.text) for p in body]
+    ) == normalize_spaces(
+        f"""{sample_content} Sent by the UK government at 12:30pm on Wednesday 21 April 2021
+            This alert was sent to 10km around the easting of 530111.0 and the northing of 170000.0.
+            Surrounding areas might also have received the alert."""
     )

@@ -96,7 +96,7 @@ def test_past_alerts_does_not_show_archived(
 
     html = client_get("alerts/past-alerts")
     titles_and_paragraphs = html.select('main .govuk-grid-column-two-thirds h2.govuk-heading-m, \
-        main .govuk-grid-column-two-thirds p.govuk-body-l')
+        main .govuk-grid-column-two-thirds p.govuk-body')
     assert [
         element.text.strip() for element in titles_and_paragraphs
     ] == [
@@ -130,7 +130,7 @@ def test_past_alerts_page_groups_by_date(
 
     html = client_get("alerts/past-alerts")
     titles_and_paragraphs = html.select('main .govuk-grid-column-two-thirds h2.govuk-heading-m, \
-        main .govuk-grid-column-two-thirds p.govuk-body-l')
+        main .govuk-grid-column-two-thirds p.govuk-body')
     assert [
         element.text.strip() for element in titles_and_paragraphs
     ] == [
