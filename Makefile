@@ -102,12 +102,12 @@ run-flask:
 	. environment.sh && flask run -p 6017
 
 .PHONY: bootstrap
-bootstrap: install-node
+bootstrap: install-node generate-version-file
 	pip3 install -r requirements_local_utils.txt
 	. ~/.nvm-source && npm ci --no-audit && npm run build
 
 .PHONY: bootstrap-for-tests
-bootstrap-for-tests: install-node
+bootstrap-for-tests: install-node generate-version-file
 	pip3 install -r requirements_github_utils.txt
 	. ~/.nvm-source && npm ci --no-audit && npm run build
 
