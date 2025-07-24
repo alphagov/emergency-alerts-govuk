@@ -1,14 +1,11 @@
 .DEFAULT_GOAL := help
 SHELL := /bin/bash
+TIME = $(shell date +%Y-%m-%dT%H:%M:%S%z)
 
-CF_API ?= api.cloud.service.gov.uk
-CF_ORG ?= govuk-notify
-CF_SPACE ?= ${DEPLOY_ENV}
-CF_HOME ?= ${HOME}
-CF_APP ?= notify-govuk-alerts
-CF_MANIFEST_PATH ?= /tmp/manifest.yml
-NOTIFY_CREDENTIALS ?= ~/.notify-credentials
-$(eval export CF_HOME)
+# Passed through by Dockerfile/buildspec
+APP_VERSION ?= unknown
+
+GIT_COMMIT ?= $(shell git rev-parse HEAD 2> /dev/null || echo "")
 
 VIRTUALENV_ROOT := $(shell [ -z $$VIRTUAL_ENV ] && echo $$(pwd)/venv || echo $$VIRTUAL_ENV)
 PYTHON_EXECUTABLE_PREFIX := $(shell test -d "$${VIRTUALENV_ROOT}" && echo "$${VIRTUALENV_ROOT}/bin/" || echo "")
@@ -117,6 +114,10 @@ bootstrap-for-tests: install-node
 .PHONY: npm-audit
 npm-audit:  ## Check for vulnerabilities in NPM packages
 	. ~/.nvm-source && npm run audit
+
+.PHONY: generate-version-file
+generate-version-file: ## Generate the app/version.py file
+	@ GIT_COMMIT=${GIT_COMMIT} TIME=${TIME} APP_VERSION=${APP_VERSION} envsubst < app/version.dist.py > app/version.py
 
 .PHONY: test
 test:
