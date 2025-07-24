@@ -1,9 +1,16 @@
-from unittest.mock import patch
+import builtins
+from unittest.mock import mock_open, patch
 
+import boto3
 import pytest
 from celery.exceptions import Retry
+from flask import current_app
+from moto import mock_aws
 
-from app.celery.tasks import publish_govuk_alerts
+from app.celery.tasks import (
+    publish_govuk_alerts,
+    trigger_govuk_alerts_healthcheck,
+)
 
 
 @patch("app.celery.tasks.Alerts.load")
@@ -39,3 +46,28 @@ def test_publish_govuk_alerts_retries(
 ):
     mock_upload_to_s3.side_effect = Exception("error")
     publish_govuk_alerts()
+
+
+# Mock only open() for the healthcheck path, but allow others (botocore) to read
+# normally for its internal init logic
+def open_for_healthcheck(original_open):
+    def side_effect(*args, **kwargs):
+        if args[0] == "/eas/emergency-alerts-govuk/celery-beat-healthcheck":
+            return mock_open()()
+        return original_open(*args, **kwargs)
+
+    return side_effect
+
+
+@mock_aws
+def test_govuk_alerts_healthcheck_posts_to_cloudwatch(mocker, govuk_alerts):
+    with patch.object(builtins, "open", side_effect=open_for_healthcheck(open)):
+        trigger_govuk_alerts_healthcheck()
+
+    cloudwatch = boto3.client(
+        "cloudwatch", region_name=current_app.config["AWS_REGION"]
+    )
+    metric = cloudwatch.list_metrics()["Metrics"][0]
+    assert metric["MetricName"] == "AppVersion"
+    assert metric["Namespace"] == "Emergency Alerts"
+    assert {"Name": "Application", "Value": "govuk"} in metric["Dimensions"]

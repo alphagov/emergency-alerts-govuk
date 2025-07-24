@@ -7,6 +7,8 @@ import requests
 from flask import current_app
 from markupsafe import Markup, escape
 
+from app import version
+
 REPO = Path(__file__).parent.parent
 DIST = REPO / 'dist'
 
@@ -196,3 +198,33 @@ mimetype_from_extension = {
     "woff": "font/woff",
     "woff2": "font/woff2",
 }
+
+
+def post_version_to_cloudwatch():
+    try:
+        boto3.client(
+            "cloudwatch", region_name=current_app.config["AWS_REGION"]
+        ).put_metric_data(
+            MetricData=[
+                {
+                    "MetricName": "AppVersion",
+                    "Dimensions": [
+                        {
+                            "Name": "Application",
+                            "Value": "govuk",
+                        },
+                        {
+                            "Name": "Version",
+                            "Value": version.app_version,
+                        },
+                    ],
+                    "Unit": "Count",
+                    "Value": 1,
+                }
+            ],
+            Namespace="Emergency Alerts",
+        )
+    except Exception:
+        current_app.logger.exception(
+            "Couldn't post app version to CloudWatch. App version: %s",
+        )
