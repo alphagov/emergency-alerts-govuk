@@ -2,13 +2,13 @@
 
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 {%- from "govuk_frontend_jinja_overrides/templates/components/language-select/macro.html" import hmrcLanguageSelect -%}
-{%- from "components/alert.html" import alert_body -%}
+{%- from "components/alert_text.html" import alert_text -%}
 {%- from "components/alerts_icon.html" import alerts_icon -%}
 {%- from "components/image.html" import image -%}
 {%- from "components/meta_tags.html" import metaTags -%}
 
 {% set pageTitle = "Emergency alert" %}
-{% set alertAreaNames = alert_data.display_areas | formatted_list(before_each='', after_each='') | simplify_custom_area_name('en') %}
+{% set alertAreaNames = alert_data.display_areas | formatted_list(before_each='', after_each='') | simplify_custom_area_name(language='en') %}
 
 {% block metaTags %}
   {{ metaTags(
@@ -73,7 +73,15 @@
         Stopped sending <time datetime="{{ alert_data.expires_date.as_iso8601 }}">{{ alert_data.expires_date.as_lang }}</time>
       </h2>
       {% endif %}
-      {{ alert_body(alert_data) }}
+      {{alert_text(alert_data.content)}}
+
+      {% if alert_data.extra_content %}
+      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+      <div id="extra-content">
+        <p class="govuk-heading-s">Additional Information </p>
+        {{alert_text(alert_data.extra_content)}}
+      </div>
+      {% endif %}
 
       <p class="govuk-body govuk-!-margin-bottom-0">
         Sent by the UK government <time datetime="{{ alert_data.starts_at_date.as_iso8601 }}">{{ alert_data.starts_at_date.as_lang }}</time>
