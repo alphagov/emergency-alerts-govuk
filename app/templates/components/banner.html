@@ -7,7 +7,7 @@
       <a class="govuk-link govuk-link--no-visited-state" href="/alerts/current-alerts{% if lang == 'cy' %}.cy{% endif %}">{{ number_of_alerts }} current {% if number_of_alerts == 1 %}alert{% else %}alerts{% endif %}</a>
     </h2>
     <p class="alerts-notification-banner__age govuk-body">
-      Updated <time class="relative-date" datetime="{{ last_updated.as_iso8601 }}">{{ last_updated.as_lang }}</time>
+      Last alert sent <time class="relative-date" datetime="{{ last_updated.as_iso8601 }}">{{ last_updated.as_lang }}</time>
     </p>
   </div>
 {% endmacro %}
