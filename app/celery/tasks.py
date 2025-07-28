@@ -7,7 +7,11 @@ from app import notify_celery
 from app.models.alerts import Alerts
 from app.notify_client.alerts_api_client import alerts_api_client
 from app.render import get_rendered_pages
-from app.utils import purge_fastly_cache, upload_html_to_s3
+from app.utils import (
+    post_version_to_cloudwatch,
+    purge_fastly_cache,
+    upload_html_to_s3,
+)
 
 
 @notify_celery.task(
@@ -37,6 +41,8 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
 @notify_celery.task(name=TaskNames.TRIGGER_GOVUK_HEALTHCHECK)
 def trigger_govuk_alerts_healthcheck():
     try:
+        post_version_to_cloudwatch()
+
         time_stamp = int(time.time())
         with open("/eas/emergency-alerts-govuk/celery-beat-healthcheck", mode="w") as file:
             file.write(str(time_stamp))
