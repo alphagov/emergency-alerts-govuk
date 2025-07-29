@@ -19,11 +19,19 @@
         {% endif %}
         {{alert_text(alert.content)}}
         {% if alert.extra_content %}
-        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        <div id="extra-content">
-            <p class="govuk-heading-s">Additional Information </p>
-            {{alert_text(alert.extra_content)}}
-        </div>
+          {% if language == 'en' %}
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+            <div id="extra-content">
+                <p class="govuk-heading-s">Additional Information </p>
+                {{alert_text(alert.extra_content)}}
+            </div>
+          {% elif language == 'cy' %}
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+            <div id="extra-content">
+                <p class="govuk-heading-s">Gwybodaeth Ychwanegol </p>
+                {{alert_text(alert.extra_content)}}
+            </div>
+          {% endif %}
         {% endif %}
 
         <p class="govuk-body govuk-!-margin-bottom-0">
