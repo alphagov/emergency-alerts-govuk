@@ -70,13 +70,13 @@
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         {{ alert(alert=current_alert, language='cy') }}
         {% endfor %}
+        {% endif %}
 
         {% if alerts.current_and_public %}
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
         {% else %}
         <p class="govuk-body">Does dim rhybuddion argyfwng ar hyn o bryd.</p>
         {% endif %}
-      {% endif %}
     </div>
 
     <div class="govuk-grid-column-one-third">
