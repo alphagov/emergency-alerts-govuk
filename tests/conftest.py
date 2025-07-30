@@ -20,6 +20,8 @@ def create_alert_dict(
     # -1 is a sentinel value, so None can be passed in
     cancelled_at=-1,
     finishes_at=None,
+    extra_content=None,
+    starts_at_date=None
 ):
     return {
         'id': str(id or uuid.UUID(int=0)),
@@ -30,6 +32,8 @@ def create_alert_dict(
         'approved_at': approved_at or dt_parse('2021-04-21T11:25:00Z'),
         'cancelled_at': cancelled_at if cancelled_at != -1 else dt_parse('2021-04-21T12:30:00Z'),
         'finishes_at': finishes_at or dt_parse('2021-04-21T15:30:00Z'),
+        'extra_content': extra_content,
+        "starts_at_date": starts_at_date or dt_parse('2021-04-21T11:30:00Z')
     }
 
 
@@ -48,6 +52,7 @@ def create_planned_test_dict(
     content=None,
     welsh_content=None,
     areas=None,
+    extra_content=None
 ):
     return {
         'id': id or uuid.uuid4(),
@@ -64,6 +69,7 @@ def create_planned_test_dict(
         'welsh_summary': welsh_summary,
         'content': content,
         'welsh_content': welsh_content,
+        "extra_content": None,
         'display_as_link': True
     }
 
@@ -103,3 +109,9 @@ def client_get(govuk_alerts, mocker):
             return BeautifulSoup(html_text, 'html.parser')
 
     return _do_get
+
+
+@pytest.fixture()
+def sample_content():
+    return """This is a mobile network operator test of the Emergency Alerts service.
+    You do not need to take any action. To find out more, search for gov.uk/alerts"""

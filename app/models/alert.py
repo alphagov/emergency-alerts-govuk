@@ -16,6 +16,7 @@ class Alert(SerialisedModel):
         'finishes_at',
         'areas',
         'content',
+        'extra_content'
     }
 
     def __lt__(self, other):

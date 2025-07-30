@@ -3,6 +3,7 @@
 {%- from "govuk_frontend_jinja/components/breadcrumbs/macro.html" import govukBreadcrumbs -%}
 {%- from "govuk_frontend_jinja_overrides/templates/components/language-select/macro.html" import hmrcLanguageSelect -%}
 {%- from "components/alert.html" import alert -%}
+{%- from "components/extended_alert.html" import extended_alert -%}
 {%- from "components/meta_tags.html" import metaTags -%}
 {%- from "components/related_content.html" import related_content -%}
 
@@ -62,10 +63,15 @@
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% for current_alert in alerts.current_and_public | sort(reverse=True) %}
-      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-      {{ alert(alert=current_alert) }}
-      {% endfor %}
+      {% if alerts.current_and_public|length  == 1 %}
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        {{ extended_alert(alert=alerts.current_and_public[0]) }}
+      {% elif alerts.current_and_public|length > 1 %}
+        {% for current_alert in alerts.current_and_public | sort(reverse=True) %}
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        {{ alert(alert=current_alert) }}
+        {% endfor %}
+      {% endif %}
 
       {% if alerts.current_and_public %}
       <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible govuk-!-margin-bottom-8">
