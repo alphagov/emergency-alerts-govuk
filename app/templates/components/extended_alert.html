@@ -14,7 +14,7 @@
           </h{{ heading_level }}>
         {% else %}
           <h{{ heading_level }} class="alerts-alert__title govuk-heading-m govuk-!-margin-bottom-3">
-            <span class="govuk-visually-hidden">Emergency alert sent to </span>{{ alert.display_areas | formatted_list(before_each='', after_each='') | simplify_custom_area_name('en') |capitalise }}
+            Emergency Alert
           </h{{ heading_level }}>
         {% endif %}
         {{alert_text(alert.content)}}
