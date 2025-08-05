@@ -22,7 +22,7 @@ def test_current_alerts_page_shows_single_alert(
     body = html.select("p.govuk-body")
 
     assert len(titles) == 1
-    assert titles[0].text.strip() == "Emergency alert sent to Foo"
+    assert titles[0].text.strip() == "Emergency Alert"
     assert body[0].text.strip() == "Something"
     assert body[1].text.strip() == (
         'Sent by the UK government at 12:30pm on Wednesday 21 April 2021'
@@ -75,7 +75,7 @@ def test_current_alerts_page_shows_postcode_area_alerts(
     body = html.select("p.govuk-body")
 
     assert len(titles) == 1
-    assert titles[0].text.strip() == "Emergency alert sent to An area in Bradford"
+    assert titles[0].text.strip() == "Emergency Alert"
     assert ' '.join(
         [normalize_spaces(p.text) for p in body]
     ) == normalize_spaces(
@@ -105,7 +105,7 @@ def test_current_alerts_page_shows_decimal_coordinate_area_alerts(
     body = html.select("p.govuk-body")
 
     assert len(titles) == 1
-    assert titles[0].text.strip() == "Emergency alert sent to An area in Craven"
+    assert titles[0].text.strip() == "Emergency Alert"
     assert ' '.join(
         [normalize_spaces(p.text) for p in body]
     ) == normalize_spaces(
@@ -135,7 +135,7 @@ def test_current_alerts_page_shows_cartesian_coordinate_area_alerts(
     body = html.select("p.govuk-body")
 
     assert len(titles) == 1
-    assert titles[0].text.strip() == "Emergency alert sent to An area in Lambeth"
+    assert titles[0].text.strip() == "Emergency Alert"
     assert ' '.join(
         [normalize_spaces(p.text) for p in body]
     ) == normalize_spaces(
@@ -167,7 +167,7 @@ def test_current_alerts_page_shows_cartesian_coordinate_area_alerts_without_loca
     assert len(titles) == 1
     assert (
         titles[0].text.strip()
-        == "Emergency alert sent to 10km around the easting of 530111.0 and the northing of 170000.0"
+        == "Emergency Alert"
     )
     assert ' '.join(
         [normalize_spaces(p.text) for p in body]
