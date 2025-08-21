@@ -1,17 +1,35 @@
 planned_tests:
   - id: dd5af9c4-849a-4c23-a523-d6cbda2557d9
-    channel: operator
-    approved_at: 2025-09-07T15:00:00Z
-    starts_at: 2025-09-07T15:00:00Z
+    channel: severe
+    approved_at: 2025-09-07T14:00:00Z
+    starts_at: 2025-09-07T14:00:00Z
     cancelled_at:
-    finishes_at: 2025-09-07T16:00:00Z
+    finishes_at: 2025-09-07T13:30:00Z
     display_in_status_box: True
     status_box_content: "We are testing the UK’s Emergency Alerts system on Sunday 7 September at 3pm."
     welsh_status_box_content: "Byddwn yn profi system Rhybuddion Argyfwng y DU ar ddydd Sul 7 Medi am 3yh."
-    display_as_link: False
+    display_as_link: True
     summary: ~
     welsh_summary: ~
-    content: ""
+    content: "This is a test of Emergency Alerts, a UK government service that will warn you if there's a life-threatening emergency nearby. 
+
+    You do not need to take any action.
+    In a real emergency, follow the instructions in the alert to keep yourself and others safe.
+
+    Find simple and effective advice on how to prepare for emergencies at gov.uk/prepare.
+
+    Visit gov.uk/alerts for more information or to view this message in Welsh.
+    Ewch i gov.uk/alerts am ragor o wybodaeth neu i weld y neges hon yn y Gymraeg."
     welsh_content: ~
     areas: {
+      aggregate_names: [
+      "England", "Northern Ireland", "Scotland", "Wales"]
     }
+    extra_content: "This is a test of Emergency Alerts, a UK government service that will warn you if there's a life-threatening emergency nearby.
+
+      You do not need to take any action. In a real emergency, follow the instructions in the alert to keep yourself and others safe.
+
+      Find simple and effective advice on how to prepare for emergencies at gov.uk/prepare.
+
+      Visit gov.uk/alerts for more information or to view this message in Welsh.
+      Ewch i gov.uk/alerts am ragor o wybodaeth neu i weld y neges hon yn y Gymraeg."
