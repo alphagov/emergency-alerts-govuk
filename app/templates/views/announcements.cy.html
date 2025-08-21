@@ -117,12 +117,20 @@
     {% endif %}
     {% if loop.first %}
       <h2 class="{% if not date_loop.first %}date-margin-top {% else %} govuk-heading-m {% endif %}">
-        {{ alert_or_planned_test.starts_at_date.datetime_as_lang }}
+        {% if alert_or_planned_test.starts_at_datetime_in_welsh %}
+          {{ alert_or_planned_test.starts_at_datetime_in_welsh }}
+        {% else %}
+          {{ alert_or_planned_test.starts_at_date.datetime_as_lang }}
+        {% endif %}
       </h2>
     {% endif %}
     <h2 class="govuk-heading-m govuk-!-margin-top-6">
       {% if alert_or_planned_test.is_public %}
-        {{ alert_or_planned_test.display_areas | formatted_list(before_each='', after_each='') }}
+        {% if alert_or_planned_test.display_areas_in_welsh %}
+          {{ alert_or_planned_test.display_areas_in_welsh | formatted_list(conjunction="a", before_each='', after_each='') }}
+        {% else %}
+          {{ alert_or_planned_test.display_areas | formatted_list(before_each='', after_each='') }}
+        {% endif %}
       {% endif %}
     </h2>
     {% if not alert_or_planned_test.is_public %}
