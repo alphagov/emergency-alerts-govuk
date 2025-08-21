@@ -26,9 +26,9 @@ from tests import normalize_spaces
             'welsh_content': None,
             'areas': {'names': ['Ibiza']},
             'display_as_link': True,
-            'extra_content': None
+            'extra_content': "This is extra content"
         })],
-        ['Wednesday 3 February 2021 at 8pm', 'Ibiza'],
+        ['Wednesday 3 February 2021 at 8pm', 'Ibiza', "Additional Information"],
         [],
         [
             'The alert will say:',
@@ -37,6 +37,8 @@ from tests import normalize_spaces
                 'service. You do not need to take any action. To find out more, '
                 'search for gov.uk/alerts'
             ),
+            'Welsh',
+            'This is extra content'
         ]
     ),
     (
