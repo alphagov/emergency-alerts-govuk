@@ -12,9 +12,11 @@ class PlannedTest(SerialisedModel):
         'channel',
         'approved_at',
         'starts_at',
+        'starts_at_datetime_in_welsh',
         'cancelled_at',
         'finishes_at',
         'areas',
+        'areas_in_welsh',
         'display_in_status_box',
         'status_box_content',
         'welsh_status_box_content',
@@ -36,6 +38,14 @@ class PlannedTest(SerialisedModel):
             return self.areas["aggregate_names"]
 
         return self.areas.get("names", [])
+
+    @property
+    def display_areas_in_welsh(self):
+
+        if self.areas_in_welsh and "aggregate_names" in self.areas_in_welsh:
+            return self.areas_in_welsh["aggregate_names"]
+
+        return self.areas_in_welsh.get("names", [])
 
     @property
     def starts_at_date(self):
