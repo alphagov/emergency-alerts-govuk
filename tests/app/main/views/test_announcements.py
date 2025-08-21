@@ -26,7 +26,9 @@ from tests import normalize_spaces
             'welsh_content': None,
             'areas': {'names': ['Ibiza']},
             'display_as_link': True,
-            'extra_content': "This is extra content"
+            'extra_content': "This is extra content",
+            'areas_in_welsh': None,
+            'starts_at_datetime_in_welsh': None
         })],
         ['Wednesday 3 February 2021 at 8pm', 'Ibiza', "Additional Information"],
         [],
@@ -58,7 +60,9 @@ from tests import normalize_spaces
             'welsh_content': None,
             'areas': {'names': ['Ibiza', 'The Norfolk Broads']},
             'display_as_link': True,
-            'extra_content': None
+            'extra_content': None,
+            'areas_in_welsh': None,
+            'starts_at_datetime_in_welsh': None
         })],
         ['Wednesday 3 February 2021 at 8pm', 'Ibiza and The Norfolk Broads'],
         [],
@@ -86,7 +90,9 @@ from tests import normalize_spaces
                 'welsh_content': None,
                 'areas': {'names': ['Ibiza']},
                 'display_as_link': True,
-                'extra_content': None
+                'extra_content': None,
+                'areas_in_welsh': None,
+                'starts_at_datetime_in_welsh': None
             }),
             PlannedTest({
                 'id': '5838d0d7-37eb-4ec9-87a7-5d9dc5b650c3',
@@ -104,7 +110,9 @@ from tests import normalize_spaces
                 'welsh_content': None,
                 'areas': {'names': ['The Norfolk Broads']},
                 'display_as_link': True,
-                'extra_content': None
+                'extra_content': None,
+                'areas_in_welsh': None,
+                'starts_at_datetime_in_welsh': None
             }),
         ],
         [],
