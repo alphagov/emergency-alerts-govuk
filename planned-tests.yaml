@@ -3,6 +3,7 @@ planned_tests:
     channel: severe
     approved_at: 2025-09-07T14:00:00Z
     starts_at: 2025-09-07T14:00:00Z
+    starts_at_datetime_in_welsh: "Sul 7 Medi am 3yh"
     cancelled_at:
     finishes_at: 2025-09-07T13:30:00Z
     display_in_status_box: True
@@ -13,23 +14,26 @@ planned_tests:
     welsh_summary: ~
     content: "This is a test of Emergency Alerts, a UK government service that will warn you if there's a life-threatening emergency nearby. 
 
-    You do not need to take any action.
-    In a real emergency, follow the instructions in the alert to keep yourself and others safe.
+      You do not need to take any action.
+      In a real emergency, follow the instructions in the alert to keep yourself and others safe.
 
-    Find simple and effective advice on how to prepare for emergencies at gov.uk/prepare.
+      Find simple and effective advice on how to prepare for emergencies at gov.uk/prepare.
 
-    Visit gov.uk/alerts for more information or to view this message in Welsh.
-    Ewch i gov.uk/alerts am ragor o wybodaeth neu i weld y neges hon yn y Gymraeg."
+      Visit gov.uk/alerts for more information or to view this message in Welsh.
+      Ewch i gov.uk/alerts am ragor o wybodaeth neu i weld y neges hon yn y Gymraeg."
     welsh_content: ~
     areas: {
       aggregate_names: [
       "England", "Northern Ireland", "Scotland", "Wales"]
     }
-    extra_content: "This is a test of Emergency Alerts, a UK government service that will warn you if there's a life-threatening emergency nearby.
+    areas_in_welsh: {
+      aggregate_names: [
+      "Lloegr", "Gogledd Iwerddon", "Yr Alban", "Chymru"]
+    }
+    extra_content: "Dyma brawf o Rybuddion Brys, gwasanaeth llywodraeth y DU a fydd yn eich rhybuddio os oes argyfwng sy'n peryglu bywyd gerllaw.
 
-      You do not need to take any action. In a real emergency, follow the instructions in the alert to keep yourself and others safe.
+      Does dim angen i chi wneud dim. Mewn argyfwng go iawn, dilynwch y cyfarwyddiadau yn y rhybudd i'ch cadw chi ac eraill yn ddiogel.
 
-      Find simple and effective advice on how to prepare for emergencies at gov.uk/prepare.
+      Dewch o hyd i gyngor syml ac effeithiol ar sut i baratoi ar gyfer argyfyngau yn gov.uk/prepare.
 
-      Visit gov.uk/alerts for more information or to view this message in Welsh.
       Ewch i gov.uk/alerts am ragor o wybodaeth neu i weld y neges hon yn y Gymraeg."
