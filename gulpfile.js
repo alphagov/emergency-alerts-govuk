@@ -10,7 +10,6 @@ const rollupPluginTerser = require('rollup-plugin-terser').terser;
 
 const plugins = {}
 plugins.sass = require('gulp-sass')(require('sass'));
-plugins.gulpStylelint = require('gulp-stylelint');
 plugins.gulpif = require('gulp-if');
 plugins.postcss = require('gulp-postcss');
 plugins.hash = require('gulp-sha256-filename');
