@@ -149,9 +149,9 @@
     </p>
     <div class="govuk-inset-text govuk-!-margin-top-2">
       {% if alert_or_planned_test.welsh_content %}
-        {{ alert_or_planned_test.welsh_content | paragraphize(classes="govuk-body") }}
+        {{ alert_or_planned_test.welsh_content | autolink_urls(classes='govuk-link') | paragraphize(classes="govuk-body") }}
       {% else %}
-        {{ alert_or_planned_test.content | paragraphize(classes="govuk-body") }}
+        {{ alert_or_planned_test.content | autolink_urls(classes='govuk-link') | paragraphize(classes="govuk-body") }}
       {% endif %}
     </div>
     {% if alert_or_planned_test.extra_content %}
