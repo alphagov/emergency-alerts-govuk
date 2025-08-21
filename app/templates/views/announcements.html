@@ -149,7 +149,7 @@
         Welsh
       </p>
       <div class="govuk-inset-text govuk-!-margin-top-2">
-        {{ alert_or_planned_test.extra_content | paragraphize(classes="govuk-body") }}
+        {{ alert_or_planned_test.extra_content | autolink_urls(classes='govuk-link') | paragraphize(classes="govuk-body") }}
       </div>
     {% endif %}
 
