@@ -55,7 +55,8 @@ def test_index_page_shows_current_alerts(
                        'search for gov.uk/alerts',
             'welsh_content': None,
             'areas': {'names': ['Ibiza']},
-            'display_as_link': True
+            'display_as_link': True,
+            'extra_content': None
         })],
         'On Wednesday 21 April 2021 at 2PM, there will be a test of the UK Emergency Alerts service'
     ],
@@ -77,7 +78,8 @@ def test_index_page_shows_current_alerts(
                        'search for gov.uk/alerts',
             'welsh_content': None,
             'areas': {'names': ['Ibiza']},
-            'display_as_link': True
+            'display_as_link': True,
+            'extra_content': None
         })],
         'Status box content'
     ]
