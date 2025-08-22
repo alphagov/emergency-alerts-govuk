@@ -28,7 +28,7 @@ planned_tests:
     }
     areas_in_welsh: {
       aggregate_names: [
-      "Lloegr", "Gogledd Iwerddon", "Yr Alban", "Chymru"]
+      "Lloegr", "Gogledd Iwerddon", "Yr Alban", "Cymru"]
     }
     extra_content: "Dyma brawf o Rybuddion Brys, gwasanaeth llywodraeth y DU a fydd yn eich rhybuddio os oes argyfwng sy'n peryglu bywyd gerllaw.
 
