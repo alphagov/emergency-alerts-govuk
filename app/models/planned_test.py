@@ -42,7 +42,9 @@ class PlannedTest(SerialisedModel):
     @property
     def display_areas_in_welsh(self):
 
-        if self.areas_in_welsh and "aggregate_names" in self.areas_in_welsh:
+        if not self.areas_in_welsh:
+            return None
+        if "aggregate_names" in self.areas_in_welsh:
             return self.areas_in_welsh["aggregate_names"]
 
         return self.areas_in_welsh.get("names", [])
