@@ -10,7 +10,6 @@ GIT_COMMIT ?= $(shell git rev-parse HEAD 2> /dev/null || echo "")
 VIRTUALENV_ROOT := $(shell [ -z $$VIRTUAL_ENV ] && echo $$(pwd)/venv || echo $$VIRTUAL_ENV)
 PYTHON_EXECUTABLE_PREFIX := $(shell test -d "$${VIRTUALENV_ROOT}" && echo "$${VIRTUALENV_ROOT}/bin/" || echo "")
 
-
 .PHONY: clean
 clean:
 	rm -rf dist/*

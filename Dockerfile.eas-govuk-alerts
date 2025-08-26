@@ -4,7 +4,19 @@ ARG ECS_ACCOUNT_NUMBER
 ARG RESOURCE_PREFIX=eas-app
 ARG AWS_REGION=eu-west-2
 ARG BASE_VERSION=latest
-FROM ${ECS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${RESOURCE_PREFIX}-base:${BASE_VERSION}
+ARG BASE_IMAGE=base-local-alpine
+#${ECS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${RESOURCE_PREFIX}-base:${BASE_VERSION}
+
+FROM node:16-alpine AS node-binaries
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE} AS build
+
+# Migrate over our desired NodeJS version from the official Docker Node image
+# (NodeJS doesn't provide muslc binaries directly, and Alpine's packages only contain one version)
+COPY --from=node-binaries /usr/local/bin/node /usr/local/bin/
+COPY --from=node-binaries /usr/local/lib/node_modules /usr/local/lib/node_modules/
+RUN ln -s ../lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
+    ln -s ../lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 
 ARG APP_VERSION=unknown
 
@@ -14,12 +26,20 @@ ENV FLASK_APP=app.py
 # Create root directory and copy repo
 COPY . $DIR_GOVUK
 
-# Build emergency-alerts-api
+# Build emergency-alerts-govuk-alerts (requires Node)
 RUN cd $DIR_GOVUK && \
     . $VENV_GOVUK/bin/activate && \
     python$PYTHON_VERSION -m pip install --upgrade pip wheel setuptools && \
     python$PYTHON_VERSION -m pip install pycurl && \
     APP_VERSION=${APP_VERSION} make bootstrap
+# Remove node_modules as we don't need to ship any of that for runtime later
+RUN rm -rf $DIR_GOVUK/node_modules
+
+# ---------
+# We can now use a fresh base as a small final image without NodeJS
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE} AS final
+COPY --from=build $DIR_GOVUK $DIR_GOVUK
 
 # Create a blank configuration file
 RUN echo "" > $DIR_GOVUK/environment.sh
@@ -30,8 +50,5 @@ RUN adduser -D -s /bin/bash easuser && \
 
 COPY scripts/healthcheck.sh /
 COPY scripts/start-govuk.sh /
-
-# Getting rid of our `node_modules`, because we only need them at build-time.
-RUN rm -rf $DIR_GOVUK/node_modules
 
 CMD bash /start-govuk.sh
