@@ -28,7 +28,7 @@ const hashOptions = { format: '{name}-{hash:8}{ext}' }
 const copy = {
   govuk_frontend: {
     fonts: () => {
-      return src(paths.govuk_frontend + 'govuk/assets/fonts/**/*')
+      return src(paths.govuk_frontend + 'govuk/assets/fonts/**/*', {encoding: false})
         .pipe(dest(paths.dist + 'fonts/'));
         // Fonts have their own filename hash so we don’t need to add
         // our own
