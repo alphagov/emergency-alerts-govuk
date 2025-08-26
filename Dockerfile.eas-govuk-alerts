@@ -30,4 +30,8 @@ RUN adduser -D -s /bin/bash easuser && \
 
 COPY scripts/healthcheck.sh /
 COPY scripts/start-govuk.sh /
+
+# Getting rid of our `node_modules`, because we only need them at build-time.
+RUN rm -rf $DIR_GOVUK/node_modules
+
 CMD bash /start-govuk.sh

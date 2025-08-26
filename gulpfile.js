@@ -10,7 +10,6 @@ const rollupPluginTerser = require('rollup-plugin-terser').terser;
 
 const plugins = {}
 plugins.sass = require('gulp-sass')(require('sass'));
-plugins.gulpStylelint = require('gulp-stylelint');
 plugins.gulpif = require('gulp-if');
 plugins.postcss = require('gulp-postcss');
 plugins.hash = require('gulp-sha256-filename');
@@ -29,7 +28,7 @@ const hashOptions = { format: '{name}-{hash:8}{ext}' }
 const copy = {
   govuk_frontend: {
     fonts: () => {
-      return src(paths.govuk_frontend + 'govuk/assets/fonts/**/*')
+      return src(paths.govuk_frontend + 'govuk/assets/fonts/**/*', {encoding: false})
         .pipe(dest(paths.dist + 'fonts/'));
         // Fonts have their own filename hash so we don’t need to add
         // our own
