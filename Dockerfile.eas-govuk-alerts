@@ -4,8 +4,7 @@ ARG ECS_ACCOUNT_NUMBER
 ARG RESOURCE_PREFIX=eas-app
 ARG AWS_REGION=eu-west-2
 ARG BASE_VERSION=latest
-ARG BASE_IMAGE=base-local-alpine
-#${ECS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${RESOURCE_PREFIX}-base:${BASE_VERSION}
+ARG BASE_IMAGE=${ECS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${RESOURCE_PREFIX}-base:${BASE_VERSION}
 
 FROM node:16-alpine AS node-binaries
 ARG BASE_IMAGE
