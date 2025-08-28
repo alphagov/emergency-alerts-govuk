@@ -10,6 +10,7 @@ planned_tests:
     status_box_content: "We are testing the UK’s Emergency Alerts system on Sunday 7 September at 3pm."
     welsh_status_box_content: "Byddwn yn profi system Rhybuddion Argyfwng y DU ar ddydd Sul 7 Medi am 3yh."
     display_as_link: True
+    planned_tests_link: 'public-testing'
     summary: ~
     welsh_summary: ~
     content: "This is a test of Emergency Alerts, a UK government service that will warn you if there's a life-threatening emergency nearby. 

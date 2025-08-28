@@ -39,7 +39,8 @@ def test_system_testing_page(mocker, client_get):
             'display_as_link': True,
             'extra_content': None,
             'areas_in_welsh': None,
-            'starts_at_datetime_in_welsh': None
+            'starts_at_datetime_in_welsh': None,
+            'planned_tests_link': None
         })],
         'The government and mobile network operators occasionally carry out operator tests.'
     ],
@@ -64,7 +65,8 @@ def test_system_testing_page(mocker, client_get):
             'display_as_link': True,
             'extra_content': None,
             'areas_in_welsh': None,
-            'starts_at_datetime_in_welsh': None
+            'starts_at_datetime_in_welsh': None,
+            'planned_tests_link': None
         })],
         'This summary should be displayed'
     ]
