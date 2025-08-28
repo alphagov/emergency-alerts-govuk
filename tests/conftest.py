@@ -54,7 +54,8 @@ def create_planned_test_dict(
     areas=None,
     extra_content=None,
     starts_at_datetime_in_welsh=None,
-    areas_in_welsh=None
+    areas_in_welsh=None,
+    planned_tests_link=None
 ):
     return {
         'id': id or uuid.uuid4(),
@@ -74,7 +75,8 @@ def create_planned_test_dict(
         "extra_content": None,
         'display_as_link': True,
         'areas_in_welsh': areas_in_welsh or [],
-        'starts_at_datetime_in_welsh': starts_at_datetime_in_welsh or None
+        'starts_at_datetime_in_welsh': starts_at_datetime_in_welsh or None,
+        'planned_tests_link': planned_tests_link
     }
 
 

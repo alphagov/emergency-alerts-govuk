@@ -58,7 +58,8 @@ def test_index_page_shows_current_alerts(
             'display_as_link': True,
             'extra_content': None,
             'areas_in_welsh': None,
-            'starts_at_datetime_in_welsh': None
+            'starts_at_datetime_in_welsh': None,
+            'planned_tests_link': None
         })],
         'On Wednesday 21 April 2021 at 2PM, there will be a test of the UK Emergency Alerts service'
     ],
@@ -83,7 +84,8 @@ def test_index_page_shows_current_alerts(
             'display_as_link': True,
             'extra_content': None,
             'areas_in_welsh': None,
-            'starts_at_datetime_in_welsh': None
+            'starts_at_datetime_in_welsh': None,
+            'planned_tests_link': None
         })],
         'Status box content'
     ]
