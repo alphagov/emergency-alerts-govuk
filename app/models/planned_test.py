@@ -26,7 +26,7 @@ class PlannedTest(SerialisedModel):
         'welsh_content',
         'display_as_link',
         'extra_content',
-        'planned_tests_href'
+        'planned_tests_link'
     }
 
     def __lt__(self, other):
@@ -78,4 +78,4 @@ class PlannedTest(SerialisedModel):
 
     @property
     def planned_tests_page(self):
-        return self.planned_tests_href or "announcements"
+        return self.planned_tests_link or "announcements"
