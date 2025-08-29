@@ -67,3 +67,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.govuk-inset-text--green-border {
+  @extend .govuk-inset-text;
+  border-left: $govuk-border-width-wide solid #00703C;
+  background-color: #F3F2F1;
+  margin-bottom: govuk-spacing(9);
+}
