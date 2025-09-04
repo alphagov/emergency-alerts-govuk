@@ -114,17 +114,12 @@ def get_rendered_pages(alerts):
         template = env.get_template(path)
         target = path.replace(".html", "")
 
-        if target.endswith('.cy'):
-            notification_banner_text = "Byddwn yn profi system Rhybuddion Argyfwng y DU ar ddydd Sul 7 Medi am 3yh."
-        else:
-            notification_banner_text = "We are testing the UK’s Emergency Alerts system on Sunday 7 September at 3pm."
-
         # render each individual alert's page
         if target == 'alert':
             for alert in alerts.public:
                 alert_url = get_url_for_alert(alert, alerts)
                 rendered["alerts/" + alert_url] = template.render({
-                    'alert_data': alert, 'notification_banner_text': notification_banner_text})
+                    'alert_data': alert})
                 if feed_item_count < 20:
                     _add_feed_entry(fg, alert, alert_url)
                     _add_feed_entry(fg_cy, alert, alert_url)
@@ -136,19 +131,18 @@ def get_rendered_pages(alerts):
             for alert in alerts.public:
                 alert_url = get_url_for_alert(alert, alerts)
                 rendered["alerts/" + alert_url + ".cy"] = template.render({
-                    'alert_data': alert,
-                    'notification_banner_text': notification_banner_text})
+                    'alert_data': alert})
             continue
 
         if target == 'index':
-            rendered['alerts'] = template.render(notification_banner_text=notification_banner_text)
+            rendered['alerts'] = template.render()
             continue
 
         if target == 'index.cy':
-            rendered['alerts/about.cy'] = template.render(notification_banner_text=notification_banner_text)
+            rendered['alerts/about.cy'] = template.render()
             continue
 
-        rendered["alerts/" + target] = template.render(notification_banner_text=notification_banner_text)
+        rendered["alerts/" + target] = template.render()
 
     rendered['alerts/feed.atom'] = _add_stylesheet_attribute_to_atom(
         fg.atom_str(pretty=True).decode("utf-8")
