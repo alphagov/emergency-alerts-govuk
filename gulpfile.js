@@ -55,7 +55,7 @@ const copy = {
       .pipe(dest(paths.dist + 'javascripts/vendor/html5shiv/'));
   },
   images: () => {
-      return src(paths.src + 'images/**/*')
+      return src(paths.src + 'images/**/*', {encoding: false})
         .pipe(plugins.hash(hashOptions))
         .pipe(dest(paths.dist + 'images/'));
   }

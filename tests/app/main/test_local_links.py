@@ -83,4 +83,4 @@ def test_links_have_correct_class_attribute(client_get, alert_dict, route):
     html = client_get(route)
 
     for link in html.select('main a'):
-        assert 'govuk-link' in link['class']
+        assert link['class'][0] in ['govuk-link', 'govuk-link--no-underline']

@@ -139,7 +139,7 @@
       The alert will say:
     </p>
     <div class="govuk-inset-text govuk-!-margin-top-2">
-      {{ alert_or_planned_test.content | string | autolink_urls(classes='govuk-link') | paragraphize(classes="govuk-body")}}
+      {{ alert_or_planned_test.content | string | paragraphize(classes="govuk-body")}}
     </div>
     {% if alert_or_planned_test.extra_content %}
       <h2 class="govuk-heading-m govuk-!-margin-top-6">
@@ -149,7 +149,7 @@
         Welsh
       </p>
       <div class="govuk-inset-text govuk-!-margin-top-2">
-        {{ alert_or_planned_test.extra_content | autolink_urls(classes='govuk-link') | paragraphize(classes="govuk-body") }}
+        {{ alert_or_planned_test.extra_content | paragraphize(classes="govuk-body") }}
       </div>
     {% endif %}
 
