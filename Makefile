@@ -101,6 +101,10 @@ clean:
 run-flask:
 	. environment.sh && flask run -p 6017
 
+.PHONY: run-flask-debug
+run-flask-debug: ## Run flask in debug mode
+	. environment.sh && flask --debug run -p 6017
+
 .PHONY: bootstrap
 bootstrap: install-node generate-version-file
 	pip3 install -r requirements_local_utils.txt
