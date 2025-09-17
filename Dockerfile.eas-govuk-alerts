@@ -26,7 +26,7 @@ RUN echo "" > $DIR_GOVUK/environment.sh
 
 RUN useradd -ms /bin/bash easuser && chown -R easuser:easuser $DIR_GOVUK && chown -R easuser:easuser $DIR_UTILS
 
-COPY scripts/healthcheck.sh /
+COPY scripts/healthcheck-govuk.sh /
 COPY scripts/start-govuk.sh /
 
 # Getting rid of our `node_modules`, because we only need them at build-time.
