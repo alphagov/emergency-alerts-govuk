@@ -25,7 +25,8 @@ class PlannedTest(SerialisedModel):
         'content',
         'welsh_content',
         'display_as_link',
-        'extra_content'
+        'extra_content',
+        'planned_tests_link'
     }
 
     def __lt__(self, other):
@@ -74,3 +75,7 @@ class PlannedTest(SerialisedModel):
     def is_planned(self):
         now = datetime.now(pytz.utc)
         return self.expires_date.as_utc_datetime >= now
+
+    @property
+    def planned_tests_page(self):
+        return self.planned_tests_link or "announcements"
