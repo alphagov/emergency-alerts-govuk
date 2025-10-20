@@ -18,6 +18,9 @@
                 <link rel="icon" sizes="48x48"  href="{atom:feed/atom:icon}"/>
                 <link rel="icon" sizes="any"  href="/alerts/assets/images/favicon-2ed10a55.svg" type="image/svg+xml"/>
 
+                <meta http-equiv="Content-Security-Policy"
+                      content="script-src 'self' 'sha256-GUQ5ad8JK5KmEWmROf3LZd9ge94daqNvd8xy9YS1iDw=' 'sha256-2YzKJPFzGU1Pp3Dz6YBivmewvmWMuFWPhkpGaLfCi9E=';" />
+
                 <script type="text/javascript">
                     <![CDATA[
                     document.addEventListener('DOMContentLoaded', function() {
