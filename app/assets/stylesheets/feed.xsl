@@ -34,7 +34,7 @@
                                     '$3-$2-$1 $4 $5'
                                 )
 
-                                element.textContent = localString;
+                                element.textContent = displayDate;
 
                             });
                         });

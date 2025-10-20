@@ -17,6 +17,29 @@
                 <link rel="stylesheet" type="text/css" href="main.css"/>
                 <link rel="icon" sizes="48x48"  href="{atom:feed/atom:icon}"/>
                 <link rel="icon" sizes="any"  href="/alerts/assets/images/favicon-2ed10a55.svg" type="image/svg+xml"/>
+
+                <script type="text/javascript">
+                    <![CDATA[
+                        document.addEventListener('DOMContentLoaded', function() {
+                            document.querySelectorAll('.local-time').forEach(function(element) {
+                                const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                                const locale = Intl.DateTimeFormat().resolvedOptions().locale;
+                                var utcString = element.getAttribute('data-utc');
+                                var utcDate = new Date(utcString);
+                                const localDate = utcDate.toLocaleString(locale, { timezone: tz, timeZoneName: "short" });
+
+                                // convert from "DD/MM/YYYY, HH:MM:SS TZ" to "YYYY-MM-DD HH:MM TZ"
+                                displayDate = localDate.replace(
+                                    /(\d{2})\/(\d{2})\/(\d{4}), (\d{2}:\d{2}):\d{2} (\w+)/,
+                                    '$3-$2-$1 $4 $5'
+                                )
+
+                                element.textContent = localString;
+
+                            });
+                        });
+                    ]]>
+                </script>
             </head>
             <body class="govuk-template__body">
                 <header class="govuk-header" role="banner">
@@ -124,9 +147,12 @@
 
     <xsl:template match="atom:updated">
         <xsl:variable name="datetime" select="normalize-space(.)"/>
-        <xsl:variable name="date" select="substring-before($datetime, 'T')"/>
-        <xsl:variable name="time" select="substring-after($datetime, 'T')"/>
-        <xsl:value-of select="concat($date, ' ', substring($time, 1, 5))"/>
+        <!-- <xsl:variable name="date" select="substring-before($datetime, 'T')"/>
+             <xsl:variable name="time" select="substring-after($datetime, 'T')"/>
+             <xsl:value-of select="concat($date, ' ', substring($time, 1, 5))"/> -->
+        <time class="local-time" data-utc="{$datetime}">
+            <xsl:value-of select="$datetime"/>
+        </time>
     </xsl:template>
 
 </xsl:stylesheet>
