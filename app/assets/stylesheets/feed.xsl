@@ -13,8 +13,6 @@
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
                 <meta property="og:image" content="{atom:feed/atom:logo}"/>
                 <meta property="og:title" content="{atom:feed/atom:title}"/>
-                <meta http-equiv="Content-Security-Policy"
-                      content="script-src 'self' 'sha256-GUQ5ad8JK5KmEWmROf3LZd9ge94daqNvd8xy9YS1iDw=' 'sha256-d2oPS+sDnxVXpl621Ijmf1fW5XZ5I5/+YWXo1F7jcmI=';" />
                 <title><xsl:value-of select="atom:feed/atom:title" /> Web Feed</title>
                 <link rel="stylesheet" type="text/css" href="main.css"/>
                 <link rel="icon" sizes="48x48"  href="{atom:feed/atom:icon}"/>
