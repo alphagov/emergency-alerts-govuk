@@ -19,7 +19,7 @@
                 <link rel="icon" sizes="any"  href="/alerts/assets/images/favicon-2ed10a55.svg" type="image/svg+xml"/>
 
                 <meta http-equiv="Content-Security-Policy"
-                      content="script-src 'self' 'sha256-GUQ5ad8JK5KmEWmROf3LZd9ge94daqNvd8xy9YS1iDw=' 'sha256-2YzKJPFzGU1Pp3Dz6YBivmewvmWMuFWPhkpGaLfCi9E=';" />
+                      content="script-src 'self' 'sha256-GUQ5ad8JK5KmEWmROf3LZd9ge94daqNvd8xy9YS1iDw=' 'sha256-d2oPS+sDnxVXpl621Ijmf1fW5XZ5I5/+YWXo1F7jcmI=';" />
 
                 <script type="text/javascript">
                     <![CDATA[
