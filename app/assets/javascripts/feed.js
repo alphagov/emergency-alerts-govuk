@@ -13,6 +13,6 @@ document.addEventListener("DOMContentLoaded", function () {
       /(\d{2})\/(\d{2})\/(\d{4}), (\d{2}:\d{2}):\d{2} (\w+)/,
       "$3-$2-$1 $4 $5"
     );
-    element.textContent = displayDate;
+    element.textContent = "this is a test message";
   });
 });
