@@ -24,12 +24,11 @@
                             document.querySelectorAll('.local-time').forEach(function(element) {
                                 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
                                 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-                                var utcString = element.getAttribute('data-utc');
-                                var utcDate = new Date(utcString);
+                                const utcString = element.getAttribute('data-utc');
+                                const utcDate = new Date(utcString);
                                 const localDate = utcDate.toLocaleString(locale, { timezone: tz, timeZoneName: "short" });
-
                                 // convert from "DD/MM/YYYY, HH:MM:SS TZ" to "YYYY-MM-DD HH:MM TZ"
-                                displayDate = localDate.replace(
+                                const displayDate = localDate.replace(
                                     /(\d{2})\/(\d{2})\/(\d{4}), (\d{2}:\d{2}):\d{2} (\w+)/,
                                     '$3-$2-$1 $4 $5'
                                 )
@@ -146,9 +145,6 @@
 
     <xsl:template match="atom:updated">
         <xsl:variable name="datetime" select="normalize-space(.)"/>
-        <!-- <xsl:variable name="date" select="substring-before($datetime, 'T')"/>
-        <xsl:variable name="time" select="substring-after($datetime, 'T')"/>
-        <xsl:value-of select="concat($date, ' ', substring($time, 1, 5))"/> -->
         <time class="local-time" data-utc="{$datetime}">
             <xsl:value-of select="$datetime"/>
         </time>
