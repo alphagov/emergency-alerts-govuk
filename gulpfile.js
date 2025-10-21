@@ -133,7 +133,7 @@ const defaultTask = parallel(
   scss.compile,
   rollupTask("govuk-frontend-skip-link-init.mjs"),
   rollupTask("relative-dates-init.mjs"),
-  rollupTask("feed.js")
+  rollupTask("feed")
 );
 
 exports.default = defaultTask;
