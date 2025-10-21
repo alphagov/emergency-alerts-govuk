@@ -9,7 +9,6 @@
   border-top: govuk-spacing(2) solid govuk-colour('blue');
 }
 
-
 .govuk-\!-font-numeric {
   @include govuk-font($size: false, $tabular: true);
   letter-spacing: .06em;
@@ -43,17 +42,16 @@
 .govuk-feed {
   display: flex;
   align-items: flex-end;
+
   .govuk-link {
     margin-left: 5px;
   }
 }
 
-
 .date-margin-top {
   @extend %govuk-heading-m;
   margin-top: govuk-spacing(9);
 }
-
 
 .banner-margin-top {
   @extend %govuk-heading-m;
