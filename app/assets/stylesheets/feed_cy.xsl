@@ -17,7 +17,7 @@
                 <link rel="stylesheet" type="text/css" href="main.css"/>
                 <link rel="icon" sizes="48x48"  href="{atom:feed/atom:icon}"/>
                 <link rel="icon" sizes="any"  href="/alerts/assets/images/favicon-2ed10a55.svg" type="image/svg+xml"/>
-                <script type="application/javascript" src="/alerts/assets/javascripts/feed-acd139d8.js"></script>
+                <script type="application/javascript" src="/alerts/assets/javascripts/feed-7e69ded8.js"></script>
             </head>
             <body class="govuk-template__body">
                 <header class="govuk-header" role="banner">
