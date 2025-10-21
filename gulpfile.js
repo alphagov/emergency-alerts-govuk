@@ -61,6 +61,11 @@ const copy = {
       .pipe(plugins.hash(hashOptions))
       .pipe(dest(paths.dist + "images/"));
   },
+  plainjs: () => {
+    return src(paths.src + "javascripts/feed.js", { encoding: false })
+      .pipe(plugins.hash(hashOptions))
+      .pipe(dest(paths.dist + "javascripts/"));
+  },
 };
 
 const rollupTask = (fileName) => () => {
@@ -71,7 +76,7 @@ const rollupTask = (fileName) => () => {
       // - deliver it in one bundle
       // - allow it to run in browsers without support for JS Modules
       input: {
-        [fileName]: paths.src + "javascripts/" + fileName,
+        [fileName]: paths.src + "javascripts/" + fileName + "-init.mjs",
       },
       plugins: [
         // determine module entry points from either 'module' or 'main' fields in package.json
@@ -130,10 +135,10 @@ const defaultTask = parallel(
   copy.govuk_frontend.images,
   copy.html5shiv,
   copy.images,
+  copy.plainjs,
   scss.compile,
-  rollupTask("govuk-frontend-skip-link-init.mjs"),
-  rollupTask("relative-dates-init.mjs"),
-  rollupTask("feed")
+  rollupTask("govuk-frontend-skip-link"),
+  rollupTask("relative-dates")
 );
 
 exports.default = defaultTask;
