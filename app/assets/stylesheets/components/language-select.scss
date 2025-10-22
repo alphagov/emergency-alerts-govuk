@@ -14,13 +14,13 @@
 .hmrc-language-select__list-item {
   display: inline-block;
 
-  &:first-child:after {
+  &:first-child::after {
     content: "";
     display: inline-block;
     position: relative;
     top: .1875em;
     height: 1em;
-    border-right: .09375em solid #0b0c0c;
+    border-right: .0938em solid #0b0c0c;
   }
 
   a,
