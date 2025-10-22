@@ -119,16 +119,14 @@
             <xsl:value-of select="atom:content" disable-output-escaping="yes" />
         </p>
         <p class="govuk-body-s">
-            Cyhoeddwyd: <xsl:apply-templates select="atom:updated"/>
+            Cyhoeddwyd:
+            <time class="local-time" data-datetime="{normalize-space(atom:published)}">
+                <xsl:value-of
+                    select="substring(normalize-space(atom:summary), string-length(normalize-space(atom:summary)) - 19)"
+                />
+            </time>
         </p>
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
-    </xsl:template>
-
-    <xsl:template match="atom:updated">
-        <xsl:variable name="datetime" select="normalize-space(.)"/>
-        <time class="local-time" data-utc="{$datetime}">
-            <xsl:value-of select="$datetime"/>
-        </time>
     </xsl:template>
 
 </xsl:stylesheet>

@@ -119,9 +119,6 @@
         <p class="govuk-body atom-feed__word-wrap">
             <xsl:value-of select="atom:content" disable-output-escaping="yes" />
         </p>
-        <!-- <p class="govuk-body-s">
-            Published: <xsl:apply-templates select="atom:published"/>
-        </p> -->
         <p class="govuk-body-s">
             Published:
             <time class="local-time" data-datetime="{normalize-space(atom:published)}">
@@ -132,13 +129,5 @@
         </p>
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
     </xsl:template>
-
-    <!-- <xsl:template match="atom:published">
-        <xsl:variable name="datetime" select="normalize-space(.)"/>
-        <xsl:variable name="readable_datetime" select="substring($datetime, string-length($datetime) - 19)"/>
-        <time class="local-time" data-datetime="{$datetime}">
-            <xsl:value-of select="$readable_datetime"/>
-        </time>
-    </xsl:template> -->
 
 </xsl:stylesheet>
