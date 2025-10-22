@@ -249,7 +249,6 @@ def _add_feed_entry(fg, alert, alert_url):
     fe.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
     fe.content(alert.content)
     fe.link(href=f"{host_url}/alerts/" + alert_url, rel="alternate")
-    # content = alert.content if len(alert.content) <= 40 else alert.content[:36] + "..."
     tz_aware_datetime = alert.approved_at.astimezone(ZoneInfo("Europe/London"))
     fe.summary(title + " - " + tz_aware_datetime.strftime("%Y-%m-%d %H:%M %Z"))
     fe.published(tz_aware_datetime)
