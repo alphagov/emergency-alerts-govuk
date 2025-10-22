@@ -2,6 +2,7 @@
 <xsl:stylesheet
     version="2.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:atom="http://www.w3.org/2005/Atom"
     exclude-result-prefixes="atom"
     >
@@ -17,7 +18,7 @@
                 <link rel="stylesheet" type="text/css" href="main.css"/>
                 <link rel="icon" sizes="48x48"  href="{atom:feed/atom:icon}"/>
                 <link rel="icon" sizes="any"  href="/alerts/assets/images/favicon-2ed10a55.svg" type="image/svg+xml"/>
-                <script type="application/javascript" src="/alerts/assets/javascripts/feed-e65a6072.js"></script>
+                <script type="application/javascript" src="/alerts/assets/javascripts/feed-0517c6c7.js"></script>
             </head>
             <body class="govuk-template__body">
                 <header class="govuk-header" role="banner">
@@ -118,17 +119,26 @@
         <p class="govuk-body atom-feed__word-wrap">
             <xsl:value-of select="atom:content" disable-output-escaping="yes" />
         </p>
+        <!-- <p class="govuk-body-s">
+            Published: <xsl:apply-templates select="atom:published"/>
+        </p> -->
         <p class="govuk-body-s">
-            Published: <xsl:apply-templates select="atom:updated"/>
+            Published:
+            <time class="local-time" data-datetime="{normalize-space(atom:published)}">
+                <xsl:value-of
+                    select="substring(normalize-space(atom:summary), string-length(normalize-space(atom:summary)) - 19)"
+                />
+            </time>
         </p>
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
     </xsl:template>
 
-    <xsl:template match="atom:updated">
+    <!-- <xsl:template match="atom:published">
         <xsl:variable name="datetime" select="normalize-space(.)"/>
-        <time class="local-time" data-utc="{$datetime}">
-            <xsl:value-of select="$datetime"/>
+        <xsl:variable name="readable_datetime" select="substring($datetime, string-length($datetime) - 19)"/>
+        <time class="local-time" data-datetime="{$datetime}">
+            <xsl:value-of select="$readable_datetime"/>
         </time>
-    </xsl:template>
+    </xsl:template> -->
 
 </xsl:stylesheet>

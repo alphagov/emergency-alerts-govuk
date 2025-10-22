@@ -1,3 +1,5 @@
+from zoneinfo import ZoneInfo
+
 from emergency_alerts_utils.formatters import autolink_urls, formatted_list
 from feedgen.feed import FeedGenerator
 from flask import current_app
@@ -247,9 +249,10 @@ def _add_feed_entry(fg, alert, alert_url):
     fe.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
     fe.content(alert.content)
     fe.link(href=f"{host_url}/alerts/" + alert_url, rel="alternate")
-    content = alert.content if len(alert.content) <= 40 else alert.content[:36] + "..."
-    fe.summary(content)
-    fe.published(alert.approved_at)
+    # content = alert.content if len(alert.content) <= 40 else alert.content[:36] + "..."
+    tz_aware_datetime = alert.approved_at.astimezone(ZoneInfo("Europe/London"))
+    fe.summary(title + " - " + tz_aware_datetime.strftime("%Y-%m-%d %H:%M %Z"))
+    fe.published(tz_aware_datetime)
 
 
 def _add_stylesheet_attribute_to_atom(feed_string, style_path="feed.xsl"):
