@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const datetimeObj = new Date(datetimeString)
     const localDate = datetimeObj.toLocaleString(locale, {
       timezone: tz,
-      timeZoneName: 'short',
+      timeZoneName: 'short'
     })
     // convert from 'DD/MM/YYYY, HH:MM:SS TZ' to 'YYYY-MM-DD HH:MM TZ'
     const displayDate = localDate.replace(
