@@ -2,24 +2,26 @@
 @import "govuk/helpers";
 
 .govuk-template--rebranded .govuk-header__service-name {
-  margin-bottom: govuk-spacing(2);
+        margin-bottom: govuk-spacing(2);
 
-  @include govuk-media-query($from: desktop) {
-    margin-top: govuk-spacing(3);
-    margin-bottom: govuk-spacing(2);
-  }
+        @include govuk-media-query($from: desktop) {
+          margin-top: govuk-spacing(3);
+          margin-bottom: govuk-spacing(2);
+        }
 }
 
 .govuk-template--rebranded .govuk-header__logo {
-  @include govuk-media-query($until: desktop) {
-    padding-bottom: govuk-spacing(0);
-  }
+        @include govuk-media-query($until: desktop) {
+          padding-bottom: govuk-spacing(0);
+        }
 }
 
-.govuk-notification-banner__content > * {
-  max-width: 100%;
+
+.govuk-notification-banner__content>* {
+        max-width: 100%;
 }
+
 
 .govuk-notification-banner {
-  margin-bottom: -10px;
+        margin-bottom: -10px;
 }
