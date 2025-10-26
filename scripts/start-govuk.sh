@@ -21,7 +21,7 @@ function update_timestamp(){
     chown easuser:easuser $timestamp_filename
 }
 
-if [[ ! -z $DEBUG ]]; then
+if [[ $DEBUG == "true" ]]; then
     echo "Starting in debug mode.."
     while true; do
         echo 'Debug mode active..';
