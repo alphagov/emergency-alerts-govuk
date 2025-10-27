@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Static pages for GOVUK alerts",
   "engines": {
-    "node": ">=22.18.0",
+    "node": ">=22.21.0",
     "npm": ">=10.9.3"
   },
   "scripts": {
