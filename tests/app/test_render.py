@@ -115,27 +115,32 @@ def test_get_rendered_pages_generates_atom_feed(govuk_alerts):
         {
             "id": "http://localhost:6017/alerts/22-apr-2021",
             "title": "Wales",
-            "published": "2021-04-21T23:09:00+00:00"
+            "updated": "2021-04-21T23:09:00+00:00",
+            "published": "2021-04-22T00:09:00+01:00"
         },
         {
             "id": "http://localhost:6017/alerts/21-apr-2021-3",
             "title": "Barnsley",
-            "published": "2021-04-21T12:37:00+00:00"
+            "updated": "2021-04-21T12:37:00+00:00",
+            "published": "2021-04-21T13:37:00+01:00"
         },
         {
             "id": "http://localhost:6017/alerts/21-apr-2021-2",
             "title": "Scotland",
-            "published": "2021-04-21T12:35:00+00:00"
+            "updated": "2021-04-21T12:35:00+00:00",
+            "published": "2021-04-21T13:35:00+01:00"
         },
         {
             "id": "http://localhost:6017/alerts/21-apr-2021",
             "title": "Argyll and Bute",
-            "published": "2021-04-20T23:11:00+00:00"
+            "updated": "2021-04-20T23:11:00+00:00",
+            "published": "2021-04-21T00:11:00+01:00"
         },
         {
             "id": "http://localhost:6017/alerts/20-apr-2021",
             "title": "England",
-            "published": "2021-04-20T23:10:00+00:00"
+            "updated": "2021-04-20T23:10:00+00:00",
+            "published": "2021-04-21T00:10:00+01:00"
         }
     ]
 

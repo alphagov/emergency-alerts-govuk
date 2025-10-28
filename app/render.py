@@ -1,3 +1,5 @@
+from zoneinfo import ZoneInfo
+
 from emergency_alerts_utils.formatters import autolink_urls, formatted_list
 from feedgen.feed import FeedGenerator
 from flask import current_app
@@ -150,6 +152,7 @@ def get_rendered_pages(alerts):
     with open(REPO / 'app/assets/stylesheets/feed.xsl', "r", encoding="utf-8") as file:
         xsl_content = file.read()
         xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
+        xsl_content = _add_javascript_link_to_xsl(xsl_content)
         rendered['alerts/feed.xsl'] = xsl_content
 
     rendered['alerts/feed_cy.atom'] = _add_stylesheet_attribute_to_atom(
@@ -159,6 +162,7 @@ def get_rendered_pages(alerts):
     with open(REPO / 'app/assets/stylesheets/feed_cy.xsl', "r", encoding="utf-8") as file:
         xsl_content = file.read()
         xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
+        xsl_content = _add_javascript_link_to_xsl(xsl_content)
         rendered['alerts/feed_cy.xsl'] = xsl_content
 
     return rendered
@@ -247,9 +251,9 @@ def _add_feed_entry(fg, alert, alert_url):
     fe.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
     fe.content(alert.content)
     fe.link(href=f"{host_url}/alerts/" + alert_url, rel="alternate")
-    content = alert.content if len(alert.content) <= 40 else alert.content[:36] + "..."
-    fe.summary(content)
-    fe.published(alert.approved_at)
+    tz_aware_datetime = alert.approved_at.astimezone(ZoneInfo("Europe/London"))
+    fe.summary(title + " - " + tz_aware_datetime.strftime("%Y-%m-%d %H:%M %Z"))
+    fe.published(tz_aware_datetime)
 
 
 def _add_stylesheet_attribute_to_atom(feed_string, style_path="feed.xsl"):
@@ -266,4 +270,13 @@ def _add_stylesheet_attribute_to_atom(feed_string, style_path="feed.xsl"):
 def _add_stylesheet_link_to_xsl(xsl_content):
     stylesheet_href = file_fingerprint("/alerts/assets/stylesheets/main.css")
     new_content = xsl_content.replace("main.css", stylesheet_href)
+    return new_content
+
+
+def _add_javascript_link_to_xsl(xsl_content):
+    script_src = file_fingerprint("/alerts/assets/javascripts/feed.js")
+    new_content = xsl_content.replace(
+        'src="/alerts/assets/javascripts/feed.js"',
+        f'src="{script_src}"'
+    )
     return new_content

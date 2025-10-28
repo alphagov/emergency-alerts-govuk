@@ -17,6 +17,7 @@
                 <link rel="stylesheet" type="text/css" href="main.css"/>
                 <link rel="icon" sizes="48x48"  href="{atom:feed/atom:icon}"/>
                 <link rel="icon" sizes="any"  href="/alerts/assets/images/favicon-2ed10a55.svg" type="image/svg+xml"/>
+                <script type="application/javascript" src="/alerts/assets/javascripts/feed.js"></script>
             </head>
             <body class="govuk-template__body">
                 <header class="govuk-header" role="banner">
@@ -55,21 +56,21 @@
                 <div class="govuk-width-container">
                     <div class="govuk-grid-row govuk-subheader">
                         <div class="govuk-separator"></div>
-                            <div class="govuk-language-select">
-                                <nav class="govuk-body hmrc-language-select" aria-label="Language switcher">
-                                    <ul class="hmrc-language-select__list">
-                                    <li class="hmrc-language-select__list-item">
-                                        <span aria-current="true">English</span>
-                                    </li>
-                                    <li class="hmrc-language-select__list-item">
-                                        <a href="/alerts/feed_cy.atom" hreflang="cy" lang="cy" rel="alternate" class="govuk-link" data-journey-click="link - click:lang-select:Cymraeg">
-                                        <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
-                                        <span aria-hidden="true">Cymraeg</span>
-                                        </a>
-                                    </li>
-                                    </ul>
-                                </nav>
-                            </div>
+                        <div class="govuk-language-select">
+                            <nav class="govuk-body hmrc-language-select" aria-label="Language switcher">
+                                <ul class="hmrc-language-select__list">
+                                <li class="hmrc-language-select__list-item">
+                                    <span aria-current="true">English</span>
+                                </li>
+                                <li class="hmrc-language-select__list-item">
+                                    <a href="/alerts/feed_cy.atom" hreflang="cy" lang="cy" rel="alternate" class="govuk-link" data-journey-click="link - click:lang-select:Cymraeg">
+                                    <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
+                                    <span aria-hidden="true">Cymraeg</span>
+                                    </a>
+                                </li>
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
                     <main class="govuk-main-wrapper" role="main">
                         <xsl:apply-templates select="atom:feed" />
@@ -118,16 +119,14 @@
             <xsl:value-of select="atom:content" disable-output-escaping="yes" />
         </p>
         <p class="govuk-body-s">
-            Published: <xsl:apply-templates select="atom:updated"/>
+            Published:
+            <time class="local-time" data-datetime="{normalize-space(atom:published)}">
+                <xsl:value-of
+                    select="substring(normalize-space(atom:summary), string-length(normalize-space(atom:summary)) - 19)"
+                />
+            </time>
         </p>
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
-    </xsl:template>
-
-    <xsl:template match="atom:updated">
-        <xsl:variable name="datetime" select="normalize-space(.)"/>
-        <xsl:variable name="date" select="substring-before($datetime, 'T')"/>
-        <xsl:variable name="time" select="substring-after($datetime, 'T')"/>
-        <xsl:value-of select="concat($date, ' ', substring($time, 1, 5))"/>
     </xsl:template>
 
 </xsl:stylesheet>
