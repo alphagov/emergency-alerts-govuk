@@ -152,6 +152,7 @@ def get_rendered_pages(alerts):
     with open(REPO / 'app/assets/stylesheets/feed.xsl', "r", encoding="utf-8") as file:
         xsl_content = file.read()
         xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
+        xsl_content = _add_javascript_link_to_xsl(xsl_content)
         rendered['alerts/feed.xsl'] = xsl_content
 
     rendered['alerts/feed_cy.atom'] = _add_stylesheet_attribute_to_atom(
@@ -161,6 +162,7 @@ def get_rendered_pages(alerts):
     with open(REPO / 'app/assets/stylesheets/feed_cy.xsl', "r", encoding="utf-8") as file:
         xsl_content = file.read()
         xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
+        xsl_content = _add_javascript_link_to_xsl(xsl_content)
         rendered['alerts/feed_cy.xsl'] = xsl_content
 
     return rendered
@@ -268,4 +270,13 @@ def _add_stylesheet_attribute_to_atom(feed_string, style_path="feed.xsl"):
 def _add_stylesheet_link_to_xsl(xsl_content):
     stylesheet_href = file_fingerprint("/alerts/assets/stylesheets/main.css")
     new_content = xsl_content.replace("main.css", stylesheet_href)
+    return new_content
+
+
+def _add_javascript_link_to_xsl(xsl_content):
+    script_src = file_fingerprint("/alerts/assets/javascripts/feed.js")
+    new_content = xsl_content.replace(
+        'src="/alerts/assets/javascripts/feed.js"',
+        f'src="{script_src}"'
+    )
     return new_content
