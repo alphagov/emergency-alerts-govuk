@@ -13,7 +13,7 @@ function run_celery(){
 
 function flask_publish(){
     cd $DIR_GOVUK;
-    . $VENV_GOVUK/bin/activate && flask publish-with-assets &
+    . $VENV_GOVUK/bin/activate && OTEL_PYTHON_DISTRO="aws_distro" OTEL_PYTHON_CONFIGURATOR="aws_configurator" opentelemetry-instrument flask publish-with-assets &
 }
 
 function update_timestamp(){

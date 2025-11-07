@@ -137,7 +137,7 @@ freeze-requirements: ## create static requirements.txt
 
 .PHONY: run-celery
 run-celery: ## Run celery
-	. environment.sh && celery \
+	. environment.sh && OTEL_PYTHON_DISTRO="aws_distro" OTEL_PYTHON_CONFIGURATOR="aws_configurator" opentelemetry-instrument celery \
 		-A run_celery.notify_celery worker \
 		--uid=$(shell id -u easuser) \
 		--pidfile=/tmp/govuk_celery_worker.pid \
