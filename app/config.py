@@ -66,6 +66,9 @@ class Hosted(Config):
     NOTIFY_API_CLIENT_SECRET = os.environ.get("NOTIFY_API_CLIENT_SECRET")
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
+    HTTP_PROXY = os.environ.get("HTTP_PROXY")
+    NO_PROXY = os.environ.get("NO_PROXY")
+
     PREDEFINED_SQS_QUEUES = {
         "govuk-alerts": {
             "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}govuk-alerts"
