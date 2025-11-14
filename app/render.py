@@ -1,7 +1,6 @@
 import uuid
 from zoneinfo import ZoneInfo
 
-from app.models.alerts import Alerts
 from emergency_alerts_utils.formatters import autolink_urls, formatted_list
 from emergency_alerts_utils.xml.broadcast import generate_xml_body
 from feedgen.feed import FeedGenerator
@@ -32,8 +31,6 @@ VIEWS = TEMPLATES / 'views'
 all_view_paths = [
     str(path.relative_to(VIEWS)) for path in VIEWS.glob('*.html')
 ]
-
-host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
 
 
 def namespace(**kwargs):
@@ -176,6 +173,8 @@ def get_rendered_pages(alerts):
 
 def _get_feed_generator(lang="EN"):
 
+    host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
+
     fg = FeedGenerator()
 
     if lang == "EN":
@@ -240,6 +239,8 @@ def _get_feed_generator(lang="EN"):
 
 def _add_feed_entry(fg, alert, alert_url):
 
+    host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
+
     title = alert_url
     if alert.areas.get("aggregate_names"):
         title = ", ".join(alert.areas["aggregate_names"])
@@ -285,6 +286,7 @@ def _add_javascript_link_to_xsl(xsl_content):
 
 
 def get_cap_xml_for_alerts(alerts):
+    host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
     cap_xml_alerts = {}
     for alert in alerts.public:
         identifier = str(uuid.uuid4())
@@ -304,4 +306,3 @@ def get_cap_xml_for_alerts(alerts):
             cap_xml_alerts[f"{alert_url}-{timestamp}"] = cap_xml
 
     return cap_xml_alerts
-

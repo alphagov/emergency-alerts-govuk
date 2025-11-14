@@ -4,9 +4,9 @@ from pathlib import Path
 
 import boto3
 import requests
+from emergency_alerts_utils.polygons import Polygons
 from flask import current_app
 from markupsafe import Markup, escape
-from emergency_alerts_utils.polygons import Polygons
 
 from app import version
 

@@ -4,7 +4,12 @@ from flask import cli, current_app
 from app.models.alerts import Alerts
 from app.notify_client.alerts_api_client import alerts_api_client
 from app.render import get_cap_xml_for_alerts, get_rendered_pages
-from app.utils import purge_fastly_cache, upload_assets_to_s3, upload_cap_xml_to_s3, upload_html_to_s3
+from app.utils import (
+    purge_fastly_cache,
+    upload_assets_to_s3,
+    upload_cap_xml_to_s3,
+    upload_html_to_s3,
+)
 
 
 def setup_commands(app):
