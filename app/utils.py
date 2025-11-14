@@ -153,6 +153,7 @@ def upload_assets_to_s3():
             Key=filename
         )
 
+
 def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
     host_environment = current_app.config["HOST"]
 
