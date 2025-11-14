@@ -296,13 +296,13 @@ def get_cap_xml_for_alerts(alerts):
         event = create_cap_event(alert, identifier, f"{host_url}/alerts/{alert_url}")
         cap_xml = generate_xml_body(event)
         timestamp = alert.approved_at.strftime("%Y%m%d%H%M%S")
-        cap_xml_alerts[f"{alert_url}-{timestamp}"] = cap_xml
+        cap_xml_alerts[f"alerts/{alert_url}-{timestamp}"] = cap_xml
 
         # If alert has been cancelled, generate another CAP XML file for the updated event
         if alert.cancelled_at:
             event = create_cap_event(alert, identifier, f"{host_url}/alerts/{alert_url}", cancelled=True)
             cap_xml = generate_xml_body(event)
             timestamp = alert.cancelled_at.strftime("%Y%m%d%H%M%S")
-            cap_xml_alerts[f"{alert_url}-{timestamp}"] = cap_xml
+            cap_xml_alerts[f"alerts/{alert_url}-{timestamp}"] = cap_xml
 
     return cap_xml_alerts
