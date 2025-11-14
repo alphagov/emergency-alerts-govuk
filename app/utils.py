@@ -6,6 +6,7 @@ import boto3
 import requests
 from flask import current_app
 from markupsafe import Markup, escape
+from emergency_alerts_utils.polygons import Polygons
 
 from app import version
 
@@ -152,6 +153,42 @@ def upload_assets_to_s3():
         )
 
 
+def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
+    host_environment = current_app.config["HOST"]
+
+    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    if not bucket_name:
+        current_app.logger.info("Target S3 bucket not specified: Skipping upload")
+        return
+
+    if host_environment == "hosted":
+        session = boto3.Session()
+    else:
+        session = boto3.Session(
+            aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
+            aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
+            region_name=current_app.config["AWS_REGION"],
+        )
+
+    s3 = session.client('s3')
+
+    for path, content in cap_xml_alerts.items():
+
+        current_app.logger.info(
+            "Uploading " + path,
+            extra={
+                "broadcast_event_id": broadcast_event_id
+            }
+        )
+
+        s3.put_object(
+            Body=content,
+            Bucket=bucket_name,
+            ContentType="application/cap+xml",
+            Key=path
+        )
+
+
 def purge_fastly_cache():
     fastly_service_id = current_app.config["FASTLY_SERVICE_ID"]
     fastly_api_key = current_app.config["FASTLY_API_KEY"]
@@ -232,3 +269,25 @@ def post_version_to_cloudwatch():
         current_app.logger.exception(
             "Couldn't post app version to CloudWatch. App version: %s",
         )
+
+
+def create_cap_event(alert, identifier, url, cancelled=False):
+    return {
+        "identifier": identifier,
+        "message_type": "alert",
+        "message_format": "cap",
+        "headline": "GOV.UK Emergency alert",
+        "description": alert.content,
+        "language": "en-GB",
+        "areas": [
+            {
+                # as_coordinate_pairs_lat_long returns an extra surrounding list.
+                # We do not expect this to ever have multiple items in.
+                "polygon": Polygons(alert.areas["simple_polygons"]).as_coordinate_pairs_lat_long[0]
+            }
+        ],
+        "channel": "severe",
+        "sent": alert.starts_at.isoformat(),
+        "expires": alert.cancelled_at.isoformat() if cancelled else alert.finishes_at.isoformat(),
+        "web": url
+    }
