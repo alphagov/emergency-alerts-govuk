@@ -1,3 +1,4 @@
+import hashlib
 import os
 import re
 from pathlib import Path
@@ -152,7 +153,6 @@ def upload_assets_to_s3():
             Key=filename
         )
 
-
 def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
     host_environment = current_app.config["HOST"]
 
@@ -174,6 +174,9 @@ def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
 
     for path, content in cap_xml_alerts.items():
 
+        # generate hash
+        etag = hashlib.md5(content.encode("utf-8")).hexdigest()
+
         current_app.logger.info(
             "Uploading " + path,
             extra={
@@ -185,7 +188,8 @@ def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
             Body=content,
             Bucket=bucket_name,
             ContentType="application/cap+xml",
-            Key=path
+            Key=path,
+            IfNoneMatch=f"\"{etag}\""
         )
 
 
