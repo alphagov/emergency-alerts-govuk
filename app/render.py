@@ -1,6 +1,9 @@
+import uuid
 from zoneinfo import ZoneInfo
 
+from app.models.alerts import Alerts
 from emergency_alerts_utils.formatters import autolink_urls, formatted_list
+from emergency_alerts_utils.xml.broadcast import generate_xml_body
 from feedgen.feed import FeedGenerator
 from flask import current_app
 from jinja2 import (
@@ -17,6 +20,7 @@ from app.utils import (
     DIST,
     REPO,
     capitalise,
+    create_cap_event,
     file_fingerprint,
     paragraphize,
     simplify_custom_area_name,
@@ -28,6 +32,8 @@ VIEWS = TEMPLATES / 'views'
 all_view_paths = [
     str(path.relative_to(VIEWS)) for path in VIEWS.glob('*.html')
 ]
+
+host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
 
 
 def namespace(**kwargs):
@@ -170,8 +176,6 @@ def get_rendered_pages(alerts):
 
 def _get_feed_generator(lang="EN"):
 
-    host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
-
     fg = FeedGenerator()
 
     if lang == "EN":
@@ -236,8 +240,6 @@ def _get_feed_generator(lang="EN"):
 
 def _add_feed_entry(fg, alert, alert_url):
 
-    host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
-
     title = alert_url
     if alert.areas.get("aggregate_names"):
         title = ", ".join(alert.areas["aggregate_names"])
@@ -280,3 +282,26 @@ def _add_javascript_link_to_xsl(xsl_content):
         f'src="{script_src}"'
     )
     return new_content
+
+
+def get_cap_xml_for_alerts(alerts):
+    cap_xml_alerts = {}
+    for alert in alerts.public:
+        identifier = str(uuid.uuid4())
+        alert_url = get_url_for_alert(alert, alerts)
+
+        # Generate CAPXML for every public alert
+        event = create_cap_event(alert, identifier, f"{host_url}/alerts/{alert_url}")
+        cap_xml = generate_xml_body(event)
+        timestamp = alert.approved_at.strftime("%Y%m%d%H%M%S")
+        cap_xml_alerts[f"{alert_url}-{timestamp}"] = cap_xml
+
+        # If alert has been cancelled, generate another CAP XML file for the updated event
+        if alert.cancelled_at:
+            event = create_cap_event(alert, identifier, f"{host_url}/alerts/{alert_url}", cancelled=True)
+            cap_xml = generate_xml_body(event)
+            timestamp = alert.cancelled_at.strftime("%Y%m%d%H%M%S")
+            cap_xml_alerts[f"{alert_url}-{timestamp}"] = cap_xml
+
+    return cap_xml_alerts
+
