@@ -1,4 +1,3 @@
-import hashlib
 import os
 import re
 from pathlib import Path
@@ -107,9 +106,6 @@ def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
 
     for path, content in rendered_pages.items():
 
-        # generate hash
-        etag = hashlib.md5(content.encode("utf-8")).hexdigest()
-
         current_app.logger.info(
             "Uploading " + path,
             extra={
@@ -121,8 +117,7 @@ def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
             Body=content,
             Bucket=bucket_name,
             ContentType=content_type,
-            Key=path,
-            IfNoneMatch=f"\"{etag}\""
+            Key=path
         )
 
 
@@ -180,9 +175,6 @@ def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
 
     for path, content in cap_xml_alerts.items():
 
-        # generate hash
-        etag = hashlib.md5(content.encode("utf-8")).hexdigest()
-
         current_app.logger.info(
             "Uploading " + path,
             extra={
@@ -194,8 +186,7 @@ def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
             Body=content,
             Bucket=bucket_name,
             ContentType="application/cap+xml",
-            Key=path,
-            IfNoneMatch=f"\"{etag}\""
+            Key=path
         )
 
 
