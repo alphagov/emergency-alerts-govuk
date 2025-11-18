@@ -139,7 +139,6 @@ freeze-requirements: ## create static requirements.txt
 run-celery: ## Run celery
 	. environment.sh && opentelemetry-instrument celery \
 		-A run_celery.notify_celery worker \
-		--pool=threads \
 		--uid=$(shell id -u easuser) \
 		--pidfile=/tmp/govuk_celery_worker.pid \
 		--prefetch-multiplier=1 \
