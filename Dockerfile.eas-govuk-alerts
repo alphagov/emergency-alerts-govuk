@@ -1,10 +1,12 @@
 # Sensible defaults, but they will be explicitly overridden in the context of a buildspec anyway.
 # The only one that needs to be passed in however is the ECS_ACCOUNT_NUMBER, as this changes per environment.
+# For local/ad-hoc builds you can specify BASE_IMAGE entirely
 ARG ECS_ACCOUNT_NUMBER
 ARG RESOURCE_PREFIX=eas-app
 ARG AWS_REGION=eu-west-2
 ARG BASE_VERSION=latest
-FROM ${ECS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${RESOURCE_PREFIX}-base:${BASE_VERSION}
+ARG BASE_IMAGE=${ECS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${RESOURCE_PREFIX}-base:${BASE_VERSION}
+FROM ${BASE_IMAGE}
 
 ARG APP_VERSION=unknown
 
@@ -12,22 +14,19 @@ ENV SERVICE=govuk-alerts
 ENV FLASK_APP=app.py
 
 # Create root directory and copy repo
-COPY . $DIR_GOVUK
+COPY --chown=easuser:easuser . $DIR_GOVUK
 
 # Build emergency-alerts-api
+RUN python$PYTHON_VERSION -m venv $VENV_GOVUK
 RUN cd $DIR_GOVUK && \
     . $VENV_GOVUK/bin/activate && \
-    python$PYTHON_VERSION -m pip install --upgrade pip wheel setuptools && \
-    python$PYTHON_VERSION -m pip install pycurl && \
     APP_VERSION=${APP_VERSION} make bootstrap
 
 # Create a blank configuration file
 RUN echo "" > $DIR_GOVUK/environment.sh
 
-RUN useradd -ms /bin/bash easuser && chown -R easuser:easuser $DIR_GOVUK && chown -R easuser:easuser $DIR_UTILS
-
-COPY scripts/healthcheck.sh /
-COPY scripts/start-govuk.sh /
+COPY --chown=easuser:easuser scripts/healthcheck.sh /
+COPY --chown=easuser:easuser scripts/start-govuk.sh /
 
 # Getting rid of our `node_modules`, because we only need them at build-time.
 RUN rm -rf $DIR_GOVUK/node_modules
