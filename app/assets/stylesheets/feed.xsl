@@ -115,14 +115,26 @@
                 <xsl:value-of select="atom:title" />
             </a>
         </h3>
+        <xsl:choose>
+            <xsl:when test="contains(normalize-space(atom:summary), 'Stopped:')">
+                <p class="govuk-heading-s">
+                    Stopped sending at
+                    <time class="local-end-time" data-datetime="{substring-before(substring-after(substring-after(normalize-space(atom:summary), 'Stopped: '), ' ['), ']')}">
+                        <xsl:value-of
+                            select="substring-before(substring-after(normalize-space(atom:summary), 'Stopped: '), ' [')"
+                        />
+                    </time>
+                </p>
+            </xsl:when>
+        </xsl:choose>
         <p class="govuk-body atom-feed__word-wrap">
-            <xsl:value-of select="atom:content" disable-output-escaping="yes" />
+            <xsl:value-of select="normalize-space(atom:content)" />
         </p>
         <p class="govuk-body-s">
             Published:
             <time class="local-time" data-datetime="{normalize-space(atom:published)}">
                 <xsl:value-of
-                    select="substring(normalize-space(atom:summary), string-length(normalize-space(atom:summary)) - 19)"
+                    select="substring-before(substring-after(substring-after(normalize-space(atom:summary), 'Sent: '), '['), ']')"
                 />
             </time>
         </p>

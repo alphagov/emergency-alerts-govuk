@@ -251,9 +251,8 @@ def _add_feed_entry(fg, alert, alert_url):
     fe.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
     fe.content(alert.content)
     fe.link(href=f"{host_url}/alerts/" + alert_url, rel="alternate")
-    tz_aware_datetime = alert.approved_at.astimezone(ZoneInfo("Europe/London"))
-    fe.summary(title + " - " + tz_aware_datetime.strftime("%Y-%m-%d %H:%M %Z"))
-    fe.published(tz_aware_datetime)
+    fe.published(alert.approved_at.astimezone(ZoneInfo("Europe/London")))
+    fe.summary(_build_readable_summary(title, alert))
 
 
 def _add_stylesheet_attribute_to_atom(feed_string, style_path="feed.xsl"):
@@ -280,3 +279,29 @@ def _add_javascript_link_to_xsl(xsl_content):
         f'src="{script_src}"'
     )
     return new_content
+
+
+def _build_readable_summary(title, alert):
+    """
+    Output example: "Alert area: London.
+                     Sent: 11:57am (GMT) on Tuesday 25 November 2025 [2025-11-25 11:57 GMT].
+                     Stopped: 9:27am (GMT) on Tuesday 26 November 2025 [2025-11-26 09:27 GMT]"
+    """
+    start = alert.approved_at.astimezone(ZoneInfo("Europe/London"))
+
+    summary = "Alert area: " + title + ". Sent: "
+
+    summary += "11:57am (GMT) on Tuesday 25 November 2025"
+    summary += f" [{start.strftime("%Y-%m-%d %H:%M %Z")}]."
+
+    if alert.is_past:
+        summary += " Stopped: "
+        if alert.cancelled_at and (alert.cancelled_at < alert.finishes_at):
+            stop = alert.cancelled_at.astimezone(ZoneInfo("Europe/London"))
+            summary += stop.strftime("%-I:%M%p (%Z) on %A %d %B %Y").replace('AM', 'am').replace('PM', 'pm')
+            summary += f" [{stop.strftime("%Y-%m-%d %H:%M %Z")}]"
+        else:
+            stop = alert.finishes_at.astimezone(ZoneInfo("Europe/London"))
+            summary += stop.strftime("%-I:%M%p (%Z) on %A %d %B %Y").replace('AM', 'am').replace('PM', 'pm')
+            summary += f" [{stop.strftime("%Y-%m-%d %H:%M %Z")}]"
+    return summary
