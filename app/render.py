@@ -286,21 +286,20 @@ def _add_javascript_link_to_xsl(xsl_content):
 
 
 def get_cap_xml_for_alerts(alerts):
-    host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
     cap_xml_alerts = {}
     for alert in alerts.public:
         identifier = str(uuid.uuid4())
         alert_url = get_url_for_alert(alert, alerts)
 
         # Generate CAPXML for every public alert
-        event = create_cap_event(alert, identifier, f"{host_url}/alerts/{alert_url}")
+        event = create_cap_event(alert, identifier)
         cap_xml = generate_xml_body(event)
         timestamp = alert.approved_at.strftime("%Y%m%d%H%M%S")
         cap_xml_alerts[f"alerts/{alert_url}-{timestamp}.cap.xml"] = cap_xml
 
         # If alert has been cancelled, generate another CAP XML file for the updated event
         if alert.cancelled_at:
-            event = create_cap_event(alert, identifier, f"{host_url}/alerts/{alert_url}", cancelled=True)
+            event = create_cap_event(alert, identifier, cancelled=True)
             cap_xml = generate_xml_body(event)
             timestamp = alert.cancelled_at.strftime("%Y%m%d%H%M%S")
             cap_xml_alerts[f"alerts/{alert_url}-{timestamp}.cap.xml"] = cap_xml
