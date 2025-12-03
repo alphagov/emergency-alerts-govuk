@@ -1,35 +1,50 @@
 # Sensible defaults, but they will be explicitly overridden in the context of a buildspec anyway.
 # The only one that needs to be passed in however is the ECS_ACCOUNT_NUMBER, as this changes per environment.
+# For local/ad-hoc builds you can specify BASE_IMAGE entirely
 ARG ECS_ACCOUNT_NUMBER
 ARG RESOURCE_PREFIX=eas-app
 ARG AWS_REGION=eu-west-2
 ARG BASE_VERSION=latest
-FROM ${ECS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${RESOURCE_PREFIX}-base:${BASE_VERSION}
+ARG BASE_IMAGE=${ECS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${RESOURCE_PREFIX}-base:${BASE_VERSION}
+FROM ${BASE_IMAGE} AS build
 
 ARG APP_VERSION=unknown
+
+# Grab nvm and NodeJS, configuring future commands to work without sourcing
+SHELL ["/bin/bash", "-c"]
+ENV BASH_ENV /home/easuser/.bash_env
+RUN touch "${BASH_ENV}"
+RUN echo '. "${BASH_ENV}"' >> ~/.bashrc
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | PROFILE="${BASH_ENV}" bash
+RUN nvm install v22.21.1 && nvm use v22.21.1
+
+# Create root directory and copy repo
+COPY --chown=easuser:easuser . $DIR_GOVUK
+
+# Build venv and emergency-alerts-govuk
+RUN python$PYTHON_VERSION -m venv $VENV_GOVUK
+RUN cd $DIR_GOVUK && \
+    . $VENV_GOVUK/bin/activate && \
+    APP_VERSION=${APP_VERSION} make bootstrap
+
+# Get rid of our `node_modules` because we only need them at build-time.
+RUN rm -rf $DIR_GOVUK/node_modules
+
+# ---------
+# We can now use a fresh base as a small final image without NodeJS
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE} AS final
 
 ENV SERVICE=govuk-alerts
 ENV FLASK_APP=app.py
 
-# Create root directory and copy repo
-COPY . $DIR_GOVUK
-
-# Build emergency-alerts-api
-RUN cd $DIR_GOVUK && \
-    . $VENV_GOVUK/bin/activate && \
-    python$PYTHON_VERSION -m pip install --upgrade pip wheel setuptools && \
-    python$PYTHON_VERSION -m pip install pycurl && \
-    APP_VERSION=${APP_VERSION} make bootstrap
+# Copy over bootstrapped contents
+COPY --chown=easuser:easuser --from=build $VENV_GOVUK $VENV_GOVUK
+COPY --chown=easuser:easuser --from=build $DIR_GOVUK $DIR_GOVUK
 
 # Create a blank configuration file
 RUN echo "" > $DIR_GOVUK/environment.sh
-
-RUN useradd -ms /bin/bash easuser && chown -R easuser:easuser $DIR_GOVUK && chown -R easuser:easuser $DIR_UTILS
-
-COPY scripts/healthcheck.sh /
-COPY scripts/start-govuk.sh /
-
-# Getting rid of our `node_modules`, because we only need them at build-time.
-RUN rm -rf $DIR_GOVUK/node_modules
+COPY --chown=easuser:easuser scripts/healthcheck.sh /
+COPY --chown=easuser:easuser scripts/start-govuk.sh /
 
 CMD bash /start-govuk.sh
