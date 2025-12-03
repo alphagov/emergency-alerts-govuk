@@ -272,7 +272,7 @@ def post_version_to_cloudwatch():
         )
 
 
-def create_cap_event(alert, identifier, url, cancelled=False):
+def create_cap_event(alert, identifier, url=None, cancelled=False):
     return {
         "identifier": identifier,
         "message_type": "alert",
