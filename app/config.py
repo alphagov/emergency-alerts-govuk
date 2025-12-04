@@ -62,7 +62,9 @@ class Hosted(Config):
     FASTLY_API_KEY = os.getenv("FASTLY_API_KEY")
     FASTLY_SURROGATE_KEY = "notify-emergency-alerts"
 
-    NOTIFY_API_HOST_NAME = f"http://api.{TENANT}ecs.local:6011"
+    NOTIFY_API_HOST_NAME = os.environ.get(
+        "API_HOST_NAME", f"http://api.{TENANT}ecs.local:6011"
+    )
     NOTIFY_API_CLIENT_SECRET = os.environ.get("NOTIFY_API_CLIENT_SECRET")
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
