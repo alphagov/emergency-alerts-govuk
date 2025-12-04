@@ -38,6 +38,12 @@ FROM ${BASE_IMAGE} AS final
 ENV SERVICE=govuk-alerts
 ENV FLASK_APP=app.py
 
+ENV OTEL_SERVICE_NAME="govuk-alerts"
+ENV OTEL_PYTHON_DISTRO="aws_distro"
+ENV OTEL_PYTHON_CONFIGURATOR="aws_configurator"
+# This is incredibly noisy
+ENV OTEL_PYTHON_DISABLED_INSTRUMENTATIONS=jinja2
+
 # Copy over bootstrapped contents
 COPY --chown=easuser:easuser --from=build $VENV_GOVUK $VENV_GOVUK
 COPY --chown=easuser:easuser --from=build $DIR_GOVUK $DIR_GOVUK
