@@ -1,3 +1,4 @@
+from pathlib import Path
 import random
 import xml.etree.ElementTree as ET
 from uuid import UUID
@@ -7,7 +8,11 @@ from dateutil.parser import parse as dt_parse
 
 from app.models.alert import Alert
 from app.models.alerts import Alerts
-from app.render import get_rendered_pages, get_url_for_alert
+from app.render import (
+    get_cap_xml_for_alerts,
+    get_rendered_pages,
+    get_url_for_alert,
+)
 from tests.conftest import create_alert_dict
 
 
@@ -175,3 +180,45 @@ def _verify_entries(entries, namespace, expected):
         assert entry.find('atom:published', namespace).text == expected[i]['published']
 
     assert len(entries) == 5
+
+
+def test_get_cap_xml_for_alerts():
+    areas_dict = {"simple_polygons": [[[1, 2], [3, 4], [5, 6]], [[7, 8], [9, 10], [11, 12]]]}
+    alerts = Alerts([
+        create_alert_dict(id=UUID(int=0), areas=areas_dict, cancelled_at=False),
+        create_alert_dict(id=UUID(int=1), areas=areas_dict, cancelled_at=False),
+        create_alert_dict(id=UUID(int=2), areas=areas_dict, cancelled_at=False),
+        create_alert_dict(id=UUID(int=3), areas=areas_dict),
+        create_alert_dict(id=UUID(int=4), areas=areas_dict),
+        create_alert_dict(id=UUID(int=5), areas=areas_dict),
+        create_alert_dict(id=UUID(int=6), areas=areas_dict),
+    ])
+    # 7 CAP XML files for the initial alert send, 4 additional CAP XML files for the cancelled alerts
+    assert len(get_cap_xml_for_alerts(alerts)) == 11
+
+    # Generates list of filenames for all alerts
+    approved_cap_xml_files = [
+        f"{get_url_for_alert(alert, alerts)}-{alert.approved_at.strftime("%Y%m%d%H%M%S")}" for alert in alerts]
+
+    # Generates list of filenames for alerts that have been cancelled, as an extra
+    # CAP XML file is created when alert is cancelled
+    cancelled_cap_xml_files = [
+        f"{get_url_for_alert(alert, alerts)}-{alert.cancelled_at.strftime("%Y%m%d%H%M%S")}" for alert in alerts if alert.cancelled_at]
+    filenames = [(Path(file_path).stem).split('.cap')[0] for file_path in get_cap_xml_for_alerts(alerts)]
+
+    expected_files = approved_cap_xml_files + cancelled_cap_xml_files
+
+    # Asserts that the cap_xml dict keys are the filenames for all of the alerts
+    assert filenames.sort() == expected_files.sort()
+
+
+def test_get_cap_xml_for_alerts_skips_non_public_alerts():
+    # Asserts that CAP XML only created for public alerts, not Operator alerts
+    alerts = Alerts([
+        create_alert_dict(id=UUID(int=0), channel='operator'),
+        create_alert_dict(id=UUID(int=1), channel='operator'),
+        create_alert_dict(id=UUID(int=2), channel='operator'),
+        create_alert_dict(id=UUID(int=3), channel='operator')
+    ])
+    assert get_cap_xml_for_alerts(alerts) == {}
+
