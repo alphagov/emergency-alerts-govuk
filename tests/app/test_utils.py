@@ -4,11 +4,11 @@ from unittest.mock import patch
 
 import boto3
 import pytest
+from emergency_alerts_utils.polygons import Polygons
 from flask import current_app
 from markupsafe import Markup
 from moto import mock_aws
 
-from emergency_alerts_utils.polygons import Polygons
 from app.models.alert import Alert
 from app.utils import (
     capitalise,
