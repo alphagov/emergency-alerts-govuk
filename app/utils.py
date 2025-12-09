@@ -77,6 +77,8 @@ def is_in_uk(simple_polygons):
     first_polygon = simple_polygons[0]
     first_coordinate = first_polygon[0]
 
+    print(simple_polygons)
+
     return (
         first_coordinate[0] > uk_south_west[0] and
         first_coordinate[0] < uk_north_east[0] and
