@@ -4,7 +4,7 @@ certifi==2025.4.26
 feedgen==1.0.0
 Flask==3.0.3
 govuk-frontend-jinja==3.6.0
-Jinja2==3.1.4
+Jinja2==3.1.5
 lxml==5.4.0
 MarkupSafe==2.1.5
 notifications-python-client==9.1.0
