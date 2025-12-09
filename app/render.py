@@ -287,11 +287,11 @@ def _add_javascript_link_to_xsl(xsl_content):
 
 def get_cap_xml_for_alerts(alerts):
     cap_xml_alerts = {}
-    host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
+    govuk_alerts_url = current_app.config["GOVUK_ALERTS_WEBSITE_URL"]
     for alert in alerts.public:
         identifier = str(uuid.uuid4())
         alert_url = get_url_for_alert(alert, alerts)
-        alert_url_with_host = f"{host_url}/{alert_url}"
+        alert_url_with_host = f"{govuk_alerts_url}/{alert_url}"
 
         # Generate CAPXML for every public alert
         event = create_cap_event(alert, identifier, url=alert_url_with_host)
