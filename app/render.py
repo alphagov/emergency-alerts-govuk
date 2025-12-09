@@ -291,7 +291,7 @@ def get_cap_xml_for_alerts(alerts):
     for alert in alerts.public:
         identifier = str(uuid.uuid4())
         alert_url = get_url_for_alert(alert, alerts)
-        alert_url_with_host = f"{govuk_alerts_url}/alerts/{alert_url}"
+        alert_url_with_host = f"https://{govuk_alerts_url}/alerts/{alert_url}"
 
         # Generate CAPXML for every public alert
         event = create_cap_event(alert, identifier, url=alert_url_with_host)
