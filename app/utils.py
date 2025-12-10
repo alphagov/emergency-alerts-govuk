@@ -284,7 +284,7 @@ def create_cap_event(alert, identifier, url=None, cancelled=False):
             {
                 # as_coordinate_pairs_lat_long returns an extra surrounding list.
                 # We do not expect this to ever have multiple items in.
-                "polygon": Polygons(alert.areas["simple_polygons"]).as_coordinate_pairs_lat_long[0]
+                "polygon": Polygons(alert.areas["simple_polygons"])
             }
         ],
         "channel": "severe",
