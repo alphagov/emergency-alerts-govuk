@@ -7,7 +7,6 @@ from kombu import Exchange, Queue
 class Config():
     HOST = os.environ.get('HOST')
     GOVUK_ALERTS_HOST_URL = os.environ.get("GOVUK_ALERTS_HOST_URL", "")
-    GOVUK_ALERTS_WEBSITE_URL = os.environ.get("GOVUK_ALERTS_WEBSITE_URL", "").split("://")[0]
 
     EAS_APP_NAME = "govuk-alerts"
 
