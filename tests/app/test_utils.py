@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from unittest.mock import patch
 
@@ -17,6 +16,7 @@ from app.utils import (
     simplify_custom_area_name,
     upload_html_to_s3,
 )
+from tests.conftest import set_config
 
 
 def test_file_fingerprint_gets_variant_of_path_with_hash_in():
@@ -105,18 +105,26 @@ def test_upload_to_s3(govuk_alerts):
 
 
 @patch('app.utils.requests')
-def test_purge_fastly_cache(mock_requests, govuk_alerts):
+def test_purge_fastly_cache(mock_requests, monkeypatch, govuk_alerts):
     headers = {
         "Accept": "application/json",
         "Fastly-Key": "test-api-key"
     }
 
-    os.environ["FASTLY_SERVICE_ID"] = "test-service-id"
-    os.environ["FASTLY_SURROGATE_KEY"] = "test-surrogate-key"
-    os.environ['FASTLY_API_KEY'] = "test-api-key"
+    monkeypatch.setenv("FASTLY_SERVICE_ID", "test-service-id")
+    monkeypatch.setenv("FASTLY_SURROGATE_KEY", "test-surrogate-key")
+    monkeypatch.setenv("FASTLY_API_KEY", "test-api-key")
 
     purge_fastly_cache()
 
     fastly_url = "https://api.fastly.com/service/test-service-id/purge/test-surrogate-key"
     mock_requests.post.assert_called_once_with(fastly_url, headers=headers)
     mock_requests.post.return_value.raise_for_status.assert_called_once()
+
+
+@patch("app.utils.requests")
+def test_purge_fastly_cache_disabled(mock_requests, monkeypatch, govuk_alerts):
+    with set_config(govuk_alerts, "FASTLY_ENABLED", False):
+        purge_fastly_cache()
+
+    mock_requests.post.assert_not_called()
