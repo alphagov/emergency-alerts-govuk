@@ -249,11 +249,10 @@ def _add_feed_entry(fg, alert, alert_url):
     fe.title(title)
     fe.updated(alert.approved_at)
     fe.author(name="Emergency Alerts Service", uri="https://www.gov.uk/contact/govuk")
-    fe.content(alert.content)
+    fe.content(_add_stopped_time_to_content(alert), type="xhtml")
     fe.link(href=f"{host_url}/alerts/" + alert_url, rel="alternate")
-    tz_aware_datetime = alert.approved_at.astimezone(ZoneInfo("Europe/London"))
-    fe.summary(title + " - " + tz_aware_datetime.strftime("%Y-%m-%d %H:%M %Z"))
-    fe.published(tz_aware_datetime)
+    fe.published(alert.approved_at.astimezone(ZoneInfo("Europe/London")))
+    fe.summary(_build_readable_summary(title, alert))
 
 
 def _add_stylesheet_attribute_to_atom(feed_string, style_path="feed.xsl"):
@@ -280,3 +279,51 @@ def _add_javascript_link_to_xsl(xsl_content):
         f'src="{script_src}"'
     )
     return new_content
+
+
+def _add_stopped_time_to_content(alert):
+    if alert.is_past:
+        broadcast_status = "Stopped sending at "
+        if alert.cancelled_at and (alert.cancelled_at < alert.finishes_at):
+            broadcast_status += _readable_time_string(alert.cancelled_at)
+        else:
+            broadcast_status += _readable_time_string(alert.finishes_at)
+        return (
+            "<div xmlns='http://www.w3.org/1999/xhtml'>"
+            f"<p><strong>{broadcast_status}</strong></p>"
+            f"<p><![CDATA[{alert.content}]]></p>"
+            "</div>"
+        )
+    return alert.content
+
+
+def _build_readable_summary(title, alert):
+    """
+    Output example: "Alert area: London.
+                     Sent: 11:57am (GMT) on Tuesday 25 November 2025 [2025-11-25 11:57 GMT].
+                     Stopped: 9:27am (GMT) on Tuesday 26 November 2025 [2025-11-26 09:27 GMT]"
+    """
+
+    summary = "Alert area: " + title + ". Sent: "
+    summary += _readable_time_string(alert.approved_at)
+    summary += f" [{_display_format_time_string(alert.approved_at)}]."
+
+    if alert.is_past:
+        summary += " Stopped: "
+        if alert.cancelled_at and (alert.cancelled_at < alert.finishes_at):
+            summary += _readable_time_string(alert.cancelled_at)
+            summary += f" [{_display_format_time_string(alert.cancelled_at)}]"
+        else:
+            summary += _readable_time_string(alert.finishes_at)
+            summary += f" [{_display_format_time_string(alert.finishes_at)}]"
+    return summary
+
+
+def _readable_time_string(time):
+    tz_aware_time = time.astimezone(ZoneInfo("Europe/London"))
+    return tz_aware_time.strftime("%-I:%M%p (%Z) on %A %d %B %Y").replace('AM', 'am').replace('PM', 'pm')
+
+
+def _display_format_time_string(time):
+    tz_aware_time = time.astimezone(ZoneInfo("Europe/London"))
+    return tz_aware_time.strftime("%Y-%m-%d %H:%M %Z")
