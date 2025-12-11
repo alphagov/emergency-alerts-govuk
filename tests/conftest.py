@@ -1,4 +1,5 @@
 import uuid
+from contextlib import contextmanager
 
 import pytest
 from bs4 import BeautifulSoup
@@ -121,3 +122,13 @@ def client_get(govuk_alerts, mocker):
 def sample_content():
     return """This is a mobile network operator test of the Emergency Alerts service.
     You do not need to take any action. To find out more, search for gov.uk/alerts"""
+
+
+@contextmanager
+def set_config(app, name, value):
+    old_val = app.config.get(name)
+    app.config[name] = value
+    try:
+        yield
+    finally:
+        app.config[name] = old_val
