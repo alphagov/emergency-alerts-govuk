@@ -4,7 +4,6 @@ from pathlib import Path
 
 import boto3
 import requests
-from emergency_alerts_utils.polygons import Polygons
 from flask import current_app
 from markupsafe import Markup, escape
 
@@ -282,10 +281,8 @@ def create_cap_event(alert, identifier, url=None, cancelled=False):
         "language": "en-GB",
         "areas": [
             {
-                # as_coordinate_pairs_lat_long returns an extra surrounding list.
-                # We do not expect this to ever have multiple items in.
-                "polygon": Polygons(alert.areas["simple_polygons"])
-            }
+                "polygon": polygons,
+            } for polygons in alert.areas.get("simple_polygons")
         ],
         "channel": "severe",
         "sent": alert.starts_at.isoformat(),
