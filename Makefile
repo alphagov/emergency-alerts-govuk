@@ -55,7 +55,7 @@ freeze-requirements: ## create static requirements.txt
 
 .PHONY: run-celery
 run-celery: ## Run celery
-	. environment.sh && celery \
+	. environment.sh && opentelemetry-instrument celery \
 		-A run_celery.notify_celery worker \
 		--pidfile=/tmp/govuk_celery_worker.pid \
 		--prefetch-multiplier=1 \
