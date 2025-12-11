@@ -4,7 +4,6 @@ from unittest.mock import patch
 
 import boto3
 import pytest
-from emergency_alerts_utils.polygons import Polygons
 from flask import current_app
 from markupsafe import Markup
 from moto import mock_aws
@@ -139,7 +138,11 @@ def test_create_cap_event_for_active_alert():
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
         'language': 'en-GB',
-        'areas': [{'polygon': Polygons(alert.areas["simple_polygons"]).as_coordinate_pairs_lat_long[0]}],
+        "areas": [
+            {
+                "polygon": polygons,
+            } for polygons in alert.areas.get("simple_polygons")
+        ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
         'expires': alert.finishes_at.isoformat(),  # Expires timestamp is for when the alert is projected to finish
@@ -157,7 +160,11 @@ def test_create_cap_event_for_cancelled_alert():
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
         'language': 'en-GB',
-        'areas': [{'polygon': Polygons(alert.areas["simple_polygons"]).as_coordinate_pairs_lat_long[0]}],
+        'areas': [
+            {
+                "polygon": polygons,
+            } for polygons in alert.areas.get("simple_polygons")
+        ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
         'expires': alert.cancelled_at.isoformat(),  # Expires timestamp is for when the alert was cancelled
@@ -178,7 +185,11 @@ def test_create_cap_event_with_and_without_web_element(url):
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
         'language': 'en-GB',
-        'areas': [{'polygon': Polygons(alert.areas["simple_polygons"]).as_coordinate_pairs_lat_long[0]}],
+        "areas": [
+            {
+                "polygon": polygons,
+            } for polygons in alert.areas.get("simple_polygons")
+        ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
         'expires': alert.finishes_at.isoformat(),
