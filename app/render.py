@@ -291,7 +291,7 @@ def _add_stopped_time_to_content(alert):
         return (
             "<div xmlns='http://www.w3.org/1999/xhtml'>"
             f"<p><strong>{broadcast_status}</strong></p>"
-            f"<p>{alert.content}</p>"
+            f"<p><![CDATA[{alert.content}]]></p>"
             "</div>"
         )
     return alert.content
