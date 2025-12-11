@@ -197,6 +197,10 @@ def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
 
 
 def purge_fastly_cache():
+    if not current_app.config["FASTLY_ENABLED"]:
+        current_app.logger.info("Skipping Fastly as FASTLY_ENABLED=false")
+        return
+
     fastly_service_id = current_app.config["FASTLY_SERVICE_ID"]
     fastly_api_key = current_app.config["FASTLY_API_KEY"]
     surrogate_key = current_app.config["FASTLY_SURROGATE_KEY"]
