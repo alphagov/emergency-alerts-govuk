@@ -24,8 +24,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const locale = Intl.DateTimeFormat().resolvedOptions().locale;
     const datetimeString = element.getAttribute("data-datetime");
 
-    console.log("datetimeString: ", datetimeString);
-
     const datetimeObj = new Date(datetimeString);
 
     const fullTimeStr = datetimeObj
@@ -37,8 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
         timeZoneName: "short",
       })
       .toLowerCase();
-
-    console.log("fullTimeStr:", fullTimeStr);
 
     // Split to separate time and timezone
     const parts = fullTimeStr.split(" ");
@@ -55,8 +51,6 @@ document.addEventListener("DOMContentLoaded", function () {
       year: "numeric",
       timeZone: tz,
     });
-
-    console.log("dateStr: ", dateStr);
 
     element.textContent = `${timeStr} on ${dateStr}`;
   });

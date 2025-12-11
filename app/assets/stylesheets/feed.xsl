@@ -128,7 +128,14 @@
             </xsl:when>
         </xsl:choose>
         <p class="govuk-body atom-feed__word-wrap">
-            <xsl:value-of select="normalize-space(atom:content)" />
+            <xsl:choose>
+                <xsl:when test="starts-with(normalize-space(atom:content), 'Stopped')">
+                    <xsl:value-of select="substring(substring-after(normalize-space(atom:content), '202'), 2)"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="normalize-space(atom:content)"/>
+                </xsl:otherwise>
+            </xsl:choose>
         </p>
         <p class="govuk-body-s">
             Published:
