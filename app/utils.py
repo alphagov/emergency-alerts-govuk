@@ -104,7 +104,6 @@ def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
     s3 = session.client('s3')
 
     for path, content in rendered_pages.items():
-
         current_app.logger.info(
             "Uploading " + path,
             extra={
