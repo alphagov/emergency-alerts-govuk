@@ -7,8 +7,10 @@ from flask import current_app
 from markupsafe import Markup
 from moto import mock_aws
 
+from app.models.alert import Alert
 from app.utils import (
     capitalise,
+    create_cap_event,
     file_fingerprint,
     is_in_uk,
     paragraphize,
@@ -16,7 +18,7 @@ from app.utils import (
     simplify_custom_area_name,
     upload_html_to_s3,
 )
-from tests.conftest import set_config
+from tests.conftest import create_alert_dict, set_config
 
 
 def test_file_fingerprint_gets_variant_of_path_with_hash_in():
@@ -128,3 +130,71 @@ def test_purge_fastly_cache_disabled(mock_requests, monkeypatch, govuk_alerts):
         purge_fastly_cache()
 
     mock_requests.post.assert_not_called()
+
+
+def test_create_cap_event_for_active_alert():
+    alert = Alert(create_alert_dict(areas={"simple_polygons": [[[1, 2], [3, 4], [5, 6]], [[7, 8], [9, 10], [11, 12]]]}))
+    assert create_cap_event(alert, alert.id) == {
+        'identifier': alert.id,
+        'message_type': 'alert',
+        'message_format': 'cap',
+        'headline': 'GOV.UK Emergency alert',
+        'description': alert.content,
+        'language': 'en-GB',
+        "areas": [
+            {
+                "polygon": polygons,
+            } for polygons in alert.areas.get("simple_polygons")
+        ],
+        'channel': 'severe',
+        'sent': alert.starts_at.isoformat(),
+        'expires': alert.finishes_at.isoformat(),  # Expires timestamp is for when the alert is projected to finish
+        'web': None
+    }
+
+
+def test_create_cap_event_for_cancelled_alert():
+    alert = Alert(create_alert_dict(areas={"simple_polygons": [[[1, 2], [3, 4], [5, 6]],
+                                                               [[7, 8], [9, 10], [11, 12]]]}))
+    assert create_cap_event(alert, alert.id, cancelled=True) == {
+        'identifier': alert.id,
+        'message_type': 'alert',
+        'message_format': 'cap',
+        'headline': 'GOV.UK Emergency alert',
+        'description': alert.content,
+        'language': 'en-GB',
+        'areas': [
+            {
+                "polygon": polygons,
+            } for polygons in alert.areas.get("simple_polygons")
+        ],
+        'channel': 'severe',
+        'sent': alert.starts_at.isoformat(),
+        'expires': alert.cancelled_at.isoformat(),  # Expires timestamp is for when the alert was cancelled
+        'web': None
+    }
+
+
+@pytest.mark.parametrize('url', [
+    "https://www.gov.uk/alerts", None
+])
+def test_create_cap_event_with_and_without_web_element(url):
+    alert = Alert(create_alert_dict(areas={"simple_polygons": [[[1, 2], [3, 4], [5, 6]],
+                                                               [[7, 8], [9, 10], [11, 12]]]}))
+    assert create_cap_event(alert, alert.id, url=url) == {
+        'identifier': alert.id,
+        'message_type': 'alert',
+        'message_format': 'cap',
+        'headline': 'GOV.UK Emergency alert',
+        'description': alert.content,
+        'language': 'en-GB',
+        "areas": [
+            {
+                "polygon": polygons,
+            } for polygons in alert.areas.get("simple_polygons")
+        ],
+        'channel': 'severe',
+        'sent': alert.starts_at.isoformat(),
+        'expires': alert.finishes_at.isoformat(),
+        'web': url
+    }
