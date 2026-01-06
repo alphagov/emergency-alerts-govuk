@@ -462,6 +462,8 @@ pyyaml==6.0.1
     # via
     #   -r requirements.in
     #   responses
+redis==5.2.1
+    # via kombu
 requests==2.32.4
     # via
     #   -r requirements.in

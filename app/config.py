@@ -75,19 +75,36 @@ class Hosted(Config):
         }
     }
 
-    CELERY = {
-        "broker_transport": "sqs",
-        "broker_transport_options": {
-            "region": AWS_REGION,
-            "predefined_queues": PREDEFINED_SQS_QUEUES,
-            "is_secure": True,
-            "task_acks_late": True,
-        },
-        "timezone": "UTC",
-        "imports": ["app.celery.tasks"],
-        "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
-        "worker_max_tasks_per_child": 10,
-    }
+    if os.getenv("VALKEY_ENDPOINT"):
+        CELERY = {
+            "broker_url": f"redis://{os.getenv('VALKEY_ENDPOINT')}",
+            "broker_transport_options": {
+                "visibility_timeout": 1200,
+                "task_acks_late": True,
+            },
+            "timezone": "UTC",
+            "imports": ["app.celery.tasks"],
+            "task_queues": [
+                Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)
+            ],
+            "worker_max_tasks_per_child": 10,
+        }
+    else:
+        CELERY = {
+            "broker_transport": "sqs",
+            "broker_transport_options": {
+                "region": AWS_REGION,
+                "predefined_queues": PREDEFINED_SQS_QUEUES,
+                "is_secure": True,
+                "task_acks_late": True,
+            },
+            "timezone": "UTC",
+            "imports": ["app.celery.tasks"],
+            "task_queues": [
+                Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)
+            ],
+            "worker_max_tasks_per_child": 10,
+        }
 
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
 

@@ -1,6 +1,6 @@
 aws-opentelemetry-distro==0.12.2
 boto3==1.38.10
-celery[sqs]==5.5.3
+celery[sqs,redis]==5.5.3
 certifi==2025.4.26
 feedgen==1.0.0
 Flask==3.0.3
