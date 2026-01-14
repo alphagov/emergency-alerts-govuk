@@ -11,6 +11,7 @@ from app import version
 
 REPO = Path(__file__).parent.parent
 DIST = REPO / 'dist'
+DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
 
 def capitalise(value):
@@ -295,7 +296,7 @@ def create_cap_event(alert, identifier, url=None, cancelled=False):
             } for polygons in alert.areas.get("simple_polygons")
         ],
         "channel": "severe",
-        "sent": alert.starts_at.isoformat(),
-        "expires": alert.cancelled_at.isoformat() if cancelled else alert.finishes_at.isoformat(),
+        "sent": alert.starts_at.isoformat(timespec="seconds"),
+        "expires": alert.cancelled_at.isoformat(timespec="seconds") if cancelled else alert.finishes_at.isoformat(timespec="seconds"),
         "web": url
     }
