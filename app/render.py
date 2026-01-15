@@ -1,6 +1,8 @@
+import uuid
 from zoneinfo import ZoneInfo
 
 from emergency_alerts_utils.formatters import autolink_urls, formatted_list
+from emergency_alerts_utils.xml.broadcast import generate_xml_body
 from feedgen.feed import FeedGenerator
 from flask import current_app
 from jinja2 import (
@@ -17,6 +19,7 @@ from app.utils import (
     DIST,
     REPO,
     capitalise,
+    create_cap_event,
     file_fingerprint,
     paragraphize,
     simplify_custom_area_name,
@@ -327,3 +330,27 @@ def _readable_time_string(time):
 def _display_format_time_string(time):
     tz_aware_time = time.astimezone(ZoneInfo("Europe/London"))
     return tz_aware_time.strftime("%Y-%m-%d %H:%M %Z")
+
+
+def get_cap_xml_for_alerts(alerts):
+    cap_xml_alerts = {}
+    host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
+    for alert in alerts.public:
+        identifier = str(uuid.uuid4())
+        alert_url = get_url_for_alert(alert, alerts)
+        alert_url_with_host = f"{host_url}/alerts/{alert_url}"
+
+        # Generate CAPXML for every public alert
+        event = create_cap_event(alert, identifier, url=alert_url_with_host)
+        cap_xml = generate_xml_body(event)
+        timestamp = alert.approved_at.strftime("%Y%m%d%H%M%S")
+        cap_xml_alerts[f"alerts/{alert_url}-{timestamp}.cap.xml"] = cap_xml
+
+        # If alert has been cancelled, generate another CAP XML file for the updated event
+        if alert.cancelled_at:
+            event = create_cap_event(alert, identifier, url=alert_url_with_host, cancelled=True)
+            cap_xml = generate_xml_body(event)
+            timestamp = alert.cancelled_at.strftime("%Y%m%d%H%M%S")
+            cap_xml_alerts[f"alerts/{alert_url}-{timestamp}.cap.xml"] = cap_xml
+
+    return cap_xml_alerts
