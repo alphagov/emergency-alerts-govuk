@@ -293,10 +293,15 @@ def create_cap_event(alert, identifier, url=None, cancelled=False):
         "areas": [
             {
                 "polygon": polygons,
-            } for polygons in alert.areas.get("simple_polygons")
+            }
+            for polygons in alert.areas.get("simple_polygons")
         ],
         "channel": "severe",
         "sent": alert.starts_at.isoformat(timespec="seconds"),
-        "expires": alert.cancelled_at.isoformat(timespec="seconds") if cancelled else alert.finishes_at.isoformat(timespec="seconds"),
-        "web": url
+        "expires": (
+            alert.cancelled_at.isoformat(timespec="seconds")
+            if cancelled
+            else alert.finishes_at.isoformat(timespec="seconds")
+        ),
+        "web": url,
     }
