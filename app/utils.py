@@ -11,6 +11,7 @@ from app import version
 
 REPO = Path(__file__).parent.parent
 DIST = REPO / 'dist'
+DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
 
 def capitalise(value):
@@ -152,6 +153,49 @@ def upload_assets_to_s3():
         )
 
 
+def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
+    host_environment = current_app.config["HOST"]
+
+    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    if not bucket_name:
+        current_app.logger.info("Target S3 bucket not specified: Skipping upload")
+        return
+
+    if host_environment == "hosted":
+        session = boto3.Session()
+    else:
+        session = boto3.Session(
+            aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
+            aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
+            region_name=current_app.config["AWS_REGION"],
+        )
+
+    s3 = session.client('s3')
+
+    for path, content in cap_xml_alerts.items():
+
+        current_app.logger.info(
+            "Uploading " + path,
+            extra={
+                "broadcast_event_id": broadcast_event_id
+            }
+        )
+
+        current_app.logger.info(
+            content,
+            extra={
+                "broadcast_event_id": broadcast_event_id
+            }
+        )
+
+        s3.put_object(
+            Body=content,
+            Bucket=bucket_name,
+            ContentType="application/cap+xml",
+            Key=path
+        )
+
+
 def purge_fastly_cache():
     if not current_app.config["FASTLY_ENABLED"]:
         current_app.logger.info("Skipping Fastly as FASTLY_ENABLED=false")
@@ -236,3 +280,28 @@ def post_version_to_cloudwatch():
         current_app.logger.exception(
             "Couldn't post app version to CloudWatch. App version: %s",
         )
+
+
+def create_cap_event(alert, identifier, url=None, cancelled=False):
+    return {
+        "identifier": identifier,
+        "message_type": "alert",
+        "message_format": "cap",
+        "headline": "GOV.UK Emergency alert",
+        "description": alert.content,
+        "language": "en-GB",
+        "areas": [
+            {
+                "polygon": polygons,
+            }
+            for polygons in alert.areas.get("simple_polygons")
+        ],
+        "channel": "severe",
+        "sent": alert.starts_at.isoformat(timespec="seconds"),
+        "expires": (
+            alert.cancelled_at.isoformat(timespec="seconds")
+            if cancelled
+            else alert.finishes_at.isoformat(timespec="seconds")
+        ),
+        "web": url,
+    }
