@@ -50,6 +50,10 @@ COPY --chown=easuser:easuser --from=build $DIR_GOVUK $DIR_GOVUK
 
 # Create a blank configuration file
 RUN echo "" > $DIR_GOVUK/environment.sh
+
+# Remove our .git folder, we don't need it once the build is complete
+RUN rm -rf $DIR_GOVUK/.git
+
 COPY --chown=easuser:easuser scripts/healthcheck.sh /
 COPY --chown=easuser:easuser scripts/start-govuk.sh /
 
