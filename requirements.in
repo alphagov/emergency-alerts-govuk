@@ -1,4 +1,4 @@
-aws-opentelemetry-distro==0.12.2
+aws-opentelemetry-distro==0.14.2
 boto3==1.38.10
 celery[sqs]==5.5.3
 certifi==2025.4.26
@@ -16,7 +16,6 @@ requests==2.32.4
 responses==0.25.3
 urllib3==2.6.3
 Werkzeug==3.1.5
-aws-opentelemetry-distro==0.12.2
 
 # Packages for testing
 beautifulsoup4==4.9.3
