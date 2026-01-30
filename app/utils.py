@@ -1,6 +1,7 @@
 import os
 import re
 from pathlib import Path
+import time
 
 import boto3
 import requests
@@ -194,6 +195,32 @@ def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
             ContentType="application/cap+xml",
             Key=path
         )
+
+
+def push_timestamp_to_s3(filename):
+    host_environment = current_app.config["HOST"]
+
+    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    if not bucket_name:
+        current_app.logger.info("Target S3 bucket not specified: Skipping upload")
+        return
+
+    if host_environment == "hosted":
+        session = boto3.Session()
+    else:
+        session = boto3.Session(
+            aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
+            aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
+            region_name=current_app.config["AWS_REGION"],
+        )
+
+    s3 = session.client('s3')
+    s3.put_object(
+        Body=f'{int(time.time())}',
+        Bucket=bucket_name,
+        ContentType="application/cap+xml",
+        Key=filename
+    )
 
 
 def purge_fastly_cache():
