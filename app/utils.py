@@ -1,7 +1,7 @@
 import os
 import re
-from pathlib import Path
 import time
+from pathlib import Path
 
 import boto3
 import requests
@@ -197,7 +197,7 @@ def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
         )
 
 
-def push_timestamp_to_s3(filename):
+def put_timestamp_to_s3(filename):
     host_environment = current_app.config["HOST"]
 
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]

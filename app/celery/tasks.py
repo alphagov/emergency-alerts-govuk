@@ -1,4 +1,5 @@
 import asyncio
+import time
 
 from emergency_alerts_utils.celery import TaskNames
 from flask import current_app
@@ -10,6 +11,7 @@ from app.render import get_cap_xml_for_alerts, get_rendered_pages
 from app.utils import (
     post_version_to_cloudwatch,
     purge_fastly_cache,
+    put_timestamp_to_s3,
     upload_cap_xml_to_s3,
     upload_html_to_s3,
 )
@@ -18,7 +20,7 @@ from app.utils import (
 async def push_timestamp_to_s3(task_id, stop_event):
     while not stop_event.is_set():
         filename = f"{task_id}"
-        push_timestamp_to_s3(filename)
+        put_timestamp_to_s3(filename)
         await asyncio.sleep(1)
 
 
@@ -46,7 +48,7 @@ async def publish_govuk_alerts(stop_event, broadcast_event_id=""):
     retry_backoff_max=300,
 )
 def publish_govuk_alerts_task(self, broadcast_event_id=""):
-    task_id = self.id
+    task_id = self.request.id
 
     async def publish():
         stop_event = asyncio.Event()
