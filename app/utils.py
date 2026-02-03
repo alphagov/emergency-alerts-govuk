@@ -182,13 +182,6 @@ def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
             }
         )
 
-        current_app.logger.info(
-            content,
-            extra={
-                "broadcast_event_id": broadcast_event_id
-            }
-        )
-
         s3.put_object(
             Body=content,
             Bucket=bucket_name,
