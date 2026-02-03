@@ -21,7 +21,7 @@ class Config():
     FASTLY_SURROGATE_KEY = "notify-emergency-alerts"
 
     NOTIFY_API_HOST_NAME = os.environ.get("API_HOST_NAME", "http://localhost:6011")
-    NOTIFY_API_CLIENT_SECRET = "govuk-alerts-secret-key"
+    GOVUK_CLIENT_SECRET = "govuk-alerts-secret-key"
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
     QUEUE_NAME = "govuk-alerts"
@@ -66,7 +66,9 @@ class Hosted(Config):
     NOTIFY_API_HOST_NAME = os.environ.get(
         "API_HOST_NAME", f"http://api.{TENANT}ecs.local:6011"
     )
-    NOTIFY_API_CLIENT_SECRET = os.environ.get("NOTIFY_API_CLIENT_SECRET")
+    GOVUK_CLIENT_SECRET = os.environ.get(
+        "GOVUK_CLIENT_SECRET", "govuk-alerts-secret-key"
+    )
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
     PREDEFINED_SQS_QUEUES = {
