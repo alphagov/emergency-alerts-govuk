@@ -207,12 +207,16 @@ def put_timestamp_to_s3(filename):
             region_name=current_app.config["AWS_REGION"],
         )
 
+    timestamp = f'{int(time.time())}'
+
+    current_app.logger.info(f"Publishing {timestamp}")
+
     s3 = session.client('s3')
     s3.put_object(
-        Body=f'{int(time.time())}',
+        Body=timestamp,
         Bucket=bucket_name,
         ContentType="application/cap+xml",
-        Key=filename
+        Key=f"publish-timestamps/{filename}"
     )
 
 
