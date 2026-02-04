@@ -87,12 +87,14 @@ def test_is_in_uk_returns_polygons_in_uk_bounding_box(alert_dict, lat, lon, in_u
 @mock_aws
 def test_upload_to_s3(govuk_alerts):
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    publish_s3_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
 
     client = boto3.client('s3')
     client.create_bucket(Bucket=bucket_name, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
+    client.create_bucket(Bucket=publish_s3_bucket_name, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
 
     pages = {"alerts": "<p>this is some test content</p>"}
-    upload_html_to_s3(pages)
+    upload_html_to_s3(pages, "test")
 
     object_keys = [
         obj['Key'] for obj in
