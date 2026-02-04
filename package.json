@@ -7,7 +7,7 @@
     "npm": ">=10.9.3"
   },
   "scripts": {
-    "lint:scss": "stylelint -i app/assets/stylesheets/_govuk_frontend.scss app/assets/stylesheets/",
+    "lint:scss": "stylelint -i app/assets/stylesheets/_govuk_frontend.scss app/assets/stylesheets/ --ip '*.xsl'",
     "lint:js": "standardx app/assets/javascripts/",
     "lint": "npm run lint:scss && npm run lint:js",
     "build": "gulp",
