@@ -282,10 +282,12 @@ def post_version_to_cloudwatch():
         )
 
 
-def create_cap_event(alert, identifier, url=None, cancelled=False):
-    return {
+def create_cap_event(
+    alert, identifier, url=None, cancelled=False, prev_alert_identifier=None
+):
+    alert = {
         "identifier": identifier,
-        "message_type": "alert",
+        "message_type": "cancel" if cancelled else "alert",
         "message_format": "cap",
         "headline": "GOV.UK Emergency alert",
         "description": alert.content,
@@ -297,11 +299,19 @@ def create_cap_event(alert, identifier, url=None, cancelled=False):
             for polygons in alert.areas.get("simple_polygons")
         ],
         "channel": "severe",
-        "sent": alert.starts_at.isoformat(timespec="seconds"),
-        "expires": (
+        "sent": (
             alert.cancelled_at.isoformat(timespec="seconds")
             if cancelled
-            else alert.finishes_at.isoformat(timespec="seconds")
+            else alert.starts_at.isoformat(timespec="seconds")
         ),
+        "expires": alert.finishes_at.isoformat(timespec="seconds"),
         "web": url,
     }
+    if cancelled:
+        alert["references"] = [
+            {
+                "message_id": prev_alert_identifier,
+                "sent": alert.starts_at.isoformat(timespec="seconds"),
+            }
+        ]
+    return alert
