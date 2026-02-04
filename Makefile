@@ -44,8 +44,7 @@ generate-version-file: ## Generate the app/version.py file
 test:
 	isort --check-only *.py app tests
 	flake8 .
-# TODO: Fix linting changes (this step was broken in the past anyway)
-#	npm run lint && npm test
+	npm run lint && npm test
 	pytest tests/
 
 .PHONY: freeze-requirements
