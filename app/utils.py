@@ -86,7 +86,7 @@ def is_in_uk(simple_polygons):
     )
 
 
-def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
+def upload_html_to_s3(rendered_pages, filename, broadcast_event_id=""):
     host_environment = current_app.config["HOST"]
 
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
@@ -119,6 +119,7 @@ def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
             ContentType=content_type,
             Key=path
         )
+        put_timestamp_to_s3(filename, s3)
 
 
 def upload_assets_to_s3():
@@ -154,7 +155,7 @@ def upload_assets_to_s3():
         )
 
 
-def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
+def upload_cap_xml_to_s3(cap_xml_alerts, filename, broadcast_event_id=""):
     host_environment = current_app.config["HOST"]
 
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
@@ -188,36 +189,7 @@ def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
             ContentType="application/cap+xml",
             Key=path
         )
-
-
-def put_timestamp_to_s3(filename):
-    host_environment = current_app.config["HOST"]
-
-    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
-    if not bucket_name:
-        current_app.logger.info("Target S3 bucket not specified: Skipping upload")
-        return
-
-    if host_environment == "hosted":
-        session = boto3.Session()
-    else:
-        session = boto3.Session(
-            aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
-            aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
-            region_name=current_app.config["AWS_REGION"],
-        )
-
-    timestamp = f'{int(time.time())}'
-
-    current_app.logger.info(f"Publishing {timestamp}")
-
-    s3 = session.client('s3')
-    s3.put_object(
-        Body=timestamp,
-        Bucket=bucket_name,
-        ContentType="application/cap+xml",
-        Key=f"publish-timestamps/{filename}"
-    )
+        put_timestamp_to_s3(filename, s3)
 
 
 def purge_fastly_cache():
@@ -329,3 +301,13 @@ def create_cap_event(alert, identifier, url=None, cancelled=False):
         ),
         "web": url,
     }
+
+
+def put_timestamp_to_s3(filename, s3):
+    publish_timestamps_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
+    s3.put_object(
+        Body=f'{int(time.time())}',
+        Bucket=publish_timestamps_bucket_name,
+        ContentType="text/plain",
+        Key=f"publish-timestamps/{filename}"
+    )
