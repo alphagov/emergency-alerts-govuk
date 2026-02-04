@@ -24,6 +24,7 @@ from app.utils import (
 )
 def publish_govuk_alerts(self, broadcast_event_id=""):
     try:
+        task_id = self.request.id
         alerts = Alerts.load()
         rendered_pages = get_rendered_pages(alerts)
         cap_xml_alerts = get_cap_xml_for_alerts(alerts)
@@ -32,8 +33,8 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
             current_app.logger.info("Skipping upload to S3 in local environment")
             return
 
-        upload_html_to_s3(rendered_pages, broadcast_event_id)
-        upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id)
+        upload_html_to_s3(rendered_pages, task_id, broadcast_event_id)
+        upload_cap_xml_to_s3(cap_xml_alerts, task_id, broadcast_event_id)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
     except Exception:
