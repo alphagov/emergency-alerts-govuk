@@ -313,3 +313,4 @@ def delete_timestamp_file_from_s3(filename):
         Bucket=publish_timestamps_bucket_name,
         Key=filename,
     )
+    current_app.logger.info(f"Deleted {filename}, publish successful")
