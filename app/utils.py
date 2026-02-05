@@ -125,7 +125,7 @@ def upload_html_to_s3(rendered_pages, filename, broadcast_event_id=""):
         put_timestamp_to_s3(filename, s3)
 
 
-def upload_assets_to_s3(filename):
+def upload_assets_to_s3(timestamp_filename):
     if not Path(DIST).exists():
         raise FileExistsError(f'Folder {DIST} not found.')
 
@@ -145,7 +145,7 @@ def upload_assets_to_s3(filename):
             ContentType=mimetype,
             Key=filename
         )
-        put_timestamp_to_s3(filename, s3)
+        put_timestamp_to_s3(timestamp_filename, s3)
 
 
 def upload_cap_xml_to_s3(cap_xml_alerts, filename, broadcast_event_id=""):
