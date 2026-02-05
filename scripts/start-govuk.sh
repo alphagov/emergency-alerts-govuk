@@ -1,5 +1,7 @@
 #! /bin/sh
 timestamp_filename='/eas/emergency-alerts-govuk/celery-beat-healthcheck'
+CONTAINER_ID=$(curl -s "$ECS_CONTAINER_METADATA_URI_V4/task" | jq -r ".TaskARN" | cut -d "/" -f 3)
+CURRENT_TIMESTAMP=$(date +%s)
 echo "Start script executing for govuk-alerts celery worker..."
 
 function configure_container_role(){
@@ -13,7 +15,7 @@ function run_celery(){
 
 function flask_publish(){
     cd $DIR_GOVUK;
-    . $VENV_GOVUK/bin/activate && opentelemetry-instrument flask publish-with-assets &
+    . $VENV_GOVUK/bin/activate && opentelemetry-instrument flask publish-with-assets --container-id "$CONTAINER_ID" --timestamp "$CURRENT_TIMESTAMP"
 }
 
 function update_timestamp(){
