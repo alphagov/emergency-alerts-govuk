@@ -86,14 +86,8 @@ def is_in_uk(simple_polygons):
     )
 
 
-def upload_html_to_s3(rendered_pages, filename, broadcast_event_id=""):
+def setup_s3_client():
     host_environment = current_app.config["HOST"]
-
-    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
-    if not bucket_name:
-        current_app.logger.info("Target S3 bucket not specified: Skipping upload")
-        return
-
     if host_environment == "hosted":
         session = boto3.Session()
     else:
@@ -102,8 +96,17 @@ def upload_html_to_s3(rendered_pages, filename, broadcast_event_id=""):
             aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
             region_name=current_app.config["AWS_REGION"],
         )
+    return session.client('s3')
 
-    s3 = session.client('s3')
+
+def upload_html_to_s3(rendered_pages, filename, broadcast_event_id=""):
+
+    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    if not bucket_name:
+        current_app.logger.info("Target S3 bucket not specified: Skipping upload")
+        return
+
+    s3 = setup_s3_client()
 
     for path, content in rendered_pages.items():
         current_app.logger.info(
@@ -131,18 +134,7 @@ def upload_assets_to_s3():
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
 
-    host_environment = os.environ.get('HOST')
-
-    if host_environment == "hosted":
-        session = boto3.Session()
-
-    else:
-        session = boto3.Session(
-            aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
-            aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
-            region_name=current_app.config["BROADCASTS_AWS_REGION"],
-        )
-    s3 = session.client('s3')
+    s3 = setup_s3_client()
 
     assets = get_asset_files(DIST)
     for filename, (content, mimetype) in assets.items():
@@ -156,23 +148,13 @@ def upload_assets_to_s3():
 
 
 def upload_cap_xml_to_s3(cap_xml_alerts, filename, broadcast_event_id=""):
-    host_environment = current_app.config["HOST"]
 
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
 
-    if host_environment == "hosted":
-        session = boto3.Session()
-    else:
-        session = boto3.Session(
-            aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
-            aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
-            region_name=current_app.config["AWS_REGION"],
-        )
-
-    s3 = session.client('s3')
+    s3 = setup_s3_client()
 
     for path, content in cap_xml_alerts.items():
 
@@ -309,5 +291,25 @@ def put_timestamp_to_s3(filename, s3):
         Body=f'{int(time.time())}',
         Bucket=publish_timestamps_bucket_name,
         ContentType="text/plain",
-        Key=f"publish-timestamps/{filename}"
+        Key=filename
+    )
+
+
+def delete_timestamp_file_from_s3(filename):
+    publish_timestamps_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
+    host_environment = current_app.config["HOST"]
+
+    if host_environment == "hosted":
+        session = boto3.Session()
+    else:
+        session = boto3.Session(
+            aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
+            aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
+            region_name=current_app.config["AWS_REGION"],
+        )
+
+    s3 = session.client('s3')
+    s3.delete_object(
+        Bucket=publish_timestamps_bucket_name,
+        Key=filename,
     )

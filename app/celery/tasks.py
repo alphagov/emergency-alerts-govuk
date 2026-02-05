@@ -8,6 +8,7 @@ from app.models.alerts import Alerts
 from app.notify_client.alerts_api_client import alerts_api_client
 from app.render import get_cap_xml_for_alerts, get_rendered_pages
 from app.utils import (
+    delete_timestamp_file_from_s3,
     post_version_to_cloudwatch,
     purge_fastly_cache,
     upload_cap_xml_to_s3,
@@ -37,6 +38,7 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
         upload_cap_xml_to_s3(cap_xml_alerts, task_id, broadcast_event_id)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
+        delete_timestamp_file_from_s3(task_id)
     except Exception:
         current_app.logger.exception("Failed to publish content to gov.uk/alerts")
         self.retry(queue=current_app.config['QUEUE_NAME'])
