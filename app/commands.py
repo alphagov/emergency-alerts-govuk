@@ -5,6 +5,7 @@ from app.models.alerts import Alerts
 from app.notify_client.alerts_api_client import alerts_api_client
 from app.render import get_cap_xml_for_alerts, get_rendered_pages
 from app.utils import (
+    delete_timestamp_file_from_s3,
     purge_fastly_cache,
     upload_assets_to_s3,
     upload_cap_xml_to_s3,
@@ -29,31 +30,35 @@ def publish():
 
 
 @click.command('publish-with-assets')
+@click.option('--container-id', default=None)
+@click.option('--current-timestamp', default=None)
 @cli.with_appcontext
-def publish_with_assets():
+def publish_with_assets(container_id, current_timestamp):
     try:
-        _publish_html()
-        _publish_cap_xml()
-        _publish_assets()
+        filename = f"{container_id}_{current_timestamp}"
+        _publish_html(filename)
+        _publish_cap_xml(filename)
+        _publish_assets(filename)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
+        delete_timestamp_file_from_s3(filename)
     except FileExistsError as e:
         current_app.logger.exception(f"Publish assets FAILED: {e}")
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
 
 
-def _publish_html():
+def _publish_html(filename):
     alerts = Alerts.load()
     rendered_pages = get_rendered_pages(alerts)
-    upload_html_to_s3(rendered_pages)
+    upload_html_to_s3(rendered_pages, filename)
 
 
-def _publish_assets():
-    upload_assets_to_s3()
+def _publish_assets(filename):
+    upload_assets_to_s3(filename)
 
 
-def _publish_cap_xml():
+def _publish_cap_xml(filename):
     alerts = Alerts.load()
     cap_xml_alerts = get_cap_xml_for_alerts(alerts)
-    upload_cap_xml_to_s3(cap_xml_alerts)
+    upload_cap_xml_to_s3(cap_xml_alerts, filename)
