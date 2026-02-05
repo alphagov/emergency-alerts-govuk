@@ -1,3 +1,3 @@
 import { createAll, SkipLink } from 'govuk-frontend'
 
-createAll(SkipLink);
+createAll(SkipLink)

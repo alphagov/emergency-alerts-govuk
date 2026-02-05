@@ -1,11 +1,11 @@
 import { render } from 'timeago.js'
 
 export default function relativeDates () {
-  var nodes = document.querySelectorAll('.relative-date')
-  var nodesLength = nodes.length
-  var i
-  var parentNode
-  var prefix
+  const nodes = document.querySelectorAll('.relative-date')
+  const nodesLength = nodes.length
+  let i
+  let parentNode
+  let prefix
 
   if (nodes.length === 0) return
 
