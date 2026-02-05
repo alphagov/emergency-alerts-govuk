@@ -15,7 +15,7 @@ function run_celery(){
 
 function flask_publish(){
     cd $DIR_GOVUK;
-    . $VENV_GOVUK/bin/activate && opentelemetry-instrument flask publish-with-assets --container-id "$CONTAINER_ID" --timestamp "$CURRENT_TIMESTAMP"
+    . $VENV_GOVUK/bin/activate && opentelemetry-instrument flask publish-with-assets --container-id "$CONTAINER_ID" --current-timestamp "$CURRENT_TIMESTAMP"
 }
 
 function update_timestamp(){
