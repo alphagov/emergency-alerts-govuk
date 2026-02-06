@@ -427,7 +427,7 @@ pluggy==1.6.0
     # via pytest
 prompt-toolkit==3.0.51
     # via click-repl
-protobuf==5.29.5
+protobuf==5.29.6
     # via
     #   googleapis-common-protos
     #   opentelemetry-proto
