@@ -331,18 +331,18 @@ def put_success_metric_data(origin):
     cloudwatch = session.client('cloudwatch')
     cloudwatch.put_metric_data(
         Namespace="GOVUK Alerts Republish",
-        Dimensions=[
-            {
-                "Name": "PublishOrigin",
-                "Value": origin,
-            },
-        ],
         MetricData=[
             {
                 "MetricName": "Publish Failures",
                 "Timestamp": str(time.time()),
                 "Value": 0,
                 "Unit": "Count",
+                "Dimensions": [
+                    {
+                        "Name": "PublishOrigin",
+                        "Value": origin,
+                    },
+                ],
             },
         ]
     )
