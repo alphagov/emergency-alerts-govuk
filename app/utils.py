@@ -315,3 +315,34 @@ def delete_timestamp_file_from_s3(filename):
         Key=filename,
     )
     current_app.logger.info(f"Deleted {filename}, publish successful")
+
+
+def put_success_metric_data(origin):
+    host_environment = current_app.config["HOST"]
+    if host_environment == "hosted":
+        session = boto3.Session()
+    else:
+        session = boto3.Session(
+            aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
+            aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
+            region_name=current_app.config["AWS_REGION"],
+        )
+
+    cloudwatch = session.client('cloudwatch')
+    cloudwatch.put_metric_data(
+        Namespace="GOVUK Alerts Republish",
+        Dimensions=[
+            {
+                "Name": "PublishOrigin",
+                "Value": origin,
+            },
+        ],
+        MetricData=[
+            {
+                "MetricName": "Publish Failures",
+                "Timestamp": time,
+                "Value": 0,
+                "Unit": "Count",
+            },
+        ]
+    )

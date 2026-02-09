@@ -11,6 +11,7 @@ from app.utils import (
     delete_timestamp_file_from_s3,
     post_version_to_cloudwatch,
     purge_fastly_cache,
+    put_success_metric_data,
     upload_cap_xml_to_s3,
     upload_html_to_s3,
 )
@@ -39,6 +40,7 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
         delete_timestamp_file_from_s3(task_id)
+        put_success_metric_data("celery")
     except Exception:
         current_app.logger.exception("Failed to publish content to gov.uk/alerts")
         self.retry(queue=current_app.config['QUEUE_NAME'])

@@ -7,6 +7,7 @@ from app.render import get_cap_xml_for_alerts, get_rendered_pages
 from app.utils import (
     delete_timestamp_file_from_s3,
     purge_fastly_cache,
+    put_success_metric_data,
     upload_assets_to_s3,
     upload_cap_xml_to_s3,
     upload_html_to_s3,
@@ -42,6 +43,7 @@ def publish_with_assets(container_id, current_timestamp):
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
         delete_timestamp_file_from_s3(filename)
+        put_success_metric_data("startup")
     except FileExistsError as e:
         current_app.logger.exception(f"Publish assets FAILED: {e}")
     except Exception as e:
