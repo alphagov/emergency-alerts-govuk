@@ -340,7 +340,7 @@ def put_success_metric_data(origin):
         MetricData=[
             {
                 "MetricName": "Publish Failures",
-                "Timestamp": time.time(),
+                "Timestamp": str(time.time()),
                 "Value": 0,
                 "Unit": "Count",
             },
