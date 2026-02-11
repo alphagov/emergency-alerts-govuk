@@ -1,5 +1,5 @@
 import builtins
-from unittest.mock import mock_open, patch, ANY
+from unittest.mock import mock_open, patch
 
 import boto3
 import pytest
