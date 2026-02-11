@@ -314,10 +314,10 @@ def put_success_metric_data(origin):
     session = setup_boto3_session()
     cloudwatch = session.client('cloudwatch')
     cloudwatch.put_metric_data(
-        Namespace="GOVUK Alerts Republish",
+        Namespace=current_app.config["GOVUK_PUBLISH_METRIC_NAMESPACE"],
         MetricData=[
             {
-                "MetricName": "Publish Failures",
+                "MetricName": current_app.config["GOVUK_PUBLISH_METRIC_NAME"],
                 "Timestamp": str(time.time()),
                 "Value": 0,
                 "Unit": "Count",
