@@ -43,7 +43,7 @@ def publish_with_assets(container_id, current_timestamp):
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
         delete_timestamp_file_from_s3(filename)
-        put_success_metric_data("startup")
+        put_success_metric_data("publish-all")
     except FileExistsError as e:
         current_app.logger.exception(f"Publish assets FAILED: {e}")
     except Exception as e:
