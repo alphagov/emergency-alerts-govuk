@@ -1,5 +1,5 @@
 import builtins
-from unittest.mock import mock_open, patch
+from unittest.mock import mock_open, patch, ANY
 
 import boto3
 import pytest
@@ -18,7 +18,11 @@ from app.celery.tasks import (
 @patch("app.celery.tasks.upload_html_to_s3")
 @patch("app.celery.tasks.purge_fastly_cache")
 @patch("app.celery.tasks.alerts_api_client.send_publish_acknowledgement")
+@patch("app.celery.tasks.delete_timestamp_file_from_s3")
+@patch("app.celery.tasks.put_success_metric_data")
 def test_publish_govuk_alerts(
+    mock_put_success_metric_data,
+    mock_delete_timestamp_file_from_s3,
     mock_send_publish_acknowledgement,
     mock_purge_fastly_cache,
     mock_upload_to_s3,
@@ -32,6 +36,8 @@ def test_publish_govuk_alerts(
     mock_upload_to_s3.assert_called_once_with(mock_get_rendered_pages.return_value, None, "")
     mock_purge_fastly_cache.assert_called_once()
     mock_send_publish_acknowledgement.assert_called_once()
+    mock_put_success_metric_data.assert_called_once_with('celery')
+    mock_delete_timestamp_file_from_s3.assert_called_once()
 
 
 @patch("app.celery.tasks.Alerts.load")
