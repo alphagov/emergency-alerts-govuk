@@ -150,7 +150,9 @@ def test_delete_timestamp_file_from_s3(govuk_alerts):
 
 @mock_aws
 def test_put_success_metric_data(govuk_alerts):
-    client = boto3.client('cloudwatch')
+    client = boto3.client(
+        "cloudwatch", region_name=current_app.config["AWS_REGION"]
+    )
 
     origin = "publish-all"
     put_success_metric_data(origin)
