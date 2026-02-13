@@ -345,3 +345,11 @@ def put_success_metric_data(origin):
             },
         ]
     )
+
+
+def create_publish_healthcheck_filename_for_command(container_id, current_timestamp):
+    return (
+        f"{container_id}_{current_timestamp}"
+        if container_id and current_timestamp
+        else None
+    )
