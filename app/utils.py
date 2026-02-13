@@ -309,7 +309,11 @@ def put_timestamp_to_s3(filename, s3):
 def delete_timestamp_file_from_s3(publish_healthcheck_filename):
     publish_timestamps_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
     if not publish_timestamps_bucket_name:
-        current_app.logger.info("Target S3 Publish Healthcheck bucket not specified: Skipping upload")
+        current_app.logger.info("Target S3 Publish Healthcheck bucket not specified: Skipping file deletion")
+        return
+
+    if not publish_healthcheck_filename:
+        current_app.logger.info("Target S3 Publish Healthcheck filename not specified: Skipping file deletion")
         return
 
     session = setup_boto3_session()
