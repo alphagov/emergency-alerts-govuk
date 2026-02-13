@@ -99,7 +99,7 @@ def setup_boto3_session():
     return session
 
 
-def upload_html_to_s3(rendered_pages, filename, broadcast_event_id=""):
+def upload_html_to_s3(rendered_pages, publish_healthcheck_filename, broadcast_event_id=""):
 
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
@@ -123,10 +123,10 @@ def upload_html_to_s3(rendered_pages, filename, broadcast_event_id=""):
             ContentType=content_type,
             Key=path
         )
-        put_timestamp_to_s3(filename, s3)
+        put_timestamp_to_s3(publish_healthcheck_filename, s3)
 
 
-def upload_assets_to_s3(timestamp_filename):
+def upload_assets_to_s3(publish_healthcheck_filename):
     if not Path(DIST).exists():
         raise FileExistsError(f'Folder {DIST} not found.')
 
@@ -147,10 +147,10 @@ def upload_assets_to_s3(timestamp_filename):
             ContentType=mimetype,
             Key=filename
         )
-        put_timestamp_to_s3(timestamp_filename, s3)
+        put_timestamp_to_s3(publish_healthcheck_filename, s3)
 
 
-def upload_cap_xml_to_s3(cap_xml_alerts, filename, broadcast_event_id=""):
+def upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast_event_id=""):
 
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
@@ -175,7 +175,7 @@ def upload_cap_xml_to_s3(cap_xml_alerts, filename, broadcast_event_id=""):
             ContentType="application/cap+xml",
             Key=path
         )
-        put_timestamp_to_s3(filename, s3)
+        put_timestamp_to_s3(publish_healthcheck_filename, s3)
 
 
 def purge_fastly_cache():
@@ -299,15 +299,15 @@ def put_timestamp_to_s3(filename, s3):
     )
 
 
-def delete_timestamp_file_from_s3(filename):
+def delete_timestamp_file_from_s3(publish_healthcheck_filename):
     publish_timestamps_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
     session = setup_boto3_session()
     s3 = session.client('s3')
     s3.delete_object(
         Bucket=publish_timestamps_bucket_name,
-        Key=filename,
+        Key=publish_healthcheck_filename,
     )
-    current_app.logger.info(f"Deleted {filename}, publish successful")
+    current_app.logger.info(f"Deleted {publish_healthcheck_filename}, publish successful")
 
 
 def put_success_metric_data(origin):
