@@ -123,7 +123,8 @@ def upload_html_to_s3(rendered_pages, publish_healthcheck_filename, broadcast_ev
             ContentType=content_type,
             Key=path
         )
-        put_timestamp_to_s3(publish_healthcheck_filename, s3)
+        if publish_healthcheck_filename:
+            put_timestamp_to_s3(publish_healthcheck_filename, s3)
 
 
 def upload_assets_to_s3(publish_healthcheck_filename):
@@ -147,7 +148,8 @@ def upload_assets_to_s3(publish_healthcheck_filename):
             ContentType=mimetype,
             Key=filename
         )
-        put_timestamp_to_s3(publish_healthcheck_filename, s3)
+        if publish_healthcheck_filename:
+            put_timestamp_to_s3(publish_healthcheck_filename, s3)
 
 
 def upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast_event_id=""):
@@ -175,7 +177,8 @@ def upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast
             ContentType="application/cap+xml",
             Key=path
         )
-        put_timestamp_to_s3(publish_healthcheck_filename, s3)
+        if publish_healthcheck_filename:
+            put_timestamp_to_s3(publish_healthcheck_filename, s3)
 
 
 def purge_fastly_cache():
