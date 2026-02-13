@@ -291,6 +291,10 @@ def create_cap_event(alert, identifier, url=None, cancelled=False):
 
 def put_timestamp_to_s3(filename, s3):
     publish_timestamps_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
+    if not publish_timestamps_bucket_name:
+        current_app.logger.info("Target S3 Publish Healthcheck bucket not specified: Skipping upload")
+        return
+
     s3.put_object(
         Body=f'{int(time.time())}',
         Bucket=publish_timestamps_bucket_name,
@@ -301,6 +305,10 @@ def put_timestamp_to_s3(filename, s3):
 
 def delete_timestamp_file_from_s3(publish_healthcheck_filename):
     publish_timestamps_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
+    if not publish_timestamps_bucket_name:
+        current_app.logger.info("Target S3 Publish Healthcheck bucket not specified: Skipping upload")
+        return
+
     session = setup_boto3_session()
     s3 = session.client('s3')
     s3.delete_object(
