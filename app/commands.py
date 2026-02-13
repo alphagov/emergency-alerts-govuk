@@ -5,6 +5,7 @@ from app.models.alerts import Alerts
 from app.notify_client.alerts_api_client import alerts_api_client
 from app.render import get_cap_xml_for_alerts, get_rendered_pages
 from app.utils import (
+    create_publish_healthcheck_filename_for_command,
     delete_timestamp_file_from_s3,
     purge_fastly_cache,
     put_success_metric_data,
@@ -25,12 +26,13 @@ def setup_commands(app):
 @cli.with_appcontext
 def publish(container_id, current_timestamp):
     try:
-        publish_healthcheck_filename = f"{container_id}_{current_timestamp}"
+        publish_healthcheck_filename = create_publish_healthcheck_filename_for_command(container_id, current_timestamp)
         _publish_html(publish_healthcheck_filename)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
-        delete_timestamp_file_from_s3(publish_healthcheck_filename)
-        put_success_metric_data("publish-dynamic")
+        if publish_healthcheck_filename:
+            delete_timestamp_file_from_s3(publish_healthcheck_filename)
+            put_success_metric_data("publish-dynamic")
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
 
@@ -41,14 +43,15 @@ def publish(container_id, current_timestamp):
 @cli.with_appcontext
 def publish_with_assets(container_id, current_timestamp):
     try:
-        publish_healthcheck_filename = f"{container_id}_{current_timestamp}"
+        publish_healthcheck_filename = create_publish_healthcheck_filename_for_command(container_id, current_timestamp)
         _publish_html(publish_healthcheck_filename)
         _publish_cap_xml(publish_healthcheck_filename)
         _publish_assets(publish_healthcheck_filename)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
-        delete_timestamp_file_from_s3(publish_healthcheck_filename)
-        put_success_metric_data("publish-all")
+        if publish_healthcheck_filename:
+            delete_timestamp_file_from_s3(publish_healthcheck_filename)
+            put_success_metric_data("publish-all")
     except FileExistsError as e:
         current_app.logger.exception(f"Publish assets FAILED: {e}")
     except Exception as e:
