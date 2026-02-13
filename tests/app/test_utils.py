@@ -115,7 +115,8 @@ def test_upload_to_s3(govuk_alerts):
 def test_put_timestamp_to_s3(govuk_alerts):
     publish_s3_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
     client = boto3.client('s3')
-    client.create_bucket(Bucket=publish_s3_bucket_name, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
+    client.create_bucket(Bucket=publish_s3_bucket_name,
+                         CreateBucketConfiguration={'LocationConstraint': current_app.config["AWS_REGION"]})
 
     task_id = "test-task-id"
     put_timestamp_to_s3(task_id, client)
@@ -134,7 +135,8 @@ def test_put_timestamp_to_s3(govuk_alerts):
 def test_delete_timestamp_file_from_s3(govuk_alerts):
     publish_s3_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
     client = boto3.client('s3')
-    client.create_bucket(Bucket=publish_s3_bucket_name, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
+    client.create_bucket(Bucket=publish_s3_bucket_name,
+                         CreateBucketConfiguration={'LocationConstraint': current_app.config["AWS_REGION"]})
 
     task_id = "test-task-id"
     put_timestamp_to_s3(task_id, client)
