@@ -20,12 +20,17 @@ def setup_commands(app):
 
 
 @click.command('publish')
+@click.option('--container-id', default=None)
+@click.option('--current-timestamp', default=None)
 @cli.with_appcontext
-def publish():
+def publish(container_id, current_timestamp):
     try:
-        _publish_html()
+        publish_healthcheck_filename = f"{container_id}_{current_timestamp}"
+        _publish_html(publish_healthcheck_filename)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
+        delete_timestamp_file_from_s3(publish_healthcheck_filename)
+        put_success_metric_data("publish-dynamic")
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
 
@@ -50,13 +55,13 @@ def publish_with_assets(container_id, current_timestamp):
         current_app.logger.exception(f"Publish FAILED: {e}")
 
 
-def _publish_html(publish_healthcheck_filename):
+def _publish_html(publish_healthcheck_filename=None):
     alerts = Alerts.load()
     rendered_pages = get_rendered_pages(alerts)
     upload_html_to_s3(rendered_pages, publish_healthcheck_filename)
 
 
-def _publish_assets(publish_healthcheck_filename):
+def _publish_assets(publish_healthcheck_filename=None):
     upload_assets_to_s3(publish_healthcheck_filename)
 
 
