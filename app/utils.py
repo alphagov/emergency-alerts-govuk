@@ -299,7 +299,7 @@ def put_timestamp_to_s3(filename, s3):
         return
 
     s3.put_object(
-        Body=f'{int(time.time())}',
+        Body=str(int(time.time())),
         Bucket=publish_timestamps_bucket_name,
         ContentType="text/plain",
         Key=filename
@@ -347,9 +347,11 @@ def put_success_metric_data(origin):
     )
 
 
-def create_publish_healthcheck_filename_for_command(container_id, current_timestamp):
-    return (
-        f"{container_id}_{current_timestamp}"
-        if container_id and current_timestamp
-        else None
-    )
+def create_publish_healthcheck_filename(publish_type, publish_origin, task_id):
+    return f"{publish_type}_{publish_origin}_{task_id}_{int(time.time())}.txt"
+
+
+def get_ecs_task_id():
+    resp = requests.get(f'{current_app.config["CONTAINER_METADATA_URI"]}/task')
+    resp.raise_for_status()
+    return resp.json().get('TaskARN')
