@@ -27,8 +27,8 @@ def setup_commands(app):
 @cli.with_appcontext
 def publish():
     try:
-        task_id = get_ecs_task_id()
-        publish_healthcheck_filename = create_publish_healthcheck_filename('dynamic', "cli", task_id)
+        if task_id := get_ecs_task_id():
+            publish_healthcheck_filename = create_publish_healthcheck_filename('dynamic', "cli", task_id)
         _publish_html(publish_healthcheck_filename)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
@@ -44,9 +44,9 @@ def publish():
 @cli.with_appcontext
 def publish_with_assets(startup):
     try:
-        task_id = get_ecs_task_id()
-        publish_healthcheck_filename = create_publish_healthcheck_filename(
-            'full', "startup" if startup else "cli", task_id)
+        if task_id := get_ecs_task_id():
+            publish_healthcheck_filename = create_publish_healthcheck_filename(
+                'full', "startup" if startup else "cli", task_id)
         _publish_html(publish_healthcheck_filename)
         _publish_cap_xml(publish_healthcheck_filename)
         _publish_assets(publish_healthcheck_filename)
