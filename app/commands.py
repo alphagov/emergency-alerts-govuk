@@ -26,11 +26,17 @@ def setup_commands(app):
 def publish():
     try:
         if task_id := get_ecs_task_id():
-            publish_healthcheck_filename = create_publish_healthcheck_filename('publish-dynamic', "cli", task_id)
+            publish_healthcheck_filename = create_publish_healthcheck_filename(
+                "publish-dynamic",
+                "cli",
+                task_id,
+            )
+        else:
+            publish_healthcheck_filename = None
         _publish_html(publish_healthcheck_filename)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
-        if publish_healthcheck_filename:
+        if publish_healthcheck_filename is not None:
             delete_timestamp_file_from_s3(publish_healthcheck_filename)
             put_success_metric_data("publish-dynamic")
     except Exception as e:
@@ -43,14 +49,21 @@ def publish():
 def publish_with_assets(startup):
     try:
         if task_id := get_ecs_task_id():
+            origin = "startup" if startup else "cli"
             publish_healthcheck_filename = create_publish_healthcheck_filename(
-                'publish-all', "startup" if startup else "cli", task_id)
+                "publish-all",
+                origin,
+                task_id
+            )
+        else:
+            publish_healthcheck_filename = None
+
         _publish_html(publish_healthcheck_filename)
         _publish_cap_xml(publish_healthcheck_filename)
         _publish_assets(publish_healthcheck_filename)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
-        if publish_healthcheck_filename:
+        if publish_healthcheck_filename is not None:
             delete_timestamp_file_from_s3(publish_healthcheck_filename)
             put_success_metric_data("publish-all")
     except FileExistsError as e:
