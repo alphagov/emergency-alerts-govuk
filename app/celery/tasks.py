@@ -8,6 +8,7 @@ from app.models.alerts import Alerts
 from app.notify_client.alerts_api_client import alerts_api_client
 from app.render import get_cap_xml_for_alerts, get_rendered_pages
 from app.utils import (
+    create_publish_healthcheck_filename,
     delete_timestamp_file_from_s3,
     post_version_to_cloudwatch,
     purge_fastly_cache,
@@ -26,9 +27,7 @@ from app.utils import (
 )
 def publish_govuk_alerts(self, broadcast_event_id=""):
     try:
-        # Filename is Task ID so if the file remains, and so publish has failed
-        # we can trace it back to the task origin
-        publish_healthcheck_filename = self.request.id
+        publish_healthcheck_filename = create_publish_healthcheck_filename("dynamic", "celery", self.request.id)
         alerts = Alerts.load()
         rendered_pages = get_rendered_pages(alerts)
         cap_xml_alerts = get_cap_xml_for_alerts(alerts)
