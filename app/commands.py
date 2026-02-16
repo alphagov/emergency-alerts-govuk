@@ -1,5 +1,3 @@
-import time
-
 import click
 from flask import cli, current_app
 
@@ -75,4 +73,3 @@ def _publish_cap_xml(publish_healthcheck_filename):
     alerts = Alerts.load()
     cap_xml_alerts = get_cap_xml_for_alerts(alerts)
     upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename)
-    
