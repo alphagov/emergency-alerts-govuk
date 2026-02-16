@@ -348,7 +348,10 @@ def put_success_metric_data(origin):
 
 
 def create_publish_healthcheck_filename(publish_type, publish_origin, task_id):
-    return f"{publish_type}_{publish_origin}_{task_id}_{int(time.time())}.txt"
+    if task_id and publish_type and publish_origin:
+        return f"{publish_type}_{publish_origin}_{task_id}_{int(time.time())}.txt"
+    else:
+        None
 
 
 def get_ecs_task_id():
