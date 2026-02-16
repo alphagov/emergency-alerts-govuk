@@ -345,6 +345,7 @@ def put_success_metric_data(origin):
             },
         ]
     )
+    current_app.logger.info(f"Put success metric value of 0 for {origin}, following successful publish.")
 
 
 def create_publish_healthcheck_filename(publish_type, publish_origin, task_id):
