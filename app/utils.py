@@ -354,4 +354,6 @@ def create_publish_healthcheck_filename(publish_type, publish_origin, task_id):
 def get_ecs_task_id():
     resp = requests.get(f'{current_app.config["CONTAINER_METADATA_URI"]}/task')
     resp.raise_for_status()
-    return resp.json().get('TaskARN')
+    task_arn = resp.json().get('TaskARN')
+    task_id = task_arn.split("/")[-1]
+    return task_id or None
