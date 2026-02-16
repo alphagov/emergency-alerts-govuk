@@ -5,6 +5,7 @@ import boto3
 import pytest
 from celery.exceptions import Retry
 from flask import current_app
+from freezegun import freeze_time
 from moto import mock_aws
 
 from app.celery.tasks import (
@@ -13,6 +14,7 @@ from app.celery.tasks import (
 )
 
 
+@freeze_time('2026-02-16T11:30:00Z')
 @patch("app.celery.tasks.Alerts.load")
 @patch("app.celery.tasks.get_rendered_pages")
 @patch("app.celery.tasks.upload_html_to_s3")
@@ -33,7 +35,8 @@ def test_publish_govuk_alerts(
     publish_govuk_alerts()
     mock_Alerts_load.assert_called_once()
     mock_get_rendered_pages.assert_called_once_with(mock_Alerts_load.return_value)
-    mock_upload_to_s3.assert_called_once_with(mock_get_rendered_pages.return_value, None, "")
+    mock_upload_to_s3.assert_called_once_with(mock_get_rendered_pages.return_value,
+                                              "publish-dynamic_celery_None_1771241400.txt", "")
     mock_purge_fastly_cache.assert_called_once()
     mock_send_publish_acknowledgement.assert_called_once()
     mock_put_success_metric_data.assert_called_once_with('publish-dynamic')
