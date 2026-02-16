@@ -22,7 +22,9 @@ from app.celery.tasks import (
 @patch("app.celery.tasks.alerts_api_client.send_publish_acknowledgement")
 @patch("app.celery.tasks.delete_timestamp_file_from_s3")
 @patch("app.celery.tasks.put_success_metric_data")
+@patch("app.celery.tasks.create_publish_healthcheck_filename")
 def test_publish_govuk_alerts(
+    mock_create_publish_healthcheck_filename,
     mock_put_success_metric_data,
     mock_delete_timestamp_file_from_s3,
     mock_send_publish_acknowledgement,
@@ -32,11 +34,14 @@ def test_publish_govuk_alerts(
     mock_Alerts_load,
     govuk_alerts,
 ):
+    mock_create_publish_healthcheck_filename.return_value = "publish-dynamic_celery_TASKID_1619004600.txt"
     publish_govuk_alerts()
+    mock_create_publish_healthcheck_filename.assert_called_once()
+    mock_Alerts_load.assert_called_once()
     mock_Alerts_load.assert_called_once()
     mock_get_rendered_pages.assert_called_once_with(mock_Alerts_load.return_value)
     mock_upload_to_s3.assert_called_once_with(mock_get_rendered_pages.return_value,
-                                              "publish-dynamic_celery_None_1771241400.txt", "")
+                                              "publish-dynamic_celery_TASKID_1619004600.txt", "")
     mock_purge_fastly_cache.assert_called_once()
     mock_send_publish_acknowledgement.assert_called_once()
     mock_put_success_metric_data.assert_called_once_with('publish-dynamic')
