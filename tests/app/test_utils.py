@@ -208,7 +208,7 @@ def test_put_success_metric_data(govuk_alerts):
     metric = client.list_metrics()["Metrics"][0]
     assert metric["MetricName"] == current_app.config["GOVUK_PUBLISH_METRIC_NAME"]
     assert metric["Namespace"] == current_app.config["GOVUK_PUBLISH_METRIC_NAMESPACE"]
-    assert {'Name': 'PublishOrigin', 'Value': origin} in metric["Dimensions"]
+    assert {'Name': 'PublishType', 'Value': origin} in metric["Dimensions"]
 
 
 @patch('app.utils.requests')
