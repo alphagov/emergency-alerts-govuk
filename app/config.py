@@ -14,6 +14,14 @@ class Config():
     BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
     AWS_REGION = os.getenv("AWS_REGION", "eu-west-2")
     GOVUK_ALERTS_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_S3_BUCKET_NAME")
+    GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME = os.getenv("GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME")
+    CONTAINER_METADATA_URI = os.getenv("ECS_CONTAINER_METADATA_URI")
+    GOVUK_PUBLISH_METRIC_NAMESPACE = "GOVUK Alerts Republish"
+    GOVUK_PUBLISH_METRIC_NAME = "Publish Failures"
+    PUBLISH_TYPE_ALARMS = {
+        "publish-dynamic": os.getenv("PUBLISH_DYNAMIC_ALARM"),
+        "publish-all": os.getenv("PUBLISH_ALL_ALARM"),
+    }
 
     FASTLY_ENABLED = not os.getenv("FASTLY_ENABLED", "true").lower() == "false"
     FASTLY_SERVICE_ID = os.getenv("FASTLY_SERVICE_ID")

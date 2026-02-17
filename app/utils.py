@@ -1,5 +1,6 @@
 import os
 import re
+import time
 from pathlib import Path
 
 import boto3
@@ -85,14 +86,8 @@ def is_in_uk(simple_polygons):
     )
 
 
-def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
+def setup_boto3_session():
     host_environment = current_app.config["HOST"]
-
-    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
-    if not bucket_name:
-        current_app.logger.info("Target S3 bucket not specified: Skipping upload")
-        return
-
     if host_environment == "hosted":
         session = boto3.Session()
     else:
@@ -101,7 +96,17 @@ def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
             aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
             region_name=current_app.config["AWS_REGION"],
         )
+    return session
 
+
+def upload_html_to_s3(rendered_pages, publish_healthcheck_filename, broadcast_event_id=""):
+
+    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    if not bucket_name:
+        current_app.logger.info("Target S3 bucket not specified: Skipping upload")
+        return
+
+    session = setup_boto3_session()
     s3 = session.client('s3')
 
     for path, content in rendered_pages.items():
@@ -118,9 +123,11 @@ def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
             ContentType=content_type,
             Key=path
         )
+        if publish_healthcheck_filename:
+            put_timestamp_to_s3(publish_healthcheck_filename, s3)
 
 
-def upload_assets_to_s3():
+def upload_assets_to_s3(publish_healthcheck_filename):
     if not Path(DIST).exists():
         raise FileExistsError(f'Folder {DIST} not found.')
 
@@ -129,17 +136,7 @@ def upload_assets_to_s3():
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
 
-    host_environment = os.environ.get('HOST')
-
-    if host_environment == "hosted":
-        session = boto3.Session()
-
-    else:
-        session = boto3.Session(
-            aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
-            aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
-            region_name=current_app.config["BROADCASTS_AWS_REGION"],
-        )
+    session = setup_boto3_session()
     s3 = session.client('s3')
 
     assets = get_asset_files(DIST)
@@ -151,25 +148,18 @@ def upload_assets_to_s3():
             ContentType=mimetype,
             Key=filename
         )
+        if publish_healthcheck_filename:
+            put_timestamp_to_s3(publish_healthcheck_filename, s3)
 
 
-def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
-    host_environment = current_app.config["HOST"]
+def upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast_event_id=""):
 
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
 
-    if host_environment == "hosted":
-        session = boto3.Session()
-    else:
-        session = boto3.Session(
-            aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
-            aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
-            region_name=current_app.config["AWS_REGION"],
-        )
-
+    session = setup_boto3_session()
     s3 = session.client('s3')
 
     for path, content in cap_xml_alerts.items():
@@ -181,19 +171,14 @@ def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
             }
         )
 
-        current_app.logger.info(
-            content,
-            extra={
-                "broadcast_event_id": broadcast_event_id
-            }
-        )
-
         s3.put_object(
             Body=content,
             Bucket=bucket_name,
             ContentType="application/cap+xml",
             Key=path
         )
+        if publish_healthcheck_filename:
+            put_timestamp_to_s3(publish_healthcheck_filename, s3)
 
 
 def purge_fastly_cache():
@@ -305,3 +290,96 @@ def create_cap_event(alert, identifier, url=None, cancelled=False):
         ),
         "web": url,
     }
+
+
+def put_timestamp_to_s3(filename, s3):
+    publish_timestamps_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
+    if not publish_timestamps_bucket_name:
+        current_app.logger.info("Target S3 Publish Healthcheck bucket not specified: Skipping upload of publish timestamp")
+        return
+
+    s3.put_object(
+        Body=str(int(time.time())),
+        Bucket=publish_timestamps_bucket_name,
+        ContentType="text/plain",
+        Key=filename
+    )
+
+
+def delete_timestamp_file_from_s3(publish_healthcheck_filename):
+    publish_timestamps_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
+    if not publish_timestamps_bucket_name:
+        current_app.logger.info("Target S3 Publish Healthcheck bucket not specified: Skipping file deletion")
+        return
+
+    if not publish_healthcheck_filename:
+        current_app.logger.info("Target S3 Publish Healthcheck filename not specified: Skipping file deletion")
+        return
+
+    session = setup_boto3_session()
+    s3 = session.client('s3')
+    s3.delete_object(
+        Bucket=publish_timestamps_bucket_name,
+        Key=publish_healthcheck_filename,
+    )
+    current_app.logger.info(f"Deleted {publish_healthcheck_filename}, publish successful")
+
+
+def put_success_metric_data(publish_type):
+    session = setup_boto3_session()
+    cloudwatch = session.client('cloudwatch')
+    cloudwatch.put_metric_data(
+        Namespace=current_app.config["GOVUK_PUBLISH_METRIC_NAMESPACE"],
+        MetricData=[
+            {
+                "MetricName": current_app.config["GOVUK_PUBLISH_METRIC_NAME"],
+                "Timestamp": str(time.time()),
+                "Value": 0,
+                "Unit": "Count",
+                "Dimensions": [
+                    {
+                        "Name": "PublishType",
+                        "Value": publish_type,
+                    },
+                ],
+            },
+        ]
+    )
+    current_app.logger.info(f"Put success metric value of 0 for {publish_type}, following successful publish.")
+
+
+def put_alarm_state_to_OK(publish_type):
+    if not current_app.config["PUBLISH_TYPE_ALARMS"][publish_type]:
+        current_app.logger.info(f"Target alarm for {publish_type} failures not specific: Skipping put alarm state to OK")
+        return
+
+    session = setup_boto3_session()
+    cloudwatch = session.client('cloudwatch')
+    alarm_name = current_app.config["PUBLISH_TYPE_ALARMS"][publish_type]
+    cloudwatch.set_alarm_state(
+        AlarmName=alarm_name,
+        StateValue='OK',
+        StateReason=f'{publish_type} publish has succeeded.',
+    )
+    current_app.logger.info(f"Put alarm state to OK for {publish_type}, following successful publish.")
+
+
+def create_publish_healthcheck_filename(publish_type, publish_origin, task_id):
+    if task_id and publish_type and publish_origin:
+        return f"{publish_type}_{publish_origin}_{task_id}_{int(time.time())}.txt"
+    else:
+        None
+
+
+def get_ecs_task_id():
+    try:
+        resp = requests.get(f'{current_app.config["CONTAINER_METADATA_URI"]}/task')
+        resp.raise_for_status()
+        task_arn = resp.json().get('TaskARN')
+        if not task_arn:
+            current_app.logger.error("Container metadata response missing 'TaskARN'")
+            return None
+        return task_arn.split("/")[-1] or None
+    except Exception as e:
+        current_app.logger.error("Failed to retrieve ECS task metadata: %s", e)
+        return None
