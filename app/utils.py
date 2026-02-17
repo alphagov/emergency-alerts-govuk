@@ -295,7 +295,7 @@ def create_cap_event(alert, identifier, url=None, cancelled=False):
 def put_timestamp_to_s3(filename, s3):
     publish_timestamps_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
     if not publish_timestamps_bucket_name:
-        current_app.logger.info("Target S3 Publish Healthcheck bucket not specified: Skipping upload")
+        current_app.logger.info("Target S3 Publish Healthcheck bucket not specified: Skipping upload of publish timestamp")
         return
 
     s3.put_object(
@@ -349,6 +349,10 @@ def put_success_metric_data(publish_type):
 
 
 def put_alarm_state_to_OK(publish_type):
+    if not current_app.config["PUBLISH_TYPE_ALARMS"][publish_type]:
+        current_app.logger.info(f"Target alarm for {publish_type} failures not specific: Skipping put alarm state to OK")
+        return
+
     session = setup_boto3_session()
     cloudwatch = session.client('cloudwatch')
     alarm_name = current_app.config["PUBLISH_TYPE_ALARMS"][publish_type]
