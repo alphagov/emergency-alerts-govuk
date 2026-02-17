@@ -9,6 +9,7 @@ from app.utils import (
     delete_timestamp_file_from_s3,
     get_ecs_task_id,
     purge_fastly_cache,
+    put_alarm_state_to_OK,
     put_success_metric_data,
     upload_assets_to_s3,
     upload_cap_xml_to_s3,
@@ -39,6 +40,7 @@ def publish():
         if publish_healthcheck_filename is not None:
             delete_timestamp_file_from_s3(publish_healthcheck_filename)
             put_success_metric_data("publish-dynamic")
+            put_alarm_state_to_OK("publish-dynamic")
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
 
@@ -66,6 +68,7 @@ def publish_with_assets(startup):
         if publish_healthcheck_filename is not None:
             delete_timestamp_file_from_s3(publish_healthcheck_filename)
             put_success_metric_data("publish-all")
+            put_alarm_state_to_OK("publish-all")
     except FileExistsError as e:
         current_app.logger.exception(f"Publish assets FAILED: {e}")
     except Exception as e:

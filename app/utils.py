@@ -325,7 +325,7 @@ def delete_timestamp_file_from_s3(publish_healthcheck_filename):
     current_app.logger.info(f"Deleted {publish_healthcheck_filename}, publish successful")
 
 
-def put_success_metric_data(origin):
+def put_success_metric_data(publish_type):
     session = setup_boto3_session()
     cloudwatch = session.client('cloudwatch')
     cloudwatch.put_metric_data(
@@ -339,13 +339,25 @@ def put_success_metric_data(origin):
                 "Dimensions": [
                     {
                         "Name": "PublishType",
-                        "Value": origin,
+                        "Value": publish_type,
                     },
                 ],
             },
         ]
     )
-    current_app.logger.info(f"Put success metric value of 0 for {origin}, following successful publish.")
+    current_app.logger.info(f"Put success metric value of 0 for {publish_type}, following successful publish.")
+
+
+def put_alarm_state_to_OK(publish_type):
+    session = setup_boto3_session()
+    cloudwatch = session.client('cloudwatch')
+    alarm_name = current_app.config["PUBLISH_TYPE_ALARMS"][publish_type]
+    cloudwatch.set_alarm_state(
+        AlarmName=alarm_name,
+        StateValue='OK',
+        StateReason=f'{publish_type} publish has succeeded.',
+    )
+    current_app.logger.info(f"Put alarm state to OK for {publish_type}, following successful publish.")
 
 
 def create_publish_healthcheck_filename(publish_type, publish_origin, task_id):
