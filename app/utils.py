@@ -295,7 +295,8 @@ def create_cap_event(alert, identifier, url=None, cancelled=False):
 def put_timestamp_to_s3(filename, s3):
     publish_timestamps_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
     if not publish_timestamps_bucket_name:
-        current_app.logger.info("Target S3 Publish Healthcheck bucket not specified: Skipping upload of publish timestamp")
+        msg = "Target S3 Publish Healthcheck bucket not specified: Skipping upload of publish timestamp"
+        current_app.logger.info(msg)
         return
 
     s3.put_object(
