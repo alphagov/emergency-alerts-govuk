@@ -18,10 +18,6 @@ class Config():
     CONTAINER_METADATA_URI = os.getenv("ECS_CONTAINER_METADATA_URI")
     GOVUK_PUBLISH_METRIC_NAMESPACE = "GOVUK Alerts Republish"
     GOVUK_PUBLISH_METRIC_NAME = "Publish Failures"
-    PUBLISH_TYPE_ALARMS = {
-        "publish-dynamic": os.getenv("PUBLISH_DYNAMIC_ALARM"),
-        "publish-all": os.getenv("PUBLISH_ALL_ALARM"),
-    }
 
     FASTLY_ENABLED = not os.getenv("FASTLY_ENABLED", "true").lower() == "false"
     FASTLY_SERVICE_ID = os.getenv("FASTLY_SERVICE_ID")

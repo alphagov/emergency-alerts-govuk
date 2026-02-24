@@ -348,22 +348,6 @@ def put_success_metric_data(publish_type):
     current_app.logger.info(f"Put success metric value of 0 for {publish_type}, following successful publish.")
 
 
-def put_alarm_state_to_OK(publish_type):
-    if not current_app.config["PUBLISH_TYPE_ALARMS"][publish_type]:
-        current_app.logger.info(f"Target alarm for {publish_type} failures not specific: Skipping put alarm state to OK")
-        return
-
-    session = setup_boto3_session()
-    cloudwatch = session.client('cloudwatch')
-    alarm_name = current_app.config["PUBLISH_TYPE_ALARMS"][publish_type]
-    cloudwatch.set_alarm_state(
-        AlarmName=alarm_name,
-        StateValue='OK',
-        StateReason=f'{publish_type} publish has succeeded.',
-    )
-    current_app.logger.info(f"Put alarm state to OK for {publish_type}, following successful publish.")
-
-
 def create_publish_healthcheck_filename(publish_type, publish_origin, task_id):
     if task_id and publish_type and publish_origin:
         return f"{publish_type}_{publish_origin}_{task_id}_{int(time.time())}.txt"
