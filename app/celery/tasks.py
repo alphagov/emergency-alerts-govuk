@@ -28,7 +28,8 @@ from app.utils import (
 def publish_govuk_alerts(self, broadcast_event_id=""):
     try:
         publish_healthcheck_filename = create_publish_healthcheck_filename("publish-dynamic", "celery", self.request.id)
-        alerts = Alerts.load()
+        publish_timestamp_file = bool(publish_healthcheck_filename)
+        alerts = Alerts.load(publish_timestamp_file, publish_healthcheck_filename)
         rendered_pages = get_rendered_pages(alerts)
         cap_xml_alerts = get_cap_xml_for_alerts(alerts)
 
