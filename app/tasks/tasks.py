@@ -29,14 +29,18 @@ def publish_govuk_alerts(broadcast_event_id=""):
             broadcast_event_id,
         )
 
+        current_app.logger.info("Loading alerts")
         with tracer.start_as_current_span("Get live alerts"):
             alerts = Alerts.load()
+            current_app.logger.info("Alerts loaded")
 
         with tracer.start_as_current_span("Render pages"):
             rendered_pages = get_rendered_pages(alerts)
+            current_app.logger.info("Pages rendered")
 
         with tracer.start_as_current_span("Render CAP XML"):
             cap_xml_alerts = get_cap_xml_for_alerts(alerts)
+            current_app.logger.info("CAP XML rendered")
 
         if not current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]:
             current_app.logger.info("Skipping upload to S3 in local environment")

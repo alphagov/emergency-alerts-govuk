@@ -8,7 +8,7 @@ function configure_container_role(){
 
 function run_celery(){
     cd $DIR_GOVUK;
-    . $VENV_GOVUK/bin/activate && exec dramatiq --processes 1 --threads 1 app.dramatiq.broker:broker --queues $WORKER_QUEUE_NAMES
+    . $VENV_GOVUK/bin/activate && exec dramatiq --processes 1 --threads 1 app.dramatiq.broker:broker
 }
 
 function flask_publish(){
