@@ -1,8 +1,5 @@
 import os
 
-# from flask import current_app
-from kombu import Exchange, Queue
-
 
 class Config():
     HOST = os.environ.get('HOST')
@@ -24,19 +21,8 @@ class Config():
     GOVUK_CLIENT_SECRET = "govuk-alerts-secret-key"
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
+    QUEUE_PREFIX = ""
     QUEUE_NAME = "govuk-alerts"
-
-    CELERY = {
-        "broker_url": "filesystem://",
-        "broker_transport_options": {
-            "data_folder_in": "/tmp/.data/broker",
-            "data_folder_out": "/tmp/.data/broker/",
-        },
-        "timezone": "Europe/London",
-        "imports": ["app.celery.tasks"],
-        "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
-        "worker_max_tasks_per_child": 2,
-    }
 
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
 
@@ -50,7 +36,6 @@ class Hosted(Config):
 
     QUEUE_PREFIX = f"{ENVIRONMENT_PREFIX}-{TENANT_PREFIX}"
     SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
-    QUEUE_NAME = "govuk-alerts"
 
     EAS_APP_NAME = "govuk-alerts"
 
@@ -70,26 +55,6 @@ class Hosted(Config):
         "GOVUK_CLIENT_SECRET", "govuk-alerts-secret-key"
     )
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
-
-    PREDEFINED_SQS_QUEUES = {
-        "govuk-alerts": {
-            "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}govuk-alerts"
-        }
-    }
-
-    CELERY = {
-        "broker_transport": "sqs",
-        "broker_transport_options": {
-            "region": AWS_REGION,
-            "predefined_queues": PREDEFINED_SQS_QUEUES,
-            "is_secure": True,
-            "task_acks_late": True,
-        },
-        "timezone": "UTC",
-        "imports": ["app.celery.tasks"],
-        "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
-        "worker_max_tasks_per_child": 10,
-    }
 
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
 

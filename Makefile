@@ -52,16 +52,6 @@ freeze-requirements: ## create static requirements.txt
 	${PYTHON_EXECUTABLE_PREFIX}pip3 install --upgrade setuptools pip-tools
 	${PYTHON_EXECUTABLE_PREFIX}pip-compile --strip-extras requirements.in
 
-.PHONY: run-celery
-run-celery: ## Run celery
-	. environment.sh && opentelemetry-instrument celery \
-		-A run_celery.notify_celery worker \
-		--pidfile=/tmp/govuk_celery_worker.pid \
-		--prefetch-multiplier=1 \
-		--loglevel=INFO \
-		--autoscale=8,1 \
-		--hostname='govuk-alerts@%h'
-
 .PHONY: uninstall-packages
 uninstall-packages:
 	python -m pip uninstall emergency-alerts-utils -y

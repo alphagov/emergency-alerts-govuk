@@ -1,6 +1,6 @@
 #! /bin/sh
 timestamp_filename='/eas/emergency-alerts-govuk/celery-beat-healthcheck'
-echo "Start script executing for govuk-alerts celery worker..."
+echo "Start script executing for govuk-alerts"
 
 function configure_container_role(){
     aws configure set default.region ${AWS_REGION}
@@ -8,7 +8,7 @@ function configure_container_role(){
 
 function run_celery(){
     cd $DIR_GOVUK;
-    . $VENV_GOVUK/bin/activate && make run-celery
+    . $VENV_GOVUK/bin/activate && exec dramatiq --processes 1 --threads 1 app.dramatiq.broker:broker --queues $WORKER_QUEUE_NAMES
 }
 
 function flask_publish(){
