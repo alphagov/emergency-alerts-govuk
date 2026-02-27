@@ -2,6 +2,7 @@ import time
 
 from emergency_alerts_utils.celery import TaskNames
 from flask import current_app
+from opentelemetry import trace
 
 from app import notify_celery
 from app.models.alerts import Alerts
@@ -14,6 +15,8 @@ from app.utils import (
     upload_html_to_s3,
 )
 
+tracer = trace.get_tracer(__name__)
+
 
 @notify_celery.task(
     bind=True,
@@ -24,21 +27,44 @@ from app.utils import (
 )
 def publish_govuk_alerts(self, broadcast_event_id=""):
     try:
-        alerts = Alerts.load()
-        rendered_pages = get_rendered_pages(alerts)
-        cap_xml_alerts = get_cap_xml_for_alerts(alerts)
+        current_app.logger.info(
+            "Starting GovUK publish. (Triggered by broadcast event: %s)",
+            broadcast_event_id,
+        )
+
+        current_app.logger.info("Loading alerts")
+        with tracer.start_as_current_span("Get live alerts"):
+            alerts = Alerts.load()
+            current_app.logger.info("Alerts loaded")
+
+        with tracer.start_as_current_span("Render pages"):
+            rendered_pages = get_rendered_pages(alerts)
+            current_app.logger.info("Pages rendered")
+
+        with tracer.start_as_current_span("Render CAP XML"):
+            cap_xml_alerts = get_cap_xml_for_alerts(alerts)
+            current_app.logger.info("CAP XML rendered")
 
         if not current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]:
             current_app.logger.info("Skipping upload to S3 in local environment")
             return
 
-        upload_html_to_s3(rendered_pages, broadcast_event_id)
-        upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id)
+        with tracer.start_as_current_span("Upload HTML to S3"):
+            current_app.logger.info("Uploading %d files to S3", len(rendered_pages))
+            upload_html_to_s3(rendered_pages, broadcast_event_id)
+
+        with tracer.start_as_current_span("Upload CAP to S3"):
+            current_app.logger.info("Uploading %d files to S3", len(cap_xml_alerts))
+            upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id)
+
+        current_app.logger.info("Finished uploading to S3. Purging Fastly.")
         purge_fastly_cache()
+        current_app.logger.info("Fastly purged. Acknowledging to API.")
         alerts_api_client.send_publish_acknowledgement()
+
+        current_app.logger.info("Finished GovUK publish")
     except Exception:
         current_app.logger.exception("Failed to publish content to gov.uk/alerts")
-        self.retry(queue=current_app.config['QUEUE_NAME'])
 
 
 @notify_celery.task(name=TaskNames.TRIGGER_GOVUK_HEALTHCHECK)
