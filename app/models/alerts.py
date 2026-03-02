@@ -1,9 +1,9 @@
-from collections import defaultdict
 import time
+from collections import defaultdict
 
-from flask import current_app
 import yaml
 from emergency_alerts_utils.serialised_model import SerialisedModelCollection
+from flask import current_app
 
 from app import alerts_api_client
 from app.models.alert import Alert
