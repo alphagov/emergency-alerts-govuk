@@ -1,3 +1,5 @@
+import time
+
 import click
 from flask import cli, current_app
 
@@ -24,6 +26,7 @@ def setup_commands(app):
 @click.command('publish')
 @cli.with_appcontext
 def publish():
+    start = time.time()
     try:
         if task_id := get_ecs_task_id():
             publish_healthcheck_filename = create_publish_healthcheck_filename(
@@ -39,6 +42,8 @@ def publish():
         if publish_healthcheck_filename is not None:
             delete_timestamp_file_from_s3(publish_healthcheck_filename)
             put_success_metric_data("publish-dynamic")
+        end = time.time()
+        current_app.logger.info(f"Publish taken {end - start} seconds")
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
 
