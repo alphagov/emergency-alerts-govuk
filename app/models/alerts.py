@@ -152,9 +152,14 @@ class Alerts(SerialisedModelCollection):
                     msg = f"TOO LONG{msg}"
                 current_app.logger.info(msg)
         else:
-            for alert_dict in data:
-                if 'simple_polygons' not in alert_dict['areas'] or is_in_uk(alert_dict['areas']['simple_polygons']):
-                    alerts.append(alert_dict)
+            start = time.time()
+            if 'simple_polygons' not in alert_dict['areas'] or is_in_uk(alert_dict['areas']['simple_polygons']):
+                alerts.append(alert_dict)
+            end = time.time()
+            msg = f"Alert {alert_dict.get("id")} has taken {end - start} seconds to load"
+            if end - start > 10:
+                msg = f"TOO LONG{msg}"
+            current_app.logger.info(msg)
         return cls(alerts)
 
     @classmethod
