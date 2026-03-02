@@ -1,5 +1,3 @@
-import time
-
 import click
 from flask import cli, current_app
 
