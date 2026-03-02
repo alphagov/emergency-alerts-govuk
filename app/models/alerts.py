@@ -1,5 +1,7 @@
 from collections import defaultdict
+import time
 
+from flask import current_app
 import yaml
 from emergency_alerts_utils.serialised_model import SerialisedModelCollection
 
@@ -140,9 +142,12 @@ class Alerts(SerialisedModelCollection):
             # the current timestamp will be written to `publish_healthcheck_filename` to
             # indicate an ongoing publish
             for alert_dict in data:
+                start = time.time()
                 if 'simple_polygons' not in alert_dict['areas'] or is_in_uk(alert_dict['areas']['simple_polygons']):
                     alerts.append(alert_dict)
                     put_timestamp_to_s3(publish_healthcheck_filename, s3)
+                end = time.time()
+                current_app.logger.info(f"Alert {alert_dict.get("id")} has taken {end - start} seconds to load")
         else:
             for alert_dict in data:
                 if 'simple_polygons' not in alert_dict['areas'] or is_in_uk(alert_dict['areas']['simple_polygons']):
