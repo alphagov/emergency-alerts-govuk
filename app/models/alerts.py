@@ -1,9 +1,9 @@
-import time
 from collections import defaultdict
+import time
 
+from flask import current_app
 import yaml
 from emergency_alerts_utils.serialised_model import SerialisedModelCollection
-from flask import current_app
 
 from app import alerts_api_client
 from app.models.alert import Alert
@@ -147,10 +147,7 @@ class Alerts(SerialisedModelCollection):
                     alerts.append(alert_dict)
                     put_timestamp_to_s3(publish_healthcheck_filename, s3)
                 end = time.time()
-                msg = f"Alert {alert_dict.get("id")} has taken {end - start} seconds to load"
-                if end - start > 10:
-                    msg = f"TOO LONG{msg}"
-                current_app.logger.info(msg)
+                current_app.logger.info(f"Alert {alert_dict.get("id")} has taken {end - start} seconds to load")
         else:
             for alert_dict in data:
                 if 'simple_polygons' not in alert_dict['areas'] or is_in_uk(alert_dict['areas']['simple_polygons']):
