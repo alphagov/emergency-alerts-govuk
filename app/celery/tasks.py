@@ -13,6 +13,8 @@ from app.utils import (
     post_version_to_cloudwatch,
     purge_fastly_cache,
     put_success_metric_data,
+    put_timestamp_to_s3,
+    setup_s3_session,
     upload_cap_xml_to_s3,
     upload_html_to_s3,
 )
@@ -28,8 +30,10 @@ from app.utils import (
 def publish_govuk_alerts(self, broadcast_event_id=""):
     try:
         publish_healthcheck_filename = create_publish_healthcheck_filename("publish-dynamic", "celery", self.request.id)
-        publish_timestamp_file = bool(publish_healthcheck_filename)
-        alerts = Alerts.load(publish_timestamp_file, publish_healthcheck_filename)
+        if publish_healthcheck_filename:
+            s3_session = setup_s3_session()
+            put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
+        alerts = Alerts.load(publish_healthcheck_filename, s3_session)
         rendered_pages = get_rendered_pages(alerts)
         cap_xml_alerts = get_cap_xml_for_alerts(alerts)
 
@@ -37,8 +41,8 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
             current_app.logger.info("Skipping upload to S3 in local environment")
             return
 
-        upload_html_to_s3(rendered_pages, publish_healthcheck_filename, broadcast_event_id)
-        upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast_event_id)
+        upload_html_to_s3(rendered_pages, publish_healthcheck_filename, broadcast_event_id, s3_session)
+        upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast_event_id, s3_session)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
         if publish_healthcheck_filename:

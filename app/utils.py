@@ -99,15 +99,17 @@ def setup_boto3_session():
     return session
 
 
-def upload_html_to_s3(rendered_pages, publish_healthcheck_filename, broadcast_event_id=""):
+def setup_s3_session():
+    session = setup_boto3_session()
+    return session.client('s3')
+
+
+def upload_html_to_s3(rendered_pages, publish_healthcheck_filename, broadcast_event_id="", s3_session=None):
 
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
-
-    session = setup_boto3_session()
-    s3 = session.client('s3')
 
     for path, content in rendered_pages.items():
         current_app.logger.info(
@@ -117,17 +119,17 @@ def upload_html_to_s3(rendered_pages, publish_healthcheck_filename, broadcast_ev
             }
         )
         content_type = "text/xml" if path.endswith(".atom") else "text/html"
-        s3.put_object(
+        s3_session.put_object(
             Body=content,
             Bucket=bucket_name,
             ContentType=content_type,
             Key=path
         )
         if publish_healthcheck_filename:
-            put_timestamp_to_s3(publish_healthcheck_filename, s3)
+            put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
 
 
-def upload_assets_to_s3(publish_healthcheck_filename):
+def upload_assets_to_s3(publish_healthcheck_filename, s3_session=None):
     if not Path(DIST).exists():
         raise FileExistsError(f'Folder {DIST} not found.')
 
@@ -136,31 +138,25 @@ def upload_assets_to_s3(publish_healthcheck_filename):
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
 
-    session = setup_boto3_session()
-    s3 = session.client('s3')
-
     assets = get_asset_files(DIST)
     for filename, (content, mimetype) in assets.items():
         current_app.logger.info("Uploading " + filename)
-        s3.put_object(
+        s3_session.put_object(
             Body=content,
             Bucket=bucket_name,
             ContentType=mimetype,
             Key=filename
         )
         if publish_healthcheck_filename:
-            put_timestamp_to_s3(publish_healthcheck_filename, s3)
+            put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
 
 
-def upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast_event_id=""):
+def upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast_event_id="", s3_session=None):
 
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
-
-    session = setup_boto3_session()
-    s3 = session.client('s3')
 
     for path, content in cap_xml_alerts.items():
 
@@ -171,14 +167,14 @@ def upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast
             }
         )
 
-        s3.put_object(
+        s3_session.put_object(
             Body=content,
             Bucket=bucket_name,
             ContentType="application/cap+xml",
             Key=path
         )
         if publish_healthcheck_filename:
-            put_timestamp_to_s3(publish_healthcheck_filename, s3)
+            put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
 
 
 def purge_fastly_cache():
@@ -317,8 +313,7 @@ def delete_timestamp_file_from_s3(publish_healthcheck_filename):
         current_app.logger.info("Target S3 Publish Healthcheck filename not specified: Skipping file deletion")
         return
 
-    session = setup_boto3_session()
-    s3 = session.client('s3')
+    s3 = setup_s3_session()
     s3.delete_object(
         Bucket=publish_timestamps_bucket_name,
         Key=publish_healthcheck_filename,

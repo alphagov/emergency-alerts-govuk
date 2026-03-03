@@ -10,6 +10,8 @@ from app.utils import (
     get_ecs_task_id,
     purge_fastly_cache,
     put_success_metric_data,
+    put_timestamp_to_s3,
+    setup_s3_session,
     upload_assets_to_s3,
     upload_cap_xml_to_s3,
     upload_html_to_s3,
@@ -73,18 +75,45 @@ def publish_with_assets(startup):
 
 
 def _publish_html(publish_healthcheck_filename=None):
-    publish_timestamp_file = bool(publish_healthcheck_filename)
-    alerts = Alerts.load(publish_timestamp_file, publish_healthcheck_filename)
+    s3_session = None
+
+    if publish_healthcheck_filename:
+        s3_session = setup_s3_session()
+        # Initial write of timestamp to file to mark the start of the publish
+        put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
+
+    alerts = Alerts.load(
+        publish_healthcheck_filename,
+        s3_session,
+    )
     rendered_pages = get_rendered_pages(alerts)
-    upload_html_to_s3(rendered_pages, publish_healthcheck_filename)
+    upload_html_to_s3(rendered_pages, publish_healthcheck_filename, s3_session)
 
 
 def _publish_assets(publish_healthcheck_filename=None):
-    upload_assets_to_s3(publish_healthcheck_filename)
+    s3_session = None
+    if publish_healthcheck_filename:
+        s3_session = setup_s3_session()
+        # Initial write of timestamp to file to mark the start of the publish
+        put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
+    upload_assets_to_s3(publish_healthcheck_filename, s3_session)
 
 
 def _publish_cap_xml(publish_healthcheck_filename):
-    publish_timestamp_file = bool(publish_healthcheck_filename)
-    alerts = Alerts.load(publish_timestamp_file, publish_healthcheck_filename)
+    s3_session = None
+
+    if publish_healthcheck_filename:
+        s3_session = setup_s3_session()
+        # Initial write of timestamp to file to mark the start of the publish
+        put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
+
+    alerts = Alerts.load(
+        publish_healthcheck_filename,
+        s3_session,
+    )
     cap_xml_alerts = get_cap_xml_for_alerts(alerts)
-    upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename)
+    upload_cap_xml_to_s3(
+        cap_xml_alerts,
+        publish_healthcheck_filename,
+        s3_session=s3_session,
+    )
