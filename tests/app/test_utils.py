@@ -99,7 +99,7 @@ def test_upload_to_s3(govuk_alerts):
                          CreateBucketConfiguration={'LocationConstraint': current_app.config["AWS_REGION"]})
 
     pages = {"alerts": "<p>this is some test content</p>"}
-    upload_html_to_s3(pages, "test")
+    upload_html_to_s3(pages, "test", s3_session=client)
 
     object_keys = [
         obj['Key'] for obj in

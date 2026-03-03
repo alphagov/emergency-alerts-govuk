@@ -5,7 +5,6 @@ import boto3
 import pytest
 from celery.exceptions import Retry
 from flask import current_app
-from freezegun import freeze_time
 from moto import mock_aws
 
 from app.celery.tasks import (
@@ -14,7 +13,7 @@ from app.celery.tasks import (
 )
 
 
-@freeze_time('2026-02-16T11:30:00Z')
+@mock_aws
 @patch("app.celery.tasks.Alerts.load")
 @patch("app.celery.tasks.get_rendered_pages")
 @patch("app.celery.tasks.upload_html_to_s3")
@@ -34,14 +33,23 @@ def test_publish_govuk_alerts(
     mock_Alerts_load,
     govuk_alerts,
 ):
-    mock_create_publish_healthcheck_filename.return_value = "publish-dynamic_celery_TASKID_1619004600.txt"
+    publish_s3_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
+    client = boto3.client('s3')
+    client.create_bucket(Bucket=publish_s3_bucket_name,
+                         CreateBucketConfiguration={'LocationConstraint': current_app.config["AWS_REGION"]})
+    mock_filename = "publish-dynamic_celery_TASKID_1619004600.txt"
+    mock_create_publish_healthcheck_filename.return_value = mock_filename
     publish_govuk_alerts()
     mock_create_publish_healthcheck_filename.assert_called_once()
     mock_Alerts_load.assert_called_once()
     mock_Alerts_load.assert_called_once()
     mock_get_rendered_pages.assert_called_once_with(mock_Alerts_load.return_value)
-    mock_upload_to_s3.assert_called_once_with(mock_get_rendered_pages.return_value,
-                                              "publish-dynamic_celery_TASKID_1619004600.txt", "")
+    mock_upload_to_s3.assert_called_once()
+    # Asserts the pertinent mock_upload_to_s3 call args, the S3 session client
+    # cannot be compared
+    args, kwargs = mock_upload_to_s3.call_args
+    assert args[0] == mock_get_rendered_pages.return_value
+    assert args[1] == mock_filename
     mock_purge_fastly_cache.assert_called_once()
     mock_send_publish_acknowledgement.assert_called_once()
     mock_put_success_metric_data.assert_called_once_with('publish-dynamic')
