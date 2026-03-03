@@ -87,7 +87,7 @@ def _publish_html(publish_healthcheck_filename=None):
         s3_session,
     )
     rendered_pages = get_rendered_pages(alerts)
-    upload_html_to_s3(rendered_pages, publish_healthcheck_filename, s3_session)
+    upload_html_to_s3(rendered_pages, publish_healthcheck_filename, s3_session=s3_session)
 
 
 def _publish_assets(publish_healthcheck_filename=None):
