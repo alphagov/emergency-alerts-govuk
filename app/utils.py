@@ -294,7 +294,7 @@ def put_timestamp_to_s3(filename, s3):
         msg = "Target S3 Publish Healthcheck bucket not specified: Skipping upload of publish timestamp"
         current_app.logger.info(msg)
         return
-
+    current_app.logger.info(f"Writing {int(time.time())} to {filename}")
     s3.put_object(
         Body=str(int(time.time())),
         Bucket=publish_timestamps_bucket_name,
