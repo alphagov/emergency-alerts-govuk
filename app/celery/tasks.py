@@ -35,7 +35,7 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
         put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
 
         alerts = Alerts.load(publish_healthcheck_filename, s3_session)
-        rendered_pages = get_rendered_pages(alerts)
+        rendered_pages = get_rendered_pages(alerts, publish_healthcheck_filename, s3_session)
         cap_xml_alerts = get_cap_xml_for_alerts(alerts)
 
         if not current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]:

@@ -22,6 +22,7 @@ from app.utils import (
     create_cap_event,
     file_fingerprint,
     paragraphize,
+    put_timestamp_to_s3,
     simplify_custom_area_name,
 )
 
@@ -107,7 +108,7 @@ def setup_jinja_environment(alerts):
     return env
 
 
-def get_rendered_pages(alerts):
+def get_rendered_pages(alerts, publish_healthcheck_filename=None, s3_session=None):
     env = setup_jinja_environment(alerts)
     rendered = {}
 
@@ -116,6 +117,7 @@ def get_rendered_pages(alerts):
     feed_item_count = 0
 
     for path in all_view_paths:
+        current_app.logger.info(f"Starting render of {path}")
         template = env.get_template(path)
         target = path.replace(".html", "")
 
@@ -148,6 +150,8 @@ def get_rendered_pages(alerts):
             continue
 
         rendered["alerts/" + target] = template.render()
+        if publish_healthcheck_filename:
+            put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
 
     rendered['alerts/feed.atom'] = _add_stylesheet_attribute_to_atom(
         fg.atom_str(pretty=True).decode("utf-8")
