@@ -75,7 +75,9 @@ def _publish_html(publish_healthcheck_filename=None):
         publish_healthcheck_filename,
         s3_session,
     )
+    current_app.logger.info("Starting render of pages")
     rendered_pages = get_rendered_pages(alerts)
+    current_app.logger.info("Ending render of pages")
     upload_html_to_s3(rendered_pages, publish_healthcheck_filename, s3_session=s3_session)
 
 
