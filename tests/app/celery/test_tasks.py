@@ -37,13 +37,16 @@ def test_publish_govuk_alerts(
     client = boto3.client('s3')
     client.create_bucket(Bucket=publish_s3_bucket_name,
                          CreateBucketConfiguration={'LocationConstraint': current_app.config["AWS_REGION"]})
-    mock_filename = "publish-dynamic_celery_TASKID_1619004600.txt"
+    mock_filename = "publish-dynamic_celery.txt"
     mock_create_publish_healthcheck_filename.return_value = mock_filename
     publish_govuk_alerts()
     mock_create_publish_healthcheck_filename.assert_called_once()
     mock_Alerts_load.assert_called_once()
     mock_Alerts_load.assert_called_once()
-    mock_get_rendered_pages.assert_called_once_with(mock_Alerts_load.return_value)
+    mock_get_rendered_pages.assert_called_once()
+    args, kwargs = mock_get_rendered_pages.call_args
+    assert args[0] == mock_Alerts_load.return_value
+    assert args[1] == mock_filename
     mock_upload_to_s3.assert_called_once()
     # Asserts the pertinent mock_upload_to_s3 call args, the S3 session client
     # cannot be compared
