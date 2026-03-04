@@ -71,6 +71,7 @@ def _publish_html(publish_healthcheck_filename=None):
         # Initial write of timestamp to file to mark the start of the publish
         put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
 
+    current_app.logger.info("Starting load of alerts")
     alerts = Alerts.load(
         publish_healthcheck_filename,
         s3_session,
