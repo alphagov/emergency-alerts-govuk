@@ -29,10 +29,11 @@ from app.utils import (
 )
 def publish_govuk_alerts(self, broadcast_event_id=""):
     try:
-        publish_healthcheck_filename = create_publish_healthcheck_filename("publish-dynamic", "celery", self.request.id)
-        if publish_healthcheck_filename:
-            s3_session = setup_s3_session()
-            put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
+        publish_healthcheck_filename = create_publish_healthcheck_filename("publish-dynamic", "celery")
+
+        s3_session = setup_s3_session()
+        put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
+
         alerts = Alerts.load(publish_healthcheck_filename, s3_session)
         rendered_pages = get_rendered_pages(alerts)
         cap_xml_alerts = get_cap_xml_for_alerts(alerts)
@@ -45,9 +46,8 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
         upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast_event_id, s3_session)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
-        if publish_healthcheck_filename:
-            delete_timestamp_file_from_s3(publish_healthcheck_filename)
-            put_success_metric_data("publish-dynamic")
+        delete_timestamp_file_from_s3(publish_healthcheck_filename)
+        put_success_metric_data("publish-dynamic")
     except Exception:
         current_app.logger.exception("Failed to publish content to gov.uk/alerts")
         self.retry(queue=current_app.config['QUEUE_NAME'])

@@ -152,7 +152,6 @@ def upload_assets_to_s3(publish_healthcheck_filename, s3_session=None):
 
 
 def upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast_event_id="", s3_session=None):
-
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
@@ -344,22 +343,5 @@ def put_success_metric_data(publish_type):
     current_app.logger.info(f"Put success metric value of 0 for {publish_type}, following successful publish.")
 
 
-def create_publish_healthcheck_filename(publish_type, publish_origin, task_id):
-    if task_id and publish_type and publish_origin:
-        return f"{publish_type}_{publish_origin}_{task_id}_{int(time.time())}.txt"
-    else:
-        None
-
-
-def get_ecs_task_id():
-    try:
-        resp = requests.get(f'{current_app.config["CONTAINER_METADATA_URI"]}/task')
-        resp.raise_for_status()
-        task_arn = resp.json().get('TaskARN')
-        if not task_arn:
-            current_app.logger.error("Container metadata response missing 'TaskARN'")
-            return None
-        return task_arn.split("/")[-1] or None
-    except Exception as e:
-        current_app.logger.error("Failed to retrieve ECS task metadata: %s", e)
-        return None
+def create_publish_healthcheck_filename(publish_type, publish_origin):
+    return f"{publish_type}_{publish_origin}.txt"
