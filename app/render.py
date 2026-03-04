@@ -131,6 +131,8 @@ def get_rendered_pages(alerts, publish_healthcheck_filename=None, s3_session=Non
                     _add_feed_entry(fg, alert, alert_url)
                     _add_feed_entry(fg_cy, alert, alert_url)
                     feed_item_count += 1
+                if publish_healthcheck_filename:
+                    put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
             continue
 
         # Render each alert's page in Welsh
@@ -139,6 +141,8 @@ def get_rendered_pages(alerts, publish_healthcheck_filename=None, s3_session=Non
                 alert_url = get_url_for_alert(alert, alerts)
                 rendered["alerts/" + alert_url + ".cy"] = template.render({
                     'alert_data': alert})
+                if publish_healthcheck_filename:
+                    put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
             continue
 
         if target == 'index':
