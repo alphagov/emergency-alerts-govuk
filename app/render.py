@@ -152,6 +152,7 @@ def get_rendered_pages(alerts, publish_healthcheck_filename=None, s3_session=Non
             continue
 
         rendered["alerts/" + target] = template.render()
+        write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
 
     rendered['alerts/feed.atom'] = _add_stylesheet_attribute_to_atom(
         fg.atom_str(pretty=True).decode("utf-8")
@@ -171,8 +172,6 @@ def get_rendered_pages(alerts, publish_healthcheck_filename=None, s3_session=Non
         xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
         xsl_content = _add_javascript_link_to_xsl(xsl_content)
         rendered['alerts/feed_cy.xsl'] = xsl_content
-
-    write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
 
     return rendered
 
