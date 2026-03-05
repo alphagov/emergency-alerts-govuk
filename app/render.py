@@ -145,10 +145,12 @@ def get_rendered_pages(alerts, publish_healthcheck_filename=None, s3_session=Non
 
         if target == 'index':
             rendered['alerts'] = template.render()
+            write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
             continue
 
         if target == 'index.cy':
             rendered['alerts/about.cy'] = template.render()
+            write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
             continue
 
         rendered["alerts/" + target] = template.render()
