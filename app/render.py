@@ -22,8 +22,8 @@ from app.utils import (
     create_cap_event,
     file_fingerprint,
     paragraphize,
-    put_timestamp_to_s3,
     simplify_custom_area_name,
+    write_timestamp_to_file_if_exists,
 )
 
 TEMPLATES = REPO / 'app' / 'templates'
@@ -131,8 +131,7 @@ def get_rendered_pages(alerts, publish_healthcheck_filename=None, s3_session=Non
                     _add_feed_entry(fg, alert, alert_url)
                     _add_feed_entry(fg_cy, alert, alert_url)
                     feed_item_count += 1
-                if publish_healthcheck_filename:
-                    put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
+                write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
             continue
 
         # Render each alert's page in Welsh
@@ -141,8 +140,7 @@ def get_rendered_pages(alerts, publish_healthcheck_filename=None, s3_session=Non
                 alert_url = get_url_for_alert(alert, alerts)
                 rendered["alerts/" + alert_url + ".cy"] = template.render({
                     'alert_data': alert})
-                if publish_healthcheck_filename:
-                    put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
+                write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
             continue
 
         if target == 'index':
@@ -174,8 +172,7 @@ def get_rendered_pages(alerts, publish_healthcheck_filename=None, s3_session=Non
         xsl_content = _add_javascript_link_to_xsl(xsl_content)
         rendered['alerts/feed_cy.xsl'] = xsl_content
 
-    if publish_healthcheck_filename:
-        put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
+    write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
 
     return rendered
 
@@ -362,7 +359,6 @@ def get_cap_xml_for_alerts(alerts, publish_healthcheck_filename=None, s3_session
             timestamp = alert.cancelled_at.strftime("%Y%m%d%H%M%S")
             cap_xml_alerts[f"alerts/{alert_url}-{timestamp}.cap.xml"] = cap_xml
 
-        if publish_healthcheck_filename:
-            put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
+        write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
 
     return cap_xml_alerts

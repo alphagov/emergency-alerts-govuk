@@ -125,8 +125,7 @@ def upload_html_to_s3(rendered_pages, publish_healthcheck_filename, broadcast_ev
             ContentType=content_type,
             Key=path
         )
-        if publish_healthcheck_filename:
-            put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
+        write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
 
 
 def upload_assets_to_s3(publish_healthcheck_filename, s3_session=None):
@@ -147,8 +146,7 @@ def upload_assets_to_s3(publish_healthcheck_filename, s3_session=None):
             ContentType=mimetype,
             Key=filename
         )
-        if publish_healthcheck_filename:
-            put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
+        write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
 
 
 def upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast_event_id="", s3_session=None):
@@ -172,8 +170,7 @@ def upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast
             ContentType="application/cap+xml",
             Key=path
         )
-        if publish_healthcheck_filename:
-            put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
+        write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
 
 
 def purge_fastly_cache():
@@ -300,6 +297,11 @@ def put_timestamp_to_s3(filename, s3):
         ContentType="text/plain",
         Key=filename
     )
+
+
+def write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session):
+    if publish_healthcheck_filename:
+        put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
 
 
 def delete_timestamp_file_from_s3(publish_healthcheck_filename):
