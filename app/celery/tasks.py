@@ -36,7 +36,7 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
 
         alerts = Alerts.load(publish_healthcheck_filename, s3_session)
         rendered_pages = get_rendered_pages(alerts, publish_healthcheck_filename, s3_session)
-        cap_xml_alerts = get_cap_xml_for_alerts(alerts)
+        cap_xml_alerts = get_cap_xml_for_alerts(alerts, publish_healthcheck_filename, s3_session)
 
         if not current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]:
             current_app.logger.info("Skipping upload to S3 in local environment")

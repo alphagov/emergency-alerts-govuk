@@ -154,8 +154,6 @@ def get_rendered_pages(alerts, publish_healthcheck_filename=None, s3_session=Non
             continue
 
         rendered["alerts/" + target] = template.render()
-        if publish_healthcheck_filename:
-            put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
 
     rendered['alerts/feed.atom'] = _add_stylesheet_attribute_to_atom(
         fg.atom_str(pretty=True).decode("utf-8")
@@ -175,6 +173,9 @@ def get_rendered_pages(alerts, publish_healthcheck_filename=None, s3_session=Non
         xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
         xsl_content = _add_javascript_link_to_xsl(xsl_content)
         rendered['alerts/feed_cy.xsl'] = xsl_content
+
+    if publish_healthcheck_filename:
+        put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
 
     return rendered
 
@@ -340,7 +341,7 @@ def _display_format_time_string(time):
     return tz_aware_time.strftime("%Y-%m-%d %H:%M %Z")
 
 
-def get_cap_xml_for_alerts(alerts):
+def get_cap_xml_for_alerts(alerts, publish_healthcheck_filename=None, s3_session=None):
     cap_xml_alerts = {}
     host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
     for alert in alerts.public:
@@ -360,5 +361,8 @@ def get_cap_xml_for_alerts(alerts):
             cap_xml = generate_xml_body(event)
             timestamp = alert.cancelled_at.strftime("%Y%m%d%H%M%S")
             cap_xml_alerts[f"alerts/{alert_url}-{timestamp}.cap.xml"] = cap_xml
+
+        if publish_healthcheck_filename:
+            put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
 
     return cap_xml_alerts
