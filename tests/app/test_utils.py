@@ -11,13 +11,11 @@ from app.models.alert import Alert
 from app.utils import (
     capitalise,
     create_cap_event,
-    delete_timestamp_file_from_s3,
     file_fingerprint,
     is_in_uk,
     paragraphize,
     purge_fastly_cache,
     put_success_metric_data,
-    put_timestamp_to_s3,
     simplify_custom_area_name,
     upload_html_to_s3,
 )
@@ -111,89 +109,6 @@ def test_upload_to_s3(govuk_alerts):
     alerts_object = client.get_object(Bucket=bucket_name, Key='alerts')
     assert alerts_object['Body'].read().decode('utf-8') == pages['alerts']
     assert alerts_object['ContentType'] == 'text/html'
-
-
-@mock_aws
-def test_put_timestamp_to_s3(govuk_alerts):
-    publish_s3_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
-    client = boto3.client('s3')
-    client.create_bucket(Bucket=publish_s3_bucket_name,
-                         CreateBucketConfiguration={'LocationConstraint': current_app.config["AWS_REGION"]})
-
-    task_id = "test-task-id"
-    put_timestamp_to_s3(task_id, client)
-
-    object_keys = [
-        obj['Key'] for obj in
-        client.list_objects(Bucket=publish_s3_bucket_name)['Contents']
-    ]
-
-    assert object_keys == [task_id]
-    alerts_object = client.get_object(Bucket=publish_s3_bucket_name, Key=task_id)
-    assert alerts_object['ContentType'] == 'text/plain'
-
-
-@mock_aws
-def test_cannot_put_timestamp_to_s3_if_missing_bucket_env_var(govuk_alerts):
-    # Config env var removed and as its necessary for upload of file to bucket,
-    # we can't upload file and we assert that bucket is still empty
-    publish_s3_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
-    client = boto3.client('s3')
-    client.create_bucket(Bucket=publish_s3_bucket_name,
-                         CreateBucketConfiguration={'LocationConstraint': current_app.config["AWS_REGION"]})
-    assert client.list_objects_v2(Bucket=publish_s3_bucket_name).get('KeyCount') == 0
-
-    # Setting GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME to None so process returns early and file not uploaded
-    with set_config(govuk_alerts, "GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME", None):
-        task_id = "test-task-id"
-        put_timestamp_to_s3(task_id, client)
-
-    # Still no files in bucket
-    assert client.list_objects_v2(Bucket=publish_s3_bucket_name).get('KeyCount') == 0
-
-
-@mock_aws
-def test_delete_timestamp_file_from_s3(govuk_alerts):
-    publish_s3_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
-    client = boto3.client('s3')
-    client.create_bucket(Bucket=publish_s3_bucket_name,
-                         CreateBucketConfiguration={'LocationConstraint': current_app.config["AWS_REGION"]})
-
-    task_id = "test-task-id"
-    put_timestamp_to_s3(task_id, client)
-
-    object_keys = [
-        obj['Key'] for obj in
-        client.list_objects(Bucket=publish_s3_bucket_name)['Contents']
-    ]
-    assert object_keys == [task_id]
-    delete_timestamp_file_from_s3(task_id)
-    assert client.list_objects_v2(Bucket=publish_s3_bucket_name).get('KeyCount') == 0
-
-
-@mock_aws
-def test_delete_timestamp_file_returns_early_if_missing_bucket_env_var(govuk_alerts):
-    # File is uploaded to bucket, then config env var removed and as its necessary for
-    # deletion of file from bucket, we can't delete file and we assert that it remains
-    publish_s3_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
-    client = boto3.client('s3')
-    client.create_bucket(Bucket=publish_s3_bucket_name,
-                         CreateBucketConfiguration={'LocationConstraint': current_app.config["AWS_REGION"]})
-    task_id = "test-task-id"
-    put_timestamp_to_s3(task_id, client)
-    object_keys = [
-        obj['Key'] for obj in
-        client.list_objects(Bucket=publish_s3_bucket_name)['Contents']
-    ]
-    assert object_keys == [task_id]
-
-    # Setting GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME to None so process returns early and no deletion
-    with set_config(govuk_alerts, "GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME", None):
-        task_id = "test-task-id"
-        delete_timestamp_file_from_s3(task_id)
-
-    # File still remains in bucket
-    assert client.list_objects_v2(Bucket=publish_s3_bucket_name).get('KeyCount') == 1
 
 
 @mock_aws

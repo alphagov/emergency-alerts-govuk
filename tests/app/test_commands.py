@@ -16,9 +16,6 @@ def test_publish(mocker, govuk_alerts, mock_get_ecs_task_id):
     send_publish_ack_mock = mocker.patch(
         'app.commands.alerts_api_client.send_publish_acknowledgement'
     )
-    delete_timestamp_file_mock = mocker.patch(
-        'app.commands.delete_timestamp_file_from_s3'
-    )
     put_success_metric_data_mock = mocker.patch(
         'app.commands.put_success_metric_data'
     )
@@ -32,7 +29,6 @@ def test_publish(mocker, govuk_alerts, mock_get_ecs_task_id):
     publish_html_mock.assert_called_once_with(filename)
     purge_fastly_cache_mock.assert_called_once()
     send_publish_ack_mock.assert_called_once()
-    delete_timestamp_file_mock.assert_called_once_with(filename)
     put_success_metric_data_mock.assert_called_once_with('publish-dynamic')
 
 
@@ -47,9 +43,6 @@ def test_startup_publish_with_assets(mocker, govuk_alerts, mock_get_ecs_task_id)
     purge_fastly_cache_mock = mocker.patch('app.commands.purge_fastly_cache')
     send_publish_ack_mock = mocker.patch(
         'app.commands.alerts_api_client.send_publish_acknowledgement'
-    )
-    delete_timestamp_file_mock = mocker.patch(
-        'app.commands.delete_timestamp_file_from_s3'
     )
     put_success_metric_data_mock = mocker.patch(
         'app.commands.put_success_metric_data'
@@ -66,7 +59,6 @@ def test_startup_publish_with_assets(mocker, govuk_alerts, mock_get_ecs_task_id)
     publish_with_assets_mock.assert_called_once_with(filename)
     purge_fastly_cache_mock.assert_called_once()
     send_publish_ack_mock.assert_called_once()
-    delete_timestamp_file_mock.assert_called_once_with(filename)
     put_success_metric_data_mock.assert_called_once_with('publish-all')
 
 
@@ -81,9 +73,6 @@ def test_publish_with_assets(mocker, govuk_alerts):
     purge_fastly_cache_mock = mocker.patch('app.commands.purge_fastly_cache')
     send_publish_ack_mock = mocker.patch(
         'app.commands.alerts_api_client.send_publish_acknowledgement'
-    )
-    delete_timestamp_file_mock = mocker.patch(
-        'app.commands.delete_timestamp_file_from_s3'
     )
     put_success_metric_data_mock = mocker.patch(
         'app.commands.put_success_metric_data'
@@ -100,5 +89,4 @@ def test_publish_with_assets(mocker, govuk_alerts):
     publish_with_assets_mock.assert_called_once_with(filename)
     purge_fastly_cache_mock.assert_called_once()
     send_publish_ack_mock.assert_called_once()
-    delete_timestamp_file_mock.assert_called_once_with(filename)
     put_success_metric_data_mock.assert_called_once_with('publish-all')
