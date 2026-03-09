@@ -8,7 +8,6 @@ from markupsafe import Markup
 from moto import mock_aws
 
 from app.models.alert import Alert
-from app.models.publish_task_progress import PublishTaskProgress
 from app.utils import (
     capitalise,
     create_cap_event,
