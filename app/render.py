@@ -107,7 +107,7 @@ def setup_jinja_environment(alerts):
     return env
 
 
-def get_rendered_pages(alerts, publish_task_progress):
+def get_rendered_pages(alerts, publish_task_progress=None):
     env = setup_jinja_environment(alerts)
     rendered = {}
 
@@ -130,7 +130,8 @@ def get_rendered_pages(alerts, publish_task_progress):
                     _add_feed_entry(fg, alert, alert_url)
                     _add_feed_entry(fg_cy, alert, alert_url)
                     feed_item_count += 1
-                publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
+                if publish_task_progress:
+                    publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
             continue
 
         # Render each alert's page in Welsh
@@ -139,21 +140,25 @@ def get_rendered_pages(alerts, publish_task_progress):
                 alert_url = get_url_for_alert(alert, alerts)
                 rendered["alerts/" + alert_url + ".cy"] = template.render({
                     'alert_data': alert})
-                publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
+                if publish_task_progress:
+                    publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
             continue
 
         if target == 'index':
             rendered['alerts'] = template.render()
-            publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
+            if publish_task_progress:
+                publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
             continue
 
         if target == 'index.cy':
             rendered['alerts/about.cy'] = template.render()
-            publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
+            if publish_task_progress:
+                publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
             continue
 
         rendered["alerts/" + target] = template.render()
-        publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
+        if publish_task_progress:
+            publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
 
     rendered['alerts/feed.atom'] = _add_stylesheet_attribute_to_atom(
         fg.atom_str(pretty=True).decode("utf-8")
@@ -338,7 +343,7 @@ def _display_format_time_string(time):
     return tz_aware_time.strftime("%Y-%m-%d %H:%M %Z")
 
 
-def get_cap_xml_for_alerts(alerts, publish_task_progress):
+def get_cap_xml_for_alerts(alerts, publish_task_progress=None):
     cap_xml_alerts = {}
     host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
     for alert in alerts.public:
@@ -359,6 +364,7 @@ def get_cap_xml_for_alerts(alerts, publish_task_progress):
             timestamp = alert.cancelled_at.strftime("%Y%m%d%H%M%S")
             cap_xml_alerts[f"alerts/{alert_url}-{timestamp}.cap.xml"] = cap_xml
 
-        publish_task_progress.update_progress(publish_task=publish_task_progress, file=f"CAP XML for {alert}")
+        if publish_task_progress:
+            publish_task_progress.update_progress(publish_task=publish_task_progress, file=f"CAP XML for {alert}")
 
     return cap_xml_alerts

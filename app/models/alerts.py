@@ -131,15 +131,16 @@ class Alerts(SerialisedModelCollection):
         return alerts_by_date.items()
 
     @classmethod
-    def load(cls, publish_task_progress):
+    def load(cls, publish_task_progress=None):
         data = cls.from_yaml() + cls.from_api()
         alerts = []
         for alert_dict in data:
             if 'simple_polygons' not in alert_dict['areas'] or is_in_uk(alert_dict['areas']['simple_polygons']):
                 current_app.logger.info(f"Loading alert {alert_dict.get("id")}")
                 alerts.append(alert_dict)
-                publish_task_progress.update_progress(publish_task=publish_task_progress,
-                                                      file=f"Alert {alert_dict.get("id")}")
+                if publish_task_progress:
+                    publish_task_progress.update_progress(publish_task=publish_task_progress,
+                                                          file=f"Alert {alert_dict.get("id")}")
         return cls(alerts)
 
     @classmethod

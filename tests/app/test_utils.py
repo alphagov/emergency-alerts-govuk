@@ -8,6 +8,7 @@ from markupsafe import Markup
 from moto import mock_aws
 
 from app.models.alert import Alert
+from app.models.publish_task_progress import PublishTaskProgress
 from app.utils import (
     capitalise,
     create_cap_event,
@@ -88,16 +89,15 @@ def test_is_in_uk_returns_polygons_in_uk_bounding_box(alert_dict, lat, lon, in_u
 @mock_aws
 def test_upload_to_s3(govuk_alerts):
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
-    publish_s3_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
 
     client = boto3.client('s3')
     client.create_bucket(Bucket=bucket_name,
                          CreateBucketConfiguration={'LocationConstraint': current_app.config["AWS_REGION"]})
-    client.create_bucket(Bucket=publish_s3_bucket_name,
-                         CreateBucketConfiguration={'LocationConstraint': current_app.config["AWS_REGION"]})
 
     pages = {"alerts": "<p>this is some test content</p>"}
-    upload_html_to_s3(pages, "test", s3_session=client)
+
+    publish_progress_task = PublishTaskProgress.create("publish-dynamic", "cli")
+    upload_html_to_s3(pages, publish_progress_task, "test")
 
     object_keys = [
         obj['Key'] for obj in

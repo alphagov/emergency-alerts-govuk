@@ -6,6 +6,7 @@ from flask import current_app
 from app import notify_celery
 from app.models.alerts import Alerts
 from app.models.publish_task_progress import PublishTaskProgress
+from app.notify_client.alerts_api_client import alerts_api_client
 from app.render import get_cap_xml_for_alerts, get_rendered_pages
 from app.utils import (
     post_version_to_cloudwatch,
@@ -37,6 +38,7 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
         upload_html_to_s3(rendered_pages, publish_task_progress, broadcast_event_id)
         upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress, broadcast_event_id)
         purge_fastly_cache()
+        alerts_api_client.send_publish_acknowledgement()
         publish_task_progress.set_to_finished(publish_task_progress.id)
         put_success_metric_data("publish-dynamic")
     except Exception:

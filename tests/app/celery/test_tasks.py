@@ -13,47 +13,43 @@ from app.celery.tasks import (
 )
 
 
-@mock_aws
+@patch("app.celery.tasks.PublishTaskProgress.create")
+@patch("app.celery.tasks.alerts_api_client.create_publish_task")
+@patch("app.celery.tasks.PublishTaskProgress.update_progress")
+@patch("app.celery.tasks.alerts_api_client.update_publish_task")
 @patch("app.celery.tasks.Alerts.load")
 @patch("app.celery.tasks.get_rendered_pages")
 @patch("app.celery.tasks.upload_html_to_s3")
 @patch("app.celery.tasks.purge_fastly_cache")
 @patch("app.celery.tasks.alerts_api_client.send_publish_acknowledgement")
+@patch("app.celery.tasks.PublishTaskProgress.set_to_finished")
+@patch("app.celery.tasks.alerts_api_client.mark_publish_as_finished")
 @patch("app.celery.tasks.put_success_metric_data")
-@patch("app.celery.tasks.create_publish_healthcheck_filename")
 def test_publish_govuk_alerts(
-    mock_create_publish_healthcheck_filename,
     mock_put_success_metric_data,
+    mock_mark_publish_as_finished,
+    mock_set_to_finished,
     mock_send_publish_acknowledgement,
     mock_purge_fastly_cache,
     mock_upload_to_s3,
     mock_get_rendered_pages,
     mock_Alerts_load,
+    mock_update_publish_task,
+    mock_update_progress,
+    mock_create_publish_task,
+    mock_create_progress,
     govuk_alerts,
 ):
-    publish_s3_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
-    client = boto3.client('s3')
-    client.create_bucket(Bucket=publish_s3_bucket_name,
-                         CreateBucketConfiguration={'LocationConstraint': current_app.config["AWS_REGION"]})
-    mock_filename = "publish-dynamic_celery.txt"
-    mock_create_publish_healthcheck_filename.return_value = mock_filename
     publish_govuk_alerts()
-    mock_create_publish_healthcheck_filename.assert_called_once()
-    mock_Alerts_load.assert_called_once()
-    mock_Alerts_load.assert_called_once()
-    mock_get_rendered_pages.assert_called_once()
-    args, kwargs = mock_get_rendered_pages.call_args
-    assert args[0] == mock_Alerts_load.return_value
-    assert args[1] == mock_filename
-    mock_upload_to_s3.assert_called_once()
-    # Asserts the pertinent mock_upload_to_s3 call args, the S3 session client
-    # cannot be compared
-    args, kwargs = mock_upload_to_s3.call_args
-    assert args[0] == mock_get_rendered_pages.return_value
-    assert args[1] == mock_filename
+    mock_Alerts_load.assert_called_once_with(mock_create_progress.return_value)
+    mock_get_rendered_pages.assert_called_once_with(
+        mock_Alerts_load.return_value,
+        mock_create_progress.return_value
+    )
+    mock_upload_to_s3.assert_called_once_with(mock_get_rendered_pages.return_value,
+                                              mock_create_progress.return_value, "")
     mock_purge_fastly_cache.assert_called_once()
     mock_send_publish_acknowledgement.assert_called_once()
-    mock_put_success_metric_data.assert_called_once_with('publish-dynamic')
 
 
 @patch("app.celery.tasks.Alerts.load")

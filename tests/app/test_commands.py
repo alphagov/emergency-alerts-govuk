@@ -2,15 +2,16 @@ from freezegun import freeze_time
 
 
 def create_mock_filename(publish_type, publish_origin):
-    return f"{publish_type}_{publish_origin}.txt"
+    return f"{publish_type}_{publish_origin}_.txt"
 
 
 @freeze_time('2026-02-16T11:30:00Z')
-def test_publish(mocker, govuk_alerts, mock_get_ecs_task_id):
+def test_publish(mocker, govuk_alerts):
     # This test mocks the invocation of the publish command, via cli, and asserts
     # that mock functions are called with expected arguments
-    filename = create_mock_filename("publish-dynamic", "cli")
-
+    mock_create_progress = mocker.patch(
+        "app.celery.tasks.PublishTaskProgress.create"
+    )
     publish_html_mock = mocker.patch('app.commands._publish_html')
     purge_fastly_cache_mock = mocker.patch('app.commands.purge_fastly_cache')
     send_publish_ack_mock = mocker.patch(
@@ -26,7 +27,7 @@ def test_publish(mocker, govuk_alerts, mock_get_ecs_task_id):
         ]
     )
 
-    publish_html_mock.assert_called_once_with(filename)
+    publish_html_mock.assert_called_once_with(mock_create_progress.return_value)
     purge_fastly_cache_mock.assert_called_once()
     send_publish_ack_mock.assert_called_once()
     put_success_metric_data_mock.assert_called_once_with('publish-dynamic')
@@ -36,7 +37,9 @@ def test_publish(mocker, govuk_alerts, mock_get_ecs_task_id):
 def test_startup_publish_with_assets(mocker, govuk_alerts, mock_get_ecs_task_id):
     # This test mocks the invocation of the publish-with-assets command, upon startup, and asserts
     # that mock functions are called with expected arguments
-    filename = create_mock_filename("publish-all", "startup")
+    mock_create_progress = mocker.patch(
+        "app.celery.tasks.PublishTaskProgress.create"
+    )
     publish_html_mock = mocker.patch('app.commands._publish_html')
     publish_cap_xml_mock = mocker.patch('app.commands._publish_cap_xml')
     publish_with_assets_mock = mocker.patch('app.commands._publish_assets')
@@ -54,9 +57,9 @@ def test_startup_publish_with_assets(mocker, govuk_alerts, mock_get_ecs_task_id)
             '--startup',  # Passed in within startup script
         ]
     )
-    publish_html_mock.assert_called_once_with(filename)
-    publish_cap_xml_mock.assert_called_once_with(filename)
-    publish_with_assets_mock.assert_called_once_with(filename)
+    publish_html_mock.assert_called_once_with(mock_create_progress.return_value)
+    publish_cap_xml_mock.assert_called_once_with(mock_create_progress.return_value)
+    publish_with_assets_mock.assert_called_once_with(mock_create_progress.return_value)
     purge_fastly_cache_mock.assert_called_once()
     send_publish_ack_mock.assert_called_once()
     put_success_metric_data_mock.assert_called_once_with('publish-all')
@@ -66,7 +69,9 @@ def test_startup_publish_with_assets(mocker, govuk_alerts, mock_get_ecs_task_id)
 def test_publish_with_assets(mocker, govuk_alerts):
     # This test mocks the invocation of the publish-with-assets command, via cli, and asserts
     # that mock functions are called with expected arguments
-    filename = create_mock_filename("publish-all", "cli")
+    mock_create_progress = mocker.patch(
+        "app.celery.tasks.PublishTaskProgress.create"
+    )
     publish_html_mock = mocker.patch('app.commands._publish_html')
     publish_cap_xml_mock = mocker.patch('app.commands._publish_cap_xml')
     publish_with_assets_mock = mocker.patch('app.commands._publish_assets')
@@ -84,9 +89,9 @@ def test_publish_with_assets(mocker, govuk_alerts):
         ]
     )
 
-    publish_html_mock.assert_called_once_with(filename)
-    publish_cap_xml_mock.assert_called_once_with(filename)
-    publish_with_assets_mock.assert_called_once_with(filename)
+    publish_html_mock.assert_called_once_with(mock_create_progress.return_value)
+    publish_cap_xml_mock.assert_called_once_with(mock_create_progress.return_value)
+    publish_with_assets_mock.assert_called_once_with(mock_create_progress.return_value)
     purge_fastly_cache_mock.assert_called_once()
     send_publish_ack_mock.assert_called_once()
     put_success_metric_data_mock.assert_called_once_with('publish-all')
