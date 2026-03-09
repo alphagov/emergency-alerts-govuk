@@ -43,7 +43,7 @@ class AlertsApiClient(BaseAPIClient):
         return self.post(url="/publish_task_progress/get-publish", data={"task_id": task_id})
 
     def update_publish_task(self, task_id, file):
-        # Updates the `last_published_at` and `last_published_file` attributes of publish progress task in the database
+        # Updates the `last_activity_at` and `last_published_file` attributes of publish progress task in the database
         return self.post(url="/publish_task_progress/update-publish", data={"task_id": task_id, "file": file})
 
     def mark_publish_as_finished(self, task_id):
