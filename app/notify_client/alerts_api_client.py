@@ -31,5 +31,24 @@ class AlertsApiClient(BaseAPIClient):
     def send_publish_acknowledgement(self):
         return self.post(url="/govuk-alerts/acknowledge", data={})
 
+    # The following client methods post data to API (specifically `publish_task_progress` endpoints)
+    # and are used to update state of Publish Progress Tasks in DB
+
+    def create_publish_task(self, task_id):
+        # Creates publish progress task in the database and returns data stored for the task
+        return self.post(url="/publish_task_progress/add-publish", data={"task_id": task_id})
+
+    def get_publish_task(self, task_id):
+        # Retrieves a specific publish progress task's data from the database
+        return self.post(url="/publish_task_progress/get-publish", data={"task_id": task_id})
+
+    def update_publish_task(self, task_id, file):
+        # Updates the `last_published_at` and `last_published_file` attributes of publish progress task in the database
+        return self.post(url="/publish_task_progress/update-publish", data={"task_id": task_id, "file": file})
+
+    def mark_publish_as_finished(self, task_id):
+        # Updates the `finished_at` attribute of publish progress task in the database
+        self.post(url="/publish_task_progress/finish-publish", data={"task_id": task_id})
+
 
 alerts_api_client = AlertsApiClient()
