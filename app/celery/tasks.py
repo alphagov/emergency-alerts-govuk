@@ -65,6 +65,7 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
         current_app.logger.info("Finished GovUK publish")
     except Exception:
         current_app.logger.exception("Failed to publish content to gov.uk/alerts")
+        self.retry(queue=current_app.config["QUEUE_NAME"])
 
 
 @notify_celery.task(name=TaskNames.TRIGGER_GOVUK_HEALTHCHECK)
