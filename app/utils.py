@@ -104,7 +104,7 @@ def setup_s3_session():
     return session.client('s3')
 
 
-def upload_html_to_s3(rendered_pages, publish_task_progress, broadcast_event_id=""):
+def upload_html_to_s3(rendered_pages, publish_task_progress=None, broadcast_event_id=""):
 
     s3 = setup_s3_session()
 
@@ -127,7 +127,8 @@ def upload_html_to_s3(rendered_pages, publish_task_progress, broadcast_event_id=
             ContentType=content_type,
             Key=path
         )
-        publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
+        if publish_task_progress:
+            publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
 
 
 def upload_assets_to_s3(publish_task_progress):

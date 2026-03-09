@@ -96,8 +96,7 @@ def test_upload_to_s3(govuk_alerts):
 
     pages = {"alerts": "<p>this is some test content</p>"}
 
-    publish_progress_task = PublishTaskProgress.create("publish-dynamic", "cli")
-    upload_html_to_s3(pages, publish_progress_task, "test")
+    upload_html_to_s3(pages, broadcast_event_id="test")
 
     object_keys = [
         obj['Key'] for obj in
