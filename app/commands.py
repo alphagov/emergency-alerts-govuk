@@ -27,7 +27,7 @@ def publish():
         _publish_html(publish_task_progress)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
-        publish_task_progress.finish(publish_task_progress.id)
+        publish_task_progress.set_to_finished(publish_task_progress.id)
         put_success_metric_data("publish-dynamic")
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
@@ -45,7 +45,7 @@ def publish_with_assets(startup):
         _publish_assets(publish_task_progress)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
-        publish_task_progress.finish(publish_task_progress.id)
+        publish_task_progress.set_to_finished(publish_task_progress.id)
         put_success_metric_data("publish-all")
     except FileExistsError as e:
         current_app.logger.exception(f"Publish assets FAILED: {e}")

@@ -37,7 +37,7 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
         upload_html_to_s3(rendered_pages, publish_task_progress, broadcast_event_id)
         upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress, broadcast_event_id)
         purge_fastly_cache()
-        publish_task_progress.finish(publish_task_progress.id)
+        publish_task_progress.set_to_finished(publish_task_progress.id)
         put_success_metric_data("publish-dynamic")
     except Exception:
         current_app.logger.exception("Failed to publish content to gov.uk/alerts")
