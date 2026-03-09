@@ -8,7 +8,7 @@ from app import alerts_api_client
 from app.models.alert import Alert
 from app.models.alert_date import AlertDate
 from app.models.planned_tests import PlannedTests
-from app.utils import REPO, is_in_uk, put_timestamp_to_s3
+from app.utils import REPO, is_in_uk
 
 
 class Alerts(SerialisedModelCollection):
@@ -131,22 +131,15 @@ class Alerts(SerialisedModelCollection):
         return alerts_by_date.items()
 
     @classmethod
-    def load(cls, publish_healthcheck_filename=None, s3_session=None):
+    def load(cls, publish_task_progress):
         data = cls.from_yaml() + cls.from_api()
         alerts = []
-        if publish_healthcheck_filename:
-            # If `publish_timestamp_file` is True, with every alert from DB iterated through
-            # the current timestamp will be written to `publish_healthcheck_filename` to
-            # indicate an ongoing publish
-            for alert_dict in data:
-                if 'simple_polygons' not in alert_dict['areas'] or is_in_uk(alert_dict['areas']['simple_polygons']):
-                    current_app.logger.info(f"Loading alert {alert_dict.get("id")}")
-                    alerts.append(alert_dict)
-                    put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
-        else:
-            for alert_dict in data:
-                if 'simple_polygons' not in alert_dict['areas'] or is_in_uk(alert_dict['areas']['simple_polygons']):
-                    alerts.append(alert_dict)
+        for alert_dict in data:
+            if 'simple_polygons' not in alert_dict['areas'] or is_in_uk(alert_dict['areas']['simple_polygons']):
+                current_app.logger.info(f"Loading alert {alert_dict.get("id")}")
+                alerts.append(alert_dict)
+                publish_task_progress.update_progress(publish_task=publish_task_progress,
+                                                      file=f"Alert {alert_dict.get("id")}")
         return cls(alerts)
 
     @classmethod

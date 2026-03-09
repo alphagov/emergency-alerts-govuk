@@ -5,16 +5,12 @@ from flask import current_app
 
 from app import notify_celery
 from app.models.alerts import Alerts
-from app.notify_client.alerts_api_client import alerts_api_client
+from app.models.publish_task_progress import PublishTaskProgress
 from app.render import get_cap_xml_for_alerts, get_rendered_pages
 from app.utils import (
-    create_publish_healthcheck_filename,
-    delete_timestamp_file_from_s3,
     post_version_to_cloudwatch,
     purge_fastly_cache,
     put_success_metric_data,
-    put_timestamp_to_s3,
-    setup_s3_session,
     upload_cap_xml_to_s3,
     upload_html_to_s3,
 )
@@ -29,24 +25,19 @@ from app.utils import (
 )
 def publish_govuk_alerts(self, broadcast_event_id=""):
     try:
-        publish_healthcheck_filename = create_publish_healthcheck_filename("publish-dynamic", "celery")
-
-        s3_session = setup_s3_session()
-        put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
-
-        alerts = Alerts.load(publish_healthcheck_filename, s3_session)
-        rendered_pages = get_rendered_pages(alerts, publish_healthcheck_filename, s3_session)
-        cap_xml_alerts = get_cap_xml_for_alerts(alerts, publish_healthcheck_filename, s3_session)
+        publish_task_progress = PublishTaskProgress.create(publish_type="publish-dynamic", publish_origin="celery")
+        alerts = Alerts.load(publish_task_progress)
+        rendered_pages = get_rendered_pages(alerts, publish_task_progress)
+        cap_xml_alerts = get_cap_xml_for_alerts(alerts, publish_task_progress)
 
         if not current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]:
             current_app.logger.info("Skipping upload to S3 in local environment")
             return
 
-        upload_html_to_s3(rendered_pages, publish_healthcheck_filename, broadcast_event_id, s3_session)
-        upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast_event_id, s3_session)
+        upload_html_to_s3(rendered_pages, publish_task_progress, broadcast_event_id)
+        upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress, broadcast_event_id)
         purge_fastly_cache()
-        alerts_api_client.send_publish_acknowledgement()
-        delete_timestamp_file_from_s3(publish_healthcheck_filename)
+        publish_task_progress.finish(publish_task_progress.id)
         put_success_metric_data("publish-dynamic")
     except Exception:
         current_app.logger.exception("Failed to publish content to gov.uk/alerts")

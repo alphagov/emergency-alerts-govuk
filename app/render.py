@@ -23,7 +23,6 @@ from app.utils import (
     file_fingerprint,
     paragraphize,
     simplify_custom_area_name,
-    write_timestamp_to_file_if_exists,
 )
 
 TEMPLATES = REPO / 'app' / 'templates'
@@ -108,7 +107,7 @@ def setup_jinja_environment(alerts):
     return env
 
 
-def get_rendered_pages(alerts, publish_healthcheck_filename=None, s3_session=None):
+def get_rendered_pages(alerts, publish_task_progress):
     env = setup_jinja_environment(alerts)
     rendered = {}
 
@@ -131,7 +130,7 @@ def get_rendered_pages(alerts, publish_healthcheck_filename=None, s3_session=Non
                     _add_feed_entry(fg, alert, alert_url)
                     _add_feed_entry(fg_cy, alert, alert_url)
                     feed_item_count += 1
-                write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
+                publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
             continue
 
         # Render each alert's page in Welsh
@@ -140,21 +139,21 @@ def get_rendered_pages(alerts, publish_healthcheck_filename=None, s3_session=Non
                 alert_url = get_url_for_alert(alert, alerts)
                 rendered["alerts/" + alert_url + ".cy"] = template.render({
                     'alert_data': alert})
-                write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
+                publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
             continue
 
         if target == 'index':
             rendered['alerts'] = template.render()
-            write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
+            publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
             continue
 
         if target == 'index.cy':
             rendered['alerts/about.cy'] = template.render()
-            write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
+            publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
             continue
 
         rendered["alerts/" + target] = template.render()
-        write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
+        publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
 
     rendered['alerts/feed.atom'] = _add_stylesheet_attribute_to_atom(
         fg.atom_str(pretty=True).decode("utf-8")
@@ -339,7 +338,7 @@ def _display_format_time_string(time):
     return tz_aware_time.strftime("%Y-%m-%d %H:%M %Z")
 
 
-def get_cap_xml_for_alerts(alerts, publish_healthcheck_filename=None, s3_session=None):
+def get_cap_xml_for_alerts(alerts, publish_task_progress):
     cap_xml_alerts = {}
     host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
     for alert in alerts.public:
@@ -360,6 +359,6 @@ def get_cap_xml_for_alerts(alerts, publish_healthcheck_filename=None, s3_session
             timestamp = alert.cancelled_at.strftime("%Y%m%d%H%M%S")
             cap_xml_alerts[f"alerts/{alert_url}-{timestamp}.cap.xml"] = cap_xml
 
-        write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
+        publish_task_progress.update_progress(publish_task=publish_task_progress, file=f"CAP XML for {alert}")
 
     return cap_xml_alerts

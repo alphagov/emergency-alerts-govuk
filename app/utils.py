@@ -104,7 +104,9 @@ def setup_s3_session():
     return session.client('s3')
 
 
-def upload_html_to_s3(rendered_pages, publish_healthcheck_filename, broadcast_event_id="", s3_session=None):
+def upload_html_to_s3(rendered_pages, publish_task_progress, broadcast_event_id=""):
+
+    s3 = setup_s3_session()
 
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
@@ -119,16 +121,16 @@ def upload_html_to_s3(rendered_pages, publish_healthcheck_filename, broadcast_ev
             }
         )
         content_type = "text/xml" if path.endswith(".atom") else "text/html"
-        s3_session.put_object(
+        s3.put_object(
             Body=content,
             Bucket=bucket_name,
             ContentType=content_type,
             Key=path
         )
-        write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
+        publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
 
 
-def upload_assets_to_s3(publish_healthcheck_filename, s3_session=None):
+def upload_assets_to_s3(publish_task_progress):
     if not Path(DIST).exists():
         raise FileExistsError(f'Folder {DIST} not found.')
 
@@ -137,26 +139,29 @@ def upload_assets_to_s3(publish_healthcheck_filename, s3_session=None):
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
 
+    s3 = setup_s3_session()
+
     assets = get_asset_files(DIST)
     for filename, (content, mimetype) in assets.items():
         current_app.logger.info("Uploading " + filename)
-        s3_session.put_object(
+        s3.put_object(
             Body=content,
             Bucket=bucket_name,
             ContentType=mimetype,
             Key=filename
         )
-        write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
+        publish_task_progress.update_progress(publish_task=publish_task_progress, file=filename)
 
 
-def upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast_event_id="", s3_session=None):
+def upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress, broadcast_event_id=""):
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
 
-    for path, content in cap_xml_alerts.items():
+    s3 = setup_s3_session()
 
+    for path, content in cap_xml_alerts.items():
         current_app.logger.info(
             "Uploading " + path,
             extra={
@@ -164,13 +169,13 @@ def upload_cap_xml_to_s3(cap_xml_alerts, publish_healthcheck_filename, broadcast
             }
         )
 
-        s3_session.put_object(
+        s3.put_object(
             Body=content,
             Bucket=bucket_name,
             ContentType="application/cap+xml",
             Key=path
         )
-        write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session)
+        publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
 
 
 def purge_fastly_cache():
@@ -284,44 +289,6 @@ def create_cap_event(alert, identifier, url=None, cancelled=False):
     }
 
 
-def put_timestamp_to_s3(filename, s3):
-    publish_timestamps_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
-    if not publish_timestamps_bucket_name:
-        msg = "Target S3 Publish Healthcheck bucket not specified: Skipping upload of publish timestamp"
-        current_app.logger.info(msg)
-        return
-    current_app.logger.info(f"Writing {int(time.time())} to {filename}")
-    s3.put_object(
-        Body=str(int(time.time())),
-        Bucket=publish_timestamps_bucket_name,
-        ContentType="text/plain",
-        Key=filename
-    )
-
-
-def write_timestamp_to_file_if_exists(publish_healthcheck_filename, s3_session):
-    if publish_healthcheck_filename:
-        put_timestamp_to_s3(publish_healthcheck_filename, s3_session)
-
-
-def delete_timestamp_file_from_s3(publish_healthcheck_filename):
-    publish_timestamps_bucket_name = current_app.config["GOVUK_PUBLISH_TIMESTAMPS_S3_BUCKET_NAME"]
-    if not publish_timestamps_bucket_name:
-        current_app.logger.info("Target S3 Publish Healthcheck bucket not specified: Skipping file deletion")
-        return
-
-    if not publish_healthcheck_filename:
-        current_app.logger.info("Target S3 Publish Healthcheck filename not specified: Skipping file deletion")
-        return
-
-    s3 = setup_s3_session()
-    s3.delete_object(
-        Bucket=publish_timestamps_bucket_name,
-        Key=publish_healthcheck_filename,
-    )
-    current_app.logger.info(f"Deleted {publish_healthcheck_filename}, publish successful")
-
-
 def put_success_metric_data(publish_type):
     session = setup_boto3_session()
     cloudwatch = session.client('cloudwatch')
@@ -345,5 +312,5 @@ def put_success_metric_data(publish_type):
     current_app.logger.info(f"Put success metric value of 0 for {publish_type}, following successful publish.")
 
 
-def create_publish_healthcheck_filename(publish_type, publish_origin):
-    return f"{publish_type}_{publish_origin}.txt"
+def create_publish_progress_task_id(publish_type, publish_origin):
+    return f"{publish_type}_{publish_origin}_{int(time.time())}.txt"
