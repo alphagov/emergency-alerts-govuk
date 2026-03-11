@@ -133,10 +133,3 @@ def set_config(app, name, value):
     finally:
         app.config[name] = old_val
 
-
-@pytest.fixture()
-def mock_get_ecs_task_id(mocker):
-    mock_get = mocker.patch("app.utils.requests.get")
-    mock_get.return_value.json.return_value = {
-        "TaskARN": "arn:aws:ecs:eu-west-2:123456789012:task/cluster-name/taskid"
-    }

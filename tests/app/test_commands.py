@@ -34,7 +34,7 @@ def test_publish(mocker, govuk_alerts):
 
 
 @freeze_time('2026-02-16T11:30:00Z')
-def test_startup_publish_with_assets(mocker, govuk_alerts, mock_get_ecs_task_id):
+def test_startup_publish_with_assets(mocker, govuk_alerts):
     # This test mocks the invocation of the publish-with-assets command, upon startup, and asserts
     # that mock functions are called with expected arguments
     mock_create_progress = mocker.patch(
