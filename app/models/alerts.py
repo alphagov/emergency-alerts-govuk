@@ -8,6 +8,7 @@ from app import alerts_api_client
 from app.models.alert import Alert
 from app.models.alert_date import AlertDate
 from app.models.planned_tests import PlannedTests
+from app.models.publish_task_progress import update_publish_progress_if_exists
 from app.utils import REPO, is_in_uk
 
 
@@ -138,9 +139,7 @@ class Alerts(SerialisedModelCollection):
             if 'simple_polygons' not in alert_dict['areas'] or is_in_uk(alert_dict['areas']['simple_polygons']):
                 current_app.logger.info(f"Loading alert {alert_dict.get("id")}")
                 alerts.append(alert_dict)
-                if publish_task_progress:
-                    publish_task_progress.update_progress(publish_task=publish_task_progress,
-                                                          file=f"Alert {alert_dict.get("id")}")
+                update_publish_progress_if_exists(publish_task_progress, f"Alert {alert_dict.get("id")}")
         return cls(alerts)
 
     @classmethod

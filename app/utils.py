@@ -9,6 +9,7 @@ from flask import current_app
 from markupsafe import Markup, escape
 
 from app import version
+from app.models.publish_task_progress import update_publish_progress_if_exists
 
 REPO = Path(__file__).parent.parent
 DIST = REPO / 'dist'
@@ -127,8 +128,7 @@ def upload_html_to_s3(rendered_pages, publish_task_progress=None, broadcast_even
             ContentType=content_type,
             Key=path
         )
-        if publish_task_progress:
-            publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
+        update_publish_progress_if_exists(publish_task_progress, path)
 
 
 def upload_assets_to_s3(publish_task_progress):

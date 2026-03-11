@@ -15,6 +15,7 @@ from jinja2 import (
 )
 from lxml import etree as ET
 
+from app.models.publish_task_progress import update_publish_progress_if_exists
 from app.utils import (
     DIST,
     REPO,
@@ -130,8 +131,7 @@ def get_rendered_pages(alerts, publish_task_progress=None):
                     _add_feed_entry(fg, alert, alert_url)
                     _add_feed_entry(fg_cy, alert, alert_url)
                     feed_item_count += 1
-                if publish_task_progress:
-                    publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
+                update_publish_progress_if_exists(publish_task_progress, path)
             continue
 
         # Render each alert's page in Welsh
@@ -140,25 +140,21 @@ def get_rendered_pages(alerts, publish_task_progress=None):
                 alert_url = get_url_for_alert(alert, alerts)
                 rendered["alerts/" + alert_url + ".cy"] = template.render({
                     'alert_data': alert})
-                if publish_task_progress:
-                    publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
+                update_publish_progress_if_exists(publish_task_progress, path)
             continue
 
         if target == 'index':
             rendered['alerts'] = template.render()
-            if publish_task_progress:
-                publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
+            update_publish_progress_if_exists(publish_task_progress, path)
             continue
 
         if target == 'index.cy':
             rendered['alerts/about.cy'] = template.render()
-            if publish_task_progress:
-                publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
+            update_publish_progress_if_exists(publish_task_progress, path)
             continue
 
         rendered["alerts/" + target] = template.render()
-        if publish_task_progress:
-            publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
+        update_publish_progress_if_exists(publish_task_progress, path)
 
     rendered['alerts/feed.atom'] = _add_stylesheet_attribute_to_atom(
         fg.atom_str(pretty=True).decode("utf-8")
@@ -364,7 +360,6 @@ def get_cap_xml_for_alerts(alerts, publish_task_progress=None):
             timestamp = alert.cancelled_at.strftime("%Y%m%d%H%M%S")
             cap_xml_alerts[f"alerts/{alert_url}-{timestamp}.cap.xml"] = cap_xml
 
-        if publish_task_progress:
-            publish_task_progress.update_progress(publish_task=publish_task_progress, file=f"CAP XML for {alert}")
+        update_publish_progress_if_exists(publish_task_progress, f"CAP XML for {alert}")
 
     return cap_xml_alerts

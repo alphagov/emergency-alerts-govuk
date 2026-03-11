@@ -97,3 +97,8 @@ class PublishTaskProgress(SerialisedModel):
         if last_activity_at_datetime is None:
             return False
         return (time.time() - last_activity_at_datetime) < min_interval_seconds
+
+
+def update_publish_progress_if_exists(publish_task_progress, path):
+    if publish_task_progress:
+        publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
