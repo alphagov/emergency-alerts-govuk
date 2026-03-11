@@ -85,7 +85,7 @@ def is_in_uk(simple_polygons):
     )
 
 
-def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
+def upload_html_to_s3(rendered_pages):
     host_environment = current_app.config["HOST"]
 
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
@@ -105,12 +105,7 @@ def upload_html_to_s3(rendered_pages, broadcast_event_id=""):
     s3 = session.client('s3')
 
     for path, content in rendered_pages.items():
-        current_app.logger.info(
-            "Uploading " + path,
-            extra={
-                "broadcast_event_id": broadcast_event_id
-            }
-        )
+        current_app.logger.info("Uploading " + path)
         content_type = "text/xml" if path.endswith(".atom") else "text/html"
         s3.put_object(
             Body=content,
@@ -153,7 +148,7 @@ def upload_assets_to_s3():
         )
 
 
-def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
+def upload_cap_xml_to_s3(cap_xml_alerts):
     host_environment = current_app.config["HOST"]
 
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
@@ -176,16 +171,10 @@ def upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id=""):
 
         current_app.logger.info(
             "Uploading " + path,
-            extra={
-                "broadcast_event_id": broadcast_event_id
-            }
         )
 
         current_app.logger.info(
             content,
-            extra={
-                "broadcast_event_id": broadcast_event_id
-            }
         )
 
         s3.put_object(
