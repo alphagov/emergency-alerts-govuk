@@ -1,5 +1,5 @@
 aws-opentelemetry-distro==0.14.2
-boto3==1.42.64
+boto3==1.42.65
 celery[sqs]==5.6.2
 certifi==2026.2.25
 feedgen==1.0.0
