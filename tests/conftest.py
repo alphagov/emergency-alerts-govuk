@@ -132,4 +132,3 @@ def set_config(app, name, value):
         yield
     finally:
         app.config[name] = old_val
-
