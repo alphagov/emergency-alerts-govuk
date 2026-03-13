@@ -5,11 +5,13 @@ from flask import current_app
 
 from app import notify_celery
 from app.models.alerts import Alerts
+from app.models.publish_task_progress import PublishTaskProgress
 from app.notify_client.alerts_api_client import alerts_api_client
 from app.render import get_cap_xml_for_alerts, get_rendered_pages
 from app.utils import (
     post_version_to_cloudwatch,
     purge_fastly_cache,
+    put_success_metric_data,
     upload_cap_xml_to_s3,
     upload_html_to_s3,
 )
@@ -24,18 +26,21 @@ from app.utils import (
 )
 def publish_govuk_alerts(self, broadcast_event_id=""):
     try:
-        alerts = Alerts.load()
-        rendered_pages = get_rendered_pages(alerts)
-        cap_xml_alerts = get_cap_xml_for_alerts(alerts)
+        publish_task_progress = PublishTaskProgress.create(publish_type="publish-dynamic", publish_origin="celery")
+        alerts = Alerts.load(publish_task_progress)
+        rendered_pages = get_rendered_pages(alerts, publish_task_progress)
+        cap_xml_alerts = get_cap_xml_for_alerts(alerts, publish_task_progress)
 
         if not current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]:
             current_app.logger.info("Skipping upload to S3 in local environment")
             return
 
-        upload_html_to_s3(rendered_pages, broadcast_event_id)
-        upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id)
+        upload_html_to_s3(rendered_pages, publish_task_progress, broadcast_event_id)
+        upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress, broadcast_event_id)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
+        publish_task_progress.set_to_finished(publish_task_progress.id)
+        put_success_metric_data("publish-dynamic")
     except Exception:
         current_app.logger.exception("Failed to publish content to gov.uk/alerts")
         self.retry(queue=current_app.config['QUEUE_NAME'])

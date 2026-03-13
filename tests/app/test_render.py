@@ -234,4 +234,4 @@ def test_get_cap_xml_for_alerts_skips_non_public_alerts():
             create_alert_dict(id=UUID(int=3), channel="operator"),
         ]
     )
-    assert get_cap_xml_for_alerts(alerts) == {}
+    assert get_cap_xml_for_alerts(alerts, ) == {}

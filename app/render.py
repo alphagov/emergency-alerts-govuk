@@ -15,6 +15,7 @@ from jinja2 import (
 )
 from lxml import etree as ET
 
+from app.models.publish_task_progress import update_publish_progress_if_exists
 from app.utils import (
     DIST,
     REPO,
@@ -107,7 +108,7 @@ def setup_jinja_environment(alerts):
     return env
 
 
-def get_rendered_pages(alerts):
+def get_rendered_pages(alerts, publish_task_progress=None):
     env = setup_jinja_environment(alerts)
     rendered = {}
 
@@ -116,6 +117,7 @@ def get_rendered_pages(alerts):
     feed_item_count = 0
 
     for path in all_view_paths:
+        current_app.logger.info(f"Starting render of {path}")
         template = env.get_template(path)
         target = path.replace(".html", "")
 
@@ -129,6 +131,7 @@ def get_rendered_pages(alerts):
                     _add_feed_entry(fg, alert, alert_url)
                     _add_feed_entry(fg_cy, alert, alert_url)
                     feed_item_count += 1
+                update_publish_progress_if_exists(publish_task_progress, path)
             continue
 
         # Render each alert's page in Welsh
@@ -137,17 +140,21 @@ def get_rendered_pages(alerts):
                 alert_url = get_url_for_alert(alert, alerts)
                 rendered["alerts/" + alert_url + ".cy"] = template.render({
                     'alert_data': alert})
+                update_publish_progress_if_exists(publish_task_progress, path)
             continue
 
         if target == 'index':
             rendered['alerts'] = template.render()
+            update_publish_progress_if_exists(publish_task_progress, path)
             continue
 
         if target == 'index.cy':
             rendered['alerts/about.cy'] = template.render()
+            update_publish_progress_if_exists(publish_task_progress, path)
             continue
 
         rendered["alerts/" + target] = template.render()
+        update_publish_progress_if_exists(publish_task_progress, path)
 
     rendered['alerts/feed.atom'] = _add_stylesheet_attribute_to_atom(
         fg.atom_str(pretty=True).decode("utf-8")
@@ -332,7 +339,7 @@ def _display_format_time_string(time):
     return tz_aware_time.strftime("%Y-%m-%d %H:%M %Z")
 
 
-def get_cap_xml_for_alerts(alerts):
+def get_cap_xml_for_alerts(alerts, publish_task_progress=None):
     cap_xml_alerts = {}
     host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
     for alert in alerts.public:
@@ -352,5 +359,7 @@ def get_cap_xml_for_alerts(alerts):
             cap_xml = generate_xml_body(event)
             timestamp = alert.cancelled_at.strftime("%Y%m%d%H%M%S")
             cap_xml_alerts[f"alerts/{alert_url}-{timestamp}.cap.xml"] = cap_xml
+
+        update_publish_progress_if_exists(publish_task_progress, f"CAP XML for {alert}")
 
     return cap_xml_alerts

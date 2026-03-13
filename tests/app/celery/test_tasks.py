@@ -13,25 +13,51 @@ from app.celery.tasks import (
 )
 
 
+@patch("app.models.publish_task_progress.PublishTaskProgress.create")
+@patch("app.notify_client.alerts_api_client.publish_api_client.create_publish_task")
+@patch("app.celery.tasks.PublishTaskProgress.update_progress")
+@patch("app.notify_client.alerts_api_client.publish_api_client.update_publish_task")
 @patch("app.celery.tasks.Alerts.load")
 @patch("app.celery.tasks.get_rendered_pages")
 @patch("app.celery.tasks.upload_html_to_s3")
 @patch("app.celery.tasks.purge_fastly_cache")
 @patch("app.celery.tasks.alerts_api_client.send_publish_acknowledgement")
+@patch("app.models.publish_task_progress.PublishTaskProgress.set_to_finished")
+@patch("app.notify_client.alerts_api_client.publish_api_client.mark_publish_as_finished")
+@patch("app.celery.tasks.put_success_metric_data")
 def test_publish_govuk_alerts(
+    mock_put_success_metric_data,
+    mock_mark_publish_as_finished,
+    mock_set_to_finished,
     mock_send_publish_acknowledgement,
     mock_purge_fastly_cache,
     mock_upload_to_s3,
     mock_get_rendered_pages,
     mock_Alerts_load,
+    mock_update_publish_task,
+    mock_update_progress,
+    mock_create_publish_task,
+    mock_create_progress,
     govuk_alerts,
 ):
     publish_govuk_alerts()
-    mock_Alerts_load.assert_called_once()
-    mock_get_rendered_pages.assert_called_once_with(mock_Alerts_load.return_value)
-    mock_upload_to_s3.assert_called_once_with(mock_get_rendered_pages.return_value, "")
+    mock_Alerts_load.assert_called_once_with(mock_create_progress.return_value)
+    mock_get_rendered_pages.assert_called_once_with(
+        mock_Alerts_load.return_value,
+        mock_create_progress.return_value,
+    )
+
+    mock_upload_to_s3.assert_called_once_with(
+        mock_get_rendered_pages.return_value,
+        mock_create_progress.return_value,
+        "",
+    )
+
     mock_purge_fastly_cache.assert_called_once()
     mock_send_publish_acknowledgement.assert_called_once()
+    mock_set_to_finished.assert_called_once()
+    mock_mark_publish_as_finished.assert_called_once()
+    mock_put_success_metric_data.assert_called_once()
 
 
 @patch("app.celery.tasks.Alerts.load")

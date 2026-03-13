@@ -14,6 +14,8 @@ class Config():
     BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
     AWS_REGION = os.getenv("AWS_REGION", "eu-west-2")
     GOVUK_ALERTS_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_S3_BUCKET_NAME")
+    GOVUK_PUBLISH_METRIC_NAMESPACE = "GOVUK Alerts Publish"
+    GOVUK_PUBLISH_METRIC_NAME = f"PublishFailures_{HOST}"
 
     FASTLY_ENABLED = not os.getenv("FASTLY_ENABLED", "true").lower() == "false"
     FASTLY_SERVICE_ID = os.getenv("FASTLY_SERVICE_ID")
@@ -21,9 +23,13 @@ class Config():
     FASTLY_SURROGATE_KEY = "notify-emergency-alerts"
 
     NOTIFY_API_HOST_NAME = os.environ.get("API_HOST_NAME", "http://localhost:6011")
-    GOVUK_CLIENT_SECRET = "govuk-alerts-secret-key"
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
+    GOVUK_CLIENT_SECRET = "govuk-alerts-secret-key"
+
+    GOVUK_ALERTS_PUBLISH_CLIENT_ID = "govuk-alerts-publish"
+    GOVUK_ALERTS_PUBLISH_CLIENT_SECRET = os.environ.get("GOVUK_ALERTS_PUBLISH_CLIENT_SECRET",
+                                                        "govuk-alerts-publish-secret-key")
     QUEUE_NAME = "govuk-alerts"
 
     CELERY = {

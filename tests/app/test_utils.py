@@ -15,6 +15,7 @@ from app.utils import (
     is_in_uk,
     paragraphize,
     purge_fastly_cache,
+    put_success_metric_data,
     simplify_custom_area_name,
     upload_html_to_s3,
 )
@@ -89,10 +90,12 @@ def test_upload_to_s3(govuk_alerts):
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
 
     client = boto3.client('s3')
-    client.create_bucket(Bucket=bucket_name, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
+    client.create_bucket(Bucket=bucket_name,
+                         CreateBucketConfiguration={'LocationConstraint': current_app.config["AWS_REGION"]})
 
     pages = {"alerts": "<p>this is some test content</p>"}
-    upload_html_to_s3(pages)
+
+    upload_html_to_s3(pages, broadcast_event_id="test")
 
     object_keys = [
         obj['Key'] for obj in
@@ -104,6 +107,21 @@ def test_upload_to_s3(govuk_alerts):
     alerts_object = client.get_object(Bucket=bucket_name, Key='alerts')
     assert alerts_object['Body'].read().decode('utf-8') == pages['alerts']
     assert alerts_object['ContentType'] == 'text/html'
+
+
+@mock_aws
+def test_put_success_metric_data(govuk_alerts):
+    client = boto3.client(
+        "cloudwatch", region_name=current_app.config["AWS_REGION"]
+    )
+
+    origin = "publish-all"
+    put_success_metric_data(origin)
+
+    metric = client.list_metrics()["Metrics"][0]
+    assert metric["MetricName"] == current_app.config["GOVUK_PUBLISH_METRIC_NAME"]
+    assert metric["Namespace"] == current_app.config["GOVUK_PUBLISH_METRIC_NAMESPACE"]
+    assert {'Name': 'PublishType', 'Value': origin} in metric["Dimensions"]
 
 
 @patch('app.utils.requests')
