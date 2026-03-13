@@ -3,7 +3,7 @@ from datetime import datetime
 
 from emergency_alerts_utils.serialised_model import SerialisedModel
 
-from app.notify_client.alerts_api_client import alerts_api_client
+from app.notify_client.alerts_api_client import publish_api_client
 
 
 class PublishTaskProgress(SerialisedModel):
@@ -39,7 +39,7 @@ class PublishTaskProgress(SerialisedModel):
         # `task_id` is combination of publish type, origin and start time and is stored
         # as `id` in the database
         task_id = f"{publish_type}_{publish_origin}_{int(time.time())}.txt"
-        data = alerts_api_client.create_publish_task(task_id)
+        data = publish_api_client.create_publish_task(task_id)
         return cls(
             id=data["id"],
             started_at=data["started_at"]
@@ -47,15 +47,15 @@ class PublishTaskProgress(SerialisedModel):
 
     @classmethod
     def update(cls, publish_task, file):
-        alerts_api_client.update_publish_task(publish_task.id, file)
+        publish_api_client.update_publish_task(publish_task.id, file)
 
     @classmethod
     def set_to_finished(cls, task_id):
-        alerts_api_client.mark_publish_as_finished(task_id)
+        publish_api_client.mark_publish_as_finished(task_id)
 
     @classmethod
     def from_id(cls, task_id):
-        data = alerts_api_client.get_publish_task(task_id)
+        data = publish_api_client.get_publish_task(task_id)
         return cls(
             id=data["id"],
             started_at=data["started_at"],
@@ -70,7 +70,7 @@ class PublishTaskProgress(SerialisedModel):
             # Too soon since last update; skip calling the API
             return publish_task
 
-        data = alerts_api_client.update_publish_task(publish_task.id, file)
+        data = publish_api_client.update_publish_task(publish_task.id, file)
         publish_task.last_published_file = data.get("last_published_file")
         publish_task.last_activity_at = data.get(
             "last_activity_at",
