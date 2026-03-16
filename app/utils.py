@@ -290,28 +290,5 @@ def create_cap_event(alert, identifier, url=None, cancelled=False):
     }
 
 
-def put_success_metric_data(publish_type):
-    session = setup_boto3_session()
-    cloudwatch = session.client('cloudwatch')
-    cloudwatch.put_metric_data(
-        Namespace=current_app.config["GOVUK_PUBLISH_METRIC_NAMESPACE"],
-        MetricData=[
-            {
-                "MetricName": current_app.config["GOVUK_PUBLISH_METRIC_NAME"],
-                "Timestamp": str(time.time()),
-                "Value": 0,
-                "Unit": "Count",
-                "Dimensions": [
-                    {
-                        "Name": "PublishType",
-                        "Value": publish_type,
-                    },
-                ],
-            },
-        ]
-    )
-    current_app.logger.info(f"Put success metric value of 0 for {publish_type}, following successful publish.")
-
-
 def create_publish_progress_task_id(publish_type, publish_origin):
     return f"{publish_type}_{publish_origin}_{int(time.time())}.txt"

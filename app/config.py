@@ -14,8 +14,6 @@ class Config():
     BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
     AWS_REGION = os.getenv("AWS_REGION", "eu-west-2")
     GOVUK_ALERTS_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_S3_BUCKET_NAME")
-    GOVUK_PUBLISH_METRIC_NAMESPACE = "GOVUK Alerts Publish"
-    GOVUK_PUBLISH_METRIC_NAME = f"PublishFailures_{HOST}"
 
     FASTLY_ENABLED = not os.getenv("FASTLY_ENABLED", "true").lower() == "false"
     FASTLY_SERVICE_ID = os.getenv("FASTLY_SERVICE_ID")
