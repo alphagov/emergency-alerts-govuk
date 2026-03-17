@@ -1,10 +1,10 @@
 import os
 
 from celery import signals
-from emergency_alerts_utils import logging
 from emergency_alerts_utils.celery import NotifyCelery
 from flask import Flask, current_app
 
+from app import logging
 from app.notify_client.alerts_api_client import (
     alerts_api_client,
     publish_api_client,
