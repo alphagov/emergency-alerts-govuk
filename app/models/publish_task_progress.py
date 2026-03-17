@@ -13,7 +13,7 @@ class PublishTaskProgress(SerialisedModel):
     # using the API client methods within classmethods.
 
     ALLOWED_PROPERTIES = {
-        "id",  # The `task_id` for the publish task
+        "task_id",  # The `task_id` for the publish task
         "started_at",  # When the publish progress task was created, in RFC 2822 format
         "last_activity_at",  # When the publish progress task was last updated, in RFC 2822 format
         "last_published_file",  # The filename, or description of action, that occured with last update to the task
@@ -23,12 +23,14 @@ class PublishTaskProgress(SerialisedModel):
     def __init__(
         self,
         id,
+        task_id,
         started_at,
         last_activity_at=None,
         last_published_file=None,
         finished_at=None,
     ):
         self.id = id
+        self.task_id = task_id
         self.started_at = started_at
         self.last_activity_at = last_activity_at
         self.last_published_file = last_published_file
@@ -38,10 +40,11 @@ class PublishTaskProgress(SerialisedModel):
     def create(cls, publish_type, publish_origin):
         # `task_id` is combination of publish type, origin and start time and is stored
         # as `id` in the database
-        task_id = f"{publish_type}_{publish_origin}_{int(time.time())}.txt"
+        task_id = f"{publish_type}_{publish_origin}_{int(time.time())}"
         data = publish_api_client.create_publish_task(task_id)
         return cls(
             id=data["id"],
+            task_id=data["task_id"],
             started_at=data["started_at"]
         )
 
@@ -50,14 +53,15 @@ class PublishTaskProgress(SerialisedModel):
         publish_api_client.update_publish_task(publish_task.id, file)
 
     @classmethod
-    def set_to_finished(cls, task_id):
-        publish_api_client.mark_publish_as_finished(task_id)
+    def set_to_finished(cls, id):
+        publish_api_client.mark_publish_as_finished(id)
 
     @classmethod
-    def from_id(cls, task_id):
-        data = publish_api_client.get_publish_task(task_id)
+    def from_id(cls, id):
+        data = publish_api_client.get_publish_task(id)
         return cls(
             id=data["id"],
+            task_id=data["task_id"],
             started_at=data["started_at"],
             last_activity_at=data["last_activity_at"],
             last_published_file=data.get("last_published_file"),
