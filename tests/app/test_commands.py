@@ -2,7 +2,7 @@ from freezegun import freeze_time
 
 
 def create_mock_filename(publish_type, publish_origin):
-    return f"{publish_type}_{publish_origin}_.txt"
+    return f"{publish_type}_{publish_origin}_123"
 
 
 @freeze_time('2026-02-16T11:30:00Z')
