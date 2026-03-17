@@ -1,4 +1,3 @@
-import logging
 import os
 
 import opentelemetry.instrumentation.auto_instrumentation.sitecustomize  # noqa
@@ -15,6 +14,7 @@ from flask_dramatiq import AppContextMiddleware, Dramatiq
 from opentelemetry import trace
 from opentelemetry_instrumentor_dramatiq import DramatiqInstrumentor
 
+from app import logging
 from app.instrumentation import SqsBrokerInstrumentor
 from app.notify_client.alerts_api_client import alerts_api_client
 from app.utils import DIST
