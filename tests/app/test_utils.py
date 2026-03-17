@@ -89,12 +89,10 @@ def test_upload_to_s3(govuk_alerts):
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
 
     client = boto3.client('s3')
-    client.create_bucket(Bucket=bucket_name,
-                         CreateBucketConfiguration={'LocationConstraint': current_app.config["AWS_REGION"]})
+    client.create_bucket(Bucket=bucket_name, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
 
     pages = {"alerts": "<p>this is some test content</p>"}
-
-    upload_html_to_s3(pages, broadcast_event_id="test")
+    upload_html_to_s3(pages)
 
     object_keys = [
         obj['Key'] for obj in
