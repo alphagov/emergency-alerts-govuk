@@ -283,4 +283,4 @@ def create_cap_event(alert, identifier, url=None, cancelled=False):
 
 
 def create_publish_progress_task_id(publish_type, publish_origin):
-    return f"{publish_type}_{publish_origin}_{int(time.time())}.txt"
+    return f"{publish_type}_{publish_origin}_{int(time.time())}"
