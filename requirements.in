@@ -1,7 +1,6 @@
 aws-opentelemetry-distro==0.14.2
 opentelemetry-instrumentor-dramatiq==0.1.2
 boto3==1.42.64
-celery[sqs]==5.6.2
 certifi==2026.2.25
 dramatiq==1.18.0
 dramatiq_sqs==0.3.1
