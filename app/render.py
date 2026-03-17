@@ -360,6 +360,6 @@ def get_cap_xml_for_alerts(alerts, publish_task_progress=None):
             timestamp = alert.cancelled_at.strftime("%Y%m%d%H%M%S")
             cap_xml_alerts[f"alerts/{alert_url}-{timestamp}.cap.xml"] = cap_xml
 
-        update_publish_progress_if_exists(publish_task_progress, f"CAP XML for {alert}")
+        update_publish_progress_if_exists(publish_task_progress, f"CAP XML for {alert.id}")
 
     return cap_xml_alerts
