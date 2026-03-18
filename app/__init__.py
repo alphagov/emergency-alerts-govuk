@@ -104,6 +104,7 @@ def setup_dramatiq(app):
     ]
     sqs_broker = SQSBroker(
         middleware=middleware,
+        visibility_timeout=None,  # Use the queue's default
     )
 
     dramatiq_instance.broker = sqs_broker
