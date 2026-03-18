@@ -14,7 +14,7 @@ from flask_dramatiq import AppContextMiddleware, Dramatiq
 from opentelemetry import trace
 from opentelemetry_instrumentor_dramatiq import DramatiqInstrumentor
 
-from app import logging as app_logging
+from app import govuk_logging
 from app.instrumentation import SqsBrokerInstrumentor
 from app.notify_client.alerts_api_client import alerts_api_client
 from app.utils import DIST
@@ -43,7 +43,7 @@ def create_app():
     from app.commands import setup_commands
     setup_commands(application)
 
-    app_logging.init_app(application)
+    govuk_logging.init_app(application)
     setup_dramatiq(application)
     alerts_api_client.init_app(application)
 
