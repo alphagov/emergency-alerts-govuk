@@ -48,11 +48,11 @@ def publish_govuk_alerts(broadcast_event_id=""):
 
         with tracer.start_as_current_span("Upload HTML to S3"):
             current_app.logger.info("Uploading %d files to S3", len(rendered_pages))
-            upload_html_to_s3(rendered_pages, broadcast_event_id)
+            upload_html_to_s3(rendered_pages)
 
         with tracer.start_as_current_span("Upload CAP to S3"):
             current_app.logger.info("Uploading %d files to S3", len(cap_xml_alerts))
-            upload_cap_xml_to_s3(cap_xml_alerts, broadcast_event_id)
+            upload_cap_xml_to_s3(cap_xml_alerts)
 
         current_app.logger.info("Finished uploading to S3. Purging Fastly.")
         purge_fastly_cache()
