@@ -1,3 +1,4 @@
+import logging
 import os
 
 import opentelemetry.instrumentation.auto_instrumentation.sitecustomize  # noqa
@@ -8,13 +9,12 @@ from dramatiq.middleware import (
     TimeLimit,
 )
 from dramatiq_sqs import SQSBroker
-from emergency_alerts_utils import logging as utils_logging
 from flask import Flask
 from flask_dramatiq import AppContextMiddleware, Dramatiq
 from opentelemetry import trace
 from opentelemetry_instrumentor_dramatiq import DramatiqInstrumentor
 
-from app import logging
+from app import logging as app_logging
 from app.instrumentation import SqsBrokerInstrumentor
 from app.notify_client.alerts_api_client import alerts_api_client
 from app.utils import DIST
@@ -43,7 +43,7 @@ def create_app():
     from app.commands import setup_commands
     setup_commands(application)
 
-    utils_logging.init_app(application)
+    app_logging.init_app(application)
     setup_dramatiq(application)
     alerts_api_client.init_app(application)
 
