@@ -6,7 +6,7 @@ const { src, pipe, dest, series, parallel, watch } = require("gulp");
 const rollup = require("rollup");
 const rollupPluginCommonjs = require("@rollup/plugin-commonjs");
 const rollupPluginNodeResolve = require("@rollup/plugin-node-resolve");
-const rollupPluginTerser = require("rollup-plugin-terser").terser;
+const rollupPluginTerser = require("@rollup/plugin-terser");
 
 const plugins = {};
 plugins.sass = require("gulp-sass")(require("sass"));

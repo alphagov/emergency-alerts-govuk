@@ -37,7 +37,7 @@ a[href^="https://"]:after {
   font-size: 90%;
 }
 
-a[href="/"]:after {
+a[href="/"]::after {
   content: "";
 }
 
