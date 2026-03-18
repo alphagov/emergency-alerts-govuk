@@ -447,11 +447,7 @@ pyflakes==3.4.0
     # via flake8
 pygments==2.19.2
     # via pytest
-<<<<<<< EAS-2969-dependabot-npm-updates
-pyjwt==2.12.0
-=======
 pyjwt==2.12.1
->>>>>>> main
     # via
     #   -r requirements.in
     #   notifications-python-client
