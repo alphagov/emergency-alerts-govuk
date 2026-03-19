@@ -52,9 +52,7 @@ def test_publish_govuk_alerts(
     )
     mock_purge_fastly_cache.assert_called_once()
     mock_send_publish_acknowledgement.assert_called_once()
-    mock_publish_task.set_to_finished.assert_called_once_with(
-        mock_create_progress.return_value.id
-    )
+    mock_publish_task.set_to_finished.assert_called_once_with()
 
 
 @patch("app.celery.tasks.Alerts.load")
