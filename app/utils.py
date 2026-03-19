@@ -146,7 +146,7 @@ def upload_assets_to_s3(publish_task_progress):
             ContentType=mimetype,
             Key=filename
         )
-        publish_task_progress.update_progress(publish_task=publish_task_progress, file=filename)
+        publish_task_progress.update_progress(file=filename)
 
 
 def upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress, broadcast_event_id=""):
@@ -168,7 +168,7 @@ def upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress, broadcast_event_
             ContentType="application/cap+xml",
             Key=path
         )
-        publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
+        publish_task_progress.update_progress(file=path)
 
 
 def purge_fastly_cache():
