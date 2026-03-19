@@ -49,13 +49,6 @@ class PublishTaskProgress(SerialisedModel):
         )
 
     @classmethod
-    def update(cls, publish_task, file):
-        publish_api_client.update_publish_task(publish_task.id, file)
-
-    def set_to_finished(self):
-        publish_api_client.mark_publish_as_finished(self.id)
-
-    @classmethod
     def from_id(cls, id):
         data = publish_api_client.get_publish_task(id)
         return cls(
@@ -67,36 +60,32 @@ class PublishTaskProgress(SerialisedModel):
             finished_at=data.get("finished_at"),
         )
 
-    @classmethod
-    def update_progress(cls, publish_task, file):
-        if cls.skip_update_via_API(publish_task):
+    def update(self, file):
+        publish_api_client.update_publish_task(self.id, file)
+
+    def set_to_finished(self):
+        publish_api_client.mark_publish_as_finished(self.id)
+
+    def update_progress(self, file):
+        if self.skip_update_via_API():
             # Too soon since last update; skip calling the API
-            return publish_task
+            print(self)
+            return self
 
-        data = publish_api_client.update_publish_task(publish_task.id, file)
-        publish_task.last_published_file = data.get("last_published_file")
-        publish_task.last_activity_at = data.get(
+        data = publish_api_client.update_publish_task(self.id, file)
+        self.last_published_file = data.get("last_published_file")
+        self.last_activity_at = data.get(
             "last_activity_at",
-            publish_task.last_activity_at,
+            self.last_activity_at,
         )
-        return publish_task
+        return self
 
-    @classmethod
-    def parse_last_activity_at(cls, last_activity_at):
-        # If `last_activity_at` has been set, here we convert it to timestamp
-        if not last_activity_at:
-            return None
-        # timestamp string returned by API has format "Mon, 09 Mar 2026 14:05:01 GMT", RFC 2822 format
-        dt = datetime.strptime(last_activity_at, "%a, %d %b %Y %H:%M:%S %Z")
-        return dt.timestamp()
-
-    @classmethod
-    def skip_update_via_API(cls, publish_task, min_interval_seconds=1.0):
+    def skip_update_via_API(self, min_interval_seconds=1.0):
         # Task's `last_activity_at` attribute, if it has been set, is converted
         # to timestamp and compared with current timestamp
         # If `last_activity_at` is less than `min_interval_seconds` ago then no need to call API,
         # to minimise calls to API
-        last_activity_at_datetime = cls.parse_last_activity_at(publish_task.last_activity_at)
+        last_activity_at_datetime = parse_last_activity_at(self.last_activity_at)
         if last_activity_at_datetime is None:
             return False
         return (time.time() - last_activity_at_datetime) < min_interval_seconds
@@ -104,4 +93,13 @@ class PublishTaskProgress(SerialisedModel):
 
 def update_publish_progress_if_exists(publish_task_progress, path):
     if publish_task_progress:
-        publish_task_progress.update_progress(publish_task=publish_task_progress, file=path)
+        publish_task_progress.update_progress(file=path)
+
+
+def parse_last_activity_at(last_activity_at):
+    # If `last_activity_at` has been set, here we convert it to timestamp
+    if not last_activity_at:
+        return None
+    # timestamp string returned by API has format "Mon, 09 Mar 2026 14:05:01 GMT", RFC 2822 format
+    dt = datetime.strptime(last_activity_at, "%a, %d %b %Y %H:%M:%S %Z")
+    return dt.timestamp()
