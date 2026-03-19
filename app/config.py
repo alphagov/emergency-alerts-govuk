@@ -21,9 +21,8 @@ class Config():
     FASTLY_SURROGATE_KEY = "notify-emergency-alerts"
 
     NOTIFY_API_HOST_NAME = os.environ.get("API_HOST_NAME", "http://localhost:6011")
+    GOVUK_CLIENT_SECRET = os.environ.get("GOVUK_CLIENT_SECRET")
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
-
-    GOVUK_CLIENT_SECRET = "govuk-alerts-secret-key"
 
     GOVUK_ALERTS_PUBLISH_CLIENT_ID = "govuk-alerts-publish"
     GOVUK_ALERTS_PUBLISH_CLIENT_SECRET = os.environ.get("GOVUK_ALERTS_PUBLISH_CLIENT_SECRET")
