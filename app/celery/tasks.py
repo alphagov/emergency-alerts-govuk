@@ -67,7 +67,7 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
         purge_fastly_cache()
         current_app.logger.info("Fastly purged. Acknowledging to API.")
         alerts_api_client.send_publish_acknowledgement()
-        publish_task_progress.set_to_finished(publish_task_progress.id)
+        publish_task_progress.set_to_finished()
 
         current_app.logger.info("Finished GovUK publish")
     except Exception:

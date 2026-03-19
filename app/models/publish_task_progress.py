@@ -52,9 +52,8 @@ class PublishTaskProgress(SerialisedModel):
     def update(cls, publish_task, file):
         publish_api_client.update_publish_task(publish_task.id, file)
 
-    @classmethod
-    def set_to_finished(cls, id):
-        publish_api_client.mark_publish_as_finished(id)
+    def set_to_finished(self):
+        publish_api_client.mark_publish_as_finished(self.id)
 
     @classmethod
     def from_id(cls, id):
