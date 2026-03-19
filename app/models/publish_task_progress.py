@@ -97,4 +97,3 @@ class PublishTaskProgress(SerialisedModel):
 def update_publish_progress_if_exists(publish_task_progress, path):
     if publish_task_progress:
         publish_task_progress.update_progress(file=path)
-
