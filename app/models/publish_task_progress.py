@@ -36,6 +36,12 @@ class PublishTaskProgress(SerialisedModel):
         self.last_published_file = last_published_file
         self.finished_at = finished_at
 
+    @property
+    def last_activity_at_datetime(self):
+        if not self.last_activity_at:
+            return
+        return datetime.strptime(self.last_activity_at, "%a, %d %b %Y %H:%M:%S %Z").timestamp()
+
     @classmethod
     def create(cls, publish_type, publish_origin):
         # `task_id` is combination of publish type, origin and start time and is stored
@@ -81,25 +87,14 @@ class PublishTaskProgress(SerialisedModel):
         return self
 
     def skip_update(self, min_interval_seconds=1.0):
-        # Task's `last_activity_at` attribute, if it has been set, is converted
-        # to timestamp and compared with current timestamp
         # If `last_activity_at` is less than `min_interval_seconds` ago then no need to call API,
         # to minimise calls to API
-        last_activity_at_datetime = parse_last_activity_at(self.last_activity_at)
-        if last_activity_at_datetime is None:
+        if self.last_activity_at_datetime is None:
             return False
-        return (time.time() - last_activity_at_datetime) < min_interval_seconds
+        return (time.time() - self.last_activity_at_datetime) < min_interval_seconds
 
 
 def update_publish_progress_if_exists(publish_task_progress, path):
     if publish_task_progress:
         publish_task_progress.update_progress(file=path)
 
-
-def parse_last_activity_at(last_activity_at):
-    # If `last_activity_at` has been set, here we convert it to timestamp
-    if not last_activity_at:
-        return None
-    # timestamp string returned by API has format "Mon, 09 Mar 2026 14:05:01 GMT", RFC 2822 format
-    dt = datetime.strptime(last_activity_at, "%a, %d %b %Y %H:%M:%S %Z")
-    return dt.timestamp()
