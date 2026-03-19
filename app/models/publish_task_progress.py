@@ -75,7 +75,6 @@ class PublishTaskProgress(SerialisedModel):
     def update_progress(self, file):
         if self.skip_update():
             # Too soon since last update; skip calling the API
-            print(self)
             return self
 
         data = publish_api_client.update_publish_task(self.id, file)
