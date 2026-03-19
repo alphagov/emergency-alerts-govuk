@@ -105,7 +105,7 @@ def setup_s3_session():
     return session.client('s3')
 
 
-def upload_html_to_s3(rendered_pages, publish_task_progress=None, broadcast_event_id=""):
+def upload_html_to_s3(rendered_pages, publish_task_progress=None):
 
     s3 = setup_s3_session()
 
@@ -149,7 +149,7 @@ def upload_assets_to_s3(publish_task_progress):
         publish_task_progress.update_progress(file=filename)
 
 
-def upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress, broadcast_event_id=""):
+def upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress):
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
