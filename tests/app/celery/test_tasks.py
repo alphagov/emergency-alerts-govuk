@@ -47,8 +47,7 @@ def test_publish_govuk_alerts(
     )
     mock_upload_to_s3.assert_called_once_with(
         mock_get_rendered_pages.return_value,
-        mock_create_progress.return_value,
-        "",
+        mock_create_progress.return_value
     )
     mock_purge_fastly_cache.assert_called_once()
     mock_send_publish_acknowledgement.assert_called_once()
