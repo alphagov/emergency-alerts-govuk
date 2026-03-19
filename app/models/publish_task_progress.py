@@ -67,7 +67,7 @@ class PublishTaskProgress(SerialisedModel):
         publish_api_client.mark_publish_as_finished(self.id)
 
     def update_progress(self, file):
-        if self.skip_update_via_API():
+        if self.skip_update():
             # Too soon since last update; skip calling the API
             print(self)
             return self
@@ -80,7 +80,7 @@ class PublishTaskProgress(SerialisedModel):
         )
         return self
 
-    def skip_update_via_API(self, min_interval_seconds=1.0):
+    def skip_update(self, min_interval_seconds=1.0):
         # Task's `last_activity_at` attribute, if it has been set, is converted
         # to timestamp and compared with current timestamp
         # If `last_activity_at` is less than `min_interval_seconds` ago then no need to call API,
