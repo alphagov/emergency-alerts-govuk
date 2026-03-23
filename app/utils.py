@@ -1,5 +1,6 @@
 import os
 import re
+import time
 from pathlib import Path
 
 import boto3
@@ -8,6 +9,7 @@ from flask import current_app
 from markupsafe import Markup, escape
 
 from app import version
+from app.models.publish_task_progress import update_publish_progress_if_exists
 
 REPO = Path(__file__).parent.parent
 DIST = REPO / 'dist'
@@ -85,14 +87,8 @@ def is_in_uk(simple_polygons):
     )
 
 
-def upload_html_to_s3(rendered_pages):
+def setup_boto3_session():
     host_environment = current_app.config["HOST"]
-
-    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
-    if not bucket_name:
-        current_app.logger.info("Target S3 bucket not specified: Skipping upload")
-        return
-
     if host_environment == "hosted":
         session = boto3.Session()
     else:
@@ -101,8 +97,22 @@ def upload_html_to_s3(rendered_pages):
             aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
             region_name=current_app.config["AWS_REGION"],
         )
+    return session
 
-    s3 = session.client('s3')
+
+def setup_s3_session():
+    session = setup_boto3_session()
+    return session.client('s3')
+
+
+def upload_html_to_s3(rendered_pages, publish_task_progress=None):
+
+    s3 = setup_s3_session()
+
+    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    if not bucket_name:
+        current_app.logger.info("Target S3 bucket not specified: Skipping upload")
+        return
 
     for path, content in rendered_pages.items():
         current_app.logger.info("Uploading " + path)
@@ -113,9 +123,10 @@ def upload_html_to_s3(rendered_pages):
             ContentType=content_type,
             Key=path
         )
+        update_publish_progress_if_exists(publish_task_progress, path)
 
 
-def upload_assets_to_s3():
+def upload_assets_to_s3(publish_task_progress):
     if not Path(DIST).exists():
         raise FileExistsError(f'Folder {DIST} not found.')
 
@@ -124,18 +135,7 @@ def upload_assets_to_s3():
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
 
-    host_environment = os.environ.get('HOST')
-
-    if host_environment == "hosted":
-        session = boto3.Session()
-
-    else:
-        session = boto3.Session(
-            aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
-            aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
-            region_name=current_app.config["BROADCASTS_AWS_REGION"],
-        )
-    s3 = session.client('s3')
+    s3 = setup_s3_session()
 
     assets = get_asset_files(DIST)
     for filename, (content, mimetype) in assets.items():
@@ -146,35 +146,20 @@ def upload_assets_to_s3():
             ContentType=mimetype,
             Key=filename
         )
+        publish_task_progress.update_progress(file=filename)
 
 
-def upload_cap_xml_to_s3(cap_xml_alerts):
-    host_environment = current_app.config["HOST"]
-
+def upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress):
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
 
-    if host_environment == "hosted":
-        session = boto3.Session()
-    else:
-        session = boto3.Session(
-            aws_access_key_id=current_app.config["BROADCASTS_AWS_ACCESS_KEY_ID"],
-            aws_secret_access_key=current_app.config["BROADCASTS_AWS_SECRET_ACCESS_KEY"],
-            region_name=current_app.config["AWS_REGION"],
-        )
-
-    s3 = session.client('s3')
+    s3 = setup_s3_session()
 
     for path, content in cap_xml_alerts.items():
-
         current_app.logger.info(
             "Uploading " + path,
-        )
-
-        current_app.logger.info(
-            content,
         )
 
         s3.put_object(
@@ -183,6 +168,7 @@ def upload_cap_xml_to_s3(cap_xml_alerts):
             ContentType="application/cap+xml",
             Key=path
         )
+        publish_task_progress.update_progress(file=path)
 
 
 def purge_fastly_cache():
@@ -294,3 +280,7 @@ def create_cap_event(alert, identifier, url=None, cancelled=False):
         ),
         "web": url,
     }
+
+
+def create_publish_progress_task_id(publish_type, publish_origin):
+    return f"{publish_type}_{publish_origin}_{int(time.time())}"

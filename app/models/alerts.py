@@ -2,11 +2,13 @@ from collections import defaultdict
 
 import yaml
 from emergency_alerts_utils.serialised_model import SerialisedModelCollection
+from flask import current_app
 
 from app import alerts_api_client
 from app.models.alert import Alert
 from app.models.alert_date import AlertDate
 from app.models.planned_tests import PlannedTests
+from app.models.publish_task_progress import update_publish_progress_if_exists
 from app.utils import REPO, is_in_uk
 
 
@@ -130,13 +132,15 @@ class Alerts(SerialisedModelCollection):
         return alerts_by_date.items()
 
     @classmethod
-    def load(cls):
+    def load(cls, publish_task_progress=None):
         data = cls.from_yaml() + cls.from_api()
-        return cls([
-            alert_dict for alert_dict in data
-            if 'simple_polygons' not in alert_dict['areas'] or
-            is_in_uk(alert_dict['areas']['simple_polygons'])
-        ])
+        alerts = []
+        for alert_dict in data:
+            if 'simple_polygons' not in alert_dict['areas'] or is_in_uk(alert_dict['areas']['simple_polygons']):
+                current_app.logger.info(f"Loading alert {alert_dict.get("id")}")
+                alerts.append(alert_dict)
+                update_publish_progress_if_exists(publish_task_progress, f"Alert {alert_dict.get("id")}")
+        return cls(alerts)
 
     @classmethod
     def from_api(cls):
