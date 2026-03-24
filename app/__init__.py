@@ -16,7 +16,10 @@ from opentelemetry_instrumentor_dramatiq import DramatiqInstrumentor
 
 from app import govuk_logging
 from app.instrumentation import SqsBrokerInstrumentor
-from app.notify_client.alerts_api_client import alerts_api_client
+from app.notify_client.alerts_api_client import (
+    alerts_api_client,
+    publish_api_client,
+)
 from app.utils import DIST
 
 DramatiqInstrumentor().instrument()
@@ -46,6 +49,7 @@ def create_app():
     govuk_logging.init_app(application)
     setup_dramatiq(application)
     alerts_api_client.init_app(application)
+    publish_api_client.init_app(application)
 
     return application
 
