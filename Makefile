@@ -24,12 +24,12 @@ run-flask-debug: ## Run flask in debug mode
 
 .PHONY: bootstrap
 bootstrap: generate-version-file
-	pip3 install -r requirements_local_utils.txt
+	pip3 install -r requirements_local_utils.txt -c constraints.txt
 	npm ci --no-audit && npm run build
 
 .PHONY: bootstrap-for-tests
 bootstrap-for-tests: generate-version-file
-	pip3 install -r requirements_github_utils.txt
+	pip3 install -r requirements_github_utils.txt -c constraints.txt
 	npm ci --no-audit && npm run build
 
 .PHONY: npm-audit
