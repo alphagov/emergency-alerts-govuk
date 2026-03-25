@@ -4,7 +4,7 @@ from emergency_alerts_utils.tasks import QueueNames, TaskNames
 from flask import current_app
 from opentelemetry import trace
 
-from app import define_traced_actor
+from app import dramatiq_instance
 from app.models.alerts import Alerts
 from app.models.publish_task_progress import PublishTaskProgress
 from app.notify_client.alerts_api_client import alerts_api_client
@@ -19,9 +19,8 @@ from app.utils import (
 tracer = trace.get_tracer(__name__)
 
 
-@define_traced_actor(
-    actor_name=TaskNames.PUBLISH_GOVUK_ALERTS,
-    queue_name=QueueNames.GOVUK_ALERTS
+@dramatiq_instance.actor(
+    actor_name=TaskNames.PUBLISH_GOVUK_ALERTS, queue_name=QueueNames.GOVUK_ALERTS
 )
 def publish_govuk_alerts(broadcast_event_id=""):
     try:
@@ -67,7 +66,9 @@ def publish_govuk_alerts(broadcast_event_id=""):
         current_app.logger.exception("Failed to publish content to gov.uk/alerts")
 
 
-@define_traced_actor(actor_name=TaskNames.TRIGGER_GOVUK_HEALTHCHECK, queue_name=QueueNames.GOVUK_ALERTS)
+@dramatiq_instance.actor(
+    actor_name=TaskNames.TRIGGER_GOVUK_HEALTHCHECK, queue_name=QueueNames.GOVUK_ALERTS
+)
 def trigger_govuk_alerts_healthcheck():
     try:
         post_version_to_cloudwatch()
