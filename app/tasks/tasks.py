@@ -20,7 +20,9 @@ tracer = trace.get_tracer(__name__)
 
 
 @dramatiq_instance.actor(
-    actor_name=TaskNames.PUBLISH_GOVUK_ALERTS, queue_name=QueueNames.GOVUK_ALERTS
+    actor_name=TaskNames.PUBLISH_GOVUK_ALERTS,
+    queue_name=QueueNames.GOVUK_ALERTS,
+    allow_retry=True,
 )
 def publish_govuk_alerts(broadcast_event_id=""):
     try:
@@ -62,8 +64,9 @@ def publish_govuk_alerts(broadcast_event_id=""):
         publish_task_progress.set_to_finished()
 
         current_app.logger.info("Finished GovUK publish")
-    except Exception:
+    except Exception as e:
         current_app.logger.exception("Failed to publish content to gov.uk/alerts")
+        raise e
 
 
 @dramatiq_instance.actor(

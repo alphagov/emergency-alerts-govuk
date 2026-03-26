@@ -14,7 +14,6 @@ from app.utils import DIST
 
 DramatiqInstrumentor().instrument()
 
-# We override the broker when init-ing
 dramatiq_instance = EasSqsFlaskDramatiq()
 
 
