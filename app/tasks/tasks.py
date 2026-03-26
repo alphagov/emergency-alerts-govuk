@@ -32,7 +32,9 @@ def publish_govuk_alerts(broadcast_event_id=""):
         )
 
         current_app.logger.info("Loading alerts")
-        publish_task_progress = PublishTaskProgress.create(publish_type="publish-dynamic", publish_origin="celery")
+        publish_task_progress = PublishTaskProgress.create(
+            publish_type="publish-dynamic", publish_origin="dramatiq"
+        )
         with tracer.start_as_current_span("Get live alerts"):
             alerts = Alerts.load(publish_task_progress)
             current_app.logger.info("Alerts loaded")

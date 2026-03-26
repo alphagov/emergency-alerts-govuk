@@ -36,8 +36,9 @@ def test_publish_govuk_alerts(
     govuk_alerts,
 ):
     publish_govuk_alerts()
-    mock_create_progress.assert_called_once_with(publish_type='publish-dynamic',
-                                                 publish_origin='celery')
+    mock_create_progress.assert_called_once_with(
+        publish_type="publish-dynamic", publish_origin="dramatiq"
+    )
     mock_publish_task = mock_create_progress.return_value
     mock_Alerts_load.assert_called_once_with(mock_create_progress.return_value)
     mock_get_rendered_pages.assert_called_once_with(
