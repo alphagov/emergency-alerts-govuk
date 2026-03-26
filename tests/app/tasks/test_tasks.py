@@ -3,11 +3,10 @@ from unittest.mock import mock_open, patch
 
 import boto3
 import pytest
-from celery.exceptions import Retry
 from flask import current_app
 from moto import mock_aws
 
-from app.celery.tasks import (
+from app.tasks.tasks import (
     publish_govuk_alerts,
     trigger_govuk_alerts_healthcheck,
 )
@@ -15,13 +14,13 @@ from app.celery.tasks import (
 
 @patch("app.models.publish_task_progress.PublishTaskProgress.create")
 @patch("app.notify_client.alerts_api_client.publish_api_client.create_publish_task")
-@patch("app.celery.tasks.PublishTaskProgress.update_progress")
+@patch("app.tasks.tasks.PublishTaskProgress.update_progress")
 @patch("app.notify_client.alerts_api_client.publish_api_client.update_publish_task")
-@patch("app.celery.tasks.Alerts.load")
-@patch("app.celery.tasks.get_rendered_pages")
-@patch("app.celery.tasks.upload_html_to_s3")
-@patch("app.celery.tasks.purge_fastly_cache")
-@patch("app.celery.tasks.alerts_api_client.send_publish_acknowledgement")
+@patch("app.tasks.tasks.Alerts.load")
+@patch("app.tasks.tasks.get_rendered_pages")
+@patch("app.tasks.tasks.upload_html_to_s3")
+@patch("app.tasks.tasks.purge_fastly_cache")
+@patch("app.tasks.tasks.alerts_api_client.send_publish_acknowledgement")
 @patch("app.notify_client.alerts_api_client.publish_api_client.mark_publish_as_finished")
 def test_publish_govuk_alerts(
     mock_mark_publish_as_finished,
@@ -54,17 +53,26 @@ def test_publish_govuk_alerts(
     mock_publish_task.set_to_finished.assert_called_once_with()
 
 
-@patch("app.celery.tasks.Alerts.load")
-@patch("app.celery.tasks.get_rendered_pages")
-@patch("app.celery.tasks.upload_html_to_s3")
-@pytest.mark.xfail(raises=Retry)
-def test_publish_govuk_alerts_retries(
+class BubbledException(Exception):
+    pass
+
+
+@patch("app.models.publish_task_progress.PublishTaskProgress.create")
+@patch("app.tasks.tasks.Alerts.load")
+@patch("app.tasks.tasks.get_rendered_pages")
+@patch("app.tasks.tasks.upload_html_to_s3")
+@pytest.mark.xfail(raises=BubbledException)
+def test_publish_govuk_alerts_bubbles_for_retry(
     mock_upload_to_s3,
     mock_get_rendered_pages,
     mock_Alerts_load,
+    mock_create_progress,
     govuk_alerts,
 ):
-    mock_upload_to_s3.side_effect = Exception("error")
+    # The retry logic here is based around the idea we should bubble exceptions, and
+    # that the actor is registered for retry
+    assert publish_govuk_alerts.kw.get("allow_retry")
+    mock_upload_to_s3.side_effect = BubbledException("Error for retry")
     publish_govuk_alerts()
 
 
