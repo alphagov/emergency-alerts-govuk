@@ -37,7 +37,6 @@ class Hosted(Config):
     ENVIRONMENT_PREFIX = ENVIRONMENT if ENVIRONMENT != 'development' else 'dev'
 
     QUEUE_PREFIX = f"{ENVIRONMENT_PREFIX}-{TENANT_PREFIX}dramatiq-"
-    SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
 
     EAS_APP_NAME = "govuk-alerts"
 
