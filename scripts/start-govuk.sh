@@ -1,19 +1,19 @@
 #! /bin/sh
 timestamp_filename='/eas/emergency-alerts-govuk/celery-beat-healthcheck'
-echo "Start script executing for govuk-alerts celery worker..."
+echo "Start script executing for govuk-alerts"
 
 function configure_container_role(){
     aws configure set default.region ${AWS_REGION}
 }
 
-function run_celery(){
+function run_dramatiq(){
     cd $DIR_GOVUK;
-    . $VENV_GOVUK/bin/activate && make run-celery
+    . $VENV_GOVUK/bin/activate && exec dramatiq --skip-logging --processes 1 --threads 2 app.dramatiq_broker:broker
 }
 
 function flask_publish(){
     cd $DIR_GOVUK;
-    . $VENV_GOVUK/bin/activate && opentelemetry-instrument flask publish-with-assets --startup
+    . $VENV_GOVUK/bin/activate && flask publish-with-assets --startup
 }
 
 function update_timestamp(){
@@ -32,5 +32,5 @@ else
     configure_container_role
     update_timestamp
     flask_publish
-    run_celery
+    run_dramatiq
 fi

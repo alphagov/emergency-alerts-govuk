@@ -92,7 +92,10 @@ def planned_test_dict():
 
 
 @pytest.fixture(scope='session')
-def govuk_alerts():
+def govuk_alerts(session_mocker):
+    # Don't instantiate the SQS components
+    session_mocker.patch("app.EasSqsFlaskDramatiq.init_app", return_value=None)
+
     app = create_app()
 
     ctx = app.app_context()
