@@ -1,11 +1,14 @@
 import os
 
 from celery import signals
-from emergency_alerts_utils import logging
 from emergency_alerts_utils.celery import NotifyCelery
 from flask import Flask, current_app
 
-from app.notify_client.alerts_api_client import alerts_api_client
+from app import logging
+from app.notify_client.alerts_api_client import (
+    alerts_api_client,
+    publish_api_client,
+)
 from app.utils import DIST
 
 notify_celery = NotifyCelery()
@@ -30,6 +33,7 @@ def create_app():
     logging.init_app(application)
     notify_celery.init_app(application)
     alerts_api_client.init_app(application)
+    publish_api_client.init_app(application)
 
     return application
 
