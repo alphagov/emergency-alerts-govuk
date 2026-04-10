@@ -258,7 +258,7 @@ def post_version_to_cloudwatch():
 
 
 def create_cap_event(alert, identifier, url=None, cancelled=False, prev_alert_identifier=None):
-    alert = {
+    cap_dict = {
         "identifier": identifier,
         "message_type": "alert",
         "message_format": "cap",
@@ -273,18 +273,22 @@ def create_cap_event(alert, identifier, url=None, cancelled=False, prev_alert_id
         ],
         "channel": "severe",
         "sent": alert.starts_at.isoformat(timespec="seconds"),
-        "expires": alert.finishes_at.isoformat(timespec="seconds"),
+        "expires": (
+            alert.cancelled_at.isoformat(timespec="seconds")
+            if cancelled
+            else alert.finishes_at.isoformat(timespec="seconds")
+        ),
         "web": url,
     }
 
     if cancelled:
-        alert["references"] = [
+        cap_dict["references"] = [
             {
                 "message_id": prev_alert_identifier,
                 "sent": alert.starts_at.isoformat(timespec="seconds"),
             }
         ]
-    return alert
+    return cap_dict
 
 
 def create_publish_progress_task_id(publish_type, publish_origin):
