@@ -140,7 +140,7 @@ def test_create_cap_event_for_active_alert():
         'message_format': 'cap',
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
-        'language': 'en-GB',
+        'language': 'en',
         "areas": [
             {
                 "polygon": polygons,
@@ -162,7 +162,7 @@ def test_create_cap_event_for_cancelled_alert():
         'message_format': 'cap',
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
-        'language': 'en-GB',
+        'language': 'en',
         'areas': [
             {
                 "polygon": polygons,
@@ -187,7 +187,7 @@ def test_create_cap_event_with_and_without_web_element(url):
         'message_format': 'cap',
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
-        'language': 'en-GB',
+        'language': 'en',
         "areas": [
             {
                 "polygon": polygons,
