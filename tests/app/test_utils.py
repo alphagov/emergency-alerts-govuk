@@ -158,7 +158,7 @@ def test_create_cap_event_for_cancelled_alert():
                                                                [[7, 8], [9, 10], [11, 12]]]}))
     assert create_cap_event(alert, alert.id, cancelled=True, prev_alert_identifier=alert.id) == {
         'identifier': alert.id,
-        'message_type': 'alert',
+        'message_type': 'cancel',
         'message_format': 'cap',
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
