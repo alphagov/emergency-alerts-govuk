@@ -260,7 +260,7 @@ def post_version_to_cloudwatch():
 def create_cap_event(alert, identifier, url=None, cancelled=False, prev_alert_identifier=None):
     cap_dict = {
         "identifier": identifier,
-        "message_type": "alert",
+        "message_type": "cancel" if cancelled else "alert",
         "message_format": "cap",
         "headline": "GOV.UK Emergency alert",
         "description": alert.content,
