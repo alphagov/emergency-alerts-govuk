@@ -265,9 +265,10 @@ def create_cap_event(alert, identifier, url=None, cancelled=False, prev_alert_id
         "headline": "GOV.UK Emergency alert",
         "description": alert.content,
         "language": "en",
-        "areas": {
+        "areas": [{
             "polygons": [polygons for polygons in alert.areas.get("simple_polygons")],
-        },
+            **({"description": alert.display_areas_formatted_string} if alert.display_areas else {})
+        }],
         "channel": "severe",
         "sent": alert.starts_at.isoformat(timespec="seconds"),
         "expires": (
@@ -277,9 +278,6 @@ def create_cap_event(alert, identifier, url=None, cancelled=False, prev_alert_id
         ),
         "web": url,
     }
-
-    if alert.display_areas:
-        cap_dict["areas"]["description"] = alert.display_areas_formatted_string
 
     if cancelled:
         cap_dict["references"] = [
