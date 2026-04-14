@@ -12,12 +12,12 @@ beautifulsoup4==4.14.3
     # via -r requirements.in
 blinker==1.9.0
     # via flask
-boto3==1.42.74
+boto3==1.42.87
     # via
     #   -r requirements.in
     #   dramatiq-sqs
     #   moto
-botocore==1.42.74
+botocore==1.42.87
     # via
     #   boto3
     #   moto
@@ -32,7 +32,7 @@ charset-normalizer==3.4.2
     # via requests
 click==8.2.1
     # via flask
-cryptography==46.0.5
+cryptography==46.0.7
     # via moto
 deprecated==1.3.1
     # via
@@ -89,7 +89,7 @@ jmespath==1.0.1
     # via
     #   boto3
     #   botocore
-lxml==6.0.2
+lxml==6.0.3
     # via
     #   -r requirements.in
     #   feedgen
@@ -442,7 +442,7 @@ pyjwt==2.12.1
     # via
     #   -r requirements.in
     #   notifications-python-client
-pytest==9.0.2
+pytest==9.0.3
     # via
     #   -r requirements.in
     #   pytest-env
@@ -463,7 +463,7 @@ pyyaml==6.0.3
     # via
     #   -r requirements.in
     #   responses
-requests==2.32.5
+requests==2.33.1
     # via
     #   -r requirements.in
     #   moto
@@ -491,7 +491,7 @@ urllib3==2.6.3
     #   botocore
     #   requests
     #   responses
-werkzeug==3.1.7
+werkzeug==3.1.8
     # via
     #   -r requirements.in
     #   flask
