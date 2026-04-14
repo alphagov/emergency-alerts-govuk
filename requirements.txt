@@ -50,7 +50,7 @@ click-plugins==1.1.1.2
     # via celery
 click-repl==0.3.0
     # via celery
-cryptography==46.0.6
+cryptography==46.0.7
     # via moto
 deprecated==1.3.1
     # via
