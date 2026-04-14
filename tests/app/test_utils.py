@@ -143,8 +143,10 @@ def test_create_cap_event_for_active_alert():
         'language': 'en',
         "areas": [
             {
-                "polygon": polygons,
-            } for polygons in alert.areas.get("simple_polygons")
+                "polygons": [
+                    polygons for polygons in alert.areas.get("simple_polygons")
+                ]
+            }
         ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
@@ -165,8 +167,10 @@ def test_create_cap_event_for_cancelled_alert():
         'language': 'en',
         'areas': [
             {
-                "polygon": polygons,
-            } for polygons in alert.areas.get("simple_polygons")
+                "polygons": [
+                    polygons for polygons in alert.areas.get("simple_polygons")
+                ]
+            }
         ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
@@ -196,8 +200,10 @@ def test_create_cap_event_with_and_without_web_element(url):
         'language': 'en',
         "areas": [
             {
-                "polygon": polygons,
-            } for polygons in alert.areas.get("simple_polygons")
+                "polygons": [
+                    polygons for polygons in alert.areas.get("simple_polygons")
+                    ]
+            }
         ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
