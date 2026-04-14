@@ -140,11 +140,13 @@ def test_create_cap_event_for_active_alert():
         'message_format': 'cap',
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
-        'language': 'en-GB',
+        'language': 'en',
         "areas": [
             {
-                "polygon": polygons,
-            } for polygons in alert.areas.get("simple_polygons")
+                "polygons": [
+                    polygons for polygons in alert.areas.get("simple_polygons")
+                ]
+            }
         ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
@@ -156,22 +158,30 @@ def test_create_cap_event_for_active_alert():
 def test_create_cap_event_for_cancelled_alert():
     alert = Alert(create_alert_dict(areas={"simple_polygons": [[[1, 2], [3, 4], [5, 6]],
                                                                [[7, 8], [9, 10], [11, 12]]]}))
-    assert create_cap_event(alert, alert.id, cancelled=True) == {
+    assert create_cap_event(alert, alert.id, cancelled=True, prev_alert_identifier=alert.id) == {
         'identifier': alert.id,
-        'message_type': 'alert',
+        'message_type': 'cancel',
         'message_format': 'cap',
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
-        'language': 'en-GB',
+        'language': 'en',
         'areas': [
             {
-                "polygon": polygons,
-            } for polygons in alert.areas.get("simple_polygons")
+                "polygons": [
+                    polygons for polygons in alert.areas.get("simple_polygons")
+                ]
+            }
         ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
         'expires': alert.cancelled_at.isoformat(),  # Expires timestamp is for when the alert was cancelled
-        'web': None
+        'web': None,
+        'references': [
+            {
+                'message_id': alert.id,
+                'sent': alert.starts_at.isoformat()
+            }
+        ]
     }
 
 
@@ -187,11 +197,13 @@ def test_create_cap_event_with_and_without_web_element(url):
         'message_format': 'cap',
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
-        'language': 'en-GB',
+        'language': 'en',
         "areas": [
             {
-                "polygon": polygons,
-            } for polygons in alert.areas.get("simple_polygons")
+                "polygons": [
+                    polygons for polygons in alert.areas.get("simple_polygons")
+                    ]
+            }
         ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
