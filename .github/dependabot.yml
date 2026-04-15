@@ -18,10 +18,6 @@ updates:
         applies-to: security-updates
         patterns:
           - "*"
-      pip-updates:
-        applies-to: version-updates
-        patterns:
-          - "*"
 
   - package-ecosystem: "npm"
     directory: "/"
@@ -32,9 +28,5 @@ updates:
     groups:
       npm-security:
         applies-to: security-updates
-        patterns:
-          - "*"
-      npm-updates:
-        applies-to: version-updates
         patterns:
           - "*"
