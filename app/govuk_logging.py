@@ -10,7 +10,7 @@ FLASK_G_TASK_ID = "celery_task_id"
 FLASK_G_BROADCAST_EVENT_ID = "broadcast_event_id"
 
 
-class CeleryLogFilter(logging.Filter):
+class TaskLogFilter(logging.Filter):
     def filter(self, record):
         if has_app_context():
             task_name = g.get(FLASK_G_TASK_ID)
@@ -30,4 +30,4 @@ def init_app(app: Flask):
     # Add to the handler instead of app.logger so that other loggers (libraries) inherit
     # the filter. (Calling .addFilter on the root logger won't propagate)
     for handler in logging.getLogger().handlers:
-        handler.addFilter(CeleryLogFilter())
+        handler.addFilter(TaskLogFilter())
