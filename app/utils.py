@@ -105,11 +105,15 @@ def setup_s3_session():
     return session.client('s3')
 
 
-def upload_html_to_s3(rendered_pages, publish_task_progress=None):
+def upload_html_to_s3(rendered_pages, publish_task_progress=None, archive=None):
 
     s3 = setup_s3_session()
 
-    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    if not archive:
+        bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    else:
+        bucket_name = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
+
     if not bucket_name:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
@@ -126,11 +130,15 @@ def upload_html_to_s3(rendered_pages, publish_task_progress=None):
         update_publish_progress_if_exists(publish_task_progress, path)
 
 
-def upload_assets_to_s3(publish_task_progress):
+def upload_assets_to_s3(publish_task_progress, archive=None):
     if not Path(DIST).exists():
         raise FileExistsError(f'Folder {DIST} not found.')
 
-    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    if not archive:
+        bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    else:
+        bucket_name = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
+
     if not bucket_name:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
@@ -149,8 +157,12 @@ def upload_assets_to_s3(publish_task_progress):
         publish_task_progress.update_progress(file=filename)
 
 
-def upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress):
-    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+def upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress, archive=None):
+    if not archive:
+        bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    else:
+        bucket_name = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
+
     if not bucket_name:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
