@@ -27,6 +27,8 @@ def publish():
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
         publish_task_progress.set_to_finished()
+        # Still here - publish must have been successful, so write the same content to the archive bucket
+        _publish_html(publish_task_progress, archive=True)
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
 
@@ -44,31 +46,36 @@ def publish_with_assets(startup):
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
         publish_task_progress.set_to_finished()
+        # Still here - publish must have been successful, so write the same content to the backup bucket
+        _publish_html(publish_task_progress, archive=True)
+        _publish_cap_xml(publish_task_progress, archive=True)
+        _publish_assets(publish_task_progress, archive=True)
     except FileExistsError as e:
         current_app.logger.exception(f"Publish assets FAILED: {e}")
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
 
 
-def _publish_html(publish_task_progress):
+def _publish_html(publish_task_progress, archive=None):
     current_app.logger.info("Starting load of alerts")
     alerts = Alerts.load(publish_task_progress)
     current_app.logger.info("Starting render of pages")
     rendered_pages = get_rendered_pages(alerts, publish_task_progress)
     current_app.logger.info("Ending render of pages")
-    upload_html_to_s3(rendered_pages, publish_task_progress)
+    upload_html_to_s3(rendered_pages, publish_task_progress, archive)
 
 
-def _publish_assets(publish_task_progress):
-    upload_assets_to_s3(publish_task_progress)
+def _publish_assets(publish_task_progress, archive=None):
+    upload_assets_to_s3(publish_task_progress, archive)
 
 
-def _publish_cap_xml(publish_task_progress):
+def _publish_cap_xml(publish_task_progress, archive=None):
     alerts = Alerts.load(
         publish_task_progress
     )
     cap_xml_alerts = get_cap_xml_for_alerts(alerts, publish_task_progress)
     upload_cap_xml_to_s3(
         cap_xml_alerts,
-        publish_task_progress
+        publish_task_progress,
+        archive
     )
