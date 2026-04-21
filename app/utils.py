@@ -1,5 +1,7 @@
+import io
 import os
 import re
+import tarfile
 import time
 from pathlib import Path
 
@@ -284,3 +286,31 @@ def create_cap_event(alert, identifier, url=None, cancelled=False):
 
 def create_publish_progress_task_id(publish_type, publish_origin):
     return f"{publish_type}_{publish_origin}_{int(time.time())}"
+
+
+def archive_website():
+    s3 = setup_s3_session()
+
+    source_bucket = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    dest_bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
+    tar_file = "archive.tar.gz"
+
+    if not dest_bucket:
+        current_app.logger.info("Target S3 bucket not specified: Skipping archive")
+        return
+
+    buffer = io.BytesIO()
+
+    with tarfile.open(fileobj=buffer, mode="w:gz") as tar:
+        paginator = s3.get_paginator("list_objects_v2")
+        for page in paginator.paginate(Bucket=source_bucket):
+            for obj in page.get("Contents", []):
+                key = obj["Key"]
+                body = s3.get_object(Bucket=source_bucket, Key=key)["Body"].read()
+
+                info = tarfile.TarInfo(name=key)
+                info.size = len(body)
+                tar.addfile(info, io.BytesIO(body))
+
+    buffer.seek(0)
+    s3.upload_fileobj(buffer, dest_bucket, tar_file)
