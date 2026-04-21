@@ -3,6 +3,7 @@ import os
 import re
 import tarfile
 import time
+from datetime import datetime
 from pathlib import Path
 
 import boto3
@@ -293,7 +294,10 @@ def archive_website():
 
     source_bucket = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     dest_bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
-    tar_file = "archive.tar.gz"
+
+    # Generate timestamped filename: archive_yyyymmddhhmm.tar.gz
+    timestamp = datetime.utcnow().strftime("%Y%m%d%H%M")
+    tar_file = f"archive_{timestamp}.tar.gz"
 
     if not dest_bucket:
         current_app.logger.info("Target S3 bucket not specified: Skipping archive")
@@ -306,10 +310,24 @@ def archive_website():
         for page in paginator.paginate(Bucket=source_bucket):
             for obj in page.get("Contents", []):
                 key = obj["Key"]
-                body = s3.get_object(Bucket=source_bucket, Key=key)["Body"].read()
 
-                info = tarfile.TarInfo(name=key)
+                # Rename alerts page otherwise tar will fail
+                # to open due to subdirectory with the same name
+                if key == "alerts":
+                    tar_name = "alerts.html"
+                else:
+                    tar_name = key
+
+                # Fetch object
+                response = s3.get_object(Bucket=source_bucket, Key=key)
+                body = response["Body"].read()
+
+                info = tarfile.TarInfo(name=tar_name)
                 info.size = len(body)
+
+                # Preserve timestamp
+                info.mtime = int(response["LastModified"].timestamp())
+
                 tar.addfile(info, io.BytesIO(body))
 
     buffer.seek(0)
