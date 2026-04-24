@@ -11,6 +11,7 @@ from app.models.publish_task_progress import PublishTaskProgress
 from app.notify_client.alerts_api_client import alerts_api_client
 from app.render import get_cap_xml_for_alerts, get_rendered_pages
 from app.utils import (
+    archive_website,
     post_version_to_cloudwatch,
     purge_fastly_cache,
     upload_cap_xml_to_s3,
@@ -68,6 +69,10 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
         current_app.logger.info("Fastly purged. Acknowledging to API.")
         alerts_api_client.send_publish_acknowledgement()
         publish_task_progress.set_to_finished()
+
+        with tracer.start_as_current_span("Archive website to S3"):
+            archive_website()
+            current_app.logger.info("Website archived")
 
         current_app.logger.info("Finished GovUK publish")
     except Exception:
