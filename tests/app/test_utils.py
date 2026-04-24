@@ -136,7 +136,7 @@ def test_create_cap_event_for_active_alert():
     alert = Alert(
         create_alert_dict(areas={
             "simple_polygons": [[[1, 2], [3, 4], [5, 6]], [[7, 8], [9, 10], [11, 12]]],
-            "aggregate_names": "England, Scotland and Wales"
+            "aggregate_names": ["England", "Scotland", "Wales"]
         }))
     assert create_cap_event(alert, alert.id) == {
         'identifier': alert.id,
@@ -150,7 +150,7 @@ def test_create_cap_event_for_active_alert():
                 "polygons": [
                     polygons for polygons in alert.areas.get("simple_polygons")
                 ],
-                "description": alert.display_areas
+                "description": alert.display_areas_formatted_string
             },
         ],
         'channel': 'severe',
