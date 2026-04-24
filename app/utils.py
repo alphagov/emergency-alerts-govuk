@@ -267,7 +267,7 @@ def create_cap_event(alert, identifier, url=None, cancelled=False, prev_alert_id
         "language": "en",
         "areas": [{
             "polygons": [polygons for polygons in alert.areas.get("simple_polygons")],
-            **({"description": alert.display_areas_formatted_string} if alert.display_areas else {})
+            **({"description": alert.display_areas} if alert.display_areas else {})
         }],
         "channel": "severe",
         "sent": alert.starts_at.isoformat(timespec="seconds"),

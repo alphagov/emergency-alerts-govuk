@@ -133,7 +133,11 @@ def test_purge_fastly_cache_disabled(mock_requests, monkeypatch, govuk_alerts):
 
 
 def test_create_cap_event_for_active_alert():
-    alert = Alert(create_alert_dict(areas={"simple_polygons": [[[1, 2], [3, 4], [5, 6]], [[7, 8], [9, 10], [11, 12]]]}))
+    alert = Alert(
+        create_alert_dict(areas={
+            "simple_polygons": [[[1, 2], [3, 4], [5, 6]], [[7, 8], [9, 10], [11, 12]]],
+            "aggregate_names": "England, Scotland and Wales"
+        }))
     assert create_cap_event(alert, alert.id) == {
         'identifier': alert.id,
         'message_type': 'alert',
@@ -145,8 +149,9 @@ def test_create_cap_event_for_active_alert():
             {
                 "polygons": [
                     polygons for polygons in alert.areas.get("simple_polygons")
-                ]
-            }
+                ],
+                "description": alert.display_areas
+            },
         ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
