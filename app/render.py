@@ -355,13 +355,12 @@ def get_cap_xml_for_alerts(alerts, publish_task_progress=None):
 
         # If alert has been cancelled, generate another CAP XML file for the updated event
         if alert.cancelled_at:
-            new_identifier = str(uuid.uuid4())
             event = create_cap_event(
                 alert,
-                new_identifier,
+                f"{identifier}-1",
                 url=alert_url_with_host,
                 cancelled=True,
-                prev_alert_identifier=identifier
+                prev_alert_identifier=identifier,
             )
             cap_xml = generate_xml_body(event)
             timestamp = alert.cancelled_at.strftime("%Y%m%d%H%M%S")
