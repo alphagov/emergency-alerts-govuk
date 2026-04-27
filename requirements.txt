@@ -89,7 +89,7 @@ jmespath==1.0.1
     # via
     #   boto3
     #   botocore
-lxml==6.0.3
+lxml==6.1.0
     # via
     #   -r requirements.in
     #   feedgen
