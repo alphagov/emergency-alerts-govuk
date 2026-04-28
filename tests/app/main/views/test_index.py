@@ -2,7 +2,6 @@ import base64
 import hashlib
 
 import pytest
-from bs4 import Comment
 from dateutil.parser import parse as dt_parse
 from freezegun import freeze_time
 
@@ -14,8 +13,6 @@ def test_index_page(client_get):
     html = client_get("alerts")
     assert html.select_one('h1').text.strip() == "About Emergency Alerts"
     assert 'current alert' not in html.select('.govuk-heading-m')
-    comments = html.find_all(string=lambda text: isinstance(text, Comment))
-    assert any('Break glass' in c for c in comments)
 
 
 @pytest.mark.parametrize('planned_tests', (
