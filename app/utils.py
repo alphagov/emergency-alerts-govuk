@@ -3,7 +3,7 @@ import os
 import re
 import tarfile
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import boto3
@@ -296,7 +296,7 @@ def archive_website():
     dest_bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
 
     # Generate timestamped filename: archive_yyyymmddhhmm.tar.gz
-    timestamp = datetime.utcnow().strftime("%Y%m%d%H%M")
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M")
     tar_file = f"archive_{timestamp}.tar.gz"
 
     if not dest_bucket:
