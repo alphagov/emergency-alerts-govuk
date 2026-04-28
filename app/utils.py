@@ -3,7 +3,6 @@ import os
 import re
 import tarfile
 import time
-from datetime import datetime, timezone
 from pathlib import Path
 
 import boto3
@@ -295,9 +294,8 @@ def archive_website():
     source_bucket = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     dest_bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
 
-    # Generate timestamped filename: archive_yyyymmddhhmm.tar.gz
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M")
-    tar_file = f"archive_{timestamp}.tar.gz"
+    # Same tar will be created every time, dest_bucket will have versioning enabled.
+    tar_file = "archive_govuk-alerts-website.tar.gz"
 
     if not dest_bucket:
         current_app.logger.info("Target S3 bucket not specified: Skipping archive")

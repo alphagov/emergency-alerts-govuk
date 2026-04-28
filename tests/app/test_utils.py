@@ -1,5 +1,4 @@
 import io
-import re
 import tarfile
 from pathlib import Path
 from unittest.mock import patch
@@ -226,8 +225,7 @@ def test_archive_website(govuk_alerts):
         client.list_objects(Bucket=dest_bucket)['Contents']
     ]
     assert len(object_keys) == 1
-    pattern = r"^archive_\d{12}\.tar\.gz$"
-    assert re.match(pattern, object_keys[0])
+    assert object_keys[0] == 'archive_govuk-alerts-website.tar.gz'
 
     # Check archive includes the file uploaded
     obj = client.get_object(Bucket=dest_bucket, Key=object_keys[0])
