@@ -22,7 +22,8 @@ RUN nvm install v22.21.1 && nvm use v22.21.1
 COPY --chown=easuser:easuser . $DIR_GOVUK
 
 # Build venv and emergency-alerts-govuk
-RUN python$PYTHON_VERSION -m venv $VENV_GOVUK
+RUN --mount=type=cache,target=/home/easuser/.cache \
+    python$PYTHON_VERSION -m venv $VENV_GOVUK
 RUN cd $DIR_GOVUK && \
     . $VENV_GOVUK/bin/activate && \
     APP_VERSION=${APP_VERSION} make bootstrap
@@ -41,8 +42,13 @@ ENV FLASK_APP=app.py
 ENV OTEL_SERVICE_NAME="govuk-alerts"
 ENV OTEL_PYTHON_DISTRO="aws_distro"
 ENV OTEL_PYTHON_CONFIGURATOR="aws_configurator"
-# This is incredibly noisy
-ENV OTEL_PYTHON_DISABLED_INSTRUMENTATIONS=jinja2
+# Jinja2 is incredibly noisy
+# SQS instrumentation is handled by botocore instrumentation. boto3 refers to boto3sqs ...confusingly
+# boto3sqs just makes a mess of the trace contexts: https://github.com/open-telemetry/opentelemetry-python-contrib/issues/2509#issue-2285937495
+ENV OTEL_PYTHON_DISABLED_INSTRUMENTATIONS="jinja2,boto3"
+
+# Only grab a message when we're ready to process it (i.e. don't prefetch - in-progress counts here so it's 1 and not 0)
+ENV dramatiq_queue_prefetch=1
 
 # Copy over bootstrapped contents
 COPY --chown=easuser:easuser --from=build $VENV_GOVUK $VENV_GOVUK

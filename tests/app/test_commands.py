@@ -9,9 +9,7 @@ def create_mock_filename(publish_type, publish_origin):
 def test_publish(mocker, govuk_alerts):
     # This test mocks the invocation of the publish command, via cli, and asserts
     # that mock functions are called with expected arguments
-    mock_create_progress = mocker.patch(
-        "app.celery.tasks.PublishTaskProgress.create"
-    )
+    mock_create_progress = mocker.patch("app.tasks.tasks.PublishTaskProgress.create")
     publish_html_mock = mocker.patch('app.commands._publish_html')
     purge_fastly_cache_mock = mocker.patch('app.commands.purge_fastly_cache')
     send_publish_ack_mock = mocker.patch(
@@ -33,9 +31,7 @@ def test_publish(mocker, govuk_alerts):
 def test_startup_publish_with_assets(mocker, govuk_alerts):
     # This test mocks the invocation of the publish-with-assets command, upon startup, and asserts
     # that mock functions are called with expected arguments
-    mock_create_progress = mocker.patch(
-        "app.celery.tasks.PublishTaskProgress.create"
-    )
+    mock_create_progress = mocker.patch("app.tasks.tasks.PublishTaskProgress.create")
     publish_html_mock = mocker.patch('app.commands._publish_html')
     publish_cap_xml_mock = mocker.patch('app.commands._publish_cap_xml')
     publish_with_assets_mock = mocker.patch('app.commands._publish_assets')
@@ -61,9 +57,7 @@ def test_startup_publish_with_assets(mocker, govuk_alerts):
 def test_publish_with_assets(mocker, govuk_alerts):
     # This test mocks the invocation of the publish-with-assets command, via cli, and asserts
     # that mock functions are called with expected arguments
-    mock_create_progress = mocker.patch(
-        "app.celery.tasks.PublishTaskProgress.create"
-    )
+    mock_create_progress = mocker.patch("app.tasks.tasks.PublishTaskProgress.create")
     publish_html_mock = mocker.patch('app.commands._publish_html')
     publish_cap_xml_mock = mocker.patch('app.commands._publish_cap_xml')
     publish_with_assets_mock = mocker.patch('app.commands._publish_assets')

@@ -1,17 +1,20 @@
 import os
 
-from celery import signals
-from emergency_alerts_utils.celery import NotifyCelery
-from flask import Flask, current_app
+import opentelemetry.instrumentation.auto_instrumentation.sitecustomize  # noqa
+from emergency_alerts_utils.dramatiq import EasSqsFlaskDramatiq
+from emergency_alerts_utils.dramatiq.instrumentation import DramatiqInstrumentor
+from flask import Flask
 
-from app import logging
+from app import govuk_logging
 from app.notify_client.alerts_api_client import (
     alerts_api_client,
     publish_api_client,
 )
 from app.utils import DIST
 
-notify_celery = NotifyCelery()
+DramatiqInstrumentor().instrument()
+
+dramatiq_instance = EasSqsFlaskDramatiq()
 
 
 def create_app():
@@ -30,47 +33,9 @@ def create_app():
     from app.commands import setup_commands
     setup_commands(application)
 
-    logging.init_app(application)
-    notify_celery.init_app(application)
+    govuk_logging.init_app(application)
+    dramatiq_instance.init_app(application, application.config["QUEUE_PREFIX"])
     alerts_api_client.init_app(application)
     publish_api_client.init_app(application)
 
     return application
-
-
-@signals.task_prerun.connect
-def mark_task_active(*args, **kwargs):
-    task = kwargs.get("task", None)
-    if task is None:
-        return
-    try:
-        current_app.logger.info(
-            f"[celery task_prerun] {task.name}",
-            extra={
-                "task_id": kwargs["task_id"],
-                "broadcast_event_id": kwargs["kwargs"].get("broadcast_event_id", None),
-                "provider": kwargs["kwargs"].get("provider", None),
-            }
-        )
-    except Exception as e:
-        current_app.logger.error(f"Error logging task_prerun: {e}")
-
-
-@signals.task_postrun.connect
-def clear_task_context(*args, **kwargs):
-    task = kwargs.get("task", None)
-    if task is None:
-        return
-    try:
-        current_app.logger.info(
-            f"[celery task_postrun] {task.name}",
-            extra={
-                "task_id": kwargs["task_id"],
-                "retval": kwargs["retval"],
-                "state": kwargs["state"],
-                "broadcast_event_id": kwargs["kwargs"].get("broadcast_event_id", None),
-                "provider": kwargs["kwargs"].get("provider", None),
-            }
-        )
-    except Exception as e:
-        current_app.logger.error(f"Error logging task_postrun: {e}")
