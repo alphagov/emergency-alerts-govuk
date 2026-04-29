@@ -257,9 +257,11 @@ def post_version_to_cloudwatch():
         )
 
 
-def create_cap_event(alert, identifier, url=None, cancelled=False, prev_alert_identifier=None):
+def create_cap_event(alert, identifier, url=None, cancelled=False, prev_alert_identifier=None, sender=None):
+    sender_email = current_app.config["CAP_XML_SENDER_EMAIL"]
     cap_dict = {
         "identifier": identifier,
+        "sender": sender or sender_email,
         "message_type": "cancel" if cancelled else "alert",
         "message_format": "cap",
         "headline": "GOV.UK Emergency alert",

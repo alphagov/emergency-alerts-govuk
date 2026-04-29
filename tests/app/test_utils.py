@@ -156,7 +156,8 @@ def test_create_cap_event_for_active_alert():
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
         'expires': alert.finishes_at.isoformat(),  # Expires timestamp is for when the alert is projected to finish
-        'web': None
+        'web': None,
+        'sender': current_app.config["CAP_XML_SENDER_EMAIL"]
     }
 
 
@@ -186,7 +187,8 @@ def test_create_cap_event_for_cancelled_alert():
                 'message_id': alert.id,
                 'sent': alert.starts_at.isoformat()
             }
-        ]
+        ],
+        'sender': current_app.config["CAP_XML_SENDER_EMAIL"]
     }
 
 
@@ -213,5 +215,6 @@ def test_create_cap_event_with_and_without_web_element(url):
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
         'expires': alert.finishes_at.isoformat(),
-        'web': url
+        'web': url,
+        'sender': current_app.config["CAP_XML_SENDER_EMAIL"]
     }
