@@ -1,3 +1,5 @@
+import io
+import tarfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -9,6 +11,7 @@ from moto import mock_aws
 
 from app.models.alert import Alert
 from app.utils import (
+    archive_website,
     capitalise,
     create_cap_event,
     file_fingerprint,
@@ -215,3 +218,39 @@ def test_create_cap_event_with_and_without_web_element(url):
         'expires': alert.finishes_at.isoformat(),
         'web': url
     }
+
+
+@mock_aws
+def test_archive_website(govuk_alerts):
+    source_bucket = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    dest_bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
+
+    client = boto3.client('s3')
+    client.create_bucket(Bucket=source_bucket, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
+    client.create_bucket(Bucket=dest_bucket, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
+
+    # Create test content
+    pages = {"alerts": "<p>this is some test content</p>"}
+    upload_html_to_s3(pages)
+
+    # Archive it
+    archive_website()
+
+    # Check archive exists
+    object_keys = [
+        obj['Key'] for obj in
+        client.list_objects(Bucket=dest_bucket)['Contents']
+    ]
+    assert len(object_keys) == 1
+    assert object_keys[0] == 'archive_govuk-alerts-website.tar.gz'
+
+    # Check archive includes the file uploaded
+    obj = client.get_object(Bucket=dest_bucket, Key=object_keys[0])
+    body = obj["Body"].read()
+
+    tar_bytes = io.BytesIO(body)
+
+    with tarfile.open(fileobj=tar_bytes, mode="r:gz") as tar:
+        names = tar.getnames()
+
+    assert "alerts.html" in names

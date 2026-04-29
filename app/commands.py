@@ -6,6 +6,7 @@ from app.models.publish_task_progress import PublishTaskProgress
 from app.notify_client.alerts_api_client import alerts_api_client
 from app.render import get_cap_xml_for_alerts, get_rendered_pages
 from app.utils import (
+    archive_website,
     purge_fastly_cache,
     upload_assets_to_s3,
     upload_cap_xml_to_s3,
@@ -27,6 +28,7 @@ def publish():
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
         publish_task_progress.set_to_finished()
+        archive_website()
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
 
@@ -44,6 +46,7 @@ def publish_with_assets(startup):
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
         publish_task_progress.set_to_finished()
+        archive_website()
     except FileExistsError as e:
         current_app.logger.exception(f"Publish assets FAILED: {e}")
     except Exception as e:
