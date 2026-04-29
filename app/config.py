@@ -7,6 +7,7 @@ from kombu import Exchange, Queue
 class Config():
     HOST = os.environ.get('HOST')
     GOVUK_ALERTS_HOST_URL = os.environ.get("GOVUK_ALERTS_HOST_URL", "")
+    CAP_XML_SENDER_EMAIL = os.environ.get("CAP_XML_SENDER_EMAIL", "")
 
     EAS_APP_NAME = "govuk-alerts"
 
@@ -99,6 +100,7 @@ class Hosted(Config):
 class Test(Config):
     DEBUG = True
     GOVUK_ALERTS_HOST_URL = os.environ.get("GOVUK_ALERTS_HOST_URL", "http://localhost:6017")
+    CAP_XML_SENDER_EMAIL = "test@digital.cabinet-office.gov.uk"
 
     FASTLY_SERVICE_ID = "test-service-id"
     FASTLY_API_KEY = "test-api-key"
