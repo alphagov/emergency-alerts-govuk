@@ -232,9 +232,11 @@ def test_archive_website(govuk_alerts):
     # Create test content
     pages = {"alerts": "<p>this is some test content</p>"}
     upload_html_to_s3(pages)
+    capxml = {"alert.cap.xml": "<p>this is some test content</p>"}
+    upload_html_to_s3(capxml)
 
     # Archive it
-    archive_website()
+    archive_website(html=pages, capxml=capxml)
 
     # Check archive exists
     object_keys = [
@@ -254,3 +256,4 @@ def test_archive_website(govuk_alerts):
         names = tar.getnames()
 
     assert "alerts.html" in names
+    assert "alert.cap.xml" in names
