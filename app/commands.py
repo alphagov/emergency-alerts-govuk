@@ -25,10 +25,11 @@ def publish():
     try:
         publish_task_progress = PublishTaskProgress.create(publish_type="publish-dynamic", publish_origin="cli")
         published_html = _publish_html(publish_task_progress)
+        published_cap = _publish_cap_xml(publish_task_progress)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
         publish_task_progress.set_to_finished()
-        archive_website(html=published_html)
+        archive_website(html=published_html, capxml=published_cap)
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
 

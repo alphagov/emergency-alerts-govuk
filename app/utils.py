@@ -292,7 +292,7 @@ def create_publish_progress_task_id(publish_type, publish_origin):
     return f"{publish_type}_{publish_origin}_{int(time.time())}"
 
 
-def archive_website(html, capxml=None, assets=None):
+def archive_website(html, capxml, assets=None):
     dest_bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
     if not dest_bucket:
         current_app.logger.info("Target S3 bucket not specified: Skipping archive")
@@ -301,7 +301,7 @@ def archive_website(html, capxml=None, assets=None):
     if not assets:
         assets = get_asset_files()
 
-    published_files = html | (capxml or {}) | assets
+    published_files = html | capxml | assets
 
     s3 = setup_s3_session()
 
