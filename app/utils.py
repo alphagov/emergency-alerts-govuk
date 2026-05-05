@@ -129,8 +129,6 @@ def upload_html_to_s3(rendered_pages, publish_task_progress=None):
 
 
 def upload_assets_to_s3(publish_task_progress):
-    if not Path(DIST).exists():
-        raise FileExistsError(f'Folder {DIST} not found.')
 
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
@@ -139,7 +137,7 @@ def upload_assets_to_s3(publish_task_progress):
 
     s3 = setup_s3_session()
 
-    assets = get_asset_files(DIST)
+    assets = get_asset_files()
     for filename, (content, mimetype) in assets.items():
         current_app.logger.info("Uploading " + filename)
         s3.put_object(
@@ -149,6 +147,7 @@ def upload_assets_to_s3(publish_task_progress):
             Key=filename
         )
         publish_task_progress.update_progress(file=filename)
+    return assets
 
 
 def upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress):
@@ -193,7 +192,12 @@ def purge_fastly_cache():
     resp.raise_for_status()
 
 
-def get_asset_files(folder):
+def get_asset_files():
+    folder = DIST
+
+    if not Path(folder).exists():
+        raise FileExistsError(f'Folder {folder} not found.')
+
     assets = {}
 
     for root, _, files in os.walk(folder):
@@ -288,45 +292,44 @@ def create_publish_progress_task_id(publish_type, publish_origin):
     return f"{publish_type}_{publish_origin}_{int(time.time())}"
 
 
-def archive_website():
-    s3 = setup_s3_session()
-
-    source_bucket = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+def archive_website(html, capxml=None, assets=None):
     dest_bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
-
-    # Same tar will be created every time, dest_bucket will have versioning enabled.
-    tar_file = "archive_govuk-alerts-website.tar.gz"
-
     if not dest_bucket:
         current_app.logger.info("Target S3 bucket not specified: Skipping archive")
         return
 
+    if not assets:
+        assets = get_asset_files()
+
+    published_files = html | (capxml or {}) | assets
+
+    s3 = setup_s3_session()
+
+    # Same tar will be created every time, dest_bucket will have versioning enabled.
+    tar_file = "archive_govuk-alerts-website.tar.gz"
+
     buffer = io.BytesIO()
 
     with tarfile.open(fileobj=buffer, mode="w:gz") as tar:
-        paginator = s3.get_paginator("list_objects_v2")
-        for page in paginator.paginate(Bucket=source_bucket):
-            for obj in page.get("Contents", []):
-                key = obj["Key"]
+        for key, content in published_files.items():
 
-                # Rename alerts page otherwise tar will fail
-                # to open due to subdirectory with the same name
-                if key == "alerts":
-                    tar_name = "alerts.html"
-                else:
-                    tar_name = key
+            # If content is a (bytes, mimetype) tuple, extract the bytes
+            if isinstance(content, tuple):
+                content = content[0]
 
-                # Fetch object
-                response = s3.get_object(Bucket=source_bucket, Key=key)
-                body = response["Body"].read()
+            # Convert str → bytes
+            if isinstance(content, str):
+                content = content.encode()
 
-                info = tarfile.TarInfo(name=tar_name)
-                info.size = len(body)
+            if key == "alerts":
+                tar_name = "alerts.html"
+            else:
+                tar_name = key
 
-                # Preserve timestamp
-                info.mtime = int(response["LastModified"].timestamp())
+            info = tarfile.TarInfo(name=tar_name)
+            info.size = len(content)
 
-                tar.addfile(info, io.BytesIO(body))
+            tar.addfile(info, io.BytesIO(content))
 
     buffer.seek(0)
     s3.upload_fileobj(buffer, dest_bucket, tar_file)

@@ -71,7 +71,7 @@ def publish_govuk_alerts(self, broadcast_event_id=""):
         publish_task_progress.set_to_finished()
 
         with tracer.start_as_current_span("Archive website to S3"):
-            archive_website()
+            archive_website(html=rendered_pages, capxml=cap_xml_alerts, assets=None)
             current_app.logger.info("Website archived")
 
         current_app.logger.info("Finished GovUK publish")
