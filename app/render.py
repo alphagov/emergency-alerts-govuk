@@ -351,14 +351,20 @@ def get_cap_xml_for_alerts(alerts, publish_task_progress=None):
         event = create_cap_event(alert, identifier, url=alert_url_with_host)
         cap_xml = generate_xml_body(event)
         timestamp = alert.approved_at.strftime("%Y%m%d%H%M%S")
-        cap_xml_alerts[f"alerts/{alert_url}-{timestamp}.cap.xml"] = cap_xml
+        cap_xml_alerts[f"cap-xml/{alert_url}-{timestamp}.cap.xml"] = cap_xml
 
         # If alert has been cancelled, generate another CAP XML file for the updated event
         if alert.cancelled_at:
-            event = create_cap_event(alert, identifier, url=alert_url_with_host, cancelled=True)
+            event = create_cap_event(
+                alert,
+                f"{identifier}-1",
+                url=alert_url_with_host,
+                cancelled=True,
+                prev_alert_identifier=identifier,
+            )
             cap_xml = generate_xml_body(event)
             timestamp = alert.cancelled_at.strftime("%Y%m%d%H%M%S")
-            cap_xml_alerts[f"alerts/{alert_url}-{timestamp}.cap.xml"] = cap_xml
+            cap_xml_alerts[f"cap-xml/{alert_url}-{timestamp}.cap.xml"] = cap_xml
 
         update_publish_progress_if_exists(publish_task_progress, f"CAP XML for {alert.id}")
 
