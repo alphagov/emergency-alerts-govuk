@@ -6,17 +6,12 @@ import logging
 from emergency_alerts_utils import logging as utils_logging
 from flask import Flask, g, has_app_context
 
-FLASK_G_TASK_ID = "celery_task_id"
 FLASK_G_BROADCAST_EVENT_ID = "broadcast_event_id"
 
 
 class TaskLogFilter(logging.Filter):
     def filter(self, record):
         if has_app_context():
-            task_name = g.get(FLASK_G_TASK_ID)
-            if task_name is not None:
-                setattr(record, FLASK_G_TASK_ID, task_name)
-
             broadcast_event_id = g.get(FLASK_G_BROADCAST_EVENT_ID)
             if broadcast_event_id is not None:
                 setattr(record, FLASK_G_BROADCAST_EVENT_ID, broadcast_event_id)

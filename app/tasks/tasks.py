@@ -1,10 +1,11 @@
 import time
 
 from emergency_alerts_utils.tasks import QueueNames, TaskNames
-from flask import current_app
+from flask import current_app, g
 from opentelemetry import trace
 
 from app import dramatiq_instance
+from app.govuk_logging import FLASK_G_BROADCAST_EVENT_ID
 from app.models.alerts import Alerts
 from app.models.publish_task_progress import PublishTaskProgress
 from app.notify_client.alerts_api_client import alerts_api_client
@@ -26,6 +27,8 @@ tracer = trace.get_tracer(__name__)
     allow_retry=True,
 )
 def publish_govuk_alerts(broadcast_event_id=""):
+    setattr(g, FLASK_G_BROADCAST_EVENT_ID, broadcast_event_id)
+
     try:
         current_app.logger.info(
             "Starting GovUK publish. (Triggered by broadcast event: %s)",
