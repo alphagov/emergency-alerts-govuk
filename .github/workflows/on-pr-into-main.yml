@@ -31,7 +31,7 @@ jobs:
       - name: Use specified utils version in PR
         env:
           PR_DESCRIPTION: ${{ github.event.pull_request.body }}
-        # Match `utils:blah` and get the blah
+        # Match `utils:blah` and capture the blah
         run: |
           PR_UTILS_BRANCH=$(echo "$PR_DESCRIPTION" | grep -oP '`utils:\K[^`]+' || true)
 
