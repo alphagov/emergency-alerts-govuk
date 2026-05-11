@@ -11,6 +11,7 @@ class Config():
     BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
     AWS_REGION = os.getenv("AWS_REGION", "eu-west-2")
     GOVUK_ALERTS_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_S3_BUCKET_NAME")
+    GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME")
 
     FASTLY_ENABLED = not os.getenv("FASTLY_ENABLED", "true").lower() == "false"
     FASTLY_SERVICE_ID = os.getenv("FASTLY_SERVICE_ID")
@@ -44,6 +45,7 @@ class Hosted(Config):
     BROADCASTS_AWS_SECRET_ACCESS_KEY = os.getenv("BROADCASTS_AWS_SECRET_ACCESS_KEY")
     AWS_REGION = os.getenv("AWS_REGION", "eu-west-2")
     GOVUK_ALERTS_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_S3_BUCKET_NAME")
+    GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME")
 
     FASTLY_SERVICE_ID = os.getenv("FASTLY_SERVICE_ID")
     FASTLY_API_KEY = os.getenv("FASTLY_API_KEY")
@@ -56,6 +58,9 @@ class Hosted(Config):
         "GOVUK_CLIENT_SECRET", "govuk-alerts-secret-key"
     )
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
+
+    HTTPS_PROXY = os.environ.get("HTTPS_PROXY")
+    NO_PROXY = os.environ.get("NO_PROXY")
 
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
 
@@ -71,6 +76,7 @@ class Test(Config):
     BROADCASTS_AWS_ACCESS_KEY_ID = "test-key-id"
     BROADCASTS_AWS_SECRET_ACCESS_KEY = "test-secret-key"
     GOVUK_ALERTS_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_S3_BUCKET_NAME")
+    GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME = os.getenv("GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME")
 
 
 configs = {

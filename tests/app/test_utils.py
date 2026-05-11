@@ -1,3 +1,5 @@
+import io
+import tarfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -9,6 +11,7 @@ from moto import mock_aws
 
 from app.models.alert import Alert
 from app.utils import (
+    archive_website,
     capitalise,
     create_cap_event,
     file_fingerprint,
@@ -133,18 +136,25 @@ def test_purge_fastly_cache_disabled(mock_requests, monkeypatch, govuk_alerts):
 
 
 def test_create_cap_event_for_active_alert():
-    alert = Alert(create_alert_dict(areas={"simple_polygons": [[[1, 2], [3, 4], [5, 6]], [[7, 8], [9, 10], [11, 12]]]}))
+    alert = Alert(
+        create_alert_dict(areas={
+            "simple_polygons": [[[1, 2], [3, 4], [5, 6]], [[7, 8], [9, 10], [11, 12]]],
+            "aggregate_names": ["England", "Scotland", "Wales"]
+        }))
     assert create_cap_event(alert, alert.id) == {
         'identifier': alert.id,
         'message_type': 'alert',
         'message_format': 'cap',
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
-        'language': 'en-GB',
+        'language': 'en',
         "areas": [
             {
-                "polygon": polygons,
-            } for polygons in alert.areas.get("simple_polygons")
+                "polygons": [
+                    polygons for polygons in alert.areas.get("simple_polygons")
+                ],
+                "description": alert.display_areas_formatted_string
+            },
         ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
@@ -156,22 +166,30 @@ def test_create_cap_event_for_active_alert():
 def test_create_cap_event_for_cancelled_alert():
     alert = Alert(create_alert_dict(areas={"simple_polygons": [[[1, 2], [3, 4], [5, 6]],
                                                                [[7, 8], [9, 10], [11, 12]]]}))
-    assert create_cap_event(alert, alert.id, cancelled=True) == {
+    assert create_cap_event(alert, alert.id, cancelled=True, prev_alert_identifier=alert.id) == {
         'identifier': alert.id,
-        'message_type': 'alert',
+        'message_type': 'cancel',
         'message_format': 'cap',
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
-        'language': 'en-GB',
+        'language': 'en',
         'areas': [
             {
-                "polygon": polygons,
-            } for polygons in alert.areas.get("simple_polygons")
+                "polygons": [
+                    polygons for polygons in alert.areas.get("simple_polygons")
+                ]
+            }
         ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
         'expires': alert.cancelled_at.isoformat(),  # Expires timestamp is for when the alert was cancelled
-        'web': None
+        'web': None,
+        'references': [
+            {
+                'message_id': alert.id,
+                'sent': alert.starts_at.isoformat()
+            }
+        ]
     }
 
 
@@ -187,14 +205,55 @@ def test_create_cap_event_with_and_without_web_element(url):
         'message_format': 'cap',
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
-        'language': 'en-GB',
+        'language': 'en',
         "areas": [
             {
-                "polygon": polygons,
-            } for polygons in alert.areas.get("simple_polygons")
+                "polygons": [
+                    polygons for polygons in alert.areas.get("simple_polygons")
+                    ]
+            }
         ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
         'expires': alert.finishes_at.isoformat(),
         'web': url
     }
+
+
+@mock_aws
+def test_archive_website(govuk_alerts):
+    source_bucket = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    dest_bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
+
+    client = boto3.client('s3')
+    client.create_bucket(Bucket=source_bucket, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
+    client.create_bucket(Bucket=dest_bucket, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
+
+    # Create test content
+    pages = {"alerts": "<p>this is some test content</p>"}
+    upload_html_to_s3(pages)
+    capxml = {"alert.cap.xml": "<p>this is some test content</p>"}
+    upload_html_to_s3(capxml)
+
+    # Archive it
+    archive_website(html=pages, capxml=capxml)
+
+    # Check archive exists
+    object_keys = [
+        obj['Key'] for obj in
+        client.list_objects(Bucket=dest_bucket)['Contents']
+    ]
+    assert len(object_keys) == 1
+    assert object_keys[0] == 'archive_govuk-alerts-website.tar.gz'
+
+    # Check archive includes the file uploaded
+    obj = client.get_object(Bucket=dest_bucket, Key=object_keys[0])
+    body = obj["Body"].read()
+
+    tar_bytes = io.BytesIO(body)
+
+    with tarfile.open(fileobj=tar_bytes, mode="r:gz") as tar:
+        names = tar.getnames()
+
+    assert "alerts.html" in names
+    assert "alert.cap.xml" in names

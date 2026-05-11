@@ -34,6 +34,18 @@ class Alert(SerialisedModel):
         return self.areas.get("names", [])
 
     @property
+    def display_areas_formatted_string(self):
+        areas = self.display_areas or []
+        if not areas:
+            return ""
+        if len(areas) == 1:
+            return areas[0]
+        if len(areas) == 2:
+            return f"{areas[0]} and {areas[1]}"
+        # 3 or more
+        return f"{', '.join(areas[:-1])} and {areas[-1]}"
+
+    @property
     def approved_at_date(self):
         return AlertDate(self.approved_at)
 
