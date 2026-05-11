@@ -22,7 +22,7 @@ from app.tasks.tasks import (
 @patch("app.tasks.tasks.purge_fastly_cache")
 @patch("app.tasks.tasks.alerts_api_client.send_publish_acknowledgement")
 @patch("app.notify_client.alerts_api_client.publish_api_client.mark_publish_as_finished")
-@patch("app.celery.tasks.archive_website")
+@patch("app.tasks.tasks.archive_website")
 def test_publish_govuk_alerts(
     mock_archive_website,
     mock_mark_publish_as_finished,
