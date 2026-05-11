@@ -303,7 +303,7 @@ def archive_website(html, capxml, assets=None):
     dest_bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
     if not dest_bucket:
         current_app.logger.info("Target S3 bucket not specified: Skipping archive")
-        return
+        return current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
 
     if not assets:
         assets = get_asset_files()
@@ -340,3 +340,74 @@ def archive_website(html, capxml, assets=None):
 
     buffer.seek(0)
     s3.upload_fileobj(buffer, dest_bucket, tar_file)
+
+
+def setup_ssm_session():
+    session = setup_boto3_session()
+    return session.client('ssm', region_name=current_app.config["AWS_REGION"])
+
+
+def get_publish_destination():
+    current_bucket_param = current_app.config["GOVUK_ALERTS_CURRENT_BUCKET_PARAM"]
+
+    if not current_bucket_param:
+        current_app.logger.info("Current bucket param not specified: defaulting to original publish bucket")
+        return current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+
+    ssm = setup_ssm_session()
+    try:
+        response = ssm.get_parameter(Name=current_bucket_param)
+        value = response["Parameter"]["Value"].strip().lower()
+    except Exception as e:
+        raise RuntimeError(
+            f"Failed to read SSM parameter '{current_bucket_param}': {e}"
+        )
+
+    if value == "blue":
+        # Currently pointing to blue bucket, so return green as destination
+        return current_app.config["GOVUK_ALERTS_GREEN_S3_BUCKET_NAME"]
+
+    if value == "green":
+        # Currently pointing to green bucket, so return blue as destination
+        return current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]
+
+    # Invalid value - log and return nothing
+    raise ValueError(
+        f"Invalid SSM value '{value}' for '{current_bucket_param}'. Expected 'blue' or 'green'."
+    )
+
+
+def prepare_destination(publish_bucket, remove_assets: bool):
+    s3 = setup_s3_session()
+
+    if not remove_assets:
+        path_to_keep = 'alerts/assets/'
+        objects_to_delete = []
+
+        # Paginate through all objects
+        paginator = s3.get_paginator("list_objects_v2")
+
+        for page in paginator.paginate(Bucket=publish_bucket):
+            for obj in page.get("Contents", []):
+                key = obj["Key"]
+
+                # Skip anything under the path_to_keep
+                if key.startswith(path_to_keep):
+                    continue
+
+                objects_to_delete.append({"Key": key})
+
+                # Delete in batches of 1000 (S3 API limit)
+                if len(objects_to_delete) == 1000:
+                    s3.delete_objects(Bucket=publish_bucket, Delete={"Objects": objects_to_delete})
+                    objects_to_delete = []
+
+        # Delete any remaining objects
+        if objects_to_delete:
+            s3.delete_objects(Bucket=publish_bucket, Delete={"Objects": objects_to_delete})
+
+    return None
+
+
+def switch_destination(publish_bucket):
+    return None

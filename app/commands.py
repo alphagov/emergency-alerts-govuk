@@ -7,7 +7,10 @@ from app.notify_client.alerts_api_client import alerts_api_client
 from app.render import get_cap_xml_for_alerts, get_rendered_pages
 from app.utils import (
     archive_website,
+    get_publish_destination,
+    prepare_destination,
     purge_fastly_cache,
+    switch_destination,
     upload_assets_to_s3,
     upload_cap_xml_to_s3,
     upload_html_to_s3,
@@ -23,10 +26,19 @@ def setup_commands(app):
 @cli.with_appcontext
 def publish():
     try:
+        # get publish destination, based on currently configured blue/green configuration.
+        # Throws exception of not blue or green - could mean break glass is in operation, or another publish
+        # is in the process of swapping blue/green.
+        publish_destination = get_publish_destination()
+
+        # delete content from destination, except for assets
+        prepare_destination(publish_destination, remove_assets=False)
+
         publish_task_progress = PublishTaskProgress.create(publish_type="publish-dynamic", publish_origin="cli")
         published_html = _publish_html(publish_task_progress)
         published_cap = _publish_cap_xml(publish_task_progress)
         purge_fastly_cache()
+        switch_destination(publish_destination)
         alerts_api_client.send_publish_acknowledgement()
         publish_task_progress.set_to_finished()
         archive_website(html=published_html, capxml=published_cap)
