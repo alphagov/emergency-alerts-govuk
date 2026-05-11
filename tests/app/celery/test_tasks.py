@@ -23,7 +23,9 @@ from app.celery.tasks import (
 @patch("app.celery.tasks.purge_fastly_cache")
 @patch("app.celery.tasks.alerts_api_client.send_publish_acknowledgement")
 @patch("app.notify_client.alerts_api_client.publish_api_client.mark_publish_as_finished")
+@patch("app.celery.tasks.archive_website")
 def test_publish_govuk_alerts(
+    mock_archive_website,
     mock_mark_publish_as_finished,
     mock_send_publish_acknowledgement,
     mock_purge_fastly_cache,
@@ -52,6 +54,7 @@ def test_publish_govuk_alerts(
     mock_purge_fastly_cache.assert_called_once()
     mock_send_publish_acknowledgement.assert_called_once()
     mock_publish_task.set_to_finished.assert_called_once_with()
+    mock_archive_website.assert_called_once()
 
 
 @patch("app.celery.tasks.Alerts.load")

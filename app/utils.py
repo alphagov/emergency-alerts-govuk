@@ -1,5 +1,7 @@
+import io
 import os
 import re
+import tarfile
 import time
 from pathlib import Path
 
@@ -127,8 +129,6 @@ def upload_html_to_s3(rendered_pages, publish_task_progress=None):
 
 
 def upload_assets_to_s3(publish_task_progress):
-    if not Path(DIST).exists():
-        raise FileExistsError(f'Folder {DIST} not found.')
 
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     if not bucket_name:
@@ -137,7 +137,7 @@ def upload_assets_to_s3(publish_task_progress):
 
     s3 = setup_s3_session()
 
-    assets = get_asset_files(DIST)
+    assets = get_asset_files()
     for filename, (content, mimetype) in assets.items():
         current_app.logger.info("Uploading " + filename)
         s3.put_object(
@@ -147,6 +147,7 @@ def upload_assets_to_s3(publish_task_progress):
             Key=filename
         )
         publish_task_progress.update_progress(file=filename)
+    return assets
 
 
 def upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress):
@@ -191,7 +192,12 @@ def purge_fastly_cache():
     resp.raise_for_status()
 
 
-def get_asset_files(folder):
+def get_asset_files():
+    folder = DIST
+
+    if not Path(folder).exists():
+        raise FileExistsError(f'Folder {folder} not found.')
+
     assets = {}
 
     for root, _, files in os.walk(folder):
@@ -291,3 +297,46 @@ def create_cap_event(alert, identifier, url=None, cancelled=False, prev_alert_id
 
 def create_publish_progress_task_id(publish_type, publish_origin):
     return f"{publish_type}_{publish_origin}_{int(time.time())}"
+
+
+def archive_website(html, capxml, assets=None):
+    dest_bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
+    if not dest_bucket:
+        current_app.logger.info("Target S3 bucket not specified: Skipping archive")
+        return
+
+    if not assets:
+        assets = get_asset_files()
+
+    published_files = html | capxml | assets
+
+    s3 = setup_s3_session()
+
+    # Same tar will be created every time, dest_bucket will have versioning enabled.
+    tar_file = "archive_govuk-alerts-website.tar.gz"
+
+    buffer = io.BytesIO()
+
+    with tarfile.open(fileobj=buffer, mode="w:gz") as tar:
+        for key, content in published_files.items():
+
+            # If content is a (bytes, mimetype) tuple, extract the bytes
+            if isinstance(content, tuple):
+                content = content[0]
+
+            # Convert str → bytes
+            if isinstance(content, str):
+                content = content.encode()
+
+            if key == "alerts":
+                tar_name = "alerts.html"
+            else:
+                tar_name = key
+
+            info = tarfile.TarInfo(name=tar_name)
+            info.size = len(content)
+
+            tar.addfile(info, io.BytesIO(content))
+
+    buffer.seek(0)
+    s3.upload_fileobj(buffer, dest_bucket, tar_file)
