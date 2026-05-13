@@ -4,31 +4,24 @@
 #
 #    pip-compile --strip-extras requirements.in
 #
-amqp==5.3.1
-    # via kombu
 asgiref==3.10.0
     # via opentelemetry-instrumentation-asgi
 aws-opentelemetry-distro==0.14.2
     # via -r requirements.in
 beautifulsoup4==4.14.3
     # via -r requirements.in
-billiard==4.2.1
-    # via celery
 blinker==1.9.0
     # via flask
 boto3==1.42.87
     # via
     #   -r requirements.in
-    #   celery
-    #   kombu
+    #   dramatiq-sqs
     #   moto
 botocore==1.42.87
     # via
     #   boto3
     #   moto
     #   s3transfer
-celery==5.6.3
-    # via -r requirements.in
 certifi==2026.2.25
     # via
     #   -r requirements.in
@@ -38,18 +31,7 @@ cffi==2.0.0
 charset-normalizer==3.4.2
     # via requests
 click==8.2.1
-    # via
-    #   celery
-    #   click-didyoumean
-    #   click-plugins
-    #   click-repl
-    #   flask
-click-didyoumean==0.3.1
-    # via celery
-click-plugins==1.1.1.2
-    # via celery
-click-repl==0.3.0
-    # via celery
+    # via flask
 cryptography==46.0.7
     # via moto
 deprecated==1.3.1
@@ -61,11 +43,21 @@ deprecated==1.3.1
     #   opentelemetry-semantic-conventions
 docopt==0.6.2
     # via notifications-python-client
+dramatiq==1.18.0
+    # via
+    #   -r requirements.in
+    #   dramatiq-sqs
+    #   flask-dramatiq
+    #   opentelemetry-instrumentor-dramatiq
+dramatiq-sqs==0.3.1
+    # via -r requirements.in
 feedgen==1.0.0
     # via -r requirements.in
 flake8==7.3.0
     # via -r requirements.in
 flask==3.1.3
+    # via -r requirements.in
+flask-dramatiq==0.6.0
     # via -r requirements.in
 freezegun==1.5.5
     # via -r requirements.in
@@ -97,8 +89,6 @@ jmespath==1.0.1
     # via
     #   boto3
     #   botocore
-kombu==5.6.2
-    # via celery
 lxml==6.1.0
     # via
     #   -r requirements.in
@@ -165,6 +155,7 @@ opentelemetry-api==1.33.1
     #   opentelemetry-instrumentation-urllib
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
+    #   opentelemetry-instrumentor-dramatiq
     #   opentelemetry-processor-baggage
     #   opentelemetry-propagator-aws-xray
     #   opentelemetry-propagator-b3
@@ -231,6 +222,7 @@ opentelemetry-instrumentation==0.54b1
     #   opentelemetry-instrumentation-urllib
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
+    #   opentelemetry-instrumentor-dramatiq
 opentelemetry-instrumentation-aio-pika==0.54b1
     # via aws-opentelemetry-distro
 opentelemetry-instrumentation-aiohttp-client==0.54b1
@@ -334,6 +326,8 @@ opentelemetry-instrumentation-wsgi==0.54b1
     #   opentelemetry-instrumentation-falcon
     #   opentelemetry-instrumentation-flask
     #   opentelemetry-instrumentation-pyramid
+opentelemetry-instrumentor-dramatiq==0.1.2
+    # via -r requirements.in
 opentelemetry-processor-baggage==0.54b1
     # via aws-opentelemetry-distro
 opentelemetry-propagator-aws-xray==1.0.1
@@ -398,6 +392,7 @@ opentelemetry-semantic-conventions==0.54b1
     #   opentelemetry-instrumentation-urllib
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
+    #   opentelemetry-instrumentor-dramatiq
     #   opentelemetry-sdk
 opentelemetry-util-http==0.54b1
     # via
@@ -417,7 +412,6 @@ opentelemetry-util-http==0.54b1
     #   opentelemetry-instrumentation-wsgi
 packaging==25.0
     # via
-    #   kombu
     #   opentelemetry-instrumentation
     #   opentelemetry-instrumentation-falcon
     #   opentelemetry-instrumentation-flask
@@ -426,8 +420,8 @@ packaging==25.0
     #   pytest
 pluggy==1.6.0
     # via pytest
-prompt-toolkit==3.0.51
-    # via click-repl
+prometheus-client==0.24.1
+    # via dramatiq
 protobuf==5.29.6
     # via
     #   googleapis-common-protos
@@ -439,10 +433,7 @@ pycodestyle==2.14.0
 pycparser==2.22
     # via cffi
 pycurl==7.45.7
-    # via
-    #   -r requirements.in
-    #   celery
-    #   kombu
+    # via -r requirements.in
 pyflakes==3.4.0
     # via flake8
 pygments==2.19.2
@@ -463,7 +454,6 @@ pytest-mock==3.15.1
 python-dateutil==2.9.0.post0
     # via
     #   botocore
-    #   celery
     #   feedgen
     #   freezegun
     #   moto
@@ -495,25 +485,12 @@ typing-extensions==4.15.0
     #   beautifulsoup4
     #   grpcio
     #   opentelemetry-sdk
-tzdata==2025.2
-    # via kombu
-tzlocal==5.3.1
-    # via celery
 urllib3==2.6.3
     # via
     #   -r requirements.in
     #   botocore
-    #   celery
-    #   kombu
     #   requests
     #   responses
-vine==5.1.0
-    # via
-    #   amqp
-    #   celery
-    #   kombu
-wcwidth==0.2.13
-    # via prompt-toolkit
 werkzeug==3.1.8
     # via
     #   -r requirements.in
