@@ -17,7 +17,7 @@ pyjwt==2.12.1
 PyYAML==6.0.3
 requests==2.33.1
 responses==0.26.0
-urllib3==2.6.3
+urllib3==2.7.0
 Werkzeug==3.1.8
 
 # Packages for testing
