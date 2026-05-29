@@ -41,12 +41,14 @@ def test_local_links_lead_to_existing_routes_in_pages_with_no_alerts(client_get)
 @pytest.mark.parametrize("alert_timings", [
     {  # current alert
         "starts_at": dt_parse('2021-04-21T11:25:00Z'),
+        "updated_at": dt_parse('2021-04-21T11:30:00Z'),
         "approved_at": dt_parse('2021-04-21T11:30:00Z'),
         "cancelled_at": dt_parse('2021-04-21T12:30:00Z'),
         "areas": {"aggregate_names": ['England']}
     },
     {  # past alert
         "starts_at": dt_parse('2021-04-20T11:25:00Z'),
+        "updated_at": dt_parse('2021-04-20T11:30:00Z'),
         "approved_at": dt_parse('2021-04-20T11:30:00Z'),
         "cancelled_at": dt_parse('2021-04-20T12:30:00Z'),
         "areas": {"aggregate_names": ['England']}
