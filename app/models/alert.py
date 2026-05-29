@@ -12,6 +12,7 @@ class Alert(SerialisedModel):
         'channel',
         'approved_at',
         'starts_at',
+        'updated_at',
         'cancelled_at',
         'finishes_at',
         'areas',
@@ -52,6 +53,10 @@ class Alert(SerialisedModel):
     @property
     def starts_at_date(self):
         return AlertDate(self.starts_at)
+
+    @property
+    def updated_at_date(self):
+        return AlertDate(self.updated_at)
 
     @property
     def expires_date(self):
