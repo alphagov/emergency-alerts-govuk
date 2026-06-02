@@ -3,7 +3,7 @@ timestamp_filename='/eas/emergency-alerts-govuk/celery-beat-healthcheck'
 echo "Start script executing for govuk-alerts"
 
 function configure_container_role(){
-    aws configure set default.region ${AWS_REGION}
+    aws configure set default.region ${AWS_REGION:-eu-west-2}
 }
 
 function run_dramatiq(){
