@@ -108,7 +108,17 @@ def setup_jinja_environment(alerts):
     return env
 
 
-def get_rendered_pages(alerts, publish_task_progress=None):
+def _alert_updated_since_cut_off(alert, cut_off):
+    # If no cut-off render everything.
+    if cut_off is None:
+        return True
+    # If an alert has no updated_at, render it to be safe.
+    if not alert.updated_at:
+        return True
+    return alert.updated_at_date.as_utc_datetime > cut_off
+
+
+def get_rendered_pages(alerts, cut_off=None, publish_task_progress=None):
     env = setup_jinja_environment(alerts)
     rendered = {}
 
@@ -125,8 +135,9 @@ def get_rendered_pages(alerts, publish_task_progress=None):
         if target == 'alert':
             for alert in alerts.public:
                 alert_url = get_url_for_alert(alert, alerts)
-                rendered["alerts/" + alert_url] = template.render({
-                    'alert_data': alert})
+                if _alert_updated_since_cut_off(alert, cut_off):
+                    rendered["alerts/" + alert_url] = template.render({
+                        'alert_data': alert})
                 if feed_item_count < 20:
                     _add_feed_entry(fg, alert, alert_url)
                     _add_feed_entry(fg_cy, alert, alert_url)
@@ -138,8 +149,9 @@ def get_rendered_pages(alerts, publish_task_progress=None):
         if target == 'alert.cy':
             for alert in alerts.public:
                 alert_url = get_url_for_alert(alert, alerts)
-                rendered["alerts/" + alert_url + ".cy"] = template.render({
-                    'alert_data': alert})
+                if _alert_updated_since_cut_off(alert, cut_off):
+                    rendered["alerts/" + alert_url + ".cy"] = template.render({
+                        'alert_data': alert})
                 update_publish_progress_if_exists(publish_task_progress, path)
             continue
 

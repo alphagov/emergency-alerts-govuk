@@ -173,6 +173,53 @@ def test_get_rendered_pages_generates_atom_feed(govuk_alerts):
     _verify_entries(entries, namespace, expected_feed_items)
 
 
+def _cut_off_alerts():
+    # One alert last updated before the cut-off, one after.
+    return [
+        create_alert_dict(
+            id=UUID(int=0),
+            starts_at=dt_parse('2021-04-20T11:30:00Z'),
+            approved_at=dt_parse('2021-04-20T11:25:00Z'),
+            updated_at=dt_parse('2021-04-20T11:30:00Z'),
+        ),
+        create_alert_dict(
+            id=UUID(int=1),
+            starts_at=dt_parse('2021-04-21T11:30:00Z'),
+            approved_at=dt_parse('2021-04-21T11:25:00Z'),
+            updated_at=dt_parse('2021-04-22T11:30:00Z'),
+        ),
+    ]
+
+
+def test_get_rendered_pages_without_cut_off_renders_all_alert_pages(govuk_alerts):
+    pages = get_rendered_pages(Alerts(_cut_off_alerts()), cut_off=None)
+
+    assert 'alerts/20-apr-2021' in pages
+    assert 'alerts/20-apr-2021.cy' in pages
+    assert 'alerts/21-apr-2021' in pages
+    assert 'alerts/21-apr-2021.cy' in pages
+
+
+def test_get_rendered_pages_skips_alerts_not_updated_since_cut_off(govuk_alerts):
+    cut_off = dt_parse('2021-04-21T00:00:00Z')
+
+    pages = get_rendered_pages(Alerts(_cut_off_alerts()), cut_off=cut_off)
+
+    # Older alert (updated before cut-off) is skipped, in both languages
+    assert 'alerts/20-apr-2021' not in pages
+    assert 'alerts/20-apr-2021.cy' not in pages
+
+    # Newer alert (updated after cut-off) is still rendered
+    assert 'alerts/21-apr-2021' in pages
+    assert 'alerts/21-apr-2021.cy' in pages
+
+    # The atom feed remains complete regardless of the cut-off
+    namespace = {'atom': 'http://www.w3.org/2005/Atom'}
+    feed_str = pages['alerts/feed.atom'].replace("\'", '"').replace("\n", "")
+    entries = ET.fromstring(feed_str).findall('atom:entry', namespace)
+    assert len(entries) == 2
+
+
 def _verify_entries(entries, namespace, expected):
     for i, entry in enumerate(entries):
         assert entry.find('atom:id', namespace).text == expected[i]['id']

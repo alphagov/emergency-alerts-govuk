@@ -23,7 +23,9 @@ from app.tasks.tasks import (
 @patch("app.tasks.tasks.alerts_api_client.send_publish_acknowledgement")
 @patch("app.notify_client.alerts_api_client.publish_api_client.mark_publish_as_finished")
 @patch("app.tasks.tasks.archive_website")
+@patch("app.tasks.tasks._get_govuk_archive_timestamp")
 def test_publish_govuk_alerts(
+    mock_get_archive_timestamp,
     mock_archive_website,
     mock_mark_publish_as_finished,
     mock_send_publish_acknowledgement,
@@ -45,7 +47,8 @@ def test_publish_govuk_alerts(
     mock_Alerts_load.assert_called_once_with(mock_create_progress.return_value)
     mock_get_rendered_pages.assert_called_once_with(
         mock_Alerts_load.return_value,
-        mock_create_progress.return_value,
+        cut_off=mock_get_archive_timestamp.return_value,
+        publish_task_progress=mock_create_progress.return_value,
     )
     mock_upload_to_s3.assert_called_once_with(
         mock_get_rendered_pages.return_value,

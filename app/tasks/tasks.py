@@ -14,6 +14,7 @@ from app.utils import (
     archive_website,
     post_version_to_cloudwatch,
     purge_fastly_cache,
+    setup_s3_session,
     upload_cap_xml_to_s3,
     upload_html_to_s3,
 )
@@ -43,8 +44,10 @@ def publish_govuk_alerts(broadcast_event_id=""):
             alerts = Alerts.load(publish_task_progress)
             current_app.logger.info("Alerts loaded")
 
+        cut_off = _get_govuk_archive_timestamp()
+
         with tracer.start_as_current_span("Render pages"):
-            rendered_pages = get_rendered_pages(alerts, publish_task_progress)
+            rendered_pages = get_rendered_pages(alerts, cut_off=cut_off, publish_task_progress=publish_task_progress)
             current_app.logger.info("Pages rendered")
 
         with tracer.start_as_current_span("Render CAP XML"):
@@ -93,3 +96,20 @@ def trigger_govuk_alerts_healthcheck():
     except Exception:
         current_app.logger.exception("Unable to generate health-check timestamp")
         raise
+
+
+def _get_govuk_archive_timestamp():
+    bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
+    if not bucket:
+        current_app.logger.info("Skipping retrieval of archive timestamp in local environment")
+        return None
+
+    try:
+        s3 = setup_s3_session()
+        response = s3.head_object(Bucket=bucket, Key="archive_govuk-alerts-website.tar.gz")
+        timestamp = response["LastModified"]
+        current_app.logger.info(f"Retrieved archive timestamp: {timestamp}")
+        return timestamp
+    except Exception:
+        current_app.logger.exception("Unable to retrieve archive timestamp")
+        return None
