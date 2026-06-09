@@ -73,7 +73,7 @@ def _publish_cap_xml(publish_task_progress):
     alerts = Alerts.load(
         publish_task_progress
     )
-    cap_xml_alerts = get_cap_xml_for_alerts(alerts, publish_task_progress)
+    cap_xml_alerts = get_cap_xml_for_alerts(alerts, publish_task_progress=publish_task_progress)
     upload_cap_xml_to_s3(
         cap_xml_alerts,
         publish_task_progress
