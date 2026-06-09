@@ -355,10 +355,14 @@ def _display_format_time_string(time):
     return tz_aware_time.strftime("%Y-%m-%d %H:%M %Z")
 
 
-def get_cap_xml_for_alerts(alerts, publish_task_progress=None):
+def get_cap_xml_for_alerts(alerts, cut_off=None, publish_task_progress=None):
     cap_xml_alerts = {}
     host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
+
     for alert in alerts.public:
+        if not _alert_updated_since_cut_off(alert, cut_off):
+            continue
+
         identifier = str(uuid.uuid4())
         alert_url = get_url_for_alert(alert, alerts)
         alert_url_with_host = f"{host_url}/alerts/{alert_url}"

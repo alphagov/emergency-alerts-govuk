@@ -246,6 +246,39 @@ def test_get_rendered_pages_skips_alerts_with_string_updated_at(govuk_alerts):
     assert 'alerts/21-apr-2021' in pages
 
 
+def test_get_cap_xml_for_alerts_skips_alerts_not_updated_since_cut_off(govuk_alerts):
+    # CAP generation needs `simple_polygons` in areas, so build alerts directly
+    # rather than reusing _cut_off_alerts(). One updated before the cut-off, one after.
+    areas_dict = {
+        "simple_polygons": [[[1, 2], [3, 4], [5, 6]], [[7, 8], [9, 10], [11, 12]]]
+    }
+    alerts = [
+        create_alert_dict(
+            id=UUID(int=0),
+            areas=areas_dict,
+            starts_at=dt_parse('2021-04-20T11:30:00Z'),
+            approved_at=dt_parse('2021-04-20T11:25:00Z'),
+            updated_at=dt_parse('2021-04-20T11:30:00Z'),
+        ),
+        create_alert_dict(
+            id=UUID(int=1),
+            areas=areas_dict,
+            starts_at=dt_parse('2021-04-21T11:30:00Z'),
+            approved_at=dt_parse('2021-04-21T11:25:00Z'),
+            updated_at=dt_parse('2021-04-22T11:30:00Z'),
+        ),
+    ]
+    cut_off = dt_parse('2021-04-21T00:00:00Z')
+
+    cap_xml = get_cap_xml_for_alerts(Alerts(alerts), cut_off=cut_off)
+
+    keys = list(cap_xml.keys())
+    # Older alert (updated before cut-off) generates no CAP XML
+    assert not any('20-apr-2021-' in key for key in keys)
+    # Newer alert (updated after cut-off) still generates CAP XML
+    assert any('21-apr-2021-' in key for key in keys)
+
+
 def _verify_entries(entries, namespace, expected):
     for i, entry in enumerate(entries):
         assert entry.find('atom:id', namespace).text == expected[i]['id']

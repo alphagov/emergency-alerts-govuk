@@ -52,7 +52,9 @@ def publish_govuk_alerts(broadcast_event_id=""):
             current_app.logger.info("Pages rendered")
 
         with tracer.start_as_current_span("Render CAP XML"):
-            cap_xml_alerts = get_cap_xml_for_alerts(alerts, publish_task_progress)
+            cap_xml_alerts = get_cap_xml_for_alerts(
+                alerts, cut_off=cut_off, publish_task_progress=publish_task_progress
+            )
             current_app.logger.info("CAP XML rendered")
 
         if not current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]:
