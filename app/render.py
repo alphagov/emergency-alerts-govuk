@@ -1,6 +1,7 @@
 import uuid
 from zoneinfo import ZoneInfo
 
+from dateutil.parser import parse as dt_parse
 from emergency_alerts_utils.formatters import autolink_urls, formatted_list
 from emergency_alerts_utils.xml.broadcast import generate_xml_body
 from feedgen.feed import FeedGenerator
@@ -115,7 +116,10 @@ def _alert_updated_since_cut_off(alert, cut_off):
     # If an alert has no updated_at, render it to be safe.
     if not alert.updated_at:
         return True
-    return alert.updated_at_date.as_utc_datetime > cut_off
+    updated_at = alert.updated_at
+    if isinstance(updated_at, str):
+        updated_at = dt_parse(updated_at)
+    return updated_at > cut_off
 
 
 def get_rendered_pages(alerts, cut_off=None, publish_task_progress=None):

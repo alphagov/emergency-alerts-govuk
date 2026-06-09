@@ -220,6 +220,32 @@ def test_get_rendered_pages_skips_alerts_not_updated_since_cut_off(govuk_alerts)
     assert len(entries) == 2
 
 
+def test_get_rendered_pages_skips_alerts_with_string_updated_at(govuk_alerts):
+    # Alerts loaded from the API keep updated_at as an ISO string (it is not in
+    # AlertsApiClient.TIMESTAMP_FIELDS), so the cut-off comparison must cope with
+    # a str as well as a datetime.
+    alerts = [
+        create_alert_dict(
+            id=UUID(int=0),
+            starts_at=dt_parse('2021-04-20T11:30:00Z'),
+            approved_at=dt_parse('2021-04-20T11:25:00Z'),
+            updated_at='2021-04-20T11:30:00Z',
+        ),
+        create_alert_dict(
+            id=UUID(int=1),
+            starts_at=dt_parse('2021-04-21T11:30:00Z'),
+            approved_at=dt_parse('2021-04-21T11:25:00Z'),
+            updated_at='2021-04-22T11:30:00Z',
+        ),
+    ]
+    cut_off = dt_parse('2021-04-21T00:00:00Z')
+
+    pages = get_rendered_pages(Alerts(alerts), cut_off=cut_off)
+
+    assert 'alerts/20-apr-2021' not in pages
+    assert 'alerts/21-apr-2021' in pages
+
+
 def _verify_entries(entries, namespace, expected):
     for i, entry in enumerate(entries):
         assert entry.find('atom:id', namespace).text == expected[i]['id']
