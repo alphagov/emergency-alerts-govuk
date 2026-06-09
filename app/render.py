@@ -115,7 +115,7 @@ def _alert_updated_since_cut_off(alert, cut_off):
     # If an alert has no updated_at, render it to be safe.
     if not alert.updated_at:
         return True
-    return alert.updated_at_date.as_utc_datetime > cut_off
+    return alert.updated_at.as_utc_datetime > cut_off
 
 
 def get_rendered_pages(alerts, cut_off=None, publish_task_progress=None):
