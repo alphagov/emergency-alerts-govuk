@@ -1,5 +1,6 @@
 import time
 
+from dateutil.parser import parse as dt_parse
 from emergency_alerts_utils.tasks import QueueNames, TaskNames
 from flask import current_app, g
 from opentelemetry import trace
@@ -108,6 +109,8 @@ def _get_govuk_archive_timestamp():
         s3 = setup_s3_session()
         response = s3.head_object(Bucket=bucket, Key="archive_govuk-alerts-website.tar.gz")
         timestamp = response["LastModified"]
+        if isinstance(timestamp, str):
+            timestamp = dt_parse(timestamp)
         current_app.logger.info(f"Retrieved archive timestamp: {timestamp}")
         return timestamp
     except Exception:
