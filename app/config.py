@@ -1,8 +1,5 @@
 import os
 
-# from flask import current_app
-from kombu import Exchange, Queue
-
 
 class Config():
     HOST = os.environ.get('HOST')
@@ -27,22 +24,11 @@ class Config():
     NOTIFY_API_HOST_NAME = os.environ.get("API_HOST_NAME", "http://localhost:6011")
     GOVUK_CLIENT_SECRET = os.environ.get("GOVUK_CLIENT_SECRET")
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
-
     GOVUK_ALERTS_PUBLISH_CLIENT_ID = "govuk-alerts-publish"
     GOVUK_ALERTS_PUBLISH_CLIENT_SECRET = os.environ.get("GOVUK_ALERTS_PUBLISH_CLIENT_SECRET")
-    QUEUE_NAME = "govuk-alerts"
 
-    CELERY = {
-        "broker_url": "filesystem://",
-        "broker_transport_options": {
-            "data_folder_in": "/tmp/.data/broker",
-            "data_folder_out": "/tmp/.data/broker/",
-        },
-        "timezone": "Europe/London",
-        "imports": ["app.celery.tasks"],
-        "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
-        "worker_max_tasks_per_child": 2,
-    }
+    QUEUE_PREFIX = ""
+    QUEUE_NAME = "govuk-alerts"
 
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
 
@@ -54,9 +40,7 @@ class Hosted(Config):
     ENVIRONMENT = os.getenv('ENVIRONMENT')
     ENVIRONMENT_PREFIX = ENVIRONMENT if ENVIRONMENT != 'development' else 'dev'
 
-    QUEUE_PREFIX = f"{ENVIRONMENT_PREFIX}-{TENANT_PREFIX}"
-    SQS_QUEUE_BASE_URL = os.getenv("SQS_QUEUE_BASE_URL")
-    QUEUE_NAME = "govuk-alerts"
+    QUEUE_PREFIX = f"{ENVIRONMENT_PREFIX}-{TENANT_PREFIX}dramatiq-"
 
     EAS_APP_NAME = "govuk-alerts"
 
@@ -81,25 +65,8 @@ class Hosted(Config):
     )
     NOTIFY_API_CLIENT_ID = "govuk-alerts"
 
-    PREDEFINED_SQS_QUEUES = {
-        "govuk-alerts": {
-            "url": f"{SQS_QUEUE_BASE_URL}/{QUEUE_PREFIX}govuk-alerts"
-        }
-    }
-
-    CELERY = {
-        "broker_transport": "sqs",
-        "broker_transport_options": {
-            "region": AWS_REGION,
-            "predefined_queues": PREDEFINED_SQS_QUEUES,
-            "is_secure": True,
-            "task_acks_late": True,
-        },
-        "timezone": "UTC",
-        "imports": ["app.celery.tasks"],
-        "task_queues": [Queue(QUEUE_NAME, Exchange("default"), routing_key=QUEUE_NAME)],
-        "worker_max_tasks_per_child": 10,
-    }
+    HTTPS_PROXY = os.environ.get("HTTPS_PROXY")
+    NO_PROXY = os.environ.get("NO_PROXY")
 
     PLANNED_TESTS_YAML_FILE_NAME = "planned-tests.yaml"
 
