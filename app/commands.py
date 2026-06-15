@@ -10,6 +10,7 @@ from app.utils import (
     get_publish_destination,
     prepare_destination,
     purge_fastly_cache,
+    restore_latest_archive,
     switch_destination,
     upload_assets_to_s3,
     upload_cap_xml_to_s3,
@@ -27,21 +28,34 @@ def setup_commands(app):
 def publish():
     try:
         # get publish destination, based on currently configured blue/green configuration.
-        # Throws exception of not blue or green - could mean break glass is in operation, or another publish
+        # Throws exception if not blue or green - could mean break glass is in operation, or another publish
         # is in the process of swapping blue/green.
         publish_destination = get_publish_destination()
 
-        # delete content from destination, except for assets
-        prepare_destination(publish_destination, remove_assets=False)
+        prepared_ok = True
+
+        # Check we aren't publishing to the original publishing bucket
+        if publish_destination != current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]:
+            try:
+                # delete content from destination, except for assets
+                # and restore from latest website archive
+                prepare_destination(publish_destination, remove_assets=False)
+                restore_latest_archive(publish_destination, remove_assets=False)
+            except Exception as e:
+                current_app.logger.exception(f"Problem preparing publish site, setting flag to run full publish: {e}")
+                prepared_ok = False
 
         publish_task_progress = PublishTaskProgress.create(publish_type="publish-dynamic", publish_origin="cli")
         published_html = _publish_html(publish_task_progress)
         published_cap = _publish_cap_xml(publish_task_progress)
-        purge_fastly_cache()
+        published_assets = None
+        if not prepared_ok:
+            published_assets = _publish_assets(publish_task_progress)
         switch_destination(publish_destination)
+        purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
         publish_task_progress.set_to_finished()
-        archive_website(html=published_html, capxml=published_cap)
+        archive_website(html=published_html, capxml=published_cap, assets=published_assets)
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
 
@@ -51,11 +65,27 @@ def publish():
 @cli.with_appcontext
 def publish_with_assets(startup):
     try:
+        # get publish destination, based on currently configured blue/green configuration.
+        # Throws exception if not blue or green - could mean break glass is in operation, or another publish
+        # is in the process of swapping blue/green.
+        publish_destination = get_publish_destination()
+
+        # Check we aren't publishing to the original publishing bucket
+        if publish_destination != current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]:
+            try:
+                # delete content from destination, including assets
+                # and restore from latest website archive
+                prepare_destination(publish_destination, remove_assets=True)
+                restore_latest_archive(publish_destination, remove_assets=True)
+            except Exception as e:
+                current_app.logger.exception(f"Problem preparing publish site, overwriting with full publish: {e}")
+
         origin = "startup" if startup else "cli"
         publish_task_progress = PublishTaskProgress.create(publish_type="publish-all", publish_origin=origin)
         published_html = _publish_html(publish_task_progress)
         published_cap = _publish_cap_xml(publish_task_progress)
         published_assets = _publish_assets(publish_task_progress)
+        switch_destination(publish_destination)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
         publish_task_progress.set_to_finished()

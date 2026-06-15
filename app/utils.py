@@ -7,6 +7,7 @@ from pathlib import Path
 
 import boto3
 import requests
+from dateutil.parser import parse as dt_parse
 from flask import current_app
 from markupsafe import Markup, escape
 
@@ -16,6 +17,7 @@ from app.models.publish_task_progress import update_publish_progress_if_exists
 REPO = Path(__file__).parent.parent
 DIST = REPO / 'dist'
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
+ARCHIVE_FILENAME = "archive_govuk-alerts-website.tar.gz"
 
 
 def capitalise(value):
@@ -313,7 +315,7 @@ def archive_website(html, capxml, assets=None):
     s3 = setup_s3_session()
 
     # Same tar will be created every time, dest_bucket will have versioning enabled.
-    tar_file = "archive_govuk-alerts-website.tar.gz"
+    tar_file = ARCHIVE_FILENAME
 
     buffer = io.BytesIO()
 
@@ -379,9 +381,9 @@ def get_publish_destination():
 
 def prepare_destination(publish_bucket, remove_assets: bool):
     s3 = setup_s3_session()
+    asset_path = 'alerts/assets/'
 
-    if not remove_assets:
-        path_to_keep = 'alerts/assets/'
+    try:
         objects_to_delete = []
 
         # Paginate through all objects
@@ -391,8 +393,8 @@ def prepare_destination(publish_bucket, remove_assets: bool):
             for obj in page.get("Contents", []):
                 key = obj["Key"]
 
-                # Skip anything under the path_to_keep
-                if key.startswith(path_to_keep):
+                # Keep assets if flag set
+                if not remove_assets and key.startswith(asset_path):
                     continue
 
                 objects_to_delete.append({"Key": key})
@@ -406,8 +408,159 @@ def prepare_destination(publish_bucket, remove_assets: bool):
         if objects_to_delete:
             s3.delete_objects(Bucket=publish_bucket, Delete={"Objects": objects_to_delete})
 
-    return None
+    except Exception as e:
+        raise RuntimeError(
+            f"Failed to delete files from publish destination '{publish_bucket}': {e}"
+        )
 
 
-def switch_destination(publish_bucket):
-    return None
+def restore_latest_archive(publish_bucket, remove_assets: bool):
+    s3 = setup_s3_session()
+    asset_path = 'alerts/assets/'
+
+    try:
+        # Retrieve latest archive from archive bucket and extract contents into publish bucket
+        timestamp, body = _get_latest_govuk_archive(s3)
+
+        with tarfile.open(fileobj=body, mode="r:gz") as tar:
+            for member in tar.getmembers():
+                if not member.isfile():
+                    continue
+
+                if not member.name.startswith("alerts/"):
+                    continue
+
+                if not remove_assets and member.name.startswith(asset_path):
+                    continue
+
+                extracted = tar.extractfile(member)
+                if extracted is None:
+                    continue
+
+                data = extracted.read()
+                fileobj = io.BytesIO(data)
+
+                if member.name == "alerts.html":
+                    member.name = "alerts"
+
+                s3.put_object(
+                    Body=fileobj,
+                    Bucket=publish_bucket,
+                    ContentType=_get_mime_type(member.name),
+                    Key=member.name
+                )
+
+    except Exception as e:
+        raise RuntimeError(
+            f"Failed to restore files from archive to '{publish_bucket}': {e}"
+        )
+
+
+def _get_mime_type(name):
+    if name.endswith(".cap.xml"):
+        return "application/cap+xml"
+    if name.endswith(".atom"):
+        return "text/xml"
+    if name.endswith(".cy") or name.endswith(".xsl"):
+        return "text/html"
+
+    parts = name.split(".")
+    if len(parts) == 1:
+        return "text/html"
+    else:
+        mimetype_from_extension[name.split(".")[-1]]
+
+
+def _get_latest_govuk_archive(s3):
+    bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
+    if not bucket:
+        current_app.logger.info("Skipping retrieval of archive timestamp in local environment")
+        raise RuntimeError("Archive bucket not configured")
+
+    try:
+        response = s3.head_object(Bucket=bucket, Key=ARCHIVE_FILENAME)
+        timestamp = response["LastModified"]
+        if isinstance(timestamp, str):
+            timestamp = dt_parse(timestamp)
+        obj = s3.get_object(Bucket=bucket, Key=ARCHIVE_FILENAME)
+        raw = obj["Body"].read()
+        archive = io.BytesIO(raw)
+        current_app.logger.info(f"Retrieved archive with timestamp: {timestamp}")
+        return timestamp, archive
+
+    except Exception as e:
+        current_app.logger.exception("Unable to retrieve archive file")
+        raise RuntimeError(f"Unable to retrieve archive file: {e}")
+
+
+def switch_destination(switch_to_bucket):
+    try:
+        PROD_CF_ID = current_app.config["GOVUK_ALERTS_CLOUDFRONT_ID"]
+        PREVIEW_CF_ID = current_app.config["GOVUK_ALERTS_CLOUDFRONT_ID_PREVIEW"]
+        BLUE_BUCKET = current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]
+        GREEN_BUCKET = current_app.config["GOVUK_ALERTS_GREEN_S3_BUCKET_NAME"]
+
+        cf = boto3.client("cloudfront")
+
+        if switch_to_bucket == BLUE_BUCKET:
+            # PREVIEW → GREEN
+            _update_cf_origin(cf, PREVIEW_CF_ID, GREEN_BUCKET)
+            # PROD → BLUE
+            _update_cf_origin(cf, PROD_CF_ID, BLUE_BUCKET)
+            # Update ssm parameter with current live website status
+            _update_current_bucket_parameter("blue")
+
+            current_app.logger.info("Switched live cloudfront origin to BLUE")
+
+        if switch_to_bucket == GREEN_BUCKET:
+            # PREVIEW → BLUE
+            _update_cf_origin(cf, PREVIEW_CF_ID, BLUE_BUCKET)
+            # PROD → GREEN
+            _update_cf_origin(cf, PROD_CF_ID, GREEN_BUCKET)
+            # Update ssm parameter with current live website status
+            _update_current_bucket_parameter("green")
+
+            current_app.logger.info("Switched live cloudfront origin to GREEN")
+
+    except Exception as e:
+        current_app.logger.exception("Unable to switch cloudfront origin")
+        raise RuntimeError(f"Unable to switch cloudfront origin: {e}")
+
+
+def _update_cf_origin(cf, cf_id, new_bucket):
+    # Get current distribution + ETag
+    dist = cf.get_distribution_config(Id=cf_id)
+    config = dist["DistributionConfig"]
+    etag = dist["ETag"]
+
+    # Update the origin domain
+    # CloudFront expects the S3 origin domain WITHOUT https://
+    new_domain = f"{new_bucket}.s3.amazonaws.com"
+
+    for origin in config["Origins"]["Items"]:
+        origin["DomainName"] = new_domain
+
+    # Push update
+    return cf.update_distribution(
+        Id=cf_id,
+        IfMatch=etag,
+        DistributionConfig=config,
+    )
+
+
+def _update_current_bucket_parameter(current_bucket):
+    current_bucket_param = current_app.config["GOVUK_ALERTS_CURRENT_BUCKET_PARAM"]
+
+    ssm = setup_ssm_session()
+
+    try:
+        ssm.put_parameter(
+            Name=current_bucket_param,
+            Value=current_bucket,
+            Type="String",
+            Overwrite=True,
+        )
+    except Exception as e:
+        raise RuntimeError(
+            f"Failed to write SSM parameter '{current_bucket_param}': {e}"
+        )
