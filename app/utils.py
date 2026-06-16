@@ -473,7 +473,7 @@ def _get_mime_type(name):
     if len(parts) == 1:
         return "text/html"
     else:
-        mimetype_from_extension[name.split(".")[-1]]
+        return mimetype_from_extension.get(parts[-1], "application/octet-stream")
 
 
 def _get_latest_govuk_archive(s3):
