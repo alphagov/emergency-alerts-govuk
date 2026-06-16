@@ -443,6 +443,8 @@ def restore_latest_archive(publish_bucket, remove_assets: bool):
                 if member.name == "alerts.html":
                     member.name = "alerts"
 
+                current_app.logger.info(f"Processing {member.name}")
+
                 s3.put_object(
                     Body=fileobj,
                     Bucket=publish_bucket,
