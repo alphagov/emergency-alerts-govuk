@@ -417,6 +417,7 @@ def prepare_destination(publish_bucket, remove_assets: bool):
 def restore_latest_archive(publish_bucket, remove_assets: bool):
     s3 = setup_s3_session()
     asset_path = 'alerts/assets/'
+    current_member = None
 
     try:
         # Retrieve latest archive from archive bucket and extract contents into publish bucket
@@ -424,6 +425,8 @@ def restore_latest_archive(publish_bucket, remove_assets: bool):
 
         with tarfile.open(fileobj=body, mode="r:gz") as tar:
             for member in tar.getmembers():
+                current_member = member.name
+
                 if not member.isfile():
                     continue
 
@@ -440,10 +443,8 @@ def restore_latest_archive(publish_bucket, remove_assets: bool):
                 data = extracted.read()
                 fileobj = io.BytesIO(data)
 
-                if member.name == "alerts.html":
-                    member.name = "alerts"
-
-                current_app.logger.info(f"Processing {member.name}")
+                if member.name.endswith == "alerts.html":
+                    member.name = "alerts/alerts"
 
                 s3.put_object(
                     Body=fileobj,
@@ -454,7 +455,9 @@ def restore_latest_archive(publish_bucket, remove_assets: bool):
 
     except Exception as e:
         raise RuntimeError(
-            f"Failed to restore files from archive to '{publish_bucket}': {e}"
+            f"Failed to restore files from archive to '{publish_bucket}'. "
+            f"Error occurred while processing: {current_member}. "
+            f"Original error: {e}"
         )
 
 
@@ -497,6 +500,7 @@ def _get_latest_govuk_archive(s3):
 
 def switch_destination(switch_to_bucket):
     try:
+        CLOUDFRONT_ENABLED = current_app.config["GOVUK_ALERTS_CLOUDFRONT_ENABLED"]
         PROD_CF_ID = current_app.config["GOVUK_ALERTS_CLOUDFRONT_ID"]
         PREVIEW_CF_ID = current_app.config["GOVUK_ALERTS_CLOUDFRONT_ID_PREVIEW"]
         BLUE_BUCKET = current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]
@@ -505,24 +509,28 @@ def switch_destination(switch_to_bucket):
         cf = boto3.client("cloudfront")
 
         if switch_to_bucket == BLUE_BUCKET:
-            # PREVIEW → GREEN
-            _update_cf_origin(cf, PREVIEW_CF_ID, GREEN_BUCKET)
-            # PROD → BLUE
-            _update_cf_origin(cf, PROD_CF_ID, BLUE_BUCKET)
+            if CLOUDFRONT_ENABLED:
+                # PREVIEW → GREEN
+                _update_cf_origin(cf, PREVIEW_CF_ID, GREEN_BUCKET)
+                # PROD → BLUE
+                _update_cf_origin(cf, PROD_CF_ID, BLUE_BUCKET)
+                current_app.logger.info("Switched live cloudfront origin to BLUE")
+            else:
+                current_app.logger.info("CloudFront not enabled, would be switching origin to BLUE")
             # Update ssm parameter with current live website status
             _update_current_bucket_parameter("blue")
 
-            current_app.logger.info("Switched live cloudfront origin to BLUE")
-
         if switch_to_bucket == GREEN_BUCKET:
-            # PREVIEW → BLUE
-            _update_cf_origin(cf, PREVIEW_CF_ID, BLUE_BUCKET)
-            # PROD → GREEN
-            _update_cf_origin(cf, PROD_CF_ID, GREEN_BUCKET)
+            if CLOUDFRONT_ENABLED:
+                # PREVIEW → BLUE
+                _update_cf_origin(cf, PREVIEW_CF_ID, BLUE_BUCKET)
+                # PROD → GREEN
+                _update_cf_origin(cf, PROD_CF_ID, GREEN_BUCKET)
+                current_app.logger.info("Switched live cloudfront origin to GREEN")
+            else:
+                current_app.logger.info("CloudFront not enabled, would be switching origin to GREEN")
             # Update ssm parameter with current live website status
             _update_current_bucket_parameter("green")
-
-            current_app.logger.info("Switched live cloudfront origin to GREEN")
 
     except Exception as e:
         current_app.logger.exception("Unable to switch cloudfront origin")
@@ -552,6 +560,7 @@ def _update_cf_origin(cf, cf_id, new_bucket):
 
 def _update_current_bucket_parameter(current_bucket):
     current_bucket_param = current_app.config["GOVUK_ALERTS_CURRENT_BUCKET_PARAM"]
+    current_app.logger.info(f"Updating SSM parameter {current_bucket_param} - setting to {current_bucket}")
 
     ssm = setup_ssm_session()
 
