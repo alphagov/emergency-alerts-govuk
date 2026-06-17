@@ -351,11 +351,6 @@ def setup_ssm_session():
 
 def get_publish_destination():
     current_bucket_param = current_app.config["GOVUK_ALERTS_CURRENT_BUCKET_PARAM"]
-
-    if not current_bucket_param:
-        current_app.logger.info("Current bucket param not specified: defaulting to original publish bucket")
-        return current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
-
     ssm = setup_ssm_session()
     try:
         response = ssm.get_parameter(Name=current_bucket_param)
@@ -379,9 +374,8 @@ def get_publish_destination():
     )
 
 
-def prepare_destination(publish_bucket, remove_assets: bool):
+def prepare_destination(publish_bucket):
     s3 = setup_s3_session()
-    asset_path = 'alerts/assets/'
 
     try:
         objects_to_delete = []
@@ -392,11 +386,6 @@ def prepare_destination(publish_bucket, remove_assets: bool):
         for page in paginator.paginate(Bucket=publish_bucket):
             for obj in page.get("Contents", []):
                 key = obj["Key"]
-
-                # Keep assets if flag set
-                if not remove_assets and key.startswith(asset_path):
-                    continue
-
                 objects_to_delete.append({"Key": key})
 
                 # Delete in batches of 1000 (S3 API limit)
@@ -414,9 +403,8 @@ def prepare_destination(publish_bucket, remove_assets: bool):
         )
 
 
-def restore_latest_archive(publish_bucket, remove_assets: bool):
+def restore_latest_archive(publish_bucket):
     s3 = setup_s3_session()
-    asset_path = 'alerts/assets/'
     current_member = None
 
     try:
@@ -430,12 +418,6 @@ def restore_latest_archive(publish_bucket, remove_assets: bool):
                 if not member.isfile():
                     continue
 
-                if not member.name.startswith("alerts/"):
-                    continue
-
-                if not remove_assets and member.name.startswith(asset_path):
-                    continue
-
                 extracted = tar.extractfile(member)
                 if extracted is None:
                     continue
@@ -443,8 +425,8 @@ def restore_latest_archive(publish_bucket, remove_assets: bool):
                 data = extracted.read()
                 fileobj = io.BytesIO(data)
 
-                if member.name.endswith == "alerts.html":
-                    member.name = "alerts/alerts"
+                if member.name == "alerts.html":
+                    member.name = "alerts"
 
                 s3.put_object(
                     Body=fileobj,
