@@ -27,9 +27,8 @@ def setup_commands(app):
 @cli.with_appcontext
 def publish():
     try:
-        # get publish destination, based on currently configured blue/green configuration.
-        # Throws exception if not blue or green - could mean break glass is in operation, or another publish
-        # is in the process of swapping blue/green.
+        # Get publish destination, based on currently configured blue/green configuration.
+        # Throws exception if not blue or green - could mean break glass is in operation.
         publish_destination = get_publish_destination()
 
         prepared_ok = True
@@ -42,11 +41,11 @@ def publish():
             prepared_ok = False
 
         publish_task_progress = PublishTaskProgress.create(publish_type="publish-dynamic", publish_origin="cli")
-        published_html = _publish_html(publish_task_progress)
-        published_cap = _publish_cap_xml(publish_task_progress)
+        published_html = _publish_html(publish_task_progress, publish_destination)
+        published_cap = _publish_cap_xml(publish_task_progress, publish_destination)
         published_assets = None
         if not prepared_ok:
-            published_assets = _publish_assets(publish_task_progress)
+            published_assets = _publish_assets(publish_task_progress, publish_destination)
         switch_destination(publish_destination)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
@@ -62,8 +61,7 @@ def publish():
 def publish_with_assets(startup):
     try:
         # get publish destination, based on currently configured blue/green configuration.
-        # Throws exception if not blue or green - could mean break glass is in operation, or another publish
-        # is in the process of swapping blue/green.
+        # Throws exception if not blue or green - could mean break glass is in operation.
         publish_destination = get_publish_destination()
 
         try:
@@ -75,9 +73,9 @@ def publish_with_assets(startup):
 
         origin = "startup" if startup else "cli"
         publish_task_progress = PublishTaskProgress.create(publish_type="publish-all", publish_origin=origin)
-        published_html = _publish_html(publish_task_progress)
-        published_cap = _publish_cap_xml(publish_task_progress)
-        published_assets = _publish_assets(publish_task_progress)
+        published_html = _publish_html(publish_task_progress, publish_destination)
+        published_cap = _publish_cap_xml(publish_task_progress, publish_destination)
+        published_assets = _publish_assets(publish_task_progress, publish_destination)
         switch_destination(publish_destination)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
@@ -89,28 +87,29 @@ def publish_with_assets(startup):
         current_app.logger.exception(f"Publish FAILED: {e}")
 
 
-def _publish_html(publish_task_progress):
+def _publish_html(publish_task_progress, publish_destination):
     current_app.logger.info("Starting load of alerts")
     alerts = Alerts.load(publish_task_progress)
     current_app.logger.info("Starting render of pages")
     rendered_pages = get_rendered_pages(alerts, publish_task_progress=publish_task_progress)
     current_app.logger.info("Ending render of pages")
-    upload_html_to_s3(rendered_pages, publish_task_progress)
+    upload_html_to_s3(rendered_pages, publish_task_progress, publish_destination)
     return rendered_pages
 
 
-def _publish_assets(publish_task_progress):
-    assets = upload_assets_to_s3(publish_task_progress)
+def _publish_assets(publish_task_progress, publish_destination):
+    assets = upload_assets_to_s3(publish_task_progress, publish_destination)
     return assets
 
 
-def _publish_cap_xml(publish_task_progress):
+def _publish_cap_xml(publish_task_progress, publish_destination):
     alerts = Alerts.load(
         publish_task_progress
     )
     cap_xml_alerts = get_cap_xml_for_alerts(alerts, publish_task_progress=publish_task_progress)
     upload_cap_xml_to_s3(
         cap_xml_alerts,
-        publish_task_progress
+        publish_task_progress,
+        publish_destination
     )
     return cap_xml_alerts

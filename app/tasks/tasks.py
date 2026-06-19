@@ -48,8 +48,7 @@ def publish_govuk_alerts(broadcast_event_id=""):
         )
 
         # get publish destination, based on currently configured blue/green configuration.
-        # Throws exception if not blue or green - could mean break glass is in operation, or another publish
-        # is in the process of swapping blue/green.
+        # Throws exception if not blue or green - could mean break glass is in operation.
         publish_destination = get_publish_destination()
 
         current_app.logger.info(f"Preparing publish destination {publish_destination}")
@@ -69,7 +68,7 @@ def publish_govuk_alerts(broadcast_event_id=""):
         if not prepared_ok:
             cut_off = datetime(1970, 1, 1, tzinfo=timezone.utc)
             current_app.logger.info("Loading assets")
-            assets = upload_assets_to_s3(publish_task_progress)
+            assets = upload_assets_to_s3(publish_task_progress, publish_destination)
             current_app.logger.info("Assets loaded")
         else:
             cut_off = _get_govuk_archive_timestamp()
@@ -96,11 +95,11 @@ def publish_govuk_alerts(broadcast_event_id=""):
 
         with tracer.start_as_current_span("Upload HTML to S3"):
             current_app.logger.info("Uploading %d files to S3", len(rendered_pages))
-            upload_html_to_s3(rendered_pages, publish_task_progress)
+            upload_html_to_s3(rendered_pages, publish_task_progress, publish_destination)
 
         with tracer.start_as_current_span("Upload CAP to S3"):
             current_app.logger.info("Uploading %d files to S3", len(cap_xml_alerts))
-            upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress)
+            upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress, publish_destination)
 
         current_app.logger.info("Finished uploading to S3. Switching Cloudfront origins.")
         switch_destination(publish_destination)

@@ -109,31 +109,27 @@ def setup_s3_session():
     return session.client('s3')
 
 
-def upload_html_to_s3(rendered_pages, publish_task_progress=None):
-
-    s3 = setup_s3_session()
-
-    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
-    if not bucket_name:
+def upload_html_to_s3(rendered_pages, publish_task_progress=None, publish_destination=None):
+    if publish_destination is None:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
 
+    s3 = setup_s3_session()
+
     for path, content in rendered_pages.items():
-        current_app.logger.info("Uploading " + path)
+        current_app.logger.info("Uploading " + path + " to " + publish_destination)
         content_type = "text/xml" if path.endswith(".atom") else "text/html"
         s3.put_object(
             Body=content,
-            Bucket=bucket_name,
+            Bucket=publish_destination,
             ContentType=content_type,
             Key=path
         )
         update_publish_progress_if_exists(publish_task_progress, path)
 
 
-def upload_assets_to_s3(publish_task_progress):
-
-    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
-    if not bucket_name:
+def upload_assets_to_s3(publish_task_progress, publish_destination=None):
+    if publish_destination is None:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
 
@@ -141,10 +137,10 @@ def upload_assets_to_s3(publish_task_progress):
 
     assets = get_asset_files()
     for filename, (content, mimetype) in assets.items():
-        current_app.logger.info("Uploading " + filename)
+        current_app.logger.info("Uploading " + filename + " to " + publish_destination)
         s3.put_object(
             Body=content,
-            Bucket=bucket_name,
+            Bucket=publish_destination,
             ContentType=mimetype,
             Key=filename
         )
@@ -152,22 +148,19 @@ def upload_assets_to_s3(publish_task_progress):
     return assets
 
 
-def upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress):
-    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
-    if not bucket_name:
+def upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress, publish_destination=None):
+    if publish_destination is None:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
 
     s3 = setup_s3_session()
 
     for path, content in cap_xml_alerts.items():
-        current_app.logger.info(
-            "Uploading " + path,
-        )
+        current_app.logger.info("Uploading " + path + " to " + publish_destination)
 
         s3.put_object(
             Body=content,
-            Bucket=bucket_name,
+            Bucket=publish_destination,
             ContentType="application/cap+xml",
             Key=path
         )
