@@ -3,6 +3,7 @@ import os
 import re
 import tarfile
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import boto3
@@ -115,17 +116,21 @@ def upload_html_to_s3(rendered_pages, publish_task_progress=None, publish_destin
         return
 
     s3 = setup_s3_session()
+    files_to_upload = []
 
     for path, content in rendered_pages.items():
         current_app.logger.info("Uploading " + path + " to " + publish_destination)
         content_type = "text/xml" if path.endswith(".atom") else "text/html"
-        s3.put_object(
-            Body=content,
-            Bucket=publish_destination,
-            ContentType=content_type,
-            Key=path
-        )
+
+        files_to_upload.append({
+            "key": path,
+            "data": content,
+            "content_type": content_type,
+        })
+
         update_publish_progress_if_exists(publish_task_progress, path)
+
+    _upload_files_threaded(s3, publish_destination, files_to_upload)
 
 
 def upload_assets_to_s3(publish_task_progress, publish_destination=None):
@@ -134,17 +139,20 @@ def upload_assets_to_s3(publish_task_progress, publish_destination=None):
         return
 
     s3 = setup_s3_session()
+    files_to_upload = []
 
     assets = get_asset_files()
     for filename, (content, mimetype) in assets.items():
         current_app.logger.info("Uploading " + filename + " to " + publish_destination)
-        s3.put_object(
-            Body=content,
-            Bucket=publish_destination,
-            ContentType=mimetype,
-            Key=filename
-        )
+        files_to_upload.append({
+            "key": filename,
+            "data": content,
+            "content_type": mimetype,
+        })
         publish_task_progress.update_progress(file=filename)
+
+    _upload_files_threaded(s3, publish_destination, files_to_upload)
+
     return assets
 
 
@@ -154,17 +162,20 @@ def upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress, publish_destinat
         return
 
     s3 = setup_s3_session()
+    files_to_upload = []
 
     for path, content in cap_xml_alerts.items():
         current_app.logger.info("Uploading " + path + " to " + publish_destination)
 
-        s3.put_object(
-            Body=content,
-            Bucket=publish_destination,
-            ContentType="application/cap+xml",
-            Key=path
-        )
+        files_to_upload.append({
+            "key": path,
+            "data": content,
+            "content_type": "application/cap+xml",
+        })
+
         publish_task_progress.update_progress(file=path)
+
+    _upload_files_threaded(s3, publish_destination, files_to_upload)
 
 
 def purge_fastly_cache():
@@ -399,6 +410,45 @@ def prepare_destination(publish_bucket):
 def restore_latest_archive(publish_bucket):
     s3 = setup_s3_session()
     current_member = None
+    files_to_upload = []
+
+    try:
+        # Retrieve latest archive from archive bucket and extract contents into publish bucket
+        timestamp, body = _get_latest_govuk_archive(s3)
+
+        with tarfile.open(fileobj=body, mode="r:gz") as tar:
+            for member in tar.getmembers():
+                current_member = member.name
+
+                if not member.isfile():
+                    continue
+
+                extracted = tar.extractfile(member)
+                if extracted is None:
+                    continue
+
+                data = extracted.read()
+                key = "alerts" if member.name == "alerts.html" else member.name
+
+                files_to_upload.append({
+                    "key": key,
+                    "data": data,
+                    "content_type": _get_mime_type(key),
+                })
+
+        _upload_files_threaded(s3, publish_bucket, files_to_upload)
+
+    except Exception as e:
+        raise RuntimeError(
+            f"Failed to restore files from archive to '{publish_bucket}'. "
+            f"Error occurred while processing: {current_member}. "
+            f"Original error: {e}"
+        )
+
+
+def restore_latest_archive_old(publish_bucket):
+    s3 = setup_s3_session()
+    current_member = None
 
     try:
         # Retrieve latest archive from archive bucket and extract contents into publish bucket
@@ -550,3 +600,29 @@ def _update_current_bucket_parameter(current_bucket):
         raise RuntimeError(
             f"Failed to write SSM parameter '{current_bucket_param}': {e}"
         )
+
+
+def _upload_files_threaded(s3, bucket, files, max_workers=8):
+    """
+    Upload multiple files to S3 concurrently.
+
+    :param s3: boto3 S3 client
+    :param bucket: target bucket name
+    :param files: iterable of dicts: { "key": ..., "data": ..., "content_type": ... }
+    :param max_workers: number of concurrent uploads
+    """
+
+    def upload_one(file):
+        s3.put_object(
+            Bucket=bucket,
+            Key=file["key"],
+            Body=file["data"],
+            ContentType=file["content_type"],
+        )
+        return file["key"]
+
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        futures = {pool.submit(upload_one, f): f["key"] for f in files}
+
+        for future in as_completed(futures):
+            future.result()  # propagate exceptions
