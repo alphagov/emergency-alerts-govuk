@@ -24,12 +24,16 @@ run-flask-debug: ## Run flask in debug mode
 
 .PHONY: bootstrap
 bootstrap: generate-version-file
-	pip3 install -r requirements_local_utils.txt -c constraints.txt
+# In container builds we use a sibling utils from the base image, not a specific ref from git.
+	sed -i.orig 's/emergency-alerts-utils @/# DO NOT COMMIT: Commented out for parent requirements.txt: emergency-alerts-utils @/' requirements.txt
+# Work around macOS having awkward sed that creates/requires an original file
+	rm requirements.txt.orig || true
+	pip3 install -r requirements_local_utils.txt
 	npm ci --no-audit && npm run build
 
 .PHONY: bootstrap-for-tests
 bootstrap-for-tests: generate-version-file
-	pip3 install -r requirements_github_utils.txt -c constraints.txt
+	pip3 install -r requirements.txt
 	npm ci --no-audit && npm run build
 
 .PHONY: npm-audit
