@@ -1,7 +1,8 @@
 import io
 import tarfile
+from datetime import datetime, timezone
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import boto3
 import botocore
@@ -12,14 +13,20 @@ from moto import mock_aws
 
 from app.models.alert import Alert
 from app.utils import (
+    _get_latest_govuk_archive,
+    _get_mime_type,
     archive_website,
     capitalise,
     create_cap_event,
     file_fingerprint,
+    get_publish_destination,
     is_in_uk,
     paragraphize,
+    prepare_destination,
     purge_fastly_cache,
+    restore_latest_archive,
     simplify_custom_area_name,
+    switch_destination,
     upload_html_to_s3,
 )
 from tests.conftest import create_alert_dict, set_config
@@ -276,3 +283,444 @@ def _ensure_bucket(client, bucket_name, region="eu-west-2"):
         Bucket=bucket_name,
         CreateBucketConfiguration={"LocationConstraint": region},
     )
+
+
+@pytest.mark.parametrize(
+    "ssm_value, expected, exception",
+    [
+        ("blue",  "green-bucket", None),
+        ("green", "blue-bucket",  None),
+        ("purple", None, ValueError),
+        (Exception("boom"), None, RuntimeError),
+    ],
+)
+@patch("app.utils.setup_ssm_session")
+def test_get_publish_destination(
+    mock_ssm, monkeypatch, govuk_alerts, ssm_value, expected, exception
+):
+    monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CURRENT_BUCKET_PARAM", "alerts-current")
+    monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_BLUE_S3_BUCKET_NAME", "blue-bucket")
+    monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_GREEN_S3_BUCKET_NAME", "green-bucket")
+
+    ssm = MagicMock()
+    mock_ssm.return_value = ssm
+
+    if isinstance(ssm_value, Exception):
+        ssm.get_parameter.side_effect = ssm_value
+    else:
+        ssm.get_parameter.return_value = {"Parameter": {"Value": ssm_value}}
+
+    if exception:
+        with pytest.raises(exception):
+            get_publish_destination()
+    else:
+        assert get_publish_destination() == expected
+
+
+@patch("app.utils.setup_s3_session")
+def test_prepare_destination_deletes_all_objects(mock_s3_session):
+    s3 = MagicMock()
+    mock_s3_session.return_value = s3
+
+    paginator = MagicMock()
+    s3.get_paginator.return_value = paginator
+
+    paginator.paginate.return_value = [
+        {"Contents": [{"Key": f"file{i}"} for i in range(3)]},
+        {"Contents": [{"Key": f"file{i}"} for i in range(3, 5)]},
+    ]
+
+    prepare_destination("my-bucket")
+
+    # Only ONE delete call because total < 1000
+    s3.delete_objects.assert_called_once_with(
+        Bucket="my-bucket",
+        Delete={"Objects": [
+            {"Key": "file0"},
+            {"Key": "file1"},
+            {"Key": "file2"},
+            {"Key": "file3"},
+            {"Key": "file4"},
+        ]}
+    )
+
+
+@pytest.mark.parametrize(
+    "members, contents, mime_types, expected",
+    [
+        (
+            # members
+            ["alerts.html", "foo/bar.txt"],
+            # contents
+            [b"<html>content</html>", b"hello world"],
+            # mime types
+            ["text/html", "text/plain"],
+            # expected upload list
+            [
+                {"key": "alerts", "data": b"<html>content</html>", "content_type": "text/html"},
+                {"key": "foo/bar.txt", "data": b"hello world", "content_type": "text/plain"},
+            ],
+        ),
+        (
+            ["index.html"],
+            [b"hi"],
+            ["text/html"],
+            [
+                {"key": "index.html", "data": b"hi", "content_type": "text/html"},
+            ],
+        ),
+    ],
+)
+@patch("app.utils._upload_files_threaded")
+@patch("app.utils._get_mime_type")
+@patch("app.utils._get_latest_govuk_archive")
+@patch("app.utils.setup_s3_session")
+@patch("app.utils.tarfile.open")
+def test_restore_latest_archive_success(
+    mock_tar_open,
+    mock_setup_s3,
+    mock_get_latest,
+    mock_get_mime,
+    mock_upload_threaded,
+    members,
+    contents,
+    mime_types,
+    expected,
+):
+    s3 = MagicMock()
+    mock_setup_s3.return_value = s3
+
+    mock_get_latest.return_value = ("ts", MagicMock())
+
+    tar = MagicMock()
+    mock_tar_open.return_value.__enter__.return_value = tar
+
+    # Build fake tar members
+    fake_members = []
+    for name in members:
+        m = MagicMock()
+        m.name = name
+        m.isfile.return_value = True
+        fake_members.append(m)
+
+    tar.getmembers.return_value = fake_members
+
+    # Fake extractfile() results
+    extracted_files = []
+    for content in contents:
+        ef = MagicMock()
+        ef.read.return_value = content
+        extracted_files.append(ef)
+
+    tar.extractfile.side_effect = extracted_files
+
+    # Fake MIME types
+    mock_get_mime.side_effect = mime_types
+
+    restore_latest_archive("bucket")
+
+    mock_upload_threaded.assert_called_once()
+    uploaded = mock_upload_threaded.call_args.args[2]
+
+    assert uploaded == expected
+
+
+@pytest.mark.parametrize("dir_name", ["folder/", "nested/dir/", "assets/"])
+@patch("app.utils._upload_files_threaded")
+@patch("app.utils._get_latest_govuk_archive")
+@patch("app.utils.setup_s3_session")
+@patch("app.utils.tarfile.open")
+def test_restore_latest_archive_skips_non_files(
+    mock_tar_open,
+    mock_setup_s3,
+    mock_get_latest,
+    mock_upload_threaded,
+    dir_name,
+):
+    s3 = MagicMock()
+    mock_setup_s3.return_value = s3
+
+    mock_get_latest.return_value = ("ts", MagicMock())
+
+    tar = MagicMock()
+    mock_tar_open.return_value.__enter__.return_value = tar
+
+    member = MagicMock()
+    member.name = dir_name
+    member.isfile.return_value = False
+
+    tar.getmembers.return_value = [member]
+
+    restore_latest_archive("bucket")
+
+    mock_upload_threaded.assert_called_once_with(s3, "bucket", [])
+
+
+@pytest.mark.parametrize(
+    "member_name, error",
+    [
+        ("badfile.txt", Exception("boom")),
+        ("alerts.html", IOError("read error")),
+    ],
+)
+@patch("app.utils._get_latest_govuk_archive")
+@patch("app.utils.setup_s3_session")
+@patch("app.utils.tarfile.open")
+def test_restore_latest_archive_raises_runtime_error(
+    mock_tar_open,
+    mock_setup_s3,
+    mock_get_latest,
+    member_name,
+    error,
+):
+    s3 = MagicMock()
+    mock_setup_s3.return_value = s3
+
+    mock_get_latest.return_value = ("ts", MagicMock())
+
+    tar = MagicMock()
+    mock_tar_open.return_value.__enter__.return_value = tar
+
+    member = MagicMock()
+    member.name = member_name
+    member.isfile.return_value = True
+
+    tar.getmembers.return_value = [member]
+
+    tar.extractfile.side_effect = error
+
+    with pytest.raises(RuntimeError) as exc:
+        restore_latest_archive("bucket")
+
+    msg = str(exc.value)
+    assert member_name in msg
+    assert str(error) in msg
+
+
+@pytest.mark.parametrize(
+    "name, expected",
+    [
+        # Special cases
+        ("foo.cap.xml", "application/cap+xml"),
+        ("alert.atom", "text/xml"),
+        ("index.cy", "text/html"),
+        ("template.xsl", "text/html"),
+
+        # No extension → default to text/html
+        ("alerts", "text/html"),
+
+        # Known extensions from mimetype_from_extension
+        ("image.png", "image/png"),
+        ("photo.jpg", "image/jpeg"),
+        ("icon.ico", "image/x-icon"),
+        ("script.js", "application/javascript"),
+        ("style.css", "text/css"),
+        ("font.woff", "font/woff"),
+        ("font.woff2", "font/woff2"),
+        ("vector.svg", "image/svg+xml"),
+        ("image.webp", "image/webp"),
+
+        # Unknown extension → fallback to application/octet-stream
+        ("file.unknownext", "application/octet-stream"),
+    ],
+)
+def test_get_mime_type(name, expected):
+    assert _get_mime_type(name) == expected
+
+
+@pytest.mark.parametrize(
+    "bucket_config, "
+    "head_response, "
+    "body_bytes, "
+    "head_side_effect, "
+    "get_side_effect, "
+    "expected_exception, "
+    "expected_timestamp_type",
+    [
+        # SUCCESS: timestamp is datetime
+        (
+            "archive-bucket",
+            {"LastModified": datetime(2024, 1, 1, tzinfo=timezone.utc)},
+            b"fake-archive",
+            None,
+            None,
+            None,
+            datetime,
+        ),
+
+        # SUCCESS: timestamp is string → parsed
+        (
+            "archive-bucket",
+            {"LastModified": "2024-01-01T00:00:00Z"},
+            b"fake-archive",
+            None,
+            None,
+            None,
+            datetime,
+        ),
+
+        # FAILURE: bucket not configured
+        (
+            "",
+            None,
+            None,
+            None,
+            None,
+            RuntimeError,
+            None,
+        ),
+
+        # FAILURE: head_object blows up
+        (
+            "archive-bucket",
+            None,
+            None,
+            Exception("boom"),
+            None,
+            RuntimeError,
+            None,
+        ),
+
+        # FAILURE: get_object blows up
+        (
+            "archive-bucket",
+            {"LastModified": datetime(2024, 1, 1, tzinfo=timezone.utc)},
+            None,
+            None,
+            Exception("read-fail"),
+            RuntimeError,
+            None,
+        ),
+    ],
+)
+@patch("app.utils.setup_s3_session")
+@patch("app.utils.dt_parse")
+def test_get_latest_govuk_archive(
+    mock_dt_parse,
+    mock_setup_s3,
+    govuk_alerts,
+    bucket_config,
+    head_response,
+    body_bytes,
+    head_side_effect,
+    get_side_effect,
+    expected_exception,
+    expected_timestamp_type,
+):
+    # Enter Flask app context
+    with govuk_alerts.app_context():
+        # Patch config
+        govuk_alerts.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"] = bucket_config
+
+        # Fake S3 client
+        s3 = MagicMock()
+        mock_setup_s3.return_value = s3
+
+        # head_object behaviour
+        if head_side_effect:
+            s3.head_object.side_effect = head_side_effect
+        elif head_response:
+            s3.head_object.return_value = head_response
+
+        # get_object behaviour
+        if get_side_effect:
+            s3.get_object.side_effect = get_side_effect
+        elif body_bytes is not None:
+            s3.get_object.return_value = {"Body": io.BytesIO(body_bytes)}
+
+        # dt_parse behaviour
+        mock_dt_parse.return_value = datetime(2024, 1, 1, tzinfo=timezone.utc)
+
+        # Assertions
+        if expected_exception:
+            with pytest.raises(expected_exception):
+                _get_latest_govuk_archive(s3)
+        else:
+            timestamp, archive = _get_latest_govuk_archive(s3)
+
+            assert isinstance(timestamp, expected_timestamp_type)
+            assert isinstance(archive, io.BytesIO)
+            assert archive.read() == body_bytes
+
+
+@pytest.mark.parametrize(
+    "switch_to, cf_enabled, expected_preview_call, expected_prod_call, expected_param",
+    [
+        # --- SWITCH TO BLUE ---
+        (
+            "blue-bucket", True,
+            ("preview-id", "green-bucket"),   # preview → green
+            ("prod-id", "blue-bucket"),       # prod → blue
+            "blue",
+        ),
+        (
+            "blue-bucket", False,
+            None,  # no CloudFront calls
+            None,
+            "blue",
+        ),
+
+        # --- SWITCH TO GREEN ---
+        (
+            "green-bucket", True,
+            ("preview-id", "blue-bucket"),    # preview → blue
+            ("prod-id", "green-bucket"),      # prod → green
+            "green",
+        ),
+        (
+            "green-bucket", False,
+            None,
+            None,
+            "green",
+        ),
+    ],
+)
+@patch("app.utils._update_current_bucket_parameter")
+@patch("app.utils._update_cf_origin")
+@patch("app.utils.boto3.client")
+def test_switch_destination(
+    mock_boto_client,
+    mock_update_cf_origin,
+    mock_update_param,
+    govuk_alerts,
+    monkeypatch,
+    switch_to,
+    cf_enabled,
+    expected_preview_call,
+    expected_prod_call,
+    expected_param,
+):
+    # --- Setup Flask config ---
+    with govuk_alerts.app_context():
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_ENABLED", cf_enabled)
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_ID", "prod-id")
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_ID_PREVIEW", "preview-id")
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_BLUE_S3_BUCKET_NAME", "blue-bucket")
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_GREEN_S3_BUCKET_NAME", "green-bucket")
+
+        # Fake CloudFront client
+        mock_cf = MagicMock()
+        mock_boto_client.return_value = mock_cf
+
+        # --- Execute ---
+        switch_destination(switch_to)
+
+        # --- Assertions ---
+        if expected_preview_call:
+            mock_update_cf_origin.assert_any_call(
+                mock_cf,
+                expected_preview_call[0],
+                expected_preview_call[1],
+            )
+        else:
+            mock_update_cf_origin.assert_not_called()
+
+        if expected_prod_call:
+            mock_update_cf_origin.assert_any_call(
+                mock_cf,
+                expected_prod_call[0],
+                expected_prod_call[1],
+            )
+
+        # Always update SSM parameter
+        mock_update_param.assert_called_once_with(expected_param)
