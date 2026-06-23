@@ -446,46 +446,6 @@ def restore_latest_archive(publish_bucket):
         )
 
 
-def restore_latest_archive_old(publish_bucket):
-    s3 = setup_s3_session()
-    current_member = None
-
-    try:
-        # Retrieve latest archive from archive bucket and extract contents into publish bucket
-        timestamp, body = _get_latest_govuk_archive(s3)
-
-        with tarfile.open(fileobj=body, mode="r:gz") as tar:
-            for member in tar.getmembers():
-                current_member = member.name
-
-                if not member.isfile():
-                    continue
-
-                extracted = tar.extractfile(member)
-                if extracted is None:
-                    continue
-
-                data = extracted.read()
-                fileobj = io.BytesIO(data)
-
-                if member.name == "alerts.html":
-                    member.name = "alerts"
-
-                s3.put_object(
-                    Body=fileobj,
-                    Bucket=publish_bucket,
-                    ContentType=_get_mime_type(member.name),
-                    Key=member.name
-                )
-
-    except Exception as e:
-        raise RuntimeError(
-            f"Failed to restore files from archive to '{publish_bucket}'. "
-            f"Error occurred while processing: {current_member}. "
-            f"Original error: {e}"
-        )
-
-
 def _get_mime_type(name):
     if name.endswith(".cap.xml"):
         return "application/cap+xml"
