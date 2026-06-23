@@ -110,7 +110,7 @@ def setup_s3_session():
     return session.client('s3')
 
 
-def upload_html_to_s3(rendered_pages, publish_task_progress=None, publish_destination=None):
+def upload_html_to_s3(rendered_pages, publish_destination, publish_task_progress=None):
     if publish_destination is None:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
@@ -133,7 +133,7 @@ def upload_html_to_s3(rendered_pages, publish_task_progress=None, publish_destin
     _upload_files_threaded(s3, publish_destination, files_to_upload)
 
 
-def upload_assets_to_s3(publish_task_progress, publish_destination=None):
+def upload_assets_to_s3(publish_task_progress, publish_destination):
     if publish_destination is None:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
@@ -156,7 +156,7 @@ def upload_assets_to_s3(publish_task_progress, publish_destination=None):
     return assets
 
 
-def upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress, publish_destination=None):
+def upload_cap_xml_to_s3(cap_xml_alerts, publish_destination, publish_task_progress):
     if publish_destination is None:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return

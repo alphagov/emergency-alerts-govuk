@@ -93,7 +93,7 @@ def _publish_html(publish_task_progress, publish_destination):
     current_app.logger.info("Starting render of pages")
     rendered_pages = get_rendered_pages(alerts, publish_task_progress=publish_task_progress)
     current_app.logger.info("Ending render of pages")
-    upload_html_to_s3(rendered_pages, publish_task_progress, publish_destination)
+    upload_html_to_s3(rendered_pages, publish_destination, publish_task_progress)
     return rendered_pages
 
 
@@ -109,7 +109,7 @@ def _publish_cap_xml(publish_task_progress, publish_destination):
     cap_xml_alerts = get_cap_xml_for_alerts(alerts, publish_task_progress=publish_task_progress)
     upload_cap_xml_to_s3(
         cap_xml_alerts,
-        publish_task_progress,
-        publish_destination
+        publish_destination,
+        publish_task_progress
     )
     return cap_xml_alerts

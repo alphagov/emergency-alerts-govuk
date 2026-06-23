@@ -96,11 +96,11 @@ def publish_govuk_alerts(broadcast_event_id=""):
 
         with tracer.start_as_current_span("Upload HTML to S3"):
             current_app.logger.info("Uploading %d files to S3", len(rendered_pages))
-            upload_html_to_s3(rendered_pages, publish_task_progress, publish_destination)
+            upload_html_to_s3(rendered_pages, publish_destination, publish_task_progress)
 
         with tracer.start_as_current_span("Upload CAP to S3"):
             current_app.logger.info("Uploading %d files to S3", len(cap_xml_alerts))
-            upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress, publish_destination)
+            upload_cap_xml_to_s3(cap_xml_alerts, publish_destination, publish_task_progress)
 
         current_app.logger.info("Finished uploading to S3. Switching Cloudfront origins.")
         switch_destination(publish_destination)
@@ -180,11 +180,11 @@ def publish_govuk_alerts_full(broadcast_event_id=""):
 
         with tracer.start_as_current_span("Upload HTML to S3"):
             current_app.logger.info("Uploading %d files to S3", len(rendered_pages))
-            upload_html_to_s3(rendered_pages, publish_task_progress, publish_destination)
+            upload_html_to_s3(rendered_pages, publish_destination, publish_task_progress)
 
         with tracer.start_as_current_span("Upload CAP to S3"):
             current_app.logger.info("Uploading %d files to S3", len(cap_xml_alerts))
-            upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress, publish_destination)
+            upload_cap_xml_to_s3(cap_xml_alerts, publish_destination, publish_task_progress)
 
         current_app.logger.info("Finished uploading to S3. Switching Cloudfront origins.")
         switch_destination(publish_destination)
