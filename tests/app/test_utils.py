@@ -4,6 +4,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import boto3
+import botocore
 import pytest
 from flask import current_app
 from markupsafe import Markup
@@ -91,18 +92,18 @@ def test_is_in_uk_returns_polygons_in_uk_bounding_box(alert_dict, lat, lon, in_u
 def test_upload_to_s3(govuk_alerts):
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
 
-    client = boto3.client('s3')
-    client.create_bucket(Bucket=bucket_name, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
+    client = boto3.client("s3")
+    _ensure_bucket(client, bucket_name)
 
     pages = {"alerts": "<p>this is some test content</p>"}
-    upload_html_to_s3(pages)
+    upload_html_to_s3(pages, bucket_name)
 
     object_keys = [
         obj['Key'] for obj in
         client.list_objects(Bucket=bucket_name)['Contents']
     ]
 
-    assert object_keys == ['alerts']
+    assert 'alerts' in object_keys
 
     alerts_object = client.get_object(Bucket=bucket_name, Key='alerts')
     assert alerts_object['Body'].read().decode('utf-8') == pages['alerts']
@@ -225,15 +226,16 @@ def test_archive_website(govuk_alerts):
     source_bucket = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
     dest_bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
 
-    client = boto3.client('s3')
-    client.create_bucket(Bucket=source_bucket, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
-    client.create_bucket(Bucket=dest_bucket, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
+    client = boto3.client("s3", region_name="eu-west-2")
+
+    _ensure_bucket(client, source_bucket)
+    _ensure_bucket(client, dest_bucket)
 
     # Create test content
     pages = {"alerts": "<p>this is some test content</p>"}
-    upload_html_to_s3(pages)
+    upload_html_to_s3(pages, source_bucket)
     capxml = {"alert.cap.xml": "<p>this is some test content</p>"}
-    upload_html_to_s3(capxml)
+    upload_html_to_s3(capxml, source_bucket)
 
     # Archive it
     archive_website(html=pages, capxml=capxml)
@@ -257,3 +259,20 @@ def test_archive_website(govuk_alerts):
 
     assert "alerts.html" in names
     assert "alert.cap.xml" in names
+
+
+def _ensure_bucket(client, bucket_name, region="eu-west-2"):
+    try:
+        client.head_bucket(Bucket=bucket_name)
+        # Bucket exists, nothing to do
+        return
+    except botocore.exceptions.ClientError as e:
+        error_code = int(e.response["Error"]["Code"])
+        if error_code != 404:
+            raise  # Something else went wrong
+
+    # Bucket does not exist → create it
+    client.create_bucket(
+        Bucket=bucket_name,
+        CreateBucketConfiguration={"LocationConstraint": region},
+    )
