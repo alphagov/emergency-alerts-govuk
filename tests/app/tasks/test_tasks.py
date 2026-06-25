@@ -1,5 +1,4 @@
 import builtins
-from datetime import datetime, timezone
 from unittest.mock import mock_open, patch
 
 import boto3
@@ -137,12 +136,10 @@ def test_publish_govuk_alerts_full(
     mock_Alerts_load.assert_called_once_with(mock_create_progress.return_value)
     mock_get_rendered_pages.assert_called_once_with(
         mock_Alerts_load.return_value,
-        cut_off=datetime(1970, 1, 1, tzinfo=timezone.utc),
         publish_task_progress=mock_create_progress.return_value,
     )
     mock_get_cap_xml.assert_called_once_with(
         mock_Alerts_load.return_value,
-        cut_off=datetime(1970, 1, 1, tzinfo=timezone.utc),
         publish_task_progress=mock_create_progress.return_value,
     )
     mock_upload_to_s3.assert_called_once_with(
