@@ -110,6 +110,11 @@ def setup_s3_session():
     return session.client('s3')
 
 
+def setup_ssm_session():
+    session = setup_boto3_session()
+    return session.client('ssm')
+
+
 def upload_html_to_s3(rendered_pages, publish_destination, publish_task_progress=None):
     if publish_destination is None:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
@@ -346,11 +351,6 @@ def archive_website(html, capxml, assets=None):
 
     buffer.seek(0)
     s3.upload_fileobj(buffer, dest_bucket, tar_file)
-
-
-def setup_ssm_session():
-    session = setup_boto3_session()
-    return session.client('ssm', region_name=current_app.config["AWS_REGION"])
 
 
 def get_publish_destination():
