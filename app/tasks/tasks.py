@@ -1,5 +1,4 @@
 import time
-from datetime import datetime, timezone
 
 from dateutil.parser import parse as dt_parse
 from emergency_alerts_utils.tasks import QueueNames, TaskNames
@@ -64,9 +63,9 @@ def publish_govuk_alerts(broadcast_event_id=""):
 
         # Not able to confirm whether our publish destination was prepared correctly,
         # therefore need to render and publish everything.
-        # Grab assets, and set a really old cut_off date.
+        # Grab assets and set cut_off to None, which will ensure all pages are rendered.
         if not prepared_ok:
-            cut_off = datetime(1970, 1, 1, tzinfo=timezone.utc)
+            cut_off = None
             current_app.logger.info("Upload assets to S3")
             with tracer.start_as_current_span("Uploading assets to S3"):
                 assets = upload_assets_to_s3(publish_task_progress, publish_destination)
@@ -151,9 +150,6 @@ def publish_govuk_alerts_full(broadcast_event_id=""):
             except Exception as e:
                 current_app.logger.exception(f"Problem preparing publish site, will overwrite existing content: {e}")
 
-        # Set old cut_off date, so that all alerts are re-rendered
-        cut_off = datetime(1970, 1, 1, tzinfo=timezone.utc)
-
         current_app.logger.info("Upload assets to S3")
         with tracer.start_as_current_span("Uploading assets to S3"):
             assets = upload_assets_to_s3(publish_task_progress, publish_destination)
@@ -165,12 +161,12 @@ def publish_govuk_alerts_full(broadcast_event_id=""):
             current_app.logger.info("Alerts loaded")
 
         with tracer.start_as_current_span("Render pages"):
-            rendered_pages = get_rendered_pages(alerts, cut_off=cut_off, publish_task_progress=publish_task_progress)
+            rendered_pages = get_rendered_pages(alerts, publish_task_progress=publish_task_progress)
             current_app.logger.info("Pages rendered")
 
         with tracer.start_as_current_span("Render CAP XML"):
             cap_xml_alerts = get_cap_xml_for_alerts(
-                alerts, cut_off=cut_off, publish_task_progress=publish_task_progress
+                alerts, publish_task_progress=publish_task_progress
             )
             current_app.logger.info("CAP XML rendered")
 
