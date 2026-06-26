@@ -13,9 +13,14 @@ from app.notify_client.alerts_api_client import alerts_api_client
 from app.render import get_cap_xml_for_alerts, get_rendered_pages
 from app.utils import (
     archive_website,
+    get_publish_destination,
     post_version_to_cloudwatch,
+    prepare_destination,
     purge_fastly_cache,
+    restore_latest_archive,
     setup_s3_session,
+    switch_destination,
+    upload_assets_to_s3,
     upload_cap_xml_to_s3,
     upload_html_to_s3,
 )
@@ -37,15 +42,42 @@ def publish_govuk_alerts(broadcast_event_id=""):
             broadcast_event_id,
         )
 
-        current_app.logger.info("Loading alerts")
         publish_task_progress = PublishTaskProgress.create(
             publish_type="publish-dynamic", publish_origin="dramatiq"
         )
+
+        # get publish destination, based on currently configured blue/green configuration.
+        # Throws exception if not blue or green - could mean break glass is in operation.
+        publish_destination = get_publish_destination()
+
+        current_app.logger.info(f"Preparing publish destination {publish_destination}")
+        with tracer.start_as_current_span("Prepare publish destination"):
+            prepared_ok = True
+            try:
+                # delete content from destination and restore from latest website archive
+                prepare_destination(publish_destination)
+                restore_latest_archive(publish_destination)
+            except Exception as e:
+                current_app.logger.exception(f"Problem preparing publish site, setting flag to run full publish: {e}")
+                prepared_ok = False
+
+        # Not able to confirm whether our publish destination was prepared correctly,
+        # therefore need to render and publish everything.
+        # Grab assets and set cut_off to None, which will ensure all pages are rendered.
+        if not prepared_ok:
+            cut_off = None
+            current_app.logger.info("Upload assets to S3")
+            with tracer.start_as_current_span("Uploading assets to S3"):
+                assets = upload_assets_to_s3(publish_task_progress, publish_destination)
+                current_app.logger.info("Assets loaded")
+        else:
+            cut_off = _get_govuk_archive_timestamp()
+            assets = None
+
+        current_app.logger.info("Loading alerts")
         with tracer.start_as_current_span("Get live alerts"):
             alerts = Alerts.load(publish_task_progress)
             current_app.logger.info("Alerts loaded")
-
-        cut_off = _get_govuk_archive_timestamp()
 
         with tracer.start_as_current_span("Render pages"):
             rendered_pages = get_rendered_pages(alerts, cut_off=cut_off, publish_task_progress=publish_task_progress)
@@ -63,25 +95,109 @@ def publish_govuk_alerts(broadcast_event_id=""):
 
         with tracer.start_as_current_span("Upload HTML to S3"):
             current_app.logger.info("Uploading %d files to S3", len(rendered_pages))
-            upload_html_to_s3(rendered_pages, publish_task_progress)
+            upload_html_to_s3(rendered_pages, publish_destination, publish_task_progress)
 
         with tracer.start_as_current_span("Upload CAP to S3"):
             current_app.logger.info("Uploading %d files to S3", len(cap_xml_alerts))
-            upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress)
+            upload_cap_xml_to_s3(cap_xml_alerts, publish_destination, publish_task_progress)
 
-        current_app.logger.info("Finished uploading to S3. Purging Fastly.")
+        current_app.logger.info("Finished uploading to S3. Switching Cloudfront origins.")
+        switch_destination(publish_destination)
+
+        current_app.logger.info("Finished switching Cloudfront origins. Purging Fastly.")
         purge_fastly_cache()
         current_app.logger.info("Fastly purged. Acknowledging to API.")
         alerts_api_client.send_publish_acknowledgement()
         publish_task_progress.set_to_finished()
 
         with tracer.start_as_current_span("Archive website to S3"):
-            archive_website(html=rendered_pages, capxml=cap_xml_alerts, assets=None)
+            archive_website(html=rendered_pages, capxml=cap_xml_alerts, assets=assets)
             current_app.logger.info("Website archived")
 
         current_app.logger.info("Finished GovUK publish")
     except Exception as e:
         current_app.logger.exception("Failed to publish content to gov.uk/alerts")
+        raise e
+
+
+@dramatiq_instance.actor(
+    actor_name=TaskNames.PUBLISH_GOVUK_ALERTS_FULL,
+    queue_name=QueueNames.GOVUK_ALERTS,
+    allow_retry=True,
+)
+def publish_govuk_alerts_full(broadcast_event_id=""):
+    setattr(g, FLASK_G_BROADCAST_EVENT_ID, broadcast_event_id)
+
+    try:
+        current_app.logger.info(
+            "Starting GovUK full publish. (Triggered by broadcast event: %s)",
+            broadcast_event_id,
+        )
+
+        publish_task_progress = PublishTaskProgress.create(
+            publish_type="publish-all", publish_origin="dramatiq"
+        )
+
+        # get publish destination, based on currently configured blue/green configuration.
+        # Throws exception if not blue or green - could mean break glass is in operation.
+        publish_destination = get_publish_destination()
+
+        current_app.logger.info(f"Preparing publish destination {publish_destination}")
+        with tracer.start_as_current_span("Prepare publish destination"):
+            try:
+                # delete content from destination
+                prepare_destination(publish_destination)
+            except Exception as e:
+                current_app.logger.exception(f"Problem preparing publish site, will overwrite existing content: {e}")
+
+        current_app.logger.info("Upload assets to S3")
+        with tracer.start_as_current_span("Uploading assets to S3"):
+            assets = upload_assets_to_s3(publish_task_progress, publish_destination)
+            current_app.logger.info("Assets loaded")
+
+        current_app.logger.info("Loading alerts")
+        with tracer.start_as_current_span("Get live alerts"):
+            alerts = Alerts.load(publish_task_progress)
+            current_app.logger.info("Alerts loaded")
+
+        with tracer.start_as_current_span("Render pages"):
+            rendered_pages = get_rendered_pages(alerts, publish_task_progress=publish_task_progress)
+            current_app.logger.info("Pages rendered")
+
+        with tracer.start_as_current_span("Render CAP XML"):
+            cap_xml_alerts = get_cap_xml_for_alerts(
+                alerts, publish_task_progress=publish_task_progress
+            )
+            current_app.logger.info("CAP XML rendered")
+
+        if not current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]:
+            current_app.logger.info("Skipping upload to S3 in local environment")
+            return
+
+        with tracer.start_as_current_span("Upload HTML to S3"):
+            current_app.logger.info("Uploading %d files to S3", len(rendered_pages))
+            upload_html_to_s3(rendered_pages, publish_destination, publish_task_progress)
+
+        with tracer.start_as_current_span("Upload CAP to S3"):
+            current_app.logger.info("Uploading %d files to S3", len(cap_xml_alerts))
+            upload_cap_xml_to_s3(cap_xml_alerts, publish_destination, publish_task_progress)
+
+        current_app.logger.info("Finished uploading to S3. Switching Cloudfront origins.")
+        switch_destination(publish_destination)
+
+        current_app.logger.info("Finished switching Cloudfront origins. Purging Fastly.")
+        purge_fastly_cache()
+        current_app.logger.info("Fastly purged. Acknowledging to API.")
+        alerts_api_client.send_publish_acknowledgement()
+        publish_task_progress.set_to_finished()
+
+        with tracer.start_as_current_span("Archive website to S3"):
+            archive_website(html=rendered_pages, capxml=cap_xml_alerts, assets=assets)
+            current_app.logger.info("Website archived")
+
+        current_app.logger.info("Finished GovUK full publish")
+    except Exception as e:
+        current_app.logger.exception("Failed to publish full content to gov.uk/alerts")
         raise e
 
 
