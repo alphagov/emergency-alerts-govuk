@@ -135,7 +135,7 @@ def publish_govuk_alerts_full(broadcast_event_id=""):
         )
 
         publish_task_progress = PublishTaskProgress.create(
-            publish_type="publish-dynamic", publish_origin="dramatiq"
+            publish_type="publish-all", publish_origin="dramatiq"
         )
 
         # get publish destination, based on currently configured blue/green configuration.

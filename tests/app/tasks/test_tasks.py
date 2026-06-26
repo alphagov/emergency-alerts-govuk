@@ -124,7 +124,7 @@ def test_publish_govuk_alerts_full(
 ):
     publish_govuk_alerts_full()
     mock_create_progress.assert_called_once_with(
-        publish_type="publish-dynamic", publish_origin="dramatiq"
+        publish_type="publish-all", publish_origin="dramatiq"
     )
     mock_publish_task = mock_create_progress.return_value
     mock_get_publish_destination.assert_called_once()
