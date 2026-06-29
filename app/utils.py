@@ -3,10 +3,12 @@ import os
 import re
 import tarfile
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import boto3
 import requests
+from dateutil.parser import parse as dt_parse
 from flask import current_app
 from markupsafe import Markup, escape
 
@@ -16,6 +18,7 @@ from app.models.publish_task_progress import update_publish_progress_if_exists
 REPO = Path(__file__).parent.parent
 DIST = REPO / 'dist'
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
+ARCHIVE_FILENAME = "archive_govuk-alerts-website.tar.gz"
 
 
 def capitalise(value):
@@ -107,69 +110,77 @@ def setup_s3_session():
     return session.client('s3')
 
 
-def upload_html_to_s3(rendered_pages, publish_task_progress=None):
+def setup_ssm_session():
+    session = setup_boto3_session()
+    return session.client('ssm')
 
-    s3 = setup_s3_session()
 
-    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
-    if not bucket_name:
+def upload_html_to_s3(rendered_pages, publish_destination, publish_task_progress=None):
+    if publish_destination is None:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
+
+    s3 = setup_s3_session()
+    files_to_upload = []
 
     for path, content in rendered_pages.items():
-        current_app.logger.info("Uploading " + path)
+        current_app.logger.info("Uploading " + path + " to " + publish_destination)
         content_type = "text/xml" if path.endswith(".atom") else "text/html"
-        s3.put_object(
-            Body=content,
-            Bucket=bucket_name,
-            ContentType=content_type,
-            Key=path
-        )
+
+        files_to_upload.append({
+            "key": path,
+            "data": content,
+            "content_type": content_type,
+        })
+
         update_publish_progress_if_exists(publish_task_progress, path)
 
+    _upload_files_threaded(s3, publish_destination, files_to_upload)
 
-def upload_assets_to_s3(publish_task_progress):
 
-    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
-    if not bucket_name:
+def upload_assets_to_s3(publish_task_progress, publish_destination):
+    if publish_destination is None:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
 
     s3 = setup_s3_session()
+    files_to_upload = []
 
     assets = get_asset_files()
     for filename, (content, mimetype) in assets.items():
-        current_app.logger.info("Uploading " + filename)
-        s3.put_object(
-            Body=content,
-            Bucket=bucket_name,
-            ContentType=mimetype,
-            Key=filename
-        )
+        current_app.logger.info("Uploading " + filename + " to " + publish_destination)
+        files_to_upload.append({
+            "key": filename,
+            "data": content,
+            "content_type": mimetype,
+        })
         publish_task_progress.update_progress(file=filename)
+
+    _upload_files_threaded(s3, publish_destination, files_to_upload)
+
     return assets
 
 
-def upload_cap_xml_to_s3(cap_xml_alerts, publish_task_progress):
-    bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
-    if not bucket_name:
+def upload_cap_xml_to_s3(cap_xml_alerts, publish_destination, publish_task_progress):
+    if publish_destination is None:
         current_app.logger.info("Target S3 bucket not specified: Skipping upload")
         return
 
     s3 = setup_s3_session()
+    files_to_upload = []
 
     for path, content in cap_xml_alerts.items():
-        current_app.logger.info(
-            "Uploading " + path,
-        )
+        current_app.logger.info("Uploading " + path + " to " + publish_destination)
 
-        s3.put_object(
-            Body=content,
-            Bucket=bucket_name,
-            ContentType="application/cap+xml",
-            Key=path
-        )
+        files_to_upload.append({
+            "key": path,
+            "data": content,
+            "content_type": "application/cap+xml",
+        })
+
         publish_task_progress.update_progress(file=path)
+
+    _upload_files_threaded(s3, publish_destination, files_to_upload)
 
 
 def purge_fastly_cache():
@@ -303,7 +314,7 @@ def archive_website(html, capxml, assets=None):
     dest_bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
     if not dest_bucket:
         current_app.logger.info("Target S3 bucket not specified: Skipping archive")
-        return
+        return current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
 
     if not assets:
         assets = get_asset_files()
@@ -313,7 +324,7 @@ def archive_website(html, capxml, assets=None):
     s3 = setup_s3_session()
 
     # Same tar will be created every time, dest_bucket will have versioning enabled.
-    tar_file = "archive_govuk-alerts-website.tar.gz"
+    tar_file = ARCHIVE_FILENAME
 
     buffer = io.BytesIO()
 
@@ -340,3 +351,238 @@ def archive_website(html, capxml, assets=None):
 
     buffer.seek(0)
     s3.upload_fileobj(buffer, dest_bucket, tar_file)
+
+
+def get_publish_destination():
+    current_bucket_param = current_app.config["GOVUK_ALERTS_CURRENT_BUCKET_PARAM"]
+    ssm = setup_ssm_session()
+    try:
+        response = ssm.get_parameter(Name=current_bucket_param)
+        value = response["Parameter"]["Value"].strip().lower()
+    except Exception as e:
+        raise RuntimeError(
+            f"Failed to read SSM parameter '{current_bucket_param}': {e}"
+        )
+
+    if value == "blue":
+        # Currently pointing to blue bucket, so return green as destination
+        return current_app.config["GOVUK_ALERTS_GREEN_S3_BUCKET_NAME"]
+
+    if value == "green":
+        # Currently pointing to green bucket, so return blue as destination
+        return current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]
+
+    # Invalid value - log and return nothing
+    raise ValueError(
+        f"Invalid SSM value '{value}' for '{current_bucket_param}'. Expected 'blue' or 'green'."
+    )
+
+
+def prepare_destination(publish_bucket):
+    s3 = setup_s3_session()
+
+    try:
+        objects_to_delete = []
+
+        # Paginate through all objects
+        paginator = s3.get_paginator("list_objects_v2")
+
+        for page in paginator.paginate(Bucket=publish_bucket):
+            for obj in page.get("Contents", []):
+                key = obj["Key"]
+                objects_to_delete.append({"Key": key})
+
+                # Delete in batches of 1000 (S3 API limit)
+                if len(objects_to_delete) == 1000:
+                    s3.delete_objects(Bucket=publish_bucket, Delete={"Objects": objects_to_delete})
+                    objects_to_delete = []
+
+        # Delete any remaining objects
+        if objects_to_delete:
+            s3.delete_objects(Bucket=publish_bucket, Delete={"Objects": objects_to_delete})
+
+    except Exception as e:
+        raise RuntimeError(
+            f"Failed to delete files from publish destination '{publish_bucket}': {e}"
+        )
+
+
+def restore_latest_archive(publish_bucket):
+    s3 = setup_s3_session()
+    current_member = None
+    files_to_upload = []
+
+    try:
+        # Retrieve latest archive from archive bucket and extract contents into publish bucket
+        timestamp, body = _get_latest_govuk_archive(s3)
+
+        with tarfile.open(fileobj=body, mode="r:gz") as tar:
+            for member in tar.getmembers():
+                current_member = member.name
+
+                if not member.isfile():
+                    continue
+
+                extracted = tar.extractfile(member)
+                if extracted is None:
+                    continue
+
+                data = extracted.read()
+                key = "alerts" if member.name == "alerts.html" else member.name
+
+                files_to_upload.append({
+                    "key": key,
+                    "data": data,
+                    "content_type": _get_mime_type(key),
+                })
+
+        _upload_files_threaded(s3, publish_bucket, files_to_upload)
+
+    except Exception as e:
+        raise RuntimeError(
+            f"Failed to restore files from archive to '{publish_bucket}'. "
+            f"Error occurred while processing: {current_member}. "
+            f"Original error: {e}"
+        )
+
+
+def _get_mime_type(name):
+    if name.endswith(".cap.xml"):
+        return "application/cap+xml"
+    if name.endswith(".atom"):
+        return "text/xml"
+    if name.endswith(".cy") or name.endswith(".xsl"):
+        return "text/html"
+
+    parts = name.split(".")
+    if len(parts) == 1:
+        return "text/html"
+    else:
+        return mimetype_from_extension.get(parts[-1], "application/octet-stream")
+
+
+def _get_latest_govuk_archive(s3):
+    bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
+    if not bucket:
+        current_app.logger.info("Skipping retrieval of archive timestamp in local environment")
+        raise RuntimeError("Archive bucket not configured")
+
+    try:
+        response = s3.head_object(Bucket=bucket, Key=ARCHIVE_FILENAME)
+        timestamp = response["LastModified"]
+        if isinstance(timestamp, str):
+            timestamp = dt_parse(timestamp)
+        obj = s3.get_object(Bucket=bucket, Key=ARCHIVE_FILENAME)
+        raw = obj["Body"].read()
+        archive = io.BytesIO(raw)
+        current_app.logger.info(f"Retrieved archive with timestamp: {timestamp}")
+        return timestamp, archive
+
+    except Exception as e:
+        current_app.logger.exception("Unable to retrieve archive file")
+        raise RuntimeError(f"Unable to retrieve archive file: {e}")
+
+
+def switch_destination(switch_to_bucket):
+    try:
+        CLOUDFRONT_ENABLED = current_app.config["GOVUK_ALERTS_CLOUDFRONT_ENABLED"]
+        PROD_CF_ID = current_app.config["GOVUK_ALERTS_CLOUDFRONT_ID"]
+        PREVIEW_CF_ID = current_app.config["GOVUK_ALERTS_CLOUDFRONT_ID_PREVIEW"]
+        BLUE_BUCKET = current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]
+        GREEN_BUCKET = current_app.config["GOVUK_ALERTS_GREEN_S3_BUCKET_NAME"]
+
+        cf = boto3.client("cloudfront")
+
+        if switch_to_bucket == BLUE_BUCKET:
+            if CLOUDFRONT_ENABLED:
+                # PREVIEW → GREEN
+                _update_cf_origin(cf, PREVIEW_CF_ID, GREEN_BUCKET)
+                # PROD → BLUE
+                _update_cf_origin(cf, PROD_CF_ID, BLUE_BUCKET)
+                current_app.logger.info("Switched live cloudfront origin to BLUE")
+            else:
+                current_app.logger.info("CloudFront not enabled, would be switching origin to BLUE")
+            # Update ssm parameter with current live website status
+            _update_current_bucket_parameter("blue")
+
+        if switch_to_bucket == GREEN_BUCKET:
+            if CLOUDFRONT_ENABLED:
+                # PREVIEW → BLUE
+                _update_cf_origin(cf, PREVIEW_CF_ID, BLUE_BUCKET)
+                # PROD → GREEN
+                _update_cf_origin(cf, PROD_CF_ID, GREEN_BUCKET)
+                current_app.logger.info("Switched live cloudfront origin to GREEN")
+            else:
+                current_app.logger.info("CloudFront not enabled, would be switching origin to GREEN")
+            # Update ssm parameter with current live website status
+            _update_current_bucket_parameter("green")
+
+    except Exception as e:
+        current_app.logger.exception("Unable to switch cloudfront origin")
+        raise RuntimeError(f"Unable to switch cloudfront origin: {e}")
+
+
+def _update_cf_origin(cf, cf_id, new_bucket):
+    # Get current distribution + ETag
+    dist = cf.get_distribution_config(Id=cf_id)
+    config = dist["DistributionConfig"]
+    etag = dist["ETag"]
+
+    # Update the origin domain
+    # CloudFront expects the S3 origin domain WITHOUT https://
+    new_domain = f"{new_bucket}.s3.amazonaws.com"
+
+    for origin in config["Origins"]["Items"]:
+        origin["DomainName"] = new_domain
+
+    # Push update
+    return cf.update_distribution(
+        Id=cf_id,
+        IfMatch=etag,
+        DistributionConfig=config,
+    )
+
+
+def _update_current_bucket_parameter(current_bucket):
+    current_bucket_param = current_app.config["GOVUK_ALERTS_CURRENT_BUCKET_PARAM"]
+    current_app.logger.info(f"Updating SSM parameter {current_bucket_param} - setting to {current_bucket}")
+
+    ssm = setup_ssm_session()
+
+    try:
+        ssm.put_parameter(
+            Name=current_bucket_param,
+            Value=current_bucket,
+            Type="String",
+            Overwrite=True,
+        )
+    except Exception as e:
+        raise RuntimeError(
+            f"Failed to write SSM parameter '{current_bucket_param}': {e}"
+        )
+
+
+def _upload_files_threaded(s3, bucket, files, max_workers=8):
+    """
+    Upload multiple files to S3 concurrently.
+
+    :param s3: boto3 S3 client
+    :param bucket: target bucket name
+    :param files: iterable of dicts: { "key": ..., "data": ..., "content_type": ... }
+    :param max_workers: number of concurrent uploads
+    """
+
+    def upload_one(file):
+        s3.put_object(
+            Bucket=bucket,
+            Key=file["key"],
+            Body=file["data"],
+            ContentType=file["content_type"],
+        )
+        return file["key"]
+
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        futures = {pool.submit(upload_one, f): f["key"] for f in files}
+
+        for future in as_completed(futures):
+            future.result()  # propagate exceptions
