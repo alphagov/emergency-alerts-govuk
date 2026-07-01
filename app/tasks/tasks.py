@@ -100,6 +100,7 @@ def publish_govuk_alerts(broadcast_event_id=""):
         with tracer.start_as_current_span("Upload CAP to S3"):
             current_app.logger.info("Uploading %d files to S3", len(cap_xml_alerts))
             upload_cap_xml_to_s3(cap_xml_alerts, publish_destination, publish_task_progress)
+        publish_task_progress.set_to_finished()
 
         current_app.logger.info("Finished uploading to S3. Switching Cloudfront origins.")
         switch_destination(publish_destination)
@@ -108,7 +109,6 @@ def publish_govuk_alerts(broadcast_event_id=""):
         purge_fastly_cache()
         current_app.logger.info("Fastly purged. Acknowledging to API.")
         alerts_api_client.send_publish_acknowledgement()
-        publish_task_progress.set_to_finished()
 
         with tracer.start_as_current_span("Archive website to S3"):
             archive_website(html=rendered_pages, capxml=cap_xml_alerts, assets=assets)
@@ -181,6 +181,7 @@ def publish_govuk_alerts_full(broadcast_event_id=""):
         with tracer.start_as_current_span("Upload CAP to S3"):
             current_app.logger.info("Uploading %d files to S3", len(cap_xml_alerts))
             upload_cap_xml_to_s3(cap_xml_alerts, publish_destination, publish_task_progress)
+        publish_task_progress.set_to_finished()
 
         current_app.logger.info("Finished uploading to S3. Switching Cloudfront origins.")
         switch_destination(publish_destination)
@@ -189,7 +190,6 @@ def publish_govuk_alerts_full(broadcast_event_id=""):
         purge_fastly_cache()
         current_app.logger.info("Fastly purged. Acknowledging to API.")
         alerts_api_client.send_publish_acknowledgement()
-        publish_task_progress.set_to_finished()
 
         with tracer.start_as_current_span("Archive website to S3"):
             archive_website(html=rendered_pages, capxml=cap_xml_alerts, assets=assets)
