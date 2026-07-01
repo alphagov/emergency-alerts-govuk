@@ -52,7 +52,7 @@ def is_custom_area_with_local_authority(value):
 
 def paragraphize(value, classes="govuk-body govuk-!-margin-bottom-4", truncate=False):
     if truncate:
-        paragraphs = f'<p class="{classes} truncated-text">{value}</p>'
+        paragraphs = f'<p class="{classes} truncated-text">{escape(value)}</p>'
         return Markup(paragraphs)
     else:
         paragraphs = [
