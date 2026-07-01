@@ -495,10 +495,10 @@ def switch_destination(switch_to_bucket):
 
         if switch_to_bucket == BLUE_BUCKET:
             if CLOUDFRONT_ENABLED:
-                # PREVIEW → GREEN
-                _update_cf_origin(cf, PREVIEW_CF_ID, GREEN_BUCKET)
                 # PROD → BLUE
                 _update_cf_origin(cf, PROD_CF_ID, BLUE_BUCKET)
+                # PREVIEW → GREEN
+                _update_cf_origin(cf, PREVIEW_CF_ID, GREEN_BUCKET)
                 current_app.logger.info("Switched live cloudfront origin to BLUE")
             else:
                 current_app.logger.info("CloudFront not enabled, would be switching origin to BLUE")
@@ -507,10 +507,10 @@ def switch_destination(switch_to_bucket):
 
         if switch_to_bucket == GREEN_BUCKET:
             if CLOUDFRONT_ENABLED:
-                # PREVIEW → BLUE
-                _update_cf_origin(cf, PREVIEW_CF_ID, BLUE_BUCKET)
                 # PROD → GREEN
                 _update_cf_origin(cf, PROD_CF_ID, GREEN_BUCKET)
+                # PREVIEW → BLUE
+                _update_cf_origin(cf, PREVIEW_CF_ID, BLUE_BUCKET)
                 current_app.logger.info("Switched live cloudfront origin to GREEN")
             else:
                 current_app.logger.info("CloudFront not enabled, would be switching origin to GREEN")

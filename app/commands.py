@@ -46,10 +46,10 @@ def publish():
         published_assets = None
         if not prepared_ok:
             published_assets = _publish_assets(publish_task_progress, publish_destination)
+        publish_task_progress.set_to_finished()
         switch_destination(publish_destination)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
-        publish_task_progress.set_to_finished()
         archive_website(html=published_html, capxml=published_cap, assets=published_assets)
     except Exception as e:
         current_app.logger.exception(f"Publish FAILED: {e}")
@@ -76,10 +76,10 @@ def publish_with_assets(startup):
         published_html = _publish_html(publish_task_progress, publish_destination)
         published_cap = _publish_cap_xml(publish_task_progress, publish_destination)
         published_assets = _publish_assets(publish_task_progress, publish_destination)
+        publish_task_progress.set_to_finished()
         switch_destination(publish_destination)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
-        publish_task_progress.set_to_finished()
         archive_website(html=published_html, capxml=published_cap, assets=published_assets)
     except FileExistsError as e:
         current_app.logger.exception(f"Publish assets FAILED: {e}")
