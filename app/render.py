@@ -15,6 +15,7 @@ from jinja2 import (
     pass_context,
 )
 from lxml import etree as ET
+from markupsafe import escape
 
 from app.models.publish_task_progress import update_publish_progress_if_exists
 from app.utils import (
@@ -308,6 +309,12 @@ def _add_javascript_link_to_xsl(xsl_content):
 
 
 def _add_stopped_time_to_content(alert):
+    # The feed entry is emitted with type="xhtml", so the content string must be a
+    # well-formed XHTML fragment whose only markup is server-generated. alert.content is
+    # attacker-influenceable (GSM-7 allows <, >, & and quotes) and MUST be XML-escaped
+    # before interpolation, otherwise it can inject markup into feed readers or break the
+    # whole feed when lxml re-parses it in _add_stylesheet_attribute_to_atom.
+    escaped_content = escape(alert.content)
     if alert.is_past:
         broadcast_status = "Stopped sending at "
         if alert.cancelled_at and (alert.cancelled_at < alert.finishes_at):
@@ -316,11 +323,15 @@ def _add_stopped_time_to_content(alert):
             broadcast_status += _readable_time_string(alert.finishes_at)
         return (
             "<div xmlns='http://www.w3.org/1999/xhtml'>"
-            f"<p><strong>{broadcast_status}</strong></p>"
-            f"<p><![CDATA[{alert.content}]]></p>"
+            f"<p><strong>{escape(broadcast_status)}</strong></p>"
+            f"<p>{escaped_content}</p>"
             "</div>"
         )
-    return alert.content
+    return (
+        "<div xmlns='http://www.w3.org/1999/xhtml'>"
+        f"<p>{escaped_content}</p>"
+        "</div>"
+    )
 
 
 def _build_readable_summary(title, alert):
