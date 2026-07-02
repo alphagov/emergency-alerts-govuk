@@ -37,7 +37,7 @@ charset-normalizer==3.4.2
     # via requests
 click==8.2.1
     # via flask
-cryptography==46.0.7
+cryptography==48.0.1
     # via
     #   moto
     #   signxml
