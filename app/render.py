@@ -314,9 +314,6 @@ def _add_stopped_time_to_content(alert):
     # attacker-influenceable (GSM-7 allows <, >, & and quotes) and MUST be XML-escaped
     # before interpolation, otherwise it can inject markup into feed readers or break the
     # whole feed when lxml re-parses it in _add_stylesheet_attribute_to_atom.
-    # NB: alerts created via the admin "create" path are already HTML-escaped in storage,
-    # so this escape double-escapes those (cosmetic only); resolving that needs the wider
-    # storage-consistency work that is intentionally out of scope here.
     escaped_content = escape(alert.content)
     if alert.is_past:
         broadcast_status = "Stopped sending at "
