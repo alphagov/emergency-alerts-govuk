@@ -119,11 +119,9 @@
             <xsl:when test="contains(normalize-space(atom:summary), 'Stopped:')">
                 <p class="govuk-heading-s">
                     Stopped sending at
-                    <time class="local-end-time" data-datetime="{substring-before(substring-after(substring-after(normalize-space(atom:summary), 'Stopped: '), ' ['), ']')}">
-                        <xsl:value-of
-                            select="substring-before(substring-after(normalize-space(atom:summary), 'Stopped: '), ' [')"
-                        />
-                    </time>
+                    <xsl:value-of
+                        select="substring-before(substring-after(normalize-space(atom:summary), 'Stopped: '), ' [')"
+                    />
                 </p>
             </xsl:when>
         </xsl:choose>
