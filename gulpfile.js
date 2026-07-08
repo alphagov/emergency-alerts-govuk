@@ -130,7 +130,6 @@ const defaultTask = parallel(
   copy.govuk_frontend.images,
   copy.html5shiv,
   copy.images,
-  // copy.plainjs,
   scss.compile,
   rollupTask("govuk-frontend-skip-link"),
   rollupTask("relative-dates")
