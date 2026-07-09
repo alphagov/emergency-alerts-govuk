@@ -61,11 +61,6 @@ const copy = {
       .pipe(plugins.hash(hashOptions))
       .pipe(dest(paths.dist + "images/"));
   },
-  plainjs: () => {
-    return src(paths.src + "javascripts/feed.js", { encoding: false })
-      .pipe(plugins.hash(hashOptions))
-      .pipe(dest(paths.dist + "javascripts/"));
-  },
 };
 
 const rollupTask = (fileName) => () => {
@@ -135,7 +130,6 @@ const defaultTask = parallel(
   copy.govuk_frontend.images,
   copy.html5shiv,
   copy.images,
-  copy.plainjs,
   scss.compile,
   rollupTask("govuk-frontend-skip-link"),
   rollupTask("relative-dates")
