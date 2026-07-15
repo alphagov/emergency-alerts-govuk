@@ -24,6 +24,9 @@ Werkzeug==3.1.8
 # In container builds we use the sibling (base image) version.
 emergency-alerts-utils @ git+https://github.com/alphagov/emergency-alerts-utils.git
 
+# To allow attaching to containers (only when started in debug)
+debugpy==1.8.21
+
 # Packages for testing
 beautifulsoup4==4.14.3
 flake8==7.3.0
