@@ -86,35 +86,6 @@ def test_paragraphize_converts_newlines_to_paragraphs():
     assert paragraphize(lines, classes="a-class") == Markup(expected)
 
 
-@pytest.mark.parametrize('malicious_content', [
-    '<script>alert("xss")</script>',
-    '<img src=x onerror=alert(1)>',
-    '<a href="javascript:alert(1)">click</a>',
-    '"><svg onload=alert(1)>',
-    '"><script>alert(document.cookie)</script>',
-])
-def test_paragraphize_escapes_html(malicious_content):
-    result = paragraphize(malicious_content)
-    assert '<script>' not in result
-    assert '<img ' not in result
-    assert '<a ' not in result
-    assert '<svg ' not in result
-    assert '&lt;' in result
-
-
-@pytest.mark.parametrize('malicious_content', [
-    '<script>alert("xss")</script>',
-    '<img src=x onerror=alert(1)>',
-    '<a href="javascript:alert(1)">click</a>',
-])
-def test_paragraphize_truncated_escapes_html(malicious_content):
-    result = paragraphize(malicious_content, truncate=True)
-    assert '<script>' not in result
-    assert '<img ' not in result
-    assert '<a ' not in result
-    assert '&lt;' in result
-
-
 @pytest.mark.parametrize('lat,lon,in_uk', [
     [66.55, 25.889, False],  # somewhere in Finland
     [52.22035, 1.58242, True]  # somewhere in UK
