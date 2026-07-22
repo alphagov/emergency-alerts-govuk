@@ -50,14 +50,16 @@ def is_custom_area_with_local_authority(value):
     )
 
 
-def paragraphize(value, classes="govuk-body govuk-!-margin-bottom-4", truncate=False):
+def paragraphize(value, classes="govuk-body govuk-!-margin-bottom-4", truncate=False, escape_content=True):
+    if escape_content:
+        value = escape(value)
     if truncate:
         paragraphs = f'<p class="{classes} truncated-text">{value}</p>'
         return Markup(paragraphs)
     else:
         paragraphs = [
             f'<p class="{classes}">{line}</p>'
-            for line in escape(value).split('\n')
+            for line in value.split('\n')
             if line
         ]
         return Markup('\n\n'.join(paragraphs))
