@@ -124,3 +124,31 @@ def test_alert_no_extra_content(client_get, mocker):
 
     html = client_get('alerts/21-apr-2021')
     assert not html.select_one('#extra-content')
+
+
+@pytest.mark.parametrize('malicious_content', [
+    '<script>alert("xss")</script>',
+    '<img src=x onerror=alert(1)>',
+    '<a href="javascript:alert(1)">click</a>',
+    '"><svg onload=alert(1)>',
+])
+def test_alert_content_with_html_is_escaped(client_get, mocker, malicious_content):
+    mocker.patch('app.models.alerts.Alerts.load', return_value=Alerts([
+        create_alert_dict(
+            id=uuid4(),
+            content=malicious_content,
+            starts_at=dt_parse('2021-04-21T11:00:00Z'),
+        )
+    ]))
+
+    html = client_get('alerts/21-apr-2021')
+
+    alert_paragraphs = html.select('p.govuk-body')
+    assert len(alert_paragraphs) > 0
+
+    for paragraph in alert_paragraphs:
+        p_html = str(paragraph)
+        assert '<script>' not in p_html
+        assert '<img ' not in p_html
+        assert '<svg' not in p_html
+        assert '<a href="javascript:' not in p_html
