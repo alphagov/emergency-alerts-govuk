@@ -1,9 +1,13 @@
+import contextlib
+import hashlib
 import io
+import json
 import os
 import re
 import tarfile
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timezone
 from pathlib import Path
 
 import boto3
@@ -203,6 +207,89 @@ def purge_fastly_cache():
 
     resp = requests.post(fastly_url, headers=headers)
     resp.raise_for_status()
+
+
+def generate_content_manifest(rendered_pages, publish_destination):
+    """
+    Generates a content manifest containing SHA-256 hashes of the mutable pages
+    that are affected by alert submissions/cancellations: the index page, current-alerts,
+    and past-alerts.
+
+    This manifest is used for two things:
+    1. KVS propagation verification during publish (checking the 'origin' field
+       matches the expected destination bucket). This can be used to get an idea of when
+       it's probably okay to purge the caches (e.g., Fastly) in front of the CloudFront
+       distribution.
+    2. Ongoing cache integrity monitoring (the ability to compare a content hash taken
+       externally to the content hash we stick in the manifest that represents what we
+       "expect" to see).
+    """
+    mutable_page_keys = ["alerts", "alerts/current-alerts", "alerts/past-alerts"]
+
+    page_hashes = {}
+    for key in mutable_page_keys:
+        content = rendered_pages.get(key)
+        if content is not None:
+            if isinstance(content, str):
+                content = content.encode("utf-8")
+            page_hashes[key] = hashlib.sha256(content).hexdigest()
+
+    manifest = {
+        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "origin": publish_destination,
+        "pages": page_hashes,
+    }
+
+    return json.dumps(manifest, indent=2)
+
+
+def upload_content_manifest(manifest, publish_destination):
+    """
+    Uploads the content manifest to the destination bucket with Cache-Control headers
+    that prevent downstream caching (i.e., by Fastly). This ensures the manifest
+    is always fetched fresh from S3.
+
+    This should be used to push the content manifest into the destination bucket (that
+    traffic is being switched over to) so we can verify KVS propagation before purging
+    any caches.
+    """
+    if publish_destination is None:
+        current_app.logger.info("Target S3 bucket not specified: Skipping manifest upload")
+        return
+
+    s3 = setup_s3_session()
+    s3.put_object(
+        Bucket=publish_destination,
+        Key="alerts/_content-manifest",
+        Body=manifest.encode("utf-8"),
+        ContentType="application/json",
+        CacheControl="no-cache, no-store, must-revalidate",
+    )
+    current_app.logger.info(f"Uploaded content manifest to {publish_destination}")
+
+
+def upload_content_manifest_to_both_buckets(manifest):
+    """
+    Uploads the content manifest to both blue and green buckets.
+    This can be used to ensure both origins have a representative hash of the expected
+    content, regardless of where CloudFront may be routing traffic.
+    """
+    s3 = setup_s3_session()
+    blue_bucket = current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]
+    green_bucket = current_app.config["GOVUK_ALERTS_GREEN_S3_BUCKET_NAME"]
+
+    for bucket in (blue_bucket, green_bucket):
+        if not bucket:
+            continue
+        s3.put_object(
+            Bucket=bucket,
+            Key="alerts/_content-manifest",
+            Body=manifest.encode("utf-8"),
+            ContentType="application/json",
+            CacheControl="no-cache, no-store, must-revalidate",
+        )
+
+    current_app.logger.info("Uploaded content manifest to both buckets")
 
 
 def get_asset_files():
@@ -486,87 +573,84 @@ def _get_latest_govuk_archive(s3):
 
 
 def switch_destination(switch_to_bucket):
+    """
+    Updates the CloudFront KVS to route traffic to the specified bucket.
+    The associated CloudFront Function reads this KVS value on every request to determine
+    which S3 origin to use, enabling what is effectively a rapid blue/green deployment mechanism.
+    """
     try:
+        KVS_ARN = current_app.config["GOVUK_ALERTS_ORIGIN_KVS_ARN"]
+        KVS_KEY = current_app.config["GOVUK_ALERTS_ORIGIN_KVS_KEY"]
         CLOUDFRONT_ENABLED = current_app.config["GOVUK_ALERTS_CLOUDFRONT_ENABLED"]
-        PROD_CF_ID = current_app.config["GOVUK_ALERTS_CLOUDFRONT_ID"]
-        PREVIEW_CF_ID = current_app.config["GOVUK_ALERTS_CLOUDFRONT_ID_PREVIEW"]
-        BLUE_BUCKET = current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]
-        GREEN_BUCKET = current_app.config["GOVUK_ALERTS_GREEN_S3_BUCKET_NAME"]
 
-        cf = boto3.client("cloudfront")
+        if not CLOUDFRONT_ENABLED:
+            current_app.logger.info(f"CloudFront not enabled, would be switching to origin {switch_to_bucket}")
 
-        if switch_to_bucket == BLUE_BUCKET:
-            if CLOUDFRONT_ENABLED:
-                # PROD → BLUE
-                _update_cf_origin(cf, PROD_CF_ID, BLUE_BUCKET)
-                # PREVIEW → GREEN
-                _update_cf_origin(cf, PREVIEW_CF_ID, GREEN_BUCKET)
-                current_app.logger.info("Switched live cloudfront origin to BLUE")
-                _wait_for_distribution_deployed(cf, PROD_CF_ID)
-            else:
-                current_app.logger.info("CloudFront not enabled, would be switching origin to BLUE")
-            # Update ssm parameter with current live website status
-            _update_current_bucket_parameter("blue")
+            _update_current_bucket_parameter(
+                "blue" if switch_to_bucket == current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"] else "green"
+            )
 
-        if switch_to_bucket == GREEN_BUCKET:
-            if CLOUDFRONT_ENABLED:
-                # PROD → GREEN
-                _update_cf_origin(cf, PROD_CF_ID, GREEN_BUCKET)
-                # PREVIEW → BLUE
-                _update_cf_origin(cf, PREVIEW_CF_ID, BLUE_BUCKET)
-                current_app.logger.info("Switched live cloudfront origin to GREEN")
-                _wait_for_distribution_deployed(cf, PROD_CF_ID)
-            else:
-                current_app.logger.info("CloudFront not enabled, would be switching origin to GREEN")
-            # Update ssm parameter with current live website status
-            _update_current_bucket_parameter("green")
+            return
+
+        if not KVS_ARN:
+            raise RuntimeError("GOVUK_ALERTS_ORIGIN_KVS_ARN is not configured")
+
+        cf_kvs = boto3.client("cloudfront-keyvaluestore")
+
+        kvs_metadata = cf_kvs.describe_key_value_store(KvsARN=KVS_ARN)
+        etag = kvs_metadata["ETag"]
+
+        # Update the KVS with the new origin bucket
+        cf_kvs.put_key(
+            KeyArn=KVS_ARN,
+            Key=KVS_KEY,
+            Value=switch_to_bucket,
+            IfMatch=etag,
+        )
+
+        current_app.logger.info(f"Updated KVS origin to {switch_to_bucket}")
+
+        _wait_for_kvs_propagation(switch_to_bucket)
+
+        _update_current_bucket_parameter(
+            "blue" if switch_to_bucket == current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"] else "green"
+        )
 
     except Exception as e:
-        current_app.logger.exception("Unable to switch cloudfront origin")
-        raise RuntimeError(f"Unable to switch cloudfront origin: {e}")
+        current_app.logger.exception("Unable to switch origin via KVS")
+        raise RuntimeError(f"Unable to switch origin via KVS: {e}") from e
 
 
-def _update_cf_origin(cf, cf_id, new_bucket):
-    # Get current distribution + ETag
-    dist = cf.get_distribution_config(Id=cf_id)
-    config = dist["DistributionConfig"]
-    etag = dist["ETag"]
-
-    # Update the origin domain
-    # CloudFront expects the S3 origin domain WITHOUT https://
-    new_domain = f"{new_bucket}.s3.amazonaws.com"
-
-    for origin in config["Origins"]["Items"]:
-        origin["DomainName"] = new_domain
-
-    # Push update
-    return cf.update_distribution(
-        Id=cf_id,
-        IfMatch=etag,
-        DistributionConfig=config,
-    )
-
-
-def _wait_for_distribution_deployed(cf, cf_id):
+def _wait_for_kvs_propagation(expected_bucket, max_wait=30, interval=2):
     """
-    Polls CloudFront until the distribution reaches 'Deployed' status.
-    This ensures the origin switchover has fully propagated before we
-    purge downstream caches (i.e., Fastly), avoiding a scenario where
-    Fastly could re-cache stale content from the old origin.
-
-    Necessary given the blue/green switchover between CloudFront origins,
-    and the asynchronous nature of `UpdateDistribution` API calls.
+    Polls the content manifest through CloudFront to verify the KVS update
+    has propagated and requests are being routed to the new origin.
+    Checks the `origin` field in the manifest matches the expected destination bucket.
     """
-    current_app.logger.info(f"Waiting for CloudFront distrbution {cf_id} to reach Deployed status...")
-    waiter = cf.get_waiter("distribution_deployed")
-    waiter.wait(
-        Id=cf_id,
-        WaiterConfig={
-            "Delay": 5,         # Poll every 5 seconds
-            "MaxAttempts": 60,  # Wait for up to 5 minutes
-        }
+    cf_url = current_app.config.get("GOVUK_ALERTS_CLOUDFRONT_URL")
+
+    if not cf_url:
+        current_app.logger.info(
+            "GOVUK_ALERTS_CLOUDFRONT_URL not configured"
+        )
+        return
+
+    manifest_url = f"{cf_url}/alerts/_content-manifest"
+    deadline = time.time() + max_wait
+
+    while time.time() < deadline:
+        with contextlib.suppress(Exception):
+            resp = requests.get(manifest_url, timeout=5, headers={"Cache-Control": "no-cache"})
+            if resp.status_code == 200:
+                manifest_data = resp.json()
+                if manifest_data.get("origin") == expected_bucket:
+                    current_app.logger.info("KVS propagation verified via content manifest")
+                    return
+        time.sleep(interval)
+
+    current_app.logger.warning(
+        f"KVS propagation verification timed out after {max_wait}s."
     )
-    current_app.logger.info(f"CloudFront distribution {cf_id} is now Deployed.")
 
 
 def _update_current_bucket_parameter(current_bucket):
