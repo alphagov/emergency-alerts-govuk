@@ -260,7 +260,7 @@ def upload_content_manifest(manifest, publish_destination):
     s3 = setup_s3_session()
     s3.put_object(
         Bucket=publish_destination,
-        Key="alerts/_content-manifest",
+        Key="_content-manifest",
         Body=manifest.encode("utf-8"),
         ContentType="application/json",
         CacheControl="no-cache, no-store, must-revalidate",
@@ -283,7 +283,7 @@ def upload_content_manifest_to_both_buckets(manifest):
             continue
         s3.put_object(
             Bucket=bucket,
-            Key="alerts/_content-manifest",
+            Key="_content-manifest",
             Body=manifest.encode("utf-8"),
             ContentType="application/json",
             CacheControl="no-cache, no-store, must-revalidate",
@@ -635,7 +635,7 @@ def _wait_for_kvs_propagation(expected_bucket, max_wait=30, interval=2):
         )
         return
 
-    manifest_url = f"{cf_url}/alerts/_content-manifest"
+    manifest_url = f"{cf_url}/_content-manifest"
     deadline = time.time() + max_wait
 
     while time.time() < deadline:
