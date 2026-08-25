@@ -602,7 +602,7 @@ def switch_destination(switch_to_bucket):
 
         # Update the KVS with the new origin bucket
         cf_kvs.put_key(
-            KeyArn=KVS_ARN,
+            KvsARN=KVS_ARN,
             Key=KVS_KEY,
             Value=switch_to_bucket,
             IfMatch=etag,
