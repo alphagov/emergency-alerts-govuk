@@ -635,7 +635,7 @@ def _wait_for_kvs_propagation(expected_bucket, max_wait=30, interval=2):
         )
         return
 
-    manifest_url = f"{cf_url}/_content-manifest"
+    manifest_url = f"https://{cf_url}/_content-manifest"
     deadline = time.time() + max_wait
 
     while time.time() < deadline:
