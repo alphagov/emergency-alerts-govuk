@@ -643,6 +643,9 @@ def _wait_for_kvs_propagation(expected_bucket, max_wait=30, interval=2):
             resp = requests.get(manifest_url, timeout=5, headers={"Cache-Control": "no-cache"})
             if resp.status_code == 200:
                 manifest_data = resp.json()
+                current_app.logger.info(json.dumps(manifest_data))
+                current_app.logger.info(manifest_data.get("origin"))
+                current_app.logger.info(expected_bucket)
                 if manifest_data.get("origin") == expected_bucket:
                     current_app.logger.info("KVS propagation verified via content manifest")
                     return
