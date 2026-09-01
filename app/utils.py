@@ -216,12 +216,10 @@ def generate_content_manifest(rendered_pages, publish_destination):
     and past-alerts.
 
     This manifest is used for two things:
-    1. KVS propagation verification during publish (checking the 'origin' field
-       matches the expected destination bucket). This can be used to get an idea of when
-       it's probably okay to purge the caches (e.g., Fastly) in front of the CloudFront
-       distribution.
+    1. Origin switch verification during publish (checking the 'origin' field
+       matches the expected destination bucket)
     2. Ongoing cache integrity monitoring (the ability to compare a content hash taken
-       externally to the content hash we stick in the manifest that represents what we
+       externally to the content has we stick in the manifest that represents what we
        "expect" to see).
     """
     mutable_page_keys = ["alerts", "alerts/current-alerts", "alerts/past-alerts"]
@@ -250,8 +248,8 @@ def upload_content_manifest(manifest, publish_destination):
     is always fetched fresh from S3.
 
     This should be used to push the content manifest into the destination bucket (that
-    traffic is being switched over to) so we can verify KVS propagation before purging
-    any caches.
+    traffic is being switched over to) so we can verify traffic has been properly rerouted
+    before purging any caches.
     """
     if publish_destination is None:
         current_app.logger.info("Target S3 bucket not specified: Skipping manifest upload")
@@ -574,65 +572,48 @@ def _get_latest_govuk_archive(s3):
 
 def switch_destination(switch_to_bucket):
     """
-    Updates the CloudFront KVS to route traffic to the specified bucket.
-    The associated CloudFront Function reads this KVS value on every request to determine
-    which S3 origin to use, enabling what is effectively a rapid blue/green deployment mechanism.
+    Updates the SSM parameter that determines which S3 origin serves traffic.
+    An origin-request Lambda@Edge function reads this parameter to decide which
+    bucket to route requests to, enabling what is effectively a rapid blue/green
+    deployment mechanism.
+
+    The SSM write is effectively immediate, but the origin-request Lambda@Edge may
+    cache the value in its execution environment for a short window. It is therefore
+    verified via the content manifest that the new origin is actually being served
+    before returning (so the caller can safely purge our CDN cache, i.e., Fastly).
     """
     try:
-        KVS_ARN = current_app.config["GOVUK_ALERTS_ORIGIN_KVS_ARN"]
-        KVS_KEY = current_app.config["GOVUK_ALERTS_ORIGIN_KVS_KEY"]
         CLOUDFRONT_ENABLED = current_app.config["GOVUK_ALERTS_CLOUDFRONT_ENABLED"]
 
         if not CLOUDFRONT_ENABLED:
-            current_app.logger.info(f"CloudFront not enabled, would be switching to origin {switch_to_bucket}")
-
-            _update_current_bucket_parameter(
-                "blue" if switch_to_bucket == current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"] else "green"
+            current_app.logger.info(
+                f"CloudFront not enabled, would be switching origin to {switch_to_bucket}"
             )
-
+            _update_current_bucket_parameter(switch_to_bucket)
             return
 
-        if not KVS_ARN:
-            raise RuntimeError("GOVUK_ALERTS_ORIGIN_KVS_ARN is not configured")
-
-        cf_kvs = boto3.client("cloudfront-keyvaluestore")
-
-        kvs_metadata = cf_kvs.describe_key_value_store(KvsARN=KVS_ARN)
-        etag = kvs_metadata["ETag"]
-
-        # Update the KVS with the new origin bucket
-        cf_kvs.put_key(
-            KvsARN=KVS_ARN,
-            Key=KVS_KEY,
-            Value=switch_to_bucket,
-            IfMatch=etag,
-        )
-
-        current_app.logger.info(f"Updated KVS origin to {switch_to_bucket}")
-
-        _wait_for_kvs_propagation(switch_to_bucket)
-
-        _update_current_bucket_parameter(
-            "blue" if switch_to_bucket == current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"] else "green"
-        )
+        _update_current_bucket_parameter(switch_to_bucket)
+        _wait_for_origin_switch(switch_to_bucket)
 
     except Exception as e:
-        current_app.logger.exception("Unable to switch origin via KVS")
-        raise RuntimeError(f"Unable to switch origin via KVS: {e}") from e
+        current_app.logger.exception("Unable to switch origin")
+        raise RuntimeError(f"Unable to switch origin: {e}") from e
 
 
-def _wait_for_kvs_propagation(expected_bucket, max_wait=30, interval=2):
+def _wait_for_origin_switch(expected_bucket, max_wait=30, interval=2):
     """
-    Polls the content manifest through CloudFront to verify the KVS update
-    has propagated and requests are being routed to the new origin.
-    Checks the `origin` field in the manifest matches the expected destination bucket.
+    Polls the content manifest through CloudFront to verify the origin switch has
+    taken effect (i.e., the origin-request Lambda@Edge is now routing to the new
+    bucket). Checks the 'origin' field in the manifest matches the expected bucket.
+    Falls back to a fixed delay if the CloudFront URL is not configured.
     """
     cf_url = current_app.config.get("GOVUK_ALERTS_CLOUDFRONT_URL")
 
     if not cf_url:
         current_app.logger.info(
-            "GOVUK_ALERTS_CLOUDFRONT_URL not configured"
+            "GOVUK_ALERTS_CLOUDFRONT_URL not configured, waiting 5s for origin switch"
         )
+        time.sleep(5)
         return
 
     manifest_url = f"https://{cf_url}/_content-manifest"
@@ -643,16 +624,13 @@ def _wait_for_kvs_propagation(expected_bucket, max_wait=30, interval=2):
             resp = requests.get(manifest_url, timeout=5, headers={"Cache-Control": "no-cache"})
             if resp.status_code == 200:
                 manifest_data = resp.json()
-                current_app.logger.info(json.dumps(manifest_data))
-                current_app.logger.info(manifest_data.get("origin"))
-                current_app.logger.info(expected_bucket)
                 if manifest_data.get("origin") == expected_bucket:
-                    current_app.logger.info("KVS propagation verified via content manifest")
+                    current_app.logger.info("Origin switch verified via content manifest")
                     return
         time.sleep(interval)
 
     current_app.logger.warning(
-        f"KVS propagation verification timed out after {max_wait}s."
+        {f"Origin switch verification timed out after {max_wait}s. Proceeding with Fastly purge."}
     )
 
 

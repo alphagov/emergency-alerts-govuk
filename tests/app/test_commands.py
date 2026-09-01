@@ -15,6 +15,9 @@ def test_publish(mocker, govuk_alerts):
     mock_create_progress = mocker.patch("app.tasks.tasks.PublishTaskProgress.create")
     publish_html_mock = mocker.patch('app.commands._publish_html')
     publish_cap_xml_mock = mocker.patch('app.commands._publish_cap_xml')
+    generate_manifest_mock = mocker.patch('app.commands.generate_content_manifest')
+    upload_manifest_mock = mocker.patch('app.commands.upload_content_manifest')
+    upload_manifest_both_mock = mocker.patch('app.commands.upload_content_manifest_to_both_buckets')
     mock_switch_destination = mocker.patch('app.commands.switch_destination')
     purge_fastly_cache_mock = mocker.patch('app.commands.purge_fastly_cache')
     send_publish_ack_mock = mocker.patch(
@@ -39,7 +42,16 @@ def test_publish(mocker, govuk_alerts):
         mock_create_progress.return_value,
         mock_get_publish_destination.return_value
     )
+    generate_manifest_mock.assert_called_once_with(
+        publish_html_mock.return_value,
+        mock_get_publish_destination.return_value,
+    )
+    upload_manifest_mock.assert_called_once_with(
+        generate_manifest_mock.return_value,
+        mock_get_publish_destination.return_value,
+    )
     mock_switch_destination.assert_called_once_with(mock_get_publish_destination.return_value)
+    upload_manifest_both_mock.assert_called_once_with(generate_manifest_mock.return_value)
     purge_fastly_cache_mock.assert_called_once()
     send_publish_ack_mock.assert_called_once()
     archive_website_mock.assert_called_once()
@@ -56,6 +68,10 @@ def test_startup_publish_with_assets(mocker, govuk_alerts):
     publish_html_mock = mocker.patch('app.commands._publish_html')
     publish_cap_xml_mock = mocker.patch('app.commands._publish_cap_xml')
     publish_with_assets_mock = mocker.patch('app.commands._publish_assets')
+    generate_manifest_mock = mocker.patch('app.commands.generate_content_manifest')
+    upload_manifest_mock = mocker.patch('app.commands.upload_content_manifest')
+    upload_manifest_both_mock = mocker.patch('app.commands.upload_content_manifest_to_both_buckets')
+    mock_switch_destination = mocker.patch('app.commands.switch_destination')
     purge_fastly_cache_mock = mocker.patch('app.commands.purge_fastly_cache')
     send_publish_ack_mock = mocker.patch(
         'app.commands.alerts_api_client.send_publish_acknowledgement'
@@ -83,6 +99,16 @@ def test_startup_publish_with_assets(mocker, govuk_alerts):
         mock_create_progress.return_value,
         mock_get_publish_destination.return_value
     )
+    generate_manifest_mock.assert_called_once_with(
+        publish_html_mock.return_value,
+        mock_get_publish_destination.return_value,
+    )
+    upload_manifest_mock.assert_called_once_with(
+        generate_manifest_mock.return_value,
+        mock_get_publish_destination.return_value,
+    )
+    mock_switch_destination.assert_called_once_with(mock_get_publish_destination.return_value)
+    upload_manifest_both_mock.assert_called_once_with(generate_manifest_mock.return_value)
     purge_fastly_cache_mock.assert_called_once()
     send_publish_ack_mock.assert_called_once()
     archive_website_mock.assert_called_once()
@@ -99,6 +125,10 @@ def test_publish_with_assets(mocker, govuk_alerts):
     publish_html_mock = mocker.patch('app.commands._publish_html')
     publish_cap_xml_mock = mocker.patch('app.commands._publish_cap_xml')
     publish_with_assets_mock = mocker.patch('app.commands._publish_assets')
+    generate_manifest_mock = mocker.patch('app.commands.generate_content_manifest')
+    upload_manifest_mock = mocker.patch('app.commands.upload_content_manifest')
+    upload_manifest_both_mock = mocker.patch('app.commands.upload_content_manifest_to_both_buckets')
+    mock_switch_destination = mocker.patch('app.commands.switch_destination')
     purge_fastly_cache_mock = mocker.patch('app.commands.purge_fastly_cache')
     send_publish_ack_mock = mocker.patch(
         'app.commands.alerts_api_client.send_publish_acknowledgement'
@@ -125,6 +155,16 @@ def test_publish_with_assets(mocker, govuk_alerts):
         mock_create_progress.return_value,
         mock_get_publish_destination.return_value
     )
+    generate_manifest_mock.assert_called_once_with(
+        publish_html_mock.return_value,
+        mock_get_publish_destination.return_value,
+    )
+    upload_manifest_mock.assert_called_once_with(
+        generate_manifest_mock.return_value,
+        mock_get_publish_destination.return_value,
+    )
+    mock_switch_destination.assert_called_once_with(mock_get_publish_destination.return_value)
+    upload_manifest_both_mock.assert_called_once_with(generate_manifest_mock.return_value)
     purge_fastly_cache_mock.assert_called_once()
     send_publish_ack_mock.assert_called_once()
     archive_website_mock.assert_called_once()

@@ -110,7 +110,7 @@ def publish_govuk_alerts(broadcast_event_id=""):
 
         publish_task_progress.set_to_finished()
 
-        current_app.logger.info("Finished uploading to S3. Switching origin via KVS.")
+        current_app.logger.info("Finished uploading to S3. Switching origin via SSM parameter.")
         switch_destination(publish_destination)
 
         current_app.logger.info("Origin switched. Syncing manifest to both buckets.")
@@ -192,12 +192,20 @@ def publish_govuk_alerts_full(broadcast_event_id=""):
         with tracer.start_as_current_span("Upload CAP to S3"):
             current_app.logger.info("Uploading %d files to S3", len(cap_xml_alerts))
             upload_cap_xml_to_s3(cap_xml_alerts, publish_destination, publish_task_progress)
+
+        with tracer.start_as_current_span("Generate and upload content manifest"):
+            content_manifest = generate_content_manifest(rendered_pages, publish_destination)
+            upload_content_manifest(content_manifest, publish_destination)
+
         publish_task_progress.set_to_finished()
 
-        current_app.logger.info("Finished uploading to S3. Switching Cloudfront origins.")
+        current_app.logger.info("Finished uploading to S3. Switching origin via SSM parameter.")
         switch_destination(publish_destination)
 
-        current_app.logger.info("Finished switching Cloudfront origins. Purging Fastly.")
+        current_app.logger.info("Origin switched. Syncing manifest to both buckets.")
+        upload_content_manifest_to_both_buckets(content_manifest)
+
+        current_app.logger.info("Purging Fastly.")
         purge_fastly_cache()
         current_app.logger.info("Fastly purged. Acknowledging to API.")
         alerts_api_client.send_publish_acknowledgement()
