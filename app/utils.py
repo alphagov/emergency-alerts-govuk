@@ -451,11 +451,11 @@ def get_publish_destination():
             f"Failed to read SSM parameter '{current_bucket_param}': {e}"
         )
 
-    if value == "blue":
+    if value == current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]:
         # Currently pointing to blue bucket, so return green as destination
         return current_app.config["GOVUK_ALERTS_GREEN_S3_BUCKET_NAME"]
 
-    if value == "green":
+    if value == current_app.config["GOVUK_ALERTS_GREEN_S3_BUCKET_NAME"]:
         # Currently pointing to green bucket, so return blue as destination
         return current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]
 

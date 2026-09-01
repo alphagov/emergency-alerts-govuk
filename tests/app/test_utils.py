@@ -323,9 +323,9 @@ def _ensure_bucket(client, bucket_name, region="eu-west-2"):
 @pytest.mark.parametrize(
     "ssm_value, expected, exception",
     [
-        ("blue",  "green-bucket", None),
-        ("green", "blue-bucket",  None),
-        ("purple", None, ValueError),
+        ("blue-bucket",  "green-bucket", None),
+        ("green-bucket", "blue-bucket",  None),
+        ("purple-bucket", None, ValueError),
         (Exception("boom"), None, RuntimeError),
     ],
 )
