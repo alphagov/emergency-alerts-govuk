@@ -15,6 +15,7 @@ import requests
 from dateutil.parser import parse as dt_parse
 from flask import current_app
 from markupsafe import Markup, escape
+from opentelemetry import trace
 
 from app import version
 from app.models.publish_task_progress import update_publish_progress_if_exists
@@ -232,10 +233,17 @@ def generate_content_manifest(rendered_pages, publish_destination):
                 content = content.encode("utf-8")
             page_hashes[key] = hashlib.sha256(content).hexdigest()
 
+    trace_id = "(unknown)"
+    span = trace.get_current_span()
+    if span is not trace.INVALID_SPAN:
+        # Convert to hex and strip out the 0x prefix
+        trace_id = hex(span.get_span_context().trace_id)[2:]
+
     manifest = {
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "origin": publish_destination,
         "pages": page_hashes,
+        "trace_id": trace_id,
     }
 
     return json.dumps(manifest, indent=2)
