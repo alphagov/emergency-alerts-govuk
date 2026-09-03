@@ -461,7 +461,9 @@ def get_publish_destination():
 
     # Invalid value - log and return nothing
     raise ValueError(
-        f"Invalid SSM value '{value}' for '{current_bucket_param}'. Expected 'blue' or 'green'."
+        f"Invalid SSM value '{value}' for '{current_bucket_param}'. Expected "
+        f"'{current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]}' or "
+        f"'{current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]}'."
     )
 
 
