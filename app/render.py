@@ -1,5 +1,4 @@
 import uuid
-from datetime import timedelta
 from zoneinfo import ZoneInfo
 
 from dateutil.parser import parse as dt_parse
@@ -18,7 +17,6 @@ from jinja2 import (
 from lxml import etree as ET
 from markupsafe import escape
 
-from app.models.alert_date import AlertDate
 from app.models.publish_task_progress import update_publish_progress_if_exists
 from app.utils import (
     DIST,
@@ -122,15 +120,6 @@ def _alert_updated_since_cut_off(alert, cut_off):
     updated_at = alert.updated_at
     if isinstance(updated_at, str):
         updated_at = dt_parse(updated_at)
-
-    one_day_ago = AlertDate.now().as_local_date - timedelta(hours=24)
-
-    # Always re-render alerts that were sent or modified within the past 24h
-    if alert.starts_at_date.as_local_date > one_day_ago:
-        return True
-    if AlertDate(updated_at).as_local_date > one_day_ago:
-        return True
-
     return updated_at > cut_off
 
 
