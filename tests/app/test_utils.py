@@ -325,6 +325,8 @@ def _ensure_bucket(client, bucket_name, region="eu-west-2"):
     [
         ("blue-bucket",  "green-bucket", None),
         ("green-bucket", "blue-bucket",  None),
+        # Break-glass bucket (or any no blue/green value) should suspend publishing.
+        ("break-glass-bucket", None, ValueError),
         ("purple-bucket", None, ValueError),
         (Exception("boom"), None, RuntimeError),
     ],

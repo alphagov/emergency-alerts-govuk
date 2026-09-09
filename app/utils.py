@@ -450,28 +450,31 @@ def archive_website(html, capxml, assets=None):
 
 def get_publish_destination():
     current_bucket_param = current_app.config["GOVUK_ALERTS_CURRENT_BUCKET_PARAM"]
+    blue_bucket = current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]
+    green_bucket = current_app.config["GOVUK_ALERTS_GREEN_S3_BUCKET_NAME"]
+
     ssm = setup_ssm_session()
     try:
         response = ssm.get_parameter(Name=current_bucket_param)
-        value = response["Parameter"]["Value"].strip().lower()
+        value = response["Parameter"]["Value"].strip()
     except Exception as e:
         raise RuntimeError(
             f"Failed to read SSM parameter '{current_bucket_param}': {e}"
         )
 
-    if value == current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]:
-        # Currently pointing to blue bucket, so return green as destination
-        return current_app.config["GOVUK_ALERTS_GREEN_S3_BUCKET_NAME"]
+    # The parameter holds the bucket name currently being served.
+    # We publish to the other bucket (blue/green alternation).
+    if value == blue_bucket:
+        return green_bucket
 
-    if value == current_app.config["GOVUK_ALERTS_GREEN_S3_BUCKET_NAME"]:
-        # Currently pointing to green bucket, so return blue as destination
-        return current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]
+    if value == green_bucket:
+        return blue_bucket
 
-    # Invalid value - log and return nothing
+    # Any other value and we suspend normal publishing.
+    # We make the assumption that the break-glass mechanism is in operation.
     raise ValueError(
-        f"Invalid SSM value '{value}' for '{current_bucket_param}'. Expected "
-        f"'{current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]}' or "
-        f"'{current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]}'."
+        f"SSM value '{value}' for '{current_bucket_param}' is not the blue or green bucket. "
+        "Publishing is suspended (break-glass may be in operation)."
     )
 
 
