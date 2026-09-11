@@ -8,8 +8,6 @@ asgiref==3.10.0
     # via opentelemetry-instrumentation-asgi
 aws-opentelemetry-distro==0.14.2
     # via -r requirements.in
-awscrt==0.31.2
-    # via botocore
 beautifulsoup4==4.14.3
     # via -r requirements.in
 blinker==1.9.0
