@@ -7,7 +7,6 @@ from app.notify_client.alerts_api_client import alerts_api_client
 from app.render import get_cap_xml_for_alerts, get_rendered_pages
 from app.utils import (
     archive_website,
-    generate_content_manifest,
     get_publish_destination,
     prepare_destination,
     purge_fastly_cache,
@@ -15,8 +14,6 @@ from app.utils import (
     switch_destination,
     upload_assets_to_s3,
     upload_cap_xml_to_s3,
-    upload_content_manifest,
-    upload_content_manifest_to_both_buckets,
     upload_html_to_s3,
 )
 
@@ -50,10 +47,7 @@ def publish():
         if not prepared_ok:
             published_assets = _publish_assets(publish_task_progress, publish_destination)
         publish_task_progress.set_to_finished()
-        content_manifest = generate_content_manifest(published_html, publish_destination)
-        upload_content_manifest(content_manifest, publish_destination)
         switch_destination(publish_destination)
-        upload_content_manifest_to_both_buckets(content_manifest)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
         archive_website(html=published_html, capxml=published_cap, assets=published_assets)
@@ -83,10 +77,7 @@ def publish_with_assets(startup):
         published_cap = _publish_cap_xml(publish_task_progress, publish_destination)
         published_assets = _publish_assets(publish_task_progress, publish_destination)
         publish_task_progress.set_to_finished()
-        content_manifest = generate_content_manifest(published_html, publish_destination)
-        upload_content_manifest(content_manifest, publish_destination)
         switch_destination(publish_destination)
-        upload_content_manifest_to_both_buckets(content_manifest)
         purge_fastly_cache()
         alerts_api_client.send_publish_acknowledgement()
         archive_website(html=published_html, capxml=published_cap, assets=published_assets)

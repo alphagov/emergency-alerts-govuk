@@ -25,10 +25,6 @@ from app.tasks.tasks import (
 @patch("app.tasks.tasks.restore_latest_archive")
 @patch("app.tasks.tasks.upload_html_to_s3")
 @patch("app.tasks.tasks.upload_cap_xml_to_s3")
-@patch("app.tasks.tasks.generate_content_manifest")
-@patch("app.tasks.tasks.upload_content_manifest")
-@patch("app.tasks.tasks.switch_destination")
-@patch("app.tasks.tasks.upload_content_manifest_to_both_buckets")
 @patch("app.tasks.tasks.purge_fastly_cache")
 @patch("app.tasks.tasks.alerts_api_client.send_publish_acknowledgement")
 @patch("app.notify_client.alerts_api_client.publish_api_client.mark_publish_as_finished")
@@ -40,10 +36,6 @@ def test_publish_govuk_alerts(
     mock_mark_publish_as_finished,
     mock_send_publish_acknowledgement,
     mock_purge_fastly_cache,
-    mock_upload_manifest_both,
-    mock_switch_destination,
-    mock_upload_content_manifest,
-    mock_generate_content_manifest,
     mock_upload_cap_xml_to_s3,
     mock_upload_to_s3,
     mock_restore_latest_archive,
@@ -87,16 +79,6 @@ def test_publish_govuk_alerts(
         mock_get_publish_destination.return_value,
         mock_create_progress.return_value,
     )
-    mock_generate_content_manifest.assert_called_once_with(
-        mock_get_rendered_pages.return_value,
-        mock_get_publish_destination.return_value,
-    )
-    mock_upload_content_manifest.assert_called_once_with(
-        mock_generate_content_manifest.return_value,
-        mock_get_publish_destination.return_value,
-    )
-    mock_switch_destination.assert_called_once_with(mock_get_publish_destination.return_value)
-    mock_upload_manifest_both.assert_called_once_with(mock_generate_content_manifest.return_value)
     mock_purge_fastly_cache.assert_called_once()
     mock_send_publish_acknowledgement.assert_called_once()
     mock_publish_task.set_to_finished.assert_called_once_with()
@@ -115,10 +97,6 @@ def test_publish_govuk_alerts(
 @patch("app.tasks.tasks.upload_assets_to_s3")
 @patch("app.tasks.tasks.upload_html_to_s3")
 @patch("app.tasks.tasks.upload_cap_xml_to_s3")
-@patch("app.tasks.tasks.generate_content_manifest")
-@patch("app.tasks.tasks.upload_content_manifest")
-@patch("app.tasks.tasks.switch_destination")
-@patch("app.tasks.tasks.upload_content_manifest_to_both_buckets")
 @patch("app.tasks.tasks.purge_fastly_cache")
 @patch("app.tasks.tasks.alerts_api_client.send_publish_acknowledgement")
 @patch("app.notify_client.alerts_api_client.publish_api_client.mark_publish_as_finished")
@@ -130,10 +108,6 @@ def test_publish_govuk_alerts_full(
     mock_mark_publish_as_finished,
     mock_send_publish_acknowledgement,
     mock_purge_fastly_cache,
-    mock_upload_manifest_both,
-    mock_switch_destination,
-    mock_upload_content_manifest,
-    mock_generate_content_manifest,
     mock_upload_cap_xml_to_s3,
     mock_upload_to_s3,
     mock_upload_assets_to_s3,
@@ -178,16 +152,6 @@ def test_publish_govuk_alerts_full(
         mock_get_publish_destination.return_value,
         mock_create_progress.return_value,
     )
-    mock_generate_content_manifest.assert_called_once_with(
-        mock_get_rendered_pages.return_value,
-        mock_get_publish_destination.return_value,
-    )
-    mock_upload_content_manifest.assert_called_once_with(
-        mock_generate_content_manifest.return_value,
-        mock_get_publish_destination.return_value,
-    )
-    mock_switch_destination.assert_called_once_with(mock_get_publish_destination.return_value)
-    mock_upload_manifest_both.assert_called_once_with(mock_generate_content_manifest.return_value)
     mock_purge_fastly_cache.assert_called_once()
     mock_send_publish_acknowledgement.assert_called_once()
     mock_publish_task.set_to_finished.assert_called_once_with()
