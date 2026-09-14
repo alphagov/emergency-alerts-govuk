@@ -1,4 +1,6 @@
+import hashlib
 import io
+import json
 import tarfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -15,10 +17,12 @@ from app.models.alert import Alert
 from app.utils import (
     _get_latest_govuk_archive,
     _get_mime_type,
+    _wait_for_origin_switch,
     archive_website,
     capitalise,
     create_cap_event,
     file_fingerprint,
+    generate_content_manifest,
     get_publish_destination,
     is_in_uk,
     paragraphize,
@@ -27,6 +31,8 @@ from app.utils import (
     restore_latest_archive,
     simplify_custom_area_name,
     switch_destination,
+    upload_content_manifest,
+    upload_content_manifest_to_both_buckets,
     upload_html_to_s3,
 )
 from tests.conftest import create_alert_dict, set_config
@@ -317,9 +323,11 @@ def _ensure_bucket(client, bucket_name, region="eu-west-2"):
 @pytest.mark.parametrize(
     "ssm_value, expected, exception",
     [
-        ("blue",  "green-bucket", None),
-        ("green", "blue-bucket",  None),
-        ("purple", None, ValueError),
+        ("blue-bucket",  "green-bucket", None),
+        ("green-bucket", "blue-bucket",  None),
+        # Break-glass bucket (or any no blue/green value) should suspend publishing.
+        ("break-glass-bucket", None, ValueError),
+        ("purple-bucket", None, ValueError),
         (Exception("boom"), None, RuntimeError),
     ],
 )
@@ -673,83 +681,192 @@ def test_get_latest_govuk_archive(
 
 
 @pytest.mark.parametrize(
-    "switch_to, cf_enabled, expected_preview_call, expected_prod_call, expected_param",
+    "switch_to",
     [
-        # --- SWITCH TO BLUE ---
-        (
-            "blue-bucket", True,
-            ("preview-id", "green-bucket"),   # preview → green
-            ("prod-id", "blue-bucket"),       # prod → blue
-            "blue",
-        ),
-        (
-            "blue-bucket", False,
-            None,  # no CloudFront calls
-            None,
-            "blue",
-        ),
-
-        # --- SWITCH TO GREEN ---
-        (
-            "green-bucket", True,
-            ("preview-id", "blue-bucket"),    # preview → blue
-            ("prod-id", "green-bucket"),      # prod → green
-            "green",
-        ),
-        (
-            "green-bucket", False,
-            None,
-            None,
-            "green",
-        ),
+        "blue-bucket",
+        "green-bucket",
     ],
 )
 @patch("app.utils._update_current_bucket_parameter")
-@patch("app.utils._update_cf_origin")
-@patch("app.utils.boto3.client")
-def test_switch_destination(
-    mock_boto_client,
-    mock_update_cf_origin,
+@patch("app.utils._wait_for_origin_switch")
+def test_switch_destination_updates_ssm_parameter(
+    mock_wait_for_switch,
     mock_update_param,
     govuk_alerts,
     monkeypatch,
     switch_to,
-    cf_enabled,
-    expected_preview_call,
-    expected_prod_call,
-    expected_param,
 ):
-    # --- Setup Flask config ---
     with govuk_alerts.app_context():
-        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_ENABLED", cf_enabled)
-        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_ID", "prod-id")
-        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_ID_PREVIEW", "preview-id")
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_ENABLED", True)
         monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_BLUE_S3_BUCKET_NAME", "blue-bucket")
         monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_GREEN_S3_BUCKET_NAME", "green-bucket")
 
-        # Fake CloudFront client
-        mock_cf = MagicMock()
-        mock_boto_client.return_value = mock_cf
-
-        # --- Execute ---
         switch_destination(switch_to)
 
-        # --- Assertions ---
-        if expected_preview_call:
-            mock_update_cf_origin.assert_any_call(
-                mock_cf,
-                expected_preview_call[0],
-                expected_preview_call[1],
-            )
-        else:
-            mock_update_cf_origin.assert_not_called()
+        mock_update_param.assert_called_once_with(switch_to)
+        mock_wait_for_switch.assert_called_once_with(switch_to)
 
-        if expected_prod_call:
-            mock_update_cf_origin.assert_any_call(
-                mock_cf,
-                expected_prod_call[0],
-                expected_prod_call[1],
-            )
 
-        # Always update SSM parameter
-        mock_update_param.assert_called_once_with(expected_param)
+@patch("app.utils._update_current_bucket_parameter")
+@patch("app.utils._wait_for_origin_switch")
+def test_switch_destination_skips_verification_when_cloudfront_disabled(
+    mock_wait_for_switch,
+    mock_update_param,
+    govuk_alerts,
+    monkeypatch,
+):
+    with govuk_alerts.app_context():
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_ENABLED", False)
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_BLUE_S3_BUCKET_NAME", "blue-bucket")
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_GREEN_S3_BUCKET_NAME", "green-bucket")
+
+        switch_destination("blue-bucket")
+
+        # SSM parameter still updated with the bucket name to reflect intended state
+        mock_update_param.assert_called_once_with("blue-bucket")
+
+        # No origin switch verification when CloudFront is disabled (local/dev)
+        mock_wait_for_switch.assert_not_called()
+
+
+@patch("app.utils._update_current_bucket_parameter")
+@patch("app.utils._wait_for_origin_switch")
+def test_switch_destination_wraps_errors(
+    mock_wait_for_switch,
+    mock_update_param,
+    govuk_alerts,
+    monkeypatch,
+):
+    with govuk_alerts.app_context():
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_ENABLED", True)
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_BLUE_S3_BUCKET_NAME", "blue-bucket")
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_GREEN_S3_BUCKET_NAME", "green-bucket")
+
+        mock_update_param.side_effect = RuntimeError("SSM write failed")
+
+        with pytest.raises(RuntimeError, match="Unable to switch origin"):
+            switch_destination("blue-bucket")
+
+
+def test_generate_content_manifest_hashes_mutable_pages(govuk_alerts):
+    rendered_pages = {
+        "alerts": "<html>index</html>",
+        "alerts/current-alerts": "<html>current</html>",
+        "alerts/past-alerts": "<html>past</html>",
+        # An individual alert page that shouldn't be included in the manifest
+        "alerts/1-jan-2026": "<html>an alert</html>",
+    }
+
+    with govuk_alerts.app_context():
+        manifest_str = generate_content_manifest(rendered_pages, "green-bucket")
+
+    manifest = json.loads(manifest_str)
+
+    assert manifest["origin"] == "green-bucket"
+    assert "generated_at" in manifest
+    assert set(manifest["pages"].keys()) == {
+        "alerts",
+        "alerts/current-alerts",
+        "alerts/past-alerts",
+    }
+    # Verify a hash matches an independently computed SHA-256
+    expected_index_hash = hashlib.sha256("<html>index</html>".encode("utf-8")).hexdigest()
+    assert manifest["pages"]["alerts"] == expected_index_hash
+
+
+def test_generate_content_manifest_skips_missing_pages(govuk_alerts):
+    rendered_pages = {"alerts": "<html>index</html>"}
+
+    with govuk_alerts.app_context():
+        manifest_str = generate_content_manifest(rendered_pages, "blue-bucket")
+
+    manifest = json.loads(manifest_str)
+    assert list(manifest["pages"].keys()) == ["alerts"]
+    assert manifest["origin"] == "blue-bucket"
+
+
+@patch("app.utils.setup_s3_session")
+def test_upload_content_manifest_writes_to_destination_with_no_cache(mock_setup_s3, govuk_alerts):
+    mock_s3 = MagicMock()
+    mock_setup_s3.return_value = mock_s3
+
+    with govuk_alerts.app_context():
+        upload_content_manifest('{"origin": "green-bucket"}', "green-bucket")
+
+    mock_s3.put_object.assert_called_once_with(
+        Bucket="green-bucket",
+        Key="_content-manifest",
+        Body=b'{"origin": "green-bucket"}',
+        ContentType="application/json",
+        CacheControl="no-cache, no-store, must-revalidate",
+    )
+
+
+@patch("app.utils.setup_s3_session")
+def test_upload_content_manifest_skips_when_no_destination(mock_setup_s3, govuk_alerts):
+    with govuk_alerts.app_context():
+        upload_content_manifest('{"origin": "x"}', None)
+
+    mock_setup_s3.assert_not_called()
+
+
+@patch("app.utils.setup_s3_session")
+def test_upload_content_manifest_to_both_buckets(mock_setup_s3, govuk_alerts, monkeypatch):
+    mock_s3 = MagicMock()
+    mock_setup_s3.return_value = mock_s3
+
+    with govuk_alerts.app_context():
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_BLUE_S3_BUCKET_NAME", "blue-bucket")
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_GREEN_S3_BUCKET_NAME", "green-bucket")
+
+        upload_content_manifest_to_both_buckets('{"origin": "green-bucket"}')
+
+    assert mock_s3.put_object.call_count == 2
+    buckets_written = {call.kwargs["Bucket"] for call in mock_s3.put_object.call_args_list}
+    assert buckets_written == {"blue-bucket", "green-bucket"}
+    for call in mock_s3.put_object.call_args_list:
+        assert call.kwargs["Key"] == "_content-manifest"
+        assert call.kwargs["CacheControl"] == "no-cache, no-store, must-revalidate"
+
+
+@patch("app.utils.requests.get")
+def test_wait_for_origin_switch_returns_when_origin_matches(mock_get, govuk_alerts, monkeypatch):
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {"origin": "green-bucket", "pages": {}}
+    mock_get.return_value = mock_response
+
+    with govuk_alerts.app_context():
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_URL", "cf.example")
+        _wait_for_origin_switch("green-bucket", max_wait=5, interval=1)
+
+    mock_get.assert_called_with(
+        "https://cf.example/_content-manifest",
+        timeout=5,
+        headers={"Cache-Control": "no-cache"},
+    )
+
+
+@patch("app.utils.time.sleep", return_value=None)
+@patch("app.utils.requests.get")
+def test_wait_for_origin_switch_times_out_without_raising(mock_get, _mock_sleep, govuk_alerts, monkeypatch):
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {"origin": "blue-bucket", "pages": {}}
+    mock_get.return_value = mock_response
+
+    with govuk_alerts.app_context():
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_URL", "https://cf.example")
+        _wait_for_origin_switch("green-bucket", max_wait=0.01, interval=0.001)
+
+
+@patch("app.utils.time.sleep", return_value=None)
+@patch("app.utils.requests.get")
+def test_wait_for_origin_switch_falls_back_to_sleep_without_cf_url(mock_get, mock_sleep, govuk_alerts, monkeypatch):
+    with govuk_alerts.app_context():
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_URL", None)
+        _wait_for_origin_switch("green-bucket")
+
+    # No HTTP requests when there's no CloudFront URL, just a fixed sleep
+    mock_get.assert_not_called()
+    mock_sleep.assert_called_once_with(5)

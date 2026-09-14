@@ -1,9 +1,13 @@
+import contextlib
+import hashlib
 import io
+import json
 import os
 import re
 import tarfile
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timezone
 from pathlib import Path
 
 import boto3
@@ -11,6 +15,7 @@ import requests
 from dateutil.parser import parse as dt_parse
 from flask import current_app
 from markupsafe import Markup, escape
+from opentelemetry import trace
 
 from app import version
 from app.models.publish_task_progress import update_publish_progress_if_exists
@@ -205,6 +210,94 @@ def purge_fastly_cache():
     resp.raise_for_status()
 
 
+def generate_content_manifest(rendered_pages, publish_destination):
+    """
+    Generates a content manifest containing SHA-256 hashes of the mutable pages
+    that are affected by alert submissions/cancellations: the index page, current-alerts,
+    and past-alerts.
+
+    This manifest is used for two things:
+    1. Origin switch verification during publish (checking the 'origin' field
+       matches the expected destination bucket)
+    2. Ongoing cache integrity monitoring (the ability to compare a content hash taken
+       externally to the content has we stick in the manifest that represents what we
+       "expect" to see).
+    """
+    mutable_page_keys = ["alerts", "alerts/current-alerts", "alerts/past-alerts"]
+
+    page_hashes = {}
+    for key in mutable_page_keys:
+        content = rendered_pages.get(key)
+        if content is not None:
+            if isinstance(content, str):
+                content = content.encode("utf-8")
+            page_hashes[key] = hashlib.sha256(content).hexdigest()
+
+    trace_id = "(unknown)"
+    span = trace.get_current_span()
+    if span is not trace.INVALID_SPAN:
+        # Convert to hex and strip out the 0x prefix
+        trace_id = hex(span.get_span_context().trace_id)[2:]
+
+    manifest = {
+        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "origin": publish_destination,
+        "pages": page_hashes,
+        "trace_id": trace_id,
+    }
+
+    return json.dumps(manifest, indent=2)
+
+
+def upload_content_manifest(manifest, publish_destination):
+    """
+    Uploads the content manifest to the destination bucket with Cache-Control headers
+    that prevent downstream caching (i.e., by Fastly). This ensures the manifest
+    is always fetched fresh from S3.
+
+    This should be used to push the content manifest into the destination bucket (that
+    traffic is being switched over to) so we can verify traffic has been properly rerouted
+    before purging any caches.
+    """
+    if publish_destination is None:
+        current_app.logger.info("Target S3 bucket not specified: Skipping manifest upload")
+        return
+
+    s3 = setup_s3_session()
+    s3.put_object(
+        Bucket=publish_destination,
+        Key="_content-manifest",
+        Body=manifest.encode("utf-8"),
+        ContentType="application/json",
+        CacheControl="no-cache, no-store, must-revalidate",
+    )
+    current_app.logger.info(f"Uploaded content manifest to {publish_destination}")
+
+
+def upload_content_manifest_to_both_buckets(manifest):
+    """
+    Uploads the content manifest to both blue and green buckets.
+    This can be used to ensure both origins have a representative hash of the expected
+    content, regardless of where CloudFront may be routing traffic.
+    """
+    s3 = setup_s3_session()
+    blue_bucket = current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]
+    green_bucket = current_app.config["GOVUK_ALERTS_GREEN_S3_BUCKET_NAME"]
+
+    for bucket in (blue_bucket, green_bucket):
+        if not bucket:
+            continue
+        s3.put_object(
+            Bucket=bucket,
+            Key="_content-manifest",
+            Body=manifest.encode("utf-8"),
+            ContentType="application/json",
+            CacheControl="no-cache, no-store, must-revalidate",
+        )
+
+    current_app.logger.info("Uploaded content manifest to both buckets")
+
+
 def get_asset_files():
     folder = DIST
 
@@ -357,26 +450,31 @@ def archive_website(html, capxml, assets=None):
 
 def get_publish_destination():
     current_bucket_param = current_app.config["GOVUK_ALERTS_CURRENT_BUCKET_PARAM"]
+    blue_bucket = current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]
+    green_bucket = current_app.config["GOVUK_ALERTS_GREEN_S3_BUCKET_NAME"]
+
     ssm = setup_ssm_session()
     try:
         response = ssm.get_parameter(Name=current_bucket_param)
-        value = response["Parameter"]["Value"].strip().lower()
+        value = response["Parameter"]["Value"].strip()
     except Exception as e:
         raise RuntimeError(
             f"Failed to read SSM parameter '{current_bucket_param}': {e}"
         )
 
-    if value == "blue":
-        # Currently pointing to blue bucket, so return green as destination
-        return current_app.config["GOVUK_ALERTS_GREEN_S3_BUCKET_NAME"]
+    # The parameter holds the bucket name currently being served.
+    # We publish to the other bucket (blue/green alternation).
+    if value == blue_bucket:
+        return green_bucket
 
-    if value == "green":
-        # Currently pointing to green bucket, so return blue as destination
-        return current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]
+    if value == green_bucket:
+        return blue_bucket
 
-    # Invalid value - log and return nothing
+    # Any other value and we suspend normal publishing.
+    # We make the assumption that the break-glass mechanism is in operation.
     raise ValueError(
-        f"Invalid SSM value '{value}' for '{current_bucket_param}'. Expected 'blue' or 'green'."
+        f"SSM value '{value}' for '{current_bucket_param}' is not the blue or green bucket. "
+        "Publishing is suspended (break-glass may be in operation)."
     )
 
 
@@ -486,62 +584,66 @@ def _get_latest_govuk_archive(s3):
 
 
 def switch_destination(switch_to_bucket):
+    """
+    Updates the SSM parameter that determines which S3 origin serves traffic.
+    An origin-request Lambda@Edge function reads this parameter to decide which
+    bucket to route requests to, enabling what is effectively a rapid blue/green
+    deployment mechanism.
+
+    The SSM write is effectively immediate, but the origin-request Lambda@Edge may
+    cache the value in its execution environment for a short window. It is therefore
+    verified via the content manifest that the new origin is actually being served
+    before returning (so the caller can safely purge our CDN cache, i.e., Fastly).
+    """
     try:
         CLOUDFRONT_ENABLED = current_app.config["GOVUK_ALERTS_CLOUDFRONT_ENABLED"]
-        PROD_CF_ID = current_app.config["GOVUK_ALERTS_CLOUDFRONT_ID"]
-        PREVIEW_CF_ID = current_app.config["GOVUK_ALERTS_CLOUDFRONT_ID_PREVIEW"]
-        BLUE_BUCKET = current_app.config["GOVUK_ALERTS_BLUE_S3_BUCKET_NAME"]
-        GREEN_BUCKET = current_app.config["GOVUK_ALERTS_GREEN_S3_BUCKET_NAME"]
 
-        cf = boto3.client("cloudfront")
+        if not CLOUDFRONT_ENABLED:
+            current_app.logger.info(
+                f"CloudFront not enabled, would be switching origin to {switch_to_bucket}"
+            )
+            _update_current_bucket_parameter(switch_to_bucket)
+            return
 
-        if switch_to_bucket == BLUE_BUCKET:
-            if CLOUDFRONT_ENABLED:
-                # PROD → BLUE
-                _update_cf_origin(cf, PROD_CF_ID, BLUE_BUCKET)
-                # PREVIEW → GREEN
-                _update_cf_origin(cf, PREVIEW_CF_ID, GREEN_BUCKET)
-                current_app.logger.info("Switched live cloudfront origin to BLUE")
-            else:
-                current_app.logger.info("CloudFront not enabled, would be switching origin to BLUE")
-            # Update ssm parameter with current live website status
-            _update_current_bucket_parameter("blue")
-
-        if switch_to_bucket == GREEN_BUCKET:
-            if CLOUDFRONT_ENABLED:
-                # PROD → GREEN
-                _update_cf_origin(cf, PROD_CF_ID, GREEN_BUCKET)
-                # PREVIEW → BLUE
-                _update_cf_origin(cf, PREVIEW_CF_ID, BLUE_BUCKET)
-                current_app.logger.info("Switched live cloudfront origin to GREEN")
-            else:
-                current_app.logger.info("CloudFront not enabled, would be switching origin to GREEN")
-            # Update ssm parameter with current live website status
-            _update_current_bucket_parameter("green")
+        _update_current_bucket_parameter(switch_to_bucket)
+        _wait_for_origin_switch(switch_to_bucket)
 
     except Exception as e:
-        current_app.logger.exception("Unable to switch cloudfront origin")
-        raise RuntimeError(f"Unable to switch cloudfront origin: {e}")
+        current_app.logger.exception("Unable to switch origin")
+        raise RuntimeError(f"Unable to switch origin: {e}") from e
 
 
-def _update_cf_origin(cf, cf_id, new_bucket):
-    # Get current distribution + ETag
-    dist = cf.get_distribution_config(Id=cf_id)
-    config = dist["DistributionConfig"]
-    etag = dist["ETag"]
+def _wait_for_origin_switch(expected_bucket, max_wait=30, interval=2):
+    """
+    Polls the content manifest through CloudFront to verify the origin switch has
+    taken effect (i.e., the origin-request Lambda@Edge is now routing to the new
+    bucket). Checks the 'origin' field in the manifest matches the expected bucket.
+    Falls back to a fixed delay if the CloudFront URL is not configured.
+    """
+    cf_url = current_app.config.get("GOVUK_ALERTS_CLOUDFRONT_URL")
 
-    # Update the origin domain
-    # CloudFront expects the S3 origin domain WITHOUT https://
-    new_domain = f"{new_bucket}.s3.amazonaws.com"
+    if not cf_url:
+        current_app.logger.info(
+            "GOVUK_ALERTS_CLOUDFRONT_URL not configured, waiting 5s for origin switch"
+        )
+        time.sleep(5)
+        return
 
-    for origin in config["Origins"]["Items"]:
-        origin["DomainName"] = new_domain
+    manifest_url = f"https://{cf_url}/_content-manifest"
+    deadline = time.time() + max_wait
 
-    # Push update
-    return cf.update_distribution(
-        Id=cf_id,
-        IfMatch=etag,
-        DistributionConfig=config,
+    while time.time() < deadline:
+        with contextlib.suppress(Exception):
+            resp = requests.get(manifest_url, timeout=5, headers={"Cache-Control": "no-cache"})
+            if resp.status_code == 200:
+                manifest_data = resp.json()
+                if manifest_data.get("origin") == expected_bucket:
+                    current_app.logger.info("Origin switch verified via content manifest")
+                    return
+        time.sleep(interval)
+
+    current_app.logger.warning(
+        {f"Origin switch verification timed out after {max_wait}s. Proceeding with Fastly purge."}
     )
 
 
