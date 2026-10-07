@@ -18,8 +18,8 @@ pyjwt==2.15.0
 PyYAML==6.0.3
 requests==2.33.1
 responses==0.26.0
-urllib3==2.7.0
-Werkzeug==3.1.8
+urllib3==2.8.0
+Werkzeug==3.1.9
 
 # For transitive dependency resolution using pip-tools only.
 # In container builds we use the sibling (base image) version.
