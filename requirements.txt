@@ -540,13 +540,13 @@ typing-extensions==4.15.0
     #   opentelemetry-sdk
 tzdata==2026.2
     # via pendulum
-urllib3==2.7.0
+urllib3==2.8.0
     # via
     #   -r requirements.in
     #   botocore
     #   requests
     #   responses
-werkzeug==3.1.8
+werkzeug==3.1.9
     # via
     #   -r requirements.in
     #   emergency-alerts-utils
