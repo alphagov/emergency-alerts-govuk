@@ -8,6 +8,7 @@ from app.models.alerts import Alerts
 TIMESTAMP_FIELDS = [
     'approved_at',
     'starts_at',
+    'updated_at',
     'finishes_at',
     'cancelled_at'
 ]

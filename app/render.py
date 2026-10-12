@@ -1,6 +1,7 @@
 import uuid
 from zoneinfo import ZoneInfo
 
+from dateutil.parser import parse as dt_parse
 from emergency_alerts_utils.formatters import autolink_urls, formatted_list
 from emergency_alerts_utils.xml.broadcast import generate_xml_body
 from feedgen.feed import FeedGenerator
@@ -14,7 +15,9 @@ from jinja2 import (
     pass_context,
 )
 from lxml import etree as ET
+from markupsafe import escape
 
+from app.models.publish_task_progress import update_publish_progress_if_exists
 from app.utils import (
     DIST,
     REPO,
@@ -107,7 +110,20 @@ def setup_jinja_environment(alerts):
     return env
 
 
-def get_rendered_pages(alerts):
+def _alert_updated_since_cut_off(alert, cut_off):
+    # If no cut-off render everything.
+    if cut_off is None:
+        return True
+    # If an alert has no updated_at, render it to be safe.
+    if not alert.updated_at:
+        return True
+    updated_at = alert.updated_at
+    if isinstance(updated_at, str):
+        updated_at = dt_parse(updated_at)
+    return updated_at > cut_off
+
+
+def get_rendered_pages(alerts, cut_off=None, publish_task_progress=None):
     env = setup_jinja_environment(alerts)
     rendered = {}
 
@@ -116,6 +132,7 @@ def get_rendered_pages(alerts):
     feed_item_count = 0
 
     for path in all_view_paths:
+        current_app.logger.info(f"Starting render of {path}")
         template = env.get_template(path)
         target = path.replace(".html", "")
 
@@ -123,31 +140,38 @@ def get_rendered_pages(alerts):
         if target == 'alert':
             for alert in alerts.public:
                 alert_url = get_url_for_alert(alert, alerts)
-                rendered["alerts/" + alert_url] = template.render({
-                    'alert_data': alert})
+                if _alert_updated_since_cut_off(alert, cut_off):
+                    rendered["alerts/" + alert_url] = template.render({
+                        'alert_data': alert})
                 if feed_item_count < 20:
                     _add_feed_entry(fg, alert, alert_url)
                     _add_feed_entry(fg_cy, alert, alert_url)
                     feed_item_count += 1
+                update_publish_progress_if_exists(publish_task_progress, path)
             continue
 
         # Render each alert's page in Welsh
         if target == 'alert.cy':
             for alert in alerts.public:
                 alert_url = get_url_for_alert(alert, alerts)
-                rendered["alerts/" + alert_url + ".cy"] = template.render({
-                    'alert_data': alert})
+                if _alert_updated_since_cut_off(alert, cut_off):
+                    rendered["alerts/" + alert_url + ".cy"] = template.render({
+                        'alert_data': alert})
+                update_publish_progress_if_exists(publish_task_progress, path)
             continue
 
         if target == 'index':
             rendered['alerts'] = template.render()
+            update_publish_progress_if_exists(publish_task_progress, path)
             continue
 
         if target == 'index.cy':
             rendered['alerts/about.cy'] = template.render()
+            update_publish_progress_if_exists(publish_task_progress, path)
             continue
 
         rendered["alerts/" + target] = template.render()
+        update_publish_progress_if_exists(publish_task_progress, path)
 
     rendered['alerts/feed.atom'] = _add_stylesheet_attribute_to_atom(
         fg.atom_str(pretty=True).decode("utf-8")
@@ -155,7 +179,6 @@ def get_rendered_pages(alerts):
     with open(REPO / 'app/assets/stylesheets/feed.xsl', "r", encoding="utf-8") as file:
         xsl_content = file.read()
         xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
-        xsl_content = _add_javascript_link_to_xsl(xsl_content)
         rendered['alerts/feed.xsl'] = xsl_content
 
     rendered['alerts/feed_cy.atom'] = _add_stylesheet_attribute_to_atom(
@@ -165,7 +188,6 @@ def get_rendered_pages(alerts):
     with open(REPO / 'app/assets/stylesheets/feed_cy.xsl', "r", encoding="utf-8") as file:
         xsl_content = file.read()
         xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
-        xsl_content = _add_javascript_link_to_xsl(xsl_content)
         rendered['alerts/feed_cy.xsl'] = xsl_content
 
     return rendered
@@ -275,16 +297,13 @@ def _add_stylesheet_link_to_xsl(xsl_content):
     return new_content
 
 
-def _add_javascript_link_to_xsl(xsl_content):
-    script_src = file_fingerprint("/alerts/assets/javascripts/feed.js")
-    new_content = xsl_content.replace(
-        'src="/alerts/assets/javascripts/feed.js"',
-        f'src="{script_src}"'
-    )
-    return new_content
-
-
 def _add_stopped_time_to_content(alert):
+    # The feed entry is emitted with type="xhtml", so the content string must be a
+    # well-formed XHTML fragment whose only markup is server-generated. alert.content is
+    # attacker-influenceable (GSM-7 allows <, >, & and quotes) and MUST be XML-escaped
+    # before interpolation, otherwise it can inject markup into feed readers or break the
+    # whole feed when lxml re-parses it in _add_stylesheet_attribute_to_atom.
+    escaped_content = escape(alert.content)
     if alert.is_past:
         broadcast_status = "Stopped sending at "
         if alert.cancelled_at and (alert.cancelled_at < alert.finishes_at):
@@ -293,11 +312,15 @@ def _add_stopped_time_to_content(alert):
             broadcast_status += _readable_time_string(alert.finishes_at)
         return (
             "<div xmlns='http://www.w3.org/1999/xhtml'>"
-            f"<p><strong>{broadcast_status}</strong></p>"
-            f"<p><![CDATA[{alert.content}]]></p>"
+            f"<p><strong>{escape(broadcast_status)}</strong></p>"
+            f"<p>{escaped_content}</p>"
             "</div>"
         )
-    return alert.content
+    return (
+        "<div xmlns='http://www.w3.org/1999/xhtml'>"
+        f"<p>{escaped_content}</p>"
+        "</div>"
+    )
 
 
 def _build_readable_summary(title, alert):
@@ -332,10 +355,14 @@ def _display_format_time_string(time):
     return tz_aware_time.strftime("%Y-%m-%d %H:%M %Z")
 
 
-def get_cap_xml_for_alerts(alerts):
+def get_cap_xml_for_alerts(alerts, cut_off=None, publish_task_progress=None):
     cap_xml_alerts = {}
     host_url = current_app.config["GOVUK_ALERTS_HOST_URL"]
+
     for alert in alerts.public:
+        if not _alert_updated_since_cut_off(alert, cut_off):
+            continue
+
         identifier = str(uuid.uuid4())
         alert_url = get_url_for_alert(alert, alerts)
         alert_url_with_host = f"{host_url}/alerts/{alert_url}"
@@ -344,13 +371,21 @@ def get_cap_xml_for_alerts(alerts):
         event = create_cap_event(alert, identifier, url=alert_url_with_host)
         cap_xml = generate_xml_body(event)
         timestamp = alert.approved_at.strftime("%Y%m%d%H%M%S")
-        cap_xml_alerts[f"alerts/{alert_url}-{timestamp}.cap.xml"] = cap_xml
+        cap_xml_alerts[f"cap-xml/{alert_url}-{timestamp}.cap.xml"] = cap_xml
 
         # If alert has been cancelled, generate another CAP XML file for the updated event
         if alert.cancelled_at:
-            event = create_cap_event(alert, identifier, url=alert_url_with_host, cancelled=True)
+            event = create_cap_event(
+                alert,
+                f"{identifier}-1",
+                url=alert_url_with_host,
+                cancelled=True,
+                prev_alert_identifier=identifier,
+            )
             cap_xml = generate_xml_body(event)
             timestamp = alert.cancelled_at.strftime("%Y%m%d%H%M%S")
-            cap_xml_alerts[f"alerts/{alert_url}-{timestamp}.cap.xml"] = cap_xml
+            cap_xml_alerts[f"cap-xml/{alert_url}-{timestamp}.cap.xml"] = cap_xml
+
+        update_publish_progress_if_exists(publish_task_progress, f"CAP XML for {alert.id}")
 
     return cap_xml_alerts

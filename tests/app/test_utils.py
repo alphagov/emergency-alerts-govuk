@@ -1,7 +1,13 @@
+import hashlib
+import io
+import json
+import tarfile
+from datetime import datetime, timezone
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import boto3
+import botocore
 import pytest
 from flask import current_app
 from markupsafe import Markup
@@ -9,13 +15,24 @@ from moto import mock_aws
 
 from app.models.alert import Alert
 from app.utils import (
+    _get_latest_govuk_archive,
+    _get_mime_type,
+    _wait_for_origin_switch,
+    archive_website,
     capitalise,
     create_cap_event,
     file_fingerprint,
+    generate_content_manifest,
+    get_publish_destination,
     is_in_uk,
     paragraphize,
+    prepare_destination,
     purge_fastly_cache,
+    restore_latest_archive,
     simplify_custom_area_name,
+    switch_destination,
+    upload_content_manifest,
+    upload_content_manifest_to_both_buckets,
     upload_html_to_s3,
 )
 from tests.conftest import create_alert_dict, set_config
@@ -75,6 +92,35 @@ def test_paragraphize_converts_newlines_to_paragraphs():
     assert paragraphize(lines, classes="a-class") == Markup(expected)
 
 
+@pytest.mark.parametrize('malicious_content', [
+    '<script>alert("xss")</script>',
+    '<img src=x onerror=alert(1)>',
+    '<a href="javascript:alert(1)">click</a>',
+    '"><svg onload=alert(1)>',
+    '"><script>alert(document.cookie)</script>',
+])
+def test_paragraphize_escapes_html(malicious_content):
+    result = paragraphize(malicious_content)
+    assert '<script>' not in result
+    assert '<img ' not in result
+    assert '<a ' not in result
+    assert '<svg ' not in result
+    assert '&lt;' in result
+
+
+@pytest.mark.parametrize('malicious_content', [
+    '<script>alert("xss")</script>',
+    '<img src=x onerror=alert(1)>',
+    '<a href="javascript:alert(1)">click</a>',
+])
+def test_paragraphize_truncated_escapes_html(malicious_content):
+    result = paragraphize(malicious_content, truncate=True)
+    assert '<script>' not in result
+    assert '<img ' not in result
+    assert '<a ' not in result
+    assert '&lt;' in result
+
+
 @pytest.mark.parametrize('lat,lon,in_uk', [
     [66.55, 25.889, False],  # somewhere in Finland
     [52.22035, 1.58242, True]  # somewhere in UK
@@ -88,18 +134,18 @@ def test_is_in_uk_returns_polygons_in_uk_bounding_box(alert_dict, lat, lon, in_u
 def test_upload_to_s3(govuk_alerts):
     bucket_name = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
 
-    client = boto3.client('s3')
-    client.create_bucket(Bucket=bucket_name, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
+    client = boto3.client("s3")
+    _ensure_bucket(client, bucket_name)
 
     pages = {"alerts": "<p>this is some test content</p>"}
-    upload_html_to_s3(pages)
+    upload_html_to_s3(pages, bucket_name)
 
     object_keys = [
         obj['Key'] for obj in
         client.list_objects(Bucket=bucket_name)['Contents']
     ]
 
-    assert object_keys == ['alerts']
+    assert 'alerts' in object_keys
 
     alerts_object = client.get_object(Bucket=bucket_name, Key='alerts')
     assert alerts_object['Body'].read().decode('utf-8') == pages['alerts']
@@ -133,18 +179,25 @@ def test_purge_fastly_cache_disabled(mock_requests, monkeypatch, govuk_alerts):
 
 
 def test_create_cap_event_for_active_alert():
-    alert = Alert(create_alert_dict(areas={"simple_polygons": [[[1, 2], [3, 4], [5, 6]], [[7, 8], [9, 10], [11, 12]]]}))
+    alert = Alert(
+        create_alert_dict(areas={
+            "simple_polygons": [[[1, 2], [3, 4], [5, 6]], [[7, 8], [9, 10], [11, 12]]],
+            "aggregate_names": ["England", "Scotland", "Wales"]
+        }))
     assert create_cap_event(alert, alert.id) == {
         'identifier': alert.id,
         'message_type': 'alert',
         'message_format': 'cap',
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
-        'language': 'en-GB',
+        'language': 'en',
         "areas": [
             {
-                "polygon": polygons,
-            } for polygons in alert.areas.get("simple_polygons")
+                "polygons": [
+                    polygons for polygons in alert.areas.get("simple_polygons")
+                ],
+                "description": alert.display_areas_formatted_string
+            },
         ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
@@ -156,22 +209,30 @@ def test_create_cap_event_for_active_alert():
 def test_create_cap_event_for_cancelled_alert():
     alert = Alert(create_alert_dict(areas={"simple_polygons": [[[1, 2], [3, 4], [5, 6]],
                                                                [[7, 8], [9, 10], [11, 12]]]}))
-    assert create_cap_event(alert, alert.id, cancelled=True) == {
+    assert create_cap_event(alert, alert.id, cancelled=True, prev_alert_identifier=alert.id) == {
         'identifier': alert.id,
-        'message_type': 'alert',
+        'message_type': 'cancel',
         'message_format': 'cap',
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
-        'language': 'en-GB',
+        'language': 'en',
         'areas': [
             {
-                "polygon": polygons,
-            } for polygons in alert.areas.get("simple_polygons")
+                "polygons": [
+                    polygons for polygons in alert.areas.get("simple_polygons")
+                ]
+            }
         ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
         'expires': alert.cancelled_at.isoformat(),  # Expires timestamp is for when the alert was cancelled
-        'web': None
+        'web': None,
+        'references': [
+            {
+                'message_id': alert.id,
+                'sent': alert.starts_at.isoformat()
+            }
+        ]
     }
 
 
@@ -187,14 +248,625 @@ def test_create_cap_event_with_and_without_web_element(url):
         'message_format': 'cap',
         'headline': 'GOV.UK Emergency alert',
         'description': alert.content,
-        'language': 'en-GB',
+        'language': 'en',
         "areas": [
             {
-                "polygon": polygons,
-            } for polygons in alert.areas.get("simple_polygons")
+                "polygons": [
+                    polygons for polygons in alert.areas.get("simple_polygons")
+                    ]
+            }
         ],
         'channel': 'severe',
         'sent': alert.starts_at.isoformat(),
         'expires': alert.finishes_at.isoformat(),
         'web': url
     }
+
+
+@mock_aws
+def test_archive_website(govuk_alerts):
+    source_bucket = current_app.config["GOVUK_ALERTS_S3_BUCKET_NAME"]
+    dest_bucket = current_app.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"]
+
+    client = boto3.client("s3", region_name="eu-west-2")
+
+    _ensure_bucket(client, source_bucket)
+    _ensure_bucket(client, dest_bucket)
+
+    # Create test content
+    pages = {"alerts": "<p>this is some test content</p>"}
+    upload_html_to_s3(pages, source_bucket)
+    capxml = {"alert.cap.xml": "<p>this is some test content</p>"}
+    upload_html_to_s3(capxml, source_bucket)
+
+    # Archive it
+    archive_website(html=pages, capxml=capxml)
+
+    # Check archive exists
+    object_keys = [
+        obj['Key'] for obj in
+        client.list_objects(Bucket=dest_bucket)['Contents']
+    ]
+    assert len(object_keys) == 1
+    assert object_keys[0] == 'archive_govuk-alerts-website.tar.gz'
+
+    # Check archive includes the file uploaded
+    obj = client.get_object(Bucket=dest_bucket, Key=object_keys[0])
+    body = obj["Body"].read()
+
+    tar_bytes = io.BytesIO(body)
+
+    with tarfile.open(fileobj=tar_bytes, mode="r:gz") as tar:
+        names = tar.getnames()
+
+    assert "alerts.html" in names
+    assert "alert.cap.xml" in names
+
+
+def _ensure_bucket(client, bucket_name, region="eu-west-2"):
+    try:
+        client.head_bucket(Bucket=bucket_name)
+        # Bucket exists, nothing to do
+        return
+    except botocore.exceptions.ClientError as e:
+        error_code = int(e.response["Error"]["Code"])
+        if error_code != 404:
+            raise  # Something else went wrong
+
+    # Bucket does not exist → create it
+    client.create_bucket(
+        Bucket=bucket_name,
+        CreateBucketConfiguration={"LocationConstraint": region},
+    )
+
+
+@pytest.mark.parametrize(
+    "ssm_value, expected, exception",
+    [
+        ("blue-bucket",  "green-bucket", None),
+        ("green-bucket", "blue-bucket",  None),
+        # Break-glass bucket (or any no blue/green value) should suspend publishing.
+        ("break-glass-bucket", None, ValueError),
+        ("purple-bucket", None, ValueError),
+        (Exception("boom"), None, RuntimeError),
+    ],
+)
+@patch("app.utils.setup_ssm_session")
+def test_get_publish_destination(
+    mock_ssm, monkeypatch, govuk_alerts, ssm_value, expected, exception
+):
+    monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CURRENT_BUCKET_PARAM", "alerts-current")
+    monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_BLUE_S3_BUCKET_NAME", "blue-bucket")
+    monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_GREEN_S3_BUCKET_NAME", "green-bucket")
+
+    ssm = MagicMock()
+    mock_ssm.return_value = ssm
+
+    if isinstance(ssm_value, Exception):
+        ssm.get_parameter.side_effect = ssm_value
+    else:
+        ssm.get_parameter.return_value = {"Parameter": {"Value": ssm_value}}
+
+    if exception:
+        with pytest.raises(exception):
+            get_publish_destination()
+    else:
+        assert get_publish_destination() == expected
+
+
+@patch("app.utils.setup_s3_session")
+def test_prepare_destination_deletes_all_objects(mock_s3_session):
+    s3 = MagicMock()
+    mock_s3_session.return_value = s3
+
+    paginator = MagicMock()
+    s3.get_paginator.return_value = paginator
+
+    paginator.paginate.return_value = [
+        {"Contents": [{"Key": f"file{i}"} for i in range(3)]},
+        {"Contents": [{"Key": f"file{i}"} for i in range(3, 5)]},
+    ]
+
+    prepare_destination("my-bucket")
+
+    # Only ONE delete call because total < 1000
+    s3.delete_objects.assert_called_once_with(
+        Bucket="my-bucket",
+        Delete={"Objects": [
+            {"Key": "file0"},
+            {"Key": "file1"},
+            {"Key": "file2"},
+            {"Key": "file3"},
+            {"Key": "file4"},
+        ]}
+    )
+
+
+@pytest.mark.parametrize(
+    "members, contents, mime_types, expected",
+    [
+        (
+            # members
+            ["alerts.html", "foo/bar.txt"],
+            # contents
+            [b"<html>content</html>", b"hello world"],
+            # mime types
+            ["text/html", "text/plain"],
+            # expected upload list
+            [
+                {"key": "alerts", "data": b"<html>content</html>", "content_type": "text/html"},
+                {"key": "foo/bar.txt", "data": b"hello world", "content_type": "text/plain"},
+            ],
+        ),
+        (
+            ["index.html"],
+            [b"hi"],
+            ["text/html"],
+            [
+                {"key": "index.html", "data": b"hi", "content_type": "text/html"},
+            ],
+        ),
+    ],
+)
+@patch("app.utils._upload_files_threaded")
+@patch("app.utils._get_mime_type")
+@patch("app.utils._get_latest_govuk_archive")
+@patch("app.utils.setup_s3_session")
+@patch("app.utils.tarfile.open")
+def test_restore_latest_archive_success(
+    mock_tar_open,
+    mock_setup_s3,
+    mock_get_latest,
+    mock_get_mime,
+    mock_upload_threaded,
+    members,
+    contents,
+    mime_types,
+    expected,
+):
+    s3 = MagicMock()
+    mock_setup_s3.return_value = s3
+
+    mock_get_latest.return_value = ("ts", MagicMock())
+
+    tar = MagicMock()
+    mock_tar_open.return_value.__enter__.return_value = tar
+
+    # Build fake tar members
+    fake_members = []
+    for name in members:
+        m = MagicMock()
+        m.name = name
+        m.isfile.return_value = True
+        fake_members.append(m)
+
+    tar.getmembers.return_value = fake_members
+
+    # Fake extractfile() results
+    extracted_files = []
+    for content in contents:
+        ef = MagicMock()
+        ef.read.return_value = content
+        extracted_files.append(ef)
+
+    tar.extractfile.side_effect = extracted_files
+
+    # Fake MIME types
+    mock_get_mime.side_effect = mime_types
+
+    restore_latest_archive("bucket")
+
+    mock_upload_threaded.assert_called_once()
+    uploaded = mock_upload_threaded.call_args.args[2]
+
+    assert uploaded == expected
+
+
+@pytest.mark.parametrize("dir_name", ["folder/", "nested/dir/", "assets/"])
+@patch("app.utils._upload_files_threaded")
+@patch("app.utils._get_latest_govuk_archive")
+@patch("app.utils.setup_s3_session")
+@patch("app.utils.tarfile.open")
+def test_restore_latest_archive_skips_non_files(
+    mock_tar_open,
+    mock_setup_s3,
+    mock_get_latest,
+    mock_upload_threaded,
+    dir_name,
+):
+    s3 = MagicMock()
+    mock_setup_s3.return_value = s3
+
+    mock_get_latest.return_value = ("ts", MagicMock())
+
+    tar = MagicMock()
+    mock_tar_open.return_value.__enter__.return_value = tar
+
+    member = MagicMock()
+    member.name = dir_name
+    member.isfile.return_value = False
+
+    tar.getmembers.return_value = [member]
+
+    restore_latest_archive("bucket")
+
+    mock_upload_threaded.assert_called_once_with(s3, "bucket", [])
+
+
+@pytest.mark.parametrize(
+    "member_name, error",
+    [
+        ("badfile.txt", Exception("boom")),
+        ("alerts.html", IOError("read error")),
+    ],
+)
+@patch("app.utils._get_latest_govuk_archive")
+@patch("app.utils.setup_s3_session")
+@patch("app.utils.tarfile.open")
+def test_restore_latest_archive_raises_runtime_error(
+    mock_tar_open,
+    mock_setup_s3,
+    mock_get_latest,
+    member_name,
+    error,
+):
+    s3 = MagicMock()
+    mock_setup_s3.return_value = s3
+
+    mock_get_latest.return_value = ("ts", MagicMock())
+
+    tar = MagicMock()
+    mock_tar_open.return_value.__enter__.return_value = tar
+
+    member = MagicMock()
+    member.name = member_name
+    member.isfile.return_value = True
+
+    tar.getmembers.return_value = [member]
+
+    tar.extractfile.side_effect = error
+
+    with pytest.raises(RuntimeError) as exc:
+        restore_latest_archive("bucket")
+
+    msg = str(exc.value)
+    assert member_name in msg
+    assert str(error) in msg
+
+
+@pytest.mark.parametrize(
+    "name, expected",
+    [
+        # Special cases
+        ("foo.cap.xml", "application/cap+xml"),
+        ("alert.atom", "text/xml"),
+        ("index.cy", "text/html"),
+        ("template.xsl", "text/html"),
+
+        # No extension → default to text/html
+        ("alerts", "text/html"),
+
+        # Known extensions from mimetype_from_extension
+        ("image.png", "image/png"),
+        ("photo.jpg", "image/jpeg"),
+        ("icon.ico", "image/x-icon"),
+        ("script.js", "application/javascript"),
+        ("style.css", "text/css"),
+        ("font.woff", "font/woff"),
+        ("font.woff2", "font/woff2"),
+        ("vector.svg", "image/svg+xml"),
+        ("image.webp", "image/webp"),
+
+        # Unknown extension → fallback to application/octet-stream
+        ("file.unknownext", "application/octet-stream"),
+    ],
+)
+def test_get_mime_type(name, expected):
+    assert _get_mime_type(name) == expected
+
+
+@pytest.mark.parametrize(
+    "bucket_config, "
+    "head_response, "
+    "body_bytes, "
+    "head_side_effect, "
+    "get_side_effect, "
+    "expected_exception, "
+    "expected_timestamp_type",
+    [
+        # SUCCESS: timestamp is datetime
+        (
+            "archive-bucket",
+            {"LastModified": datetime(2024, 1, 1, tzinfo=timezone.utc)},
+            b"fake-archive",
+            None,
+            None,
+            None,
+            datetime,
+        ),
+
+        # SUCCESS: timestamp is string → parsed
+        (
+            "archive-bucket",
+            {"LastModified": "2024-01-01T00:00:00Z"},
+            b"fake-archive",
+            None,
+            None,
+            None,
+            datetime,
+        ),
+
+        # FAILURE: bucket not configured
+        (
+            "",
+            None,
+            None,
+            None,
+            None,
+            RuntimeError,
+            None,
+        ),
+
+        # FAILURE: head_object blows up
+        (
+            "archive-bucket",
+            None,
+            None,
+            Exception("boom"),
+            None,
+            RuntimeError,
+            None,
+        ),
+
+        # FAILURE: get_object blows up
+        (
+            "archive-bucket",
+            {"LastModified": datetime(2024, 1, 1, tzinfo=timezone.utc)},
+            None,
+            None,
+            Exception("read-fail"),
+            RuntimeError,
+            None,
+        ),
+    ],
+)
+@patch("app.utils.setup_s3_session")
+@patch("app.utils.dt_parse")
+def test_get_latest_govuk_archive(
+    mock_dt_parse,
+    mock_setup_s3,
+    govuk_alerts,
+    bucket_config,
+    head_response,
+    body_bytes,
+    head_side_effect,
+    get_side_effect,
+    expected_exception,
+    expected_timestamp_type,
+):
+    # Enter Flask app context
+    with govuk_alerts.app_context():
+        # Patch config
+        govuk_alerts.config["GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME"] = bucket_config
+
+        # Fake S3 client
+        s3 = MagicMock()
+        mock_setup_s3.return_value = s3
+
+        # head_object behaviour
+        if head_side_effect:
+            s3.head_object.side_effect = head_side_effect
+        elif head_response:
+            s3.head_object.return_value = head_response
+
+        # get_object behaviour
+        if get_side_effect:
+            s3.get_object.side_effect = get_side_effect
+        elif body_bytes is not None:
+            s3.get_object.return_value = {"Body": io.BytesIO(body_bytes)}
+
+        # dt_parse behaviour
+        mock_dt_parse.return_value = datetime(2024, 1, 1, tzinfo=timezone.utc)
+
+        # Assertions
+        if expected_exception:
+            with pytest.raises(expected_exception):
+                _get_latest_govuk_archive(s3)
+        else:
+            timestamp, archive = _get_latest_govuk_archive(s3)
+
+            assert isinstance(timestamp, expected_timestamp_type)
+            assert isinstance(archive, io.BytesIO)
+            assert archive.read() == body_bytes
+
+
+@pytest.mark.parametrize(
+    "switch_to",
+    [
+        "blue-bucket",
+        "green-bucket",
+    ],
+)
+@patch("app.utils._update_current_bucket_parameter")
+@patch("app.utils._wait_for_origin_switch")
+def test_switch_destination_updates_ssm_parameter(
+    mock_wait_for_switch,
+    mock_update_param,
+    govuk_alerts,
+    monkeypatch,
+    switch_to,
+):
+    with govuk_alerts.app_context():
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_ENABLED", True)
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_BLUE_S3_BUCKET_NAME", "blue-bucket")
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_GREEN_S3_BUCKET_NAME", "green-bucket")
+
+        switch_destination(switch_to)
+
+        mock_update_param.assert_called_once_with(switch_to)
+        mock_wait_for_switch.assert_called_once_with(switch_to)
+
+
+@patch("app.utils._update_current_bucket_parameter")
+@patch("app.utils._wait_for_origin_switch")
+def test_switch_destination_skips_verification_when_cloudfront_disabled(
+    mock_wait_for_switch,
+    mock_update_param,
+    govuk_alerts,
+    monkeypatch,
+):
+    with govuk_alerts.app_context():
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_ENABLED", False)
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_BLUE_S3_BUCKET_NAME", "blue-bucket")
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_GREEN_S3_BUCKET_NAME", "green-bucket")
+
+        switch_destination("blue-bucket")
+
+        # SSM parameter still updated with the bucket name to reflect intended state
+        mock_update_param.assert_called_once_with("blue-bucket")
+
+        # No origin switch verification when CloudFront is disabled (local/dev)
+        mock_wait_for_switch.assert_not_called()
+
+
+@patch("app.utils._update_current_bucket_parameter")
+@patch("app.utils._wait_for_origin_switch")
+def test_switch_destination_wraps_errors(
+    mock_wait_for_switch,
+    mock_update_param,
+    govuk_alerts,
+    monkeypatch,
+):
+    with govuk_alerts.app_context():
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_ENABLED", True)
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_BLUE_S3_BUCKET_NAME", "blue-bucket")
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_GREEN_S3_BUCKET_NAME", "green-bucket")
+
+        mock_update_param.side_effect = RuntimeError("SSM write failed")
+
+        with pytest.raises(RuntimeError, match="Unable to switch origin"):
+            switch_destination("blue-bucket")
+
+
+def test_generate_content_manifest_hashes_mutable_pages(govuk_alerts):
+    rendered_pages = {
+        "alerts": "<html>index</html>",
+        "alerts/current-alerts": "<html>current</html>",
+        "alerts/past-alerts": "<html>past</html>",
+        # An individual alert page that shouldn't be included in the manifest
+        "alerts/1-jan-2026": "<html>an alert</html>",
+    }
+
+    with govuk_alerts.app_context():
+        manifest_str = generate_content_manifest(rendered_pages, "green-bucket")
+
+    manifest = json.loads(manifest_str)
+
+    assert manifest["origin"] == "green-bucket"
+    assert "generated_at" in manifest
+    assert set(manifest["pages"].keys()) == {
+        "alerts",
+        "alerts/current-alerts",
+        "alerts/past-alerts",
+    }
+    # Verify a hash matches an independently computed SHA-256
+    expected_index_hash = hashlib.sha256("<html>index</html>".encode("utf-8")).hexdigest()
+    assert manifest["pages"]["alerts"] == expected_index_hash
+
+
+def test_generate_content_manifest_skips_missing_pages(govuk_alerts):
+    rendered_pages = {"alerts": "<html>index</html>"}
+
+    with govuk_alerts.app_context():
+        manifest_str = generate_content_manifest(rendered_pages, "blue-bucket")
+
+    manifest = json.loads(manifest_str)
+    assert list(manifest["pages"].keys()) == ["alerts"]
+    assert manifest["origin"] == "blue-bucket"
+
+
+@patch("app.utils.setup_s3_session")
+def test_upload_content_manifest_writes_to_destination_with_no_cache(mock_setup_s3, govuk_alerts):
+    mock_s3 = MagicMock()
+    mock_setup_s3.return_value = mock_s3
+
+    with govuk_alerts.app_context():
+        upload_content_manifest('{"origin": "green-bucket"}', "green-bucket")
+
+    mock_s3.put_object.assert_called_once_with(
+        Bucket="green-bucket",
+        Key="_content-manifest",
+        Body=b'{"origin": "green-bucket"}',
+        ContentType="application/json",
+        CacheControl="no-cache, no-store, must-revalidate",
+    )
+
+
+@patch("app.utils.setup_s3_session")
+def test_upload_content_manifest_skips_when_no_destination(mock_setup_s3, govuk_alerts):
+    with govuk_alerts.app_context():
+        upload_content_manifest('{"origin": "x"}', None)
+
+    mock_setup_s3.assert_not_called()
+
+
+@patch("app.utils.setup_s3_session")
+def test_upload_content_manifest_to_both_buckets(mock_setup_s3, govuk_alerts, monkeypatch):
+    mock_s3 = MagicMock()
+    mock_setup_s3.return_value = mock_s3
+
+    with govuk_alerts.app_context():
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_BLUE_S3_BUCKET_NAME", "blue-bucket")
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_GREEN_S3_BUCKET_NAME", "green-bucket")
+
+        upload_content_manifest_to_both_buckets('{"origin": "green-bucket"}')
+
+    assert mock_s3.put_object.call_count == 2
+    buckets_written = {call.kwargs["Bucket"] for call in mock_s3.put_object.call_args_list}
+    assert buckets_written == {"blue-bucket", "green-bucket"}
+    for call in mock_s3.put_object.call_args_list:
+        assert call.kwargs["Key"] == "_content-manifest"
+        assert call.kwargs["CacheControl"] == "no-cache, no-store, must-revalidate"
+
+
+@patch("app.utils.requests.get")
+def test_wait_for_origin_switch_returns_when_origin_matches(mock_get, govuk_alerts, monkeypatch):
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {"origin": "green-bucket", "pages": {}}
+    mock_get.return_value = mock_response
+
+    with govuk_alerts.app_context():
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_URL", "cf.example")
+        _wait_for_origin_switch("green-bucket", max_wait=5, interval=1)
+
+    mock_get.assert_called_with(
+        "https://cf.example/_content-manifest",
+        timeout=5,
+        headers={"Cache-Control": "no-cache"},
+    )
+
+
+@patch("app.utils.time.sleep", return_value=None)
+@patch("app.utils.requests.get")
+def test_wait_for_origin_switch_times_out_without_raising(mock_get, _mock_sleep, govuk_alerts, monkeypatch):
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {"origin": "blue-bucket", "pages": {}}
+    mock_get.return_value = mock_response
+
+    with govuk_alerts.app_context():
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_URL", "https://cf.example")
+        _wait_for_origin_switch("green-bucket", max_wait=0.01, interval=0.001)
+
+
+@patch("app.utils.time.sleep", return_value=None)
+@patch("app.utils.requests.get")
+def test_wait_for_origin_switch_falls_back_to_sleep_without_cf_url(mock_get, mock_sleep, govuk_alerts, monkeypatch):
+    with govuk_alerts.app_context():
+        monkeypatch.setitem(govuk_alerts.config, "GOVUK_ALERTS_CLOUDFRONT_URL", None)
+        _wait_for_origin_switch("green-bucket")
+
+    # No HTTP requests when there's no CloudFront URL, just a fixed sleep
+    mock_get.assert_not_called()
+    mock_sleep.assert_called_once_with(5)

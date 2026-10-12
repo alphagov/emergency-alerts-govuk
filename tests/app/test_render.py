@@ -9,6 +9,7 @@ from dateutil.parser import parse as dt_parse
 from app.models.alert import Alert
 from app.models.alerts import Alerts
 from app.render import (
+    _add_stopped_time_to_content,
     get_cap_xml_for_alerts,
     get_rendered_pages,
     get_url_for_alert,
@@ -171,6 +172,181 @@ def test_get_rendered_pages_generates_atom_feed(govuk_alerts):
     assert len(entries) == 5
 
     _verify_entries(entries, namespace, expected_feed_items)
+
+
+# A payload that would inject markup / break the XML if not escaped: opening tags, an
+# ampersand, and the literal CDATA terminator that the old code used as an "escaping" boundary.
+HOSTILE_CONTENT = '<script>alert(1)</script> & ]]> end'
+
+
+def test_add_stopped_time_to_content_escapes_hostile_content_for_past_alert():
+    # Default create_alert_dict is expired + cancelled, so the alert is "past".
+    alert = Alert(create_alert_dict(content=HOSTILE_CONTENT))
+    assert alert.is_past
+
+    result = _add_stopped_time_to_content(alert)
+
+    # Server-generated formatting is preserved...
+    assert 'Stopped sending at ' in result
+    assert '<strong>' in result
+    # ...but the alert content is XML-escaped, with no live tag and no CDATA break-out.
+    assert '&lt;script&gt;alert(1)&lt;/script&gt;' in result
+    assert '<script>' not in result
+    assert '<![CDATA[' not in result
+    assert '&amp;' in result
+    # The fragment is well-formed XHTML (this is what feedgen must be able to parse).
+    ET.fromstring(result)
+
+
+def test_add_stopped_time_to_content_escapes_hostile_content_for_current_alert():
+    # A future finishes_at with no cancellation makes the alert current (not past).
+    alert = Alert(create_alert_dict(
+        content=HOSTILE_CONTENT,
+        cancelled_at=None,
+        finishes_at=dt_parse('2099-01-01T00:00:00Z'),
+    ))
+    assert not alert.is_past
+
+    result = _add_stopped_time_to_content(alert)
+
+    # Current alerts carry no "Stopped sending at" status, but content is still escaped
+    # and wrapped in a single well-formed XHTML root (previously it was a bare string).
+    assert 'Stopped sending at ' not in result
+    assert '&lt;script&gt;alert(1)&lt;/script&gt;' in result
+    assert '<script>' not in result
+    ET.fromstring(result)
+
+
+def test_get_rendered_pages_feed_stays_well_formed_with_hostile_content(govuk_alerts):
+    # A single alert whose content contains XML-significant characters must not break the
+    # whole feed (the assembled feed is re-parsed by lxml in _add_stylesheet_attribute_to_atom).
+    alerts = [
+        create_alert_dict(
+            id=UUID(int=0),
+            content=HOSTILE_CONTENT,
+            starts_at=dt_parse('2021-04-21T11:30:00Z'),
+            approved_at=dt_parse('2021-04-21T11:25:00Z'),
+        ),
+    ]
+
+    pages = get_rendered_pages(Alerts(alerts))
+
+    # Reaching here already proves the lxml round-trip did not raise on malformed XML.
+    namespace = {'atom': 'http://www.w3.org/2005/Atom'}
+    for feed_path in ('alerts/feed.atom', 'alerts/feed_cy.atom'):
+        feed_str = pages[feed_path]
+        # No live <script> tag leaks into the served feed; the payload is escaped.
+        assert '<script>' not in feed_str
+        assert '&lt;script&gt;' in feed_str
+        # The feed as a whole is parseable.
+        root = ET.fromstring(feed_str)
+        assert len(root.findall('atom:entry', namespace)) == 1
+
+
+def _cut_off_alerts():
+    # One alert last updated before the cut-off, one after.
+    return [
+        create_alert_dict(
+            id=UUID(int=0),
+            starts_at=dt_parse('2021-04-20T11:30:00Z'),
+            approved_at=dt_parse('2021-04-20T11:25:00Z'),
+            updated_at=dt_parse('2021-04-20T11:30:00Z'),
+        ),
+        create_alert_dict(
+            id=UUID(int=1),
+            starts_at=dt_parse('2021-04-21T11:30:00Z'),
+            approved_at=dt_parse('2021-04-21T11:25:00Z'),
+            updated_at=dt_parse('2021-04-22T11:30:00Z'),
+        ),
+    ]
+
+
+def test_get_rendered_pages_without_cut_off_renders_all_alert_pages(govuk_alerts):
+    pages = get_rendered_pages(Alerts(_cut_off_alerts()), cut_off=None)
+
+    assert 'alerts/20-apr-2021' in pages
+    assert 'alerts/20-apr-2021.cy' in pages
+    assert 'alerts/21-apr-2021' in pages
+    assert 'alerts/21-apr-2021.cy' in pages
+
+
+def test_get_rendered_pages_skips_alerts_not_updated_since_cut_off(govuk_alerts):
+    cut_off = dt_parse('2021-04-21T00:00:00Z')
+
+    pages = get_rendered_pages(Alerts(_cut_off_alerts()), cut_off=cut_off)
+
+    # Older alert (updated before cut-off) is skipped, in both languages
+    assert 'alerts/20-apr-2021' not in pages
+    assert 'alerts/20-apr-2021.cy' not in pages
+
+    # Newer alert (updated after cut-off) is still rendered
+    assert 'alerts/21-apr-2021' in pages
+    assert 'alerts/21-apr-2021.cy' in pages
+
+    # The atom feed remains complete regardless of the cut-off
+    namespace = {'atom': 'http://www.w3.org/2005/Atom'}
+    feed_str = pages['alerts/feed.atom'].replace("\'", '"').replace("\n", "")
+    entries = ET.fromstring(feed_str).findall('atom:entry', namespace)
+    assert len(entries) == 2
+
+
+def test_get_rendered_pages_skips_alerts_with_string_updated_at(govuk_alerts):
+    # Alerts loaded from the API keep updated_at as an ISO string (it is not in
+    # AlertsApiClient.TIMESTAMP_FIELDS), so the cut-off comparison must cope with
+    # a str as well as a datetime.
+    alerts = [
+        create_alert_dict(
+            id=UUID(int=0),
+            starts_at=dt_parse('2021-04-20T11:30:00Z'),
+            approved_at=dt_parse('2021-04-20T11:25:00Z'),
+            updated_at='2021-04-20T11:30:00Z',
+        ),
+        create_alert_dict(
+            id=UUID(int=1),
+            starts_at=dt_parse('2021-04-21T11:30:00Z'),
+            approved_at=dt_parse('2021-04-21T11:25:00Z'),
+            updated_at='2021-04-22T11:30:00Z',
+        ),
+    ]
+    cut_off = dt_parse('2021-04-21T00:00:00Z')
+
+    pages = get_rendered_pages(Alerts(alerts), cut_off=cut_off)
+
+    assert 'alerts/20-apr-2021' not in pages
+    assert 'alerts/21-apr-2021' in pages
+
+
+def test_get_cap_xml_for_alerts_skips_alerts_not_updated_since_cut_off(govuk_alerts):
+    # CAP generation needs `simple_polygons` in areas, so build alerts directly
+    # rather than reusing _cut_off_alerts(). One updated before the cut-off, one after.
+    areas_dict = {
+        "simple_polygons": [[[1, 2], [3, 4], [5, 6]], [[7, 8], [9, 10], [11, 12]]]
+    }
+    alerts = [
+        create_alert_dict(
+            id=UUID(int=0),
+            areas=areas_dict,
+            starts_at=dt_parse('2021-04-20T11:30:00Z'),
+            approved_at=dt_parse('2021-04-20T11:25:00Z'),
+            updated_at=dt_parse('2021-04-20T11:30:00Z'),
+        ),
+        create_alert_dict(
+            id=UUID(int=1),
+            areas=areas_dict,
+            starts_at=dt_parse('2021-04-21T11:30:00Z'),
+            approved_at=dt_parse('2021-04-21T11:25:00Z'),
+            updated_at=dt_parse('2021-04-22T11:30:00Z'),
+        ),
+    ]
+    cut_off = dt_parse('2021-04-21T00:00:00Z')
+
+    cap_xml = get_cap_xml_for_alerts(Alerts(alerts), cut_off=cut_off)
+
+    keys = list(cap_xml.keys())
+    # Older alert (updated before cut-off) generates no CAP XML
+    assert not any('20-apr-2021-' in key for key in keys)
+    # Newer alert (updated after cut-off) still generates CAP XML
+    assert any('21-apr-2021-' in key for key in keys)
 
 
 def _verify_entries(entries, namespace, expected):

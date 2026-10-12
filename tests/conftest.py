@@ -17,6 +17,7 @@ def create_alert_dict(
     areas=None,
     channel=None,
     starts_at=None,
+    updated_at=None,
     approved_at=None,
     # -1 is a sentinel value, so None can be passed in
     cancelled_at=-1,
@@ -30,6 +31,7 @@ def create_alert_dict(
         'areas': areas or {"aggregate_names": ['England']},
         'channel': channel or 'severe',
         'starts_at': starts_at or dt_parse('2021-04-21T11:30:00Z'),
+        'updated_at': updated_at or dt_parse('2021-04-21T11:30:00Z'),
         'approved_at': approved_at or dt_parse('2021-04-21T11:25:00Z'),
         'cancelled_at': cancelled_at if cancelled_at != -1 else dt_parse('2021-04-21T12:30:00Z'),
         'finishes_at': finishes_at or dt_parse('2021-04-21T15:30:00Z'),
@@ -43,6 +45,7 @@ def create_planned_test_dict(
     channel=None,
     approved_at=None,
     starts_at=None,
+    updated_at=None,
     cancelled_at=None,
     finishes_at=None,
     display_in_status_box=None,
@@ -63,6 +66,7 @@ def create_planned_test_dict(
         'channel': channel or 'operator',
         'approved_at': approved_at or dt_parse('2021-04-16T12:00:00Z'),
         'starts_at': starts_at or dt_parse('2021-04-21T11:30:00Z'),
+        'updated_at': updated_at or dt_parse('2021-04-21T11:30:00Z'),
         'cancelled_at': cancelled_at or None,
         'finishes_at': finishes_at or dt_parse('2021-04-21T13:30:00Z'),
         'areas': areas or [],
@@ -92,7 +96,10 @@ def planned_test_dict():
 
 
 @pytest.fixture(scope='session')
-def govuk_alerts():
+def govuk_alerts(session_mocker):
+    # Don't instantiate the SQS components
+    session_mocker.patch("app.EasSqsFlaskDramatiq.init_app", return_value=None)
+
     app = create_app()
 
     ctx = app.app_context()

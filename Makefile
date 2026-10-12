@@ -24,12 +24,16 @@ run-flask-debug: ## Run flask in debug mode
 
 .PHONY: bootstrap
 bootstrap: generate-version-file
+# In container builds we use a sibling utils from the base image, not a specific ref from git.
+	sed -i.orig 's/^emergency-alerts-utils @/# DO NOT COMMIT: Commented out for parent requirements.txt: emergency-alerts-utils @/' requirements.txt
+# Work around macOS having awkward sed that creates/requires an original file
+	rm requirements.txt.orig || true
 	pip3 install -r requirements_local_utils.txt
 	npm ci --no-audit && npm run build
 
 .PHONY: bootstrap-for-tests
 bootstrap-for-tests: generate-version-file
-	pip3 install -r requirements_github_utils.txt
+	pip3 install -r requirements.txt
 	npm ci --no-audit && npm run build
 
 .PHONY: npm-audit
@@ -51,16 +55,6 @@ test:
 freeze-requirements: ## create static requirements.txt
 	${PYTHON_EXECUTABLE_PREFIX}pip3 install --upgrade setuptools pip-tools
 	${PYTHON_EXECUTABLE_PREFIX}pip-compile --strip-extras requirements.in
-
-.PHONY: run-celery
-run-celery: ## Run celery
-	. environment.sh && opentelemetry-instrument celery \
-		-A run_celery.notify_celery worker \
-		--pidfile=/tmp/govuk_celery_worker.pid \
-		--prefetch-multiplier=1 \
-		--loglevel=INFO \
-		--autoscale=8,1 \
-		--hostname='govuk-alerts@%h'
 
 .PHONY: uninstall-packages
 uninstall-packages:

@@ -17,7 +17,6 @@
                 <link rel="stylesheet" type="text/css" href="main.css"/>
                 <link rel="icon" sizes="48x48"  href="{atom:feed/atom:icon}"/>
                 <link rel="icon" sizes="any"  href="/alerts/assets/images/favicon-2ed10a55.svg" type="image/svg+xml"/>
-                <script type="application/javascript" src="/alerts/assets/javascripts/feed.js"></script>
             </head>
             <body class="govuk-template__body">
                 <header class="govuk-header" role="banner">
@@ -119,11 +118,9 @@
             <xsl:when test="contains(normalize-space(atom:summary), 'Stopped:')">
                 <p class="govuk-heading-s">
                     Stopped sending at
-                    <time class="local-end-time" data-datetime="{substring-before(substring-after(substring-after(normalize-space(atom:summary), 'Stopped: '), ' ['), ']')}">
-                        <xsl:value-of
-                            select="substring-before(substring-after(normalize-space(atom:summary), 'Stopped: '), ' [')"
-                        />
-                    </time>
+                    <xsl:value-of
+                        select="substring-before(substring-after(normalize-space(atom:summary), 'Stopped: '), ' [')"
+                    />
                 </p>
             </xsl:when>
         </xsl:choose>

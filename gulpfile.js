@@ -6,7 +6,7 @@ const { src, pipe, dest, series, parallel, watch } = require("gulp");
 const rollup = require("rollup");
 const rollupPluginCommonjs = require("@rollup/plugin-commonjs");
 const rollupPluginNodeResolve = require("@rollup/plugin-node-resolve");
-const rollupPluginTerser = require("rollup-plugin-terser").terser;
+const rollupPluginTerser = require("@rollup/plugin-terser");
 
 const plugins = {};
 plugins.sass = require("gulp-sass")(require("sass"));
@@ -60,11 +60,6 @@ const copy = {
     return src(paths.src + "images/**/*", { encoding: false })
       .pipe(plugins.hash(hashOptions))
       .pipe(dest(paths.dist + "images/"));
-  },
-  plainjs: () => {
-    return src(paths.src + "javascripts/feed.js", { encoding: false })
-      .pipe(plugins.hash(hashOptions))
-      .pipe(dest(paths.dist + "javascripts/"));
   },
 };
 
@@ -135,7 +130,6 @@ const defaultTask = parallel(
   copy.govuk_frontend.images,
   copy.html5shiv,
   copy.images,
-  copy.plainjs,
   scss.compile,
   rollupTask("govuk-frontend-skip-link"),
   rollupTask("relative-dates")

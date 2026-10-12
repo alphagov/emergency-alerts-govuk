@@ -12,6 +12,7 @@ class Alert(SerialisedModel):
         'channel',
         'approved_at',
         'starts_at',
+        'updated_at',
         'cancelled_at',
         'finishes_at',
         'areas',
@@ -34,12 +35,28 @@ class Alert(SerialisedModel):
         return self.areas.get("names", [])
 
     @property
+    def display_areas_formatted_string(self):
+        areas = self.display_areas or []
+        if not areas:
+            return ""
+        if len(areas) == 1:
+            return areas[0]
+        if len(areas) == 2:
+            return f"{areas[0]} and {areas[1]}"
+        # 3 or more
+        return f"{', '.join(areas[:-1])} and {areas[-1]}"
+
+    @property
     def approved_at_date(self):
         return AlertDate(self.approved_at)
 
     @property
     def starts_at_date(self):
         return AlertDate(self.starts_at)
+
+    @property
+    def updated_at_date(self):
+        return AlertDate(self.updated_at)
 
     @property
     def expires_date(self):
