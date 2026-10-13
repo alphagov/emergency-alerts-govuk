@@ -546,7 +546,7 @@ urllib3==2.8.0
     #   botocore
     #   requests
     #   responses
-werkzeug==3.1.8
+werkzeug==3.1.9
     # via
     #   -r requirements.in
     #   emergency-alerts-utils
