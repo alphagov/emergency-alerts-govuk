@@ -24,7 +24,8 @@
   "dependencies": {
     "govuk-frontend": "^5.14.0",
     "html5shiv": "^3.7.3",
-    "timeago.js": "^4.0.2"
+    "timeago.js": "^4.0.2",
+    "xslt-polyfill": "^1.0.31"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^29.0.2",
