@@ -7,7 +7,7 @@
     >
     <xsl:output method="html" encoding="UTF-8" indent="yes" />
     <xsl:template match="/">
-        <html class="govuk-template--rebranded">
+        <html class="govuk-template">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
@@ -22,7 +22,7 @@
                 <header class="govuk-header" role="banner">
                     <div class="govuk-header__container govuk-width-container">
                         <div class="govuk-header__logo">
-                            <a class="govuk-header__link govuk-header__link--homepage">
+                            <a class="govuk-header__homepage-link">
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="substring-before(atom:feed/atom:link[@rel='alternate' and @type='application/html']/@href, '/alerts')" />
                                 </xsl:attribute>
@@ -45,13 +45,20 @@
                                     </svg>
                             </a>
                         </div>
-                        <div class="govuk-header__content">
-                            <span class="govuk-header__service-name">
-                                <xsl:value-of select="atom:feed/atom:title" />
-                            </span>
-                        </div>
                     </div>
                 </header>
+                <section aria-label="Service information" class="govuk-service-navigation"
+                data-module="govuk-service-navigation">
+                <div class="govuk-width-container">
+                    <div class="govuk-service-navigation__container">
+                    <span class="govuk-service-navigation__service-name">
+                        <a href="/alerts" class="govuk-service-navigation__link">
+                        <xsl:value-of select="atom:feed/atom:title" />
+                        </a>
+                    </span>
+                    </div>
+                </div>
+                </section>
                 <div class="govuk-width-container">
                     <div class="govuk-grid-row govuk-subheader">
                         <div class="govuk-separator"></div>
