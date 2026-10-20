@@ -1,7 +1,7 @@
 // stylelint-disable declaration-no-important
 $govuk-is-ie8: true;
 
-@import "govuk_frontend";
+@use "govuk/helpers" as *;
 
 // Global print styles,
 // adapted from https://github.com/alphagov/govuk_template/blob/master/source/assets/stylesheets/govuk-template-print.scss

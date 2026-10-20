@@ -4,25 +4,25 @@
 // Included to allow us to only include the components we need
 // All imports come from node_modules/govuk-frontend/govuk
 
-// set asset URL root to match that of application
-$govuk-assets-path: "/alerts/assets/";
 $govuk-new-link-styles: true;
-$govuk-new-organisation-colours: true;
 
-@import "govuk/base";
-@import "govuk/core";
-@import "govuk/objects";
+@use "govuk/base" as * with (
+  // set asset URL root to match that of application
+  $govuk-assets-path: "/alerts/assets/"
+);
+@use "govuk/core" as *;
+@use "govuk/objects" as *;
 
 // section replacing @import "components/all", specifying which components to include
-@import "govuk/components/skip-link";
-@import "govuk/components/header";
-@import "govuk/components/footer";
-@import "govuk/components/breadcrumbs";
-@import "govuk/components/button";
-@import "govuk/components/inset-text";
-@import "govuk/components/phase-banner";
-@import "govuk/components/notification-banner";
-@import "govuk/components/service-navigation";
+@use "govuk/components/skip-link" as *;
+@use "govuk/components/header" as *;
+@use "govuk/components/footer" as *;
+@use "govuk/components/breadcrumbs" as *;
+@use "govuk/components/button" as *;
+@use "govuk/components/inset-text" as *;
+@use "govuk/components/phase-banner" as *;
+@use "govuk/components/notification-banner" as *;
+@use "govuk/components/service-navigation" as *;
 
-@import "govuk/utilities";
-@import "govuk/overrides";
+@use "govuk/utilities" as *;
+@use "govuk/overrides" as *;
