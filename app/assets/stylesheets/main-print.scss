@@ -1,6 +1,7 @@
 // stylelint-disable declaration-no-important
 $govuk-is-ie8: true;
 
+@use "govuk_frontend" as *;
 @use "govuk/helpers" as *;
 
 // Global print styles,
