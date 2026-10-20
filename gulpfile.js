@@ -109,7 +109,7 @@ const scss = {
       .pipe(
         plugins.sass
           .sync({
-            includePaths: [paths.govuk_frontend],
+            loadPaths: [paths.govuk_frontend],
             outputStyle: "compressed",
             quietDeps: true,
           })
