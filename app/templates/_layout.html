@@ -4,8 +4,7 @@
 {%- from "govuk_frontend_jinja/components/footer/macro.html" import govukFooter -%}
 {%- from "govuk_frontend_jinja/components/phase-banner/macro.html" import govukPhaseBanner -%}
 {%- from "govuk_frontend_jinja/components/notification-banner/macro.html" import govukNotificationBanner -%}
-
-{% set govukRebrand = true %}
+{%- from "govuk_frontend_jinja/components/service-navigation/macro.html" import govukServiceNavigation -%}
 
 {% block pageTitle %}{% block pageTitleCurrent %}{% endblock %} - GOV.UK{% endblock %}
 
@@ -42,9 +41,10 @@
 {% block header %}
   {{ govukHeader({
     'assetsPath': '/alerts/assets/images',
-    "serviceName": "Emergency Alerts",
-    'rebrand': "true"
+    "productName": "Emergency Alerts",
+    "homepageUrl": "/alerts"
   }) }}
+
   <div class="govuk-width-container">
     {{ govukPhaseBanner({
       'tag': {
@@ -71,7 +71,6 @@
 
 {% block footer %}
   {{ govukFooter({
-    'rebrand': "true",
     'meta': {
       'items': [
         {

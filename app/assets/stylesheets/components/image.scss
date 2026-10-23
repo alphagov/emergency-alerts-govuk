@@ -1,7 +1,5 @@
-$govuk-new-organisation-colours: true;
-
-@import "govuk/settings";
-@import "govuk/helpers";
+@use "govuk/settings" as *;
+@use "govuk/helpers" as *;
 
 .alerts-image {
   &__container--centred {
