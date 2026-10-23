@@ -12,6 +12,7 @@ FROM ${BASE_IMAGE} AS build
 
 ARG APP_VERSION=unknown
 ARG PIP_VERSION=26.2.2
+ARG PIP_SHA256=fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70
 
 ENV HTTPS_PROXY=${HTTPS_PROXY}
 ENV NO_PROXY=${NO_PROXY}
@@ -30,7 +31,8 @@ COPY --chown=easuser:easuser . $DIR_GOVUK
 # Build venv and emergency-alerts-govuk
 RUN --mount=type=cache,target=/home/easuser/.cache \
     python$PYTHON_VERSION -m venv $VENV_GOVUK
-RUN $VENV_GOVUK/bin/python -m pip install --upgrade pip==${PIP_VERSION}
+RUN $VENV_GOVUK/bin/python -m pip install --upgrade --require-hashes --no-deps \
+    "pip==${PIP_VERSION}" --hash=sha256:${PIP_SHA256}
 RUN cd $DIR_GOVUK && \
     . $VENV_GOVUK/bin/activate && \
     APP_VERSION=${APP_VERSION} make bootstrap

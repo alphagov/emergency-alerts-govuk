@@ -6,6 +6,7 @@ permissions:
 env:
   PYTHON_VERSION: 3.12
   PIP_VERSION: 26.2.2
+  PIP_SHA256: fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70
 
 on:
   pull_request:
@@ -48,7 +49,8 @@ jobs:
         run: |
           export ENVIRONMENT='local'
           set -eu
-          python -m pip install --upgrade pip==$PIP_VERSION
+          python -m pip install --upgrade --require-hashes --no-deps \
+            "pip==$PIP_VERSION" --hash=sha256:$PIP_SHA256
           make bootstrap-for-tests
           make test
 
