@@ -5,6 +5,7 @@ permissions:
 
 env:
   PYTHON_VERSION: 3.12
+  PIP_VERSION: 26.2.2
 
 on:
   pull_request:
@@ -47,6 +48,7 @@ jobs:
         run: |
           export ENVIRONMENT='local'
           set -eu
+          python -m pip install --upgrade pip==$PIP_VERSION
           make bootstrap-for-tests
           make test
 

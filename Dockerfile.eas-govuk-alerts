@@ -11,6 +11,7 @@ ARG BASE_IMAGE=${ECS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com/${RESOU
 FROM ${BASE_IMAGE} AS build
 
 ARG APP_VERSION=unknown
+ARG PIP_VERSION=26.2.2
 
 ENV HTTPS_PROXY=${HTTPS_PROXY}
 ENV NO_PROXY=${NO_PROXY}
@@ -29,6 +30,7 @@ COPY --chown=easuser:easuser . $DIR_GOVUK
 # Build venv and emergency-alerts-govuk
 RUN --mount=type=cache,target=/home/easuser/.cache \
     python$PYTHON_VERSION -m venv $VENV_GOVUK
+RUN $VENV_GOVUK/bin/python -m pip install --upgrade pip==${PIP_VERSION}
 RUN cd $DIR_GOVUK && \
     . $VENV_GOVUK/bin/activate && \
     APP_VERSION=${APP_VERSION} make bootstrap
