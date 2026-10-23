@@ -4,6 +4,7 @@ import pytz
 from emergency_alerts_utils.serialised_model import SerialisedModel
 
 from app.models.alert_date import AlertDate
+from app.utils import simplify_custom_area_name
 
 
 class Alert(SerialisedModel):
@@ -36,7 +37,10 @@ class Alert(SerialisedModel):
 
     @property
     def display_areas_formatted_string(self):
-        areas = self.display_areas or []
+        areas = [
+            simplify_custom_area_name(area, "en")
+            for area in (self.display_areas or [])
+        ]
         if not areas:
             return ""
         if len(areas) == 1:
