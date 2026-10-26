@@ -1,7 +1,5 @@
-$govuk-new-organisation-colours: true;
-
-@import "govuk/settings";
-@import "govuk/helpers";
+@use "govuk/helpers" as *;
+@use "govuk/settings" as *;
 
 // Responsive Embed Component
 //
