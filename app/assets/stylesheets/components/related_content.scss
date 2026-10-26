@@ -1,6 +1,4 @@
-$govuk-new-organisation-colours: true;
-
-@import 'govuk/settings';
+@use 'govuk/settings' as *;
 
 .app-related-items {
   border-top: 2px solid #1d70b8;

@@ -1,3 +1,7 @@
+@use "govuk/helpers" as *;
+@use "govuk/core" as *;
+
+
 .govuk-header {
   &__service-name {
     font-weight: 700;
