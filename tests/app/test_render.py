@@ -159,6 +159,10 @@ def test_get_rendered_pages_generates_atom_feed(govuk_alerts):
 
     feed_str = pages['alerts/feed.atom'].replace("\'", '"').replace("\n", "")
     assert '<?xml-stylesheet href="feed.xsl" type="text/xsl"?>' in feed_str
+    assert (
+        '<script src="/alerts/assets/javascripts/vendor/xslt-polyfill/xslt-polyfill.min.js"'
+        ' xmlns="http://www.w3.org/1999/xhtml"/>'
+    ) in feed_str
     root = ET.fromstring(feed_str)
     entries = root.findall('atom:entry', namespace)
     assert len(entries) == 5

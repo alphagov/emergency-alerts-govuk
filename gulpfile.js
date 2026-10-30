@@ -56,6 +56,11 @@ const copy = {
       .pipe(plugins.hash(hashOptions))
       .pipe(dest(paths.dist + "javascripts/vendor/html5shiv/"));
   },
+  xslt_polyfill: () => {
+    return src(paths.node_modules + "xslt-polyfill/*.min.js")
+      // We don't hash because this is referenced in non-templated XSLT files
+      .pipe(dest(paths.dist + "javascripts/vendor/xslt-polyfill"));
+  },
   images: () => {
     return src(paths.src + "images/**/*", { encoding: false })
       .pipe(plugins.hash(hashOptions))
@@ -129,6 +134,7 @@ const defaultTask = parallel(
   copy.govuk_frontend.fonts,
   copy.govuk_frontend.images,
   copy.html5shiv,
+  copy.xslt_polyfill,
   copy.images,
   scss.compile,
   rollupTask("govuk-frontend-skip-link"),
