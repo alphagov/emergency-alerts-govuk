@@ -1,5 +1,5 @@
 import builtins
-from unittest.mock import Mock, mock_open, patch
+from unittest.mock import ANY, Mock, mock_open, patch
 
 import boto3
 import pytest
@@ -87,6 +87,7 @@ def test_publish_govuk_alerts(
     publish_govuk_alerts(pending_progress_id=pending_progress_id)
     mock_create_or_transition.assert_called_once_with(
         pending_id=pending_progress_id,
+        trace_id=ANY,
         publish_type="publish-dynamic",
         publish_origin="dramatiq",
     )
@@ -213,6 +214,7 @@ def test_publish_govuk_alerts_full(
     publish_govuk_alerts_full(pending_progress_id=pending_progress_id)
     mock_create_or_transition.assert_called_once_with(
         pending_id=pending_progress_id,
+        trace_id=ANY,
         publish_type="publish-all",
         publish_origin="dramatiq",
     )

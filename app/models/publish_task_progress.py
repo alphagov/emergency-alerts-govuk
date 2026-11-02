@@ -63,7 +63,7 @@ class PublishTaskProgress(SerialisedModel):
         # `task_id` is combination of publish type, origin and start time
         task_id = f"{publish_type}_{publish_origin}_{int(time.time())}"
         data = publish_api_client.upsert_publish_task(
-            pending_id=pending_id, task_id=task_id
+            pending_id=pending_id, trace_id=trace_id, task_id=task_id
         )
 
         return cls(

@@ -14,6 +14,7 @@ from app.render import get_cap_xml_for_alerts, get_rendered_pages
 from app.utils import (
     archive_website,
     generate_content_manifest,
+    get_current_trace_id,
     get_publish_destination,
     post_version_to_cloudwatch,
     prepare_destination,
@@ -48,6 +49,7 @@ def publish_govuk_alerts(*, pending_progress_id=None, broadcast_event_id=""):
 
         publish_task_progress = PublishTaskProgress.create_or_transition(
             pending_id=pending_progress_id,
+            trace_id=get_current_trace_id(),
             publish_type="publish-dynamic",
             publish_origin="dramatiq",
         )
@@ -157,6 +159,7 @@ def publish_govuk_alerts_full(*, pending_progress_id=None, broadcast_event_id=""
 
         publish_task_progress = PublishTaskProgress.create_or_transition(
             pending_id=pending_progress_id,
+            trace_id=get_current_trace_id(),
             publish_type="publish-all",
             publish_origin="dramatiq",
         )
