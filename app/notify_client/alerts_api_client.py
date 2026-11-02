@@ -51,9 +51,12 @@ class AlertsPublishApiClient(_BaseAlertsClient):
     # The following client methods post data to API (specifically `publish_task_progress` endpoints)
     # and are used to update state of Publish Progress Tasks in DB
 
-    def create_publish_task(self, task_id):
+    def upsert_publish_task(self, task_id, pending_id=None):
         # Creates publish progress task in the database and returns data stored for the task
-        return self.post(url="/publish_task_progress/add-publish", data={"task_id": task_id})
+        return self.post(
+            url="/publish_task_progress/add-publish",
+            data={"id": pending_id, "task_id": task_id},
+        )
 
     def get_publish_task(self, id):
         # Retrieves a specific publish progress task's data from the database

@@ -36,18 +36,27 @@ tracer = trace.get_tracer(__name__)
     queue_name=QueueNames.GOVUK_ALERTS,
     allow_retry=True,
 )
-def publish_govuk_alerts(broadcast_event_id=""):
+def publish_govuk_alerts(*, pending_progress_id=None, broadcast_event_id=""):
     setattr(g, FLASK_G_BROADCAST_EVENT_ID, broadcast_event_id)
 
     try:
         current_app.logger.info(
-            "Starting GovUK publish. (Triggered by broadcast event: %s)",
+            "Starting GovUK publish. (Triggered by broadcast event: %s, given pending task ID: %s)",
             broadcast_event_id,
+            pending_progress_id,
         )
 
-        publish_task_progress = PublishTaskProgress.create(
-            publish_type="publish-dynamic", publish_origin="dramatiq"
+        publish_task_progress = PublishTaskProgress.create_or_transition(
+            pending_id=pending_progress_id,
+            publish_type="publish-dynamic",
+            publish_origin="dramatiq",
         )
+
+        if publish_task_progress is False:
+            current_app.logger.warning(
+                "This PublishTaskProgress was marked as cancelled. Skipping."
+            )
+            return
 
         # get publish destination, based on currently configured blue/green configuration.
         # Throws exception if not blue or green - could mean break glass is in operation.
@@ -136,18 +145,27 @@ def publish_govuk_alerts(broadcast_event_id=""):
     queue_name=QueueNames.GOVUK_ALERTS,
     allow_retry=True,
 )
-def publish_govuk_alerts_full(broadcast_event_id=""):
+def publish_govuk_alerts_full(*, pending_progress_id=None, broadcast_event_id=""):
     setattr(g, FLASK_G_BROADCAST_EVENT_ID, broadcast_event_id)
 
     try:
         current_app.logger.info(
-            "Starting GovUK full publish. (Triggered by broadcast event: %s)",
+            "Starting GovUK full publish. (Triggered by broadcast event: %s, given pending ID: %s)",
             broadcast_event_id,
+            pending_progress_id,
         )
 
-        publish_task_progress = PublishTaskProgress.create(
-            publish_type="publish-all", publish_origin="dramatiq"
+        publish_task_progress = PublishTaskProgress.create_or_transition(
+            pending_id=pending_progress_id,
+            publish_type="publish-all",
+            publish_origin="dramatiq",
         )
+
+        if publish_task_progress is False:
+            current_app.logger.warning(
+                "This PublishTaskProgress was marked as cancelled. Skipping."
+            )
+            return
 
         # get publish destination, based on currently configured blue/green configuration.
         # Throws exception if not blue or green - could mean break glass is in operation.

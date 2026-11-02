@@ -1,5 +1,5 @@
 import builtins
-from unittest.mock import mock_open, patch
+from unittest.mock import Mock, mock_open, patch
 
 import boto3
 import pytest
@@ -13,8 +13,27 @@ from app.tasks.tasks import (
 )
 
 
-@patch("app.models.publish_task_progress.PublishTaskProgress.create")
-@patch("app.notify_client.alerts_api_client.publish_api_client.create_publish_task")
+@pytest.mark.parametrize(
+    "pending_progress_id, create_or_transition_return, expect_run",
+    [
+        (
+            # Assuming a manual run via SQS/an old API so we don't have an ID
+            None,
+            Mock(),
+            True,
+        ),
+        ("test", Mock(), True),
+        (
+            "test",
+            False,  # API changed its mind, the model saw a 'cancelled' and returned False to the logic here
+            False,
+        ),
+    ],
+)
+@patch(
+    "app.models.publish_task_progress.PublishTaskProgress.create_or_transition",
+)
+@patch("app.notify_client.alerts_api_client.publish_api_client.upsert_publish_task")
 @patch("app.tasks.tasks.PublishTaskProgress.update_progress")
 @patch("app.notify_client.alerts_api_client.publish_api_client.update_publish_task")
 @patch("app.tasks.tasks.Alerts.load")
@@ -31,7 +50,9 @@ from app.tasks.tasks import (
 @patch("app.tasks.tasks.upload_content_manifest_to_both_buckets")
 @patch("app.tasks.tasks.purge_fastly_cache")
 @patch("app.tasks.tasks.alerts_api_client.send_publish_acknowledgement")
-@patch("app.notify_client.alerts_api_client.publish_api_client.mark_publish_as_finished")
+@patch(
+    "app.notify_client.alerts_api_client.publish_api_client.mark_publish_as_finished"
+)
 @patch("app.tasks.tasks.archive_website")
 @patch("app.tasks.tasks._get_govuk_archive_timestamp")
 def test_publish_govuk_alerts(
@@ -54,38 +75,53 @@ def test_publish_govuk_alerts(
     mock_Alerts_load,
     mock_update_publish_task,
     mock_update_progress,
-    mock_create_publish_task,
-    mock_create_progress,
+    mock_upsert_publish_task,
+    mock_create_or_transition,
     govuk_alerts,
+    pending_progress_id,
+    create_or_transition_return,
+    expect_run,
 ):
-    publish_govuk_alerts()
-    mock_create_progress.assert_called_once_with(
-        publish_type="publish-dynamic", publish_origin="dramatiq"
+    mock_create_or_transition.return_value = create_or_transition_return
+
+    publish_govuk_alerts(pending_progress_id=pending_progress_id)
+    mock_create_or_transition.assert_called_once_with(
+        pending_id=pending_progress_id,
+        publish_type="publish-dynamic",
+        publish_origin="dramatiq",
     )
-    mock_publish_task = mock_create_progress.return_value
+
+    if not expect_run:
+        # Will have bailed
+        mock_get_publish_destination.assert_not_called()
+        mock_get_rendered_pages.assert_not_called()
+        mock_upload_cap_xml_to_s3.assert_not_called()
+        return
+
+    mock_publish_task = mock_create_or_transition.return_value
     mock_get_publish_destination.assert_called_once()
     mock_prepare_destination.assert_called_once_with(mock_get_publish_destination.return_value)
     mock_restore_latest_archive.assert_called_once_with(mock_get_publish_destination.return_value)
-    mock_Alerts_load.assert_called_once_with(mock_create_progress.return_value)
+    mock_Alerts_load.assert_called_once_with(mock_publish_task)
     mock_get_rendered_pages.assert_called_once_with(
         mock_Alerts_load.return_value,
         cut_off=mock_get_archive_timestamp.return_value,
-        publish_task_progress=mock_create_progress.return_value,
+        publish_task_progress=mock_publish_task,
     )
     mock_get_cap_xml.assert_called_once_with(
         mock_Alerts_load.return_value,
         cut_off=mock_get_archive_timestamp.return_value,
-        publish_task_progress=mock_create_progress.return_value,
+        publish_task_progress=mock_publish_task,
     )
     mock_upload_to_s3.assert_called_once_with(
         mock_get_rendered_pages.return_value,
         mock_get_publish_destination.return_value,
-        mock_create_progress.return_value
+        mock_publish_task,
     )
     mock_upload_cap_xml_to_s3.assert_called_once_with(
         mock_get_cap_xml.return_value,
         mock_get_publish_destination.return_value,
-        mock_create_progress.return_value,
+        mock_publish_task,
     )
     mock_generate_content_manifest.assert_called_once_with(
         mock_get_rendered_pages.return_value,
@@ -103,8 +139,27 @@ def test_publish_govuk_alerts(
     mock_archive_website.assert_called_once()
 
 
-@patch("app.models.publish_task_progress.PublishTaskProgress.create")
-@patch("app.notify_client.alerts_api_client.publish_api_client.create_publish_task")
+@pytest.mark.parametrize(
+    "pending_progress_id, create_or_transition_return, expect_run",
+    [
+        (
+            # Assuming a manual run via SQS/an old API so we don't have an ID
+            None,
+            Mock(),
+            True,
+        ),
+        ("test", Mock(), True),
+        (
+            "test",
+            False,  # API changed its mind, the model saw a 'cancelled' and returned False to the logic here
+            False,
+        ),
+    ],
+)
+@patch(
+    "app.models.publish_task_progress.PublishTaskProgress.create_or_transition",
+)
+@patch("app.notify_client.alerts_api_client.publish_api_client.upsert_publish_task")
 @patch("app.tasks.tasks.PublishTaskProgress.update_progress")
 @patch("app.notify_client.alerts_api_client.publish_api_client.update_publish_task")
 @patch("app.tasks.tasks.Alerts.load")
@@ -121,7 +176,9 @@ def test_publish_govuk_alerts(
 @patch("app.tasks.tasks.upload_content_manifest_to_both_buckets")
 @patch("app.tasks.tasks.purge_fastly_cache")
 @patch("app.tasks.tasks.alerts_api_client.send_publish_acknowledgement")
-@patch("app.notify_client.alerts_api_client.publish_api_client.mark_publish_as_finished")
+@patch(
+    "app.notify_client.alerts_api_client.publish_api_client.mark_publish_as_finished"
+)
 @patch("app.tasks.tasks.archive_website")
 @patch("app.tasks.tasks._get_govuk_archive_timestamp")
 def test_publish_govuk_alerts_full(
@@ -144,39 +201,54 @@ def test_publish_govuk_alerts_full(
     mock_Alerts_load,
     mock_update_publish_task,
     mock_update_progress,
-    mock_create_publish_task,
-    mock_create_progress,
+    mock_upsert_publish_task,
+    mock_create_or_transition,
     govuk_alerts,
+    pending_progress_id,
+    create_or_transition_return,
+    expect_run,
 ):
-    publish_govuk_alerts_full()
-    mock_create_progress.assert_called_once_with(
-        publish_type="publish-all", publish_origin="dramatiq"
+    mock_create_or_transition.return_value = create_or_transition_return
+
+    publish_govuk_alerts_full(pending_progress_id=pending_progress_id)
+    mock_create_or_transition.assert_called_once_with(
+        pending_id=pending_progress_id,
+        publish_type="publish-all",
+        publish_origin="dramatiq",
     )
-    mock_publish_task = mock_create_progress.return_value
+
+    if not expect_run:
+        # Will have bailed
+        mock_get_publish_destination.assert_not_called()
+        mock_get_rendered_pages.assert_not_called()
+        mock_upload_cap_xml_to_s3.assert_not_called()
+        return
+
+    mock_publish_task = mock_create_or_transition.return_value
     mock_get_publish_destination.assert_called_once()
     mock_prepare_destination.assert_called_once_with(mock_get_publish_destination.return_value)
     mock_upload_assets_to_s3.assert_called_once_with(
-        mock_create_progress.return_value,
+        mock_create_or_transition.return_value,
         mock_get_publish_destination.return_value,
     )
-    mock_Alerts_load.assert_called_once_with(mock_create_progress.return_value)
+    mock_Alerts_load.assert_called_once_with(mock_create_or_transition.return_value)
     mock_get_rendered_pages.assert_called_once_with(
         mock_Alerts_load.return_value,
-        publish_task_progress=mock_create_progress.return_value,
+        publish_task_progress=mock_create_or_transition.return_value,
     )
     mock_get_cap_xml.assert_called_once_with(
         mock_Alerts_load.return_value,
-        publish_task_progress=mock_create_progress.return_value,
+        publish_task_progress=mock_create_or_transition.return_value,
     )
     mock_upload_to_s3.assert_called_once_with(
         mock_get_rendered_pages.return_value,
         mock_get_publish_destination.return_value,
-        mock_create_progress.return_value
+        mock_create_or_transition.return_value,
     )
     mock_upload_cap_xml_to_s3.assert_called_once_with(
         mock_get_cap_xml.return_value,
         mock_get_publish_destination.return_value,
-        mock_create_progress.return_value,
+        mock_create_or_transition.return_value,
     )
     mock_generate_content_manifest.assert_called_once_with(
         mock_get_rendered_pages.return_value,
@@ -198,12 +270,11 @@ class BubbledException(Exception):
     pass
 
 
-@patch("app.models.publish_task_progress.PublishTaskProgress.create")
+@patch("app.models.publish_task_progress.PublishTaskProgress.create_or_transition")
 @patch("app.tasks.tasks.Alerts.load")
 @patch("app.tasks.tasks.get_publish_destination")
 @patch("app.tasks.tasks.get_rendered_pages")
 @patch("app.tasks.tasks.upload_html_to_s3")
-@pytest.mark.xfail(raises=BubbledException)
 def test_publish_govuk_alerts_bubbles_for_retry(
     mock_upload_to_s3,
     mock_get_rendered_pages,
@@ -216,7 +287,8 @@ def test_publish_govuk_alerts_bubbles_for_retry(
     # that the actor is registered for retry
     assert publish_govuk_alerts.kw.get("allow_retry")
     mock_get_publish_destination.side_effect = BubbledException("Error for retry")
-    publish_govuk_alerts()
+    with pytest.raises(BubbledException):
+        publish_govuk_alerts()
 
 
 # Mock only open() for the healthcheck path, but allow others (botocore) to read
