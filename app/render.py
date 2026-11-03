@@ -173,7 +173,7 @@ def get_rendered_pages(alerts, cut_off=None, publish_task_progress=None):
         rendered["alerts/" + target] = template.render()
         update_publish_progress_if_exists(publish_task_progress, path)
 
-    rendered['alerts/feed.atom'] = _add_stylesheet_attribute_to_atom(
+    rendered["alerts/feed.atom"] = _add_styling_and_polyfills_to_atom(
         fg.atom_str(pretty=True).decode("utf-8")
     )
     with open(REPO / 'app/assets/stylesheets/feed.xsl', "r", encoding="utf-8") as file:
@@ -181,9 +181,8 @@ def get_rendered_pages(alerts, cut_off=None, publish_task_progress=None):
         xsl_content = _add_stylesheet_link_to_xsl(xsl_content)
         rendered['alerts/feed.xsl'] = xsl_content
 
-    rendered['alerts/feed_cy.atom'] = _add_stylesheet_attribute_to_atom(
-        fg_cy.atom_str(pretty=True).decode("utf-8"),
-        style_path="feed_cy.xsl"
+    rendered["alerts/feed_cy.atom"] = _add_styling_and_polyfills_to_atom(
+        fg_cy.atom_str(pretty=True).decode("utf-8"), style_path="feed_cy.xsl"
     )
     with open(REPO / 'app/assets/stylesheets/feed_cy.xsl', "r", encoding="utf-8") as file:
         xsl_content = file.read()
@@ -280,8 +279,19 @@ def _add_feed_entry(fg, alert, alert_url):
     fe.summary(_build_readable_summary(title, alert))
 
 
-def _add_stylesheet_attribute_to_atom(feed_string, style_path="feed.xsl"):
+def _add_styling_and_polyfills_to_atom(feed_string, style_path="feed.xsl"):
     feed = ET.fromstring(feed_string.encode("utf-8"))
+    # As part of the removal of XSLT from browsers, this polyfill is added as an XHTML script
+    # and performs the transform at the client-side. Feed readers will ignore it as it's a
+    # different XML namespace.
+    ET.SubElement(
+        feed,
+        "script",
+        attrib={
+            "src": "/alerts/assets/javascripts/vendor/xslt-polyfill/xslt-polyfill.min.js",
+            "xmlns": "http://www.w3.org/1999/xhtml",
+        },
+    )
     return ET.tostring(
         feed,
         doctype=f'<?xml-stylesheet href="{style_path}" type="text/xsl"?>',
