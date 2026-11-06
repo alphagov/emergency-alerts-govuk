@@ -233,11 +233,7 @@ def generate_content_manifest(rendered_pages, publish_destination):
                 content = content.encode("utf-8")
             page_hashes[key] = hashlib.sha256(content).hexdigest()
 
-    trace_id = "(unknown)"
-    span = trace.get_current_span()
-    if span is not trace.INVALID_SPAN:
-        # Convert to hex and strip out the 0x prefix
-        trace_id = hex(span.get_span_context().trace_id)[2:]
+    trace_id = get_current_trace_id()
 
     manifest = {
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -690,3 +686,13 @@ def _upload_files_threaded(s3, bucket, files, max_workers=8):
 
         for future in as_completed(futures):
             future.result()  # propagate exceptions
+
+
+def get_current_trace_id():
+    span = trace.get_current_span()
+    if span is not trace.INVALID_SPAN:
+        # Convert to hex and strip out the 0x prefix
+        trace_id = hex(span.get_span_context().trace_id)[2:]
+        return trace_id
+    else:
+        return "(unknown)"

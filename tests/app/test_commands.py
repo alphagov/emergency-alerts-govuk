@@ -12,7 +12,9 @@ def test_publish(mocker, govuk_alerts):
     mock_get_publish_destination = mocker.patch("app.commands.get_publish_destination")
     mock_prepare_destination = mocker.patch("app.commands.prepare_destination")
     mock_restore_latest_archive = mocker.patch("app.commands.restore_latest_archive")
-    mock_create_progress = mocker.patch("app.tasks.tasks.PublishTaskProgress.create")
+    mock_create_progress = mocker.patch(
+        "app.tasks.tasks.PublishTaskProgress.create_or_transition"
+    )
     publish_html_mock = mocker.patch('app.commands._publish_html')
     publish_cap_xml_mock = mocker.patch('app.commands._publish_cap_xml')
     generate_manifest_mock = mocker.patch('app.commands.generate_content_manifest')
@@ -64,7 +66,9 @@ def test_startup_publish_with_assets(mocker, govuk_alerts):
     mock_get_publish_destination = mocker.patch("app.commands.get_publish_destination")
     mock_prepare_destination = mocker.patch("app.commands.prepare_destination")
     mock_restore_latest_archive = mocker.patch("app.commands.restore_latest_archive")
-    mock_create_progress = mocker.patch("app.tasks.tasks.PublishTaskProgress.create")
+    mock_create_progress = mocker.patch(
+        "app.tasks.tasks.PublishTaskProgress.create_or_transition"
+    )
     publish_html_mock = mocker.patch('app.commands._publish_html')
     publish_cap_xml_mock = mocker.patch('app.commands._publish_cap_xml')
     publish_with_assets_mock = mocker.patch('app.commands._publish_assets')
@@ -121,7 +125,9 @@ def test_publish_with_assets(mocker, govuk_alerts):
     mock_get_publish_destination = mocker.patch("app.commands.get_publish_destination")
     mock_prepare_destination = mocker.patch("app.commands.prepare_destination")
     mock_restore_latest_archive = mocker.patch("app.commands.restore_latest_archive")
-    mock_create_progress = mocker.patch("app.tasks.tasks.PublishTaskProgress.create")
+    mock_create_progress = mocker.patch(
+        "app.tasks.tasks.PublishTaskProgress.create_or_transition"
+    )
     publish_html_mock = mocker.patch('app.commands._publish_html')
     publish_cap_xml_mock = mocker.patch('app.commands._publish_cap_xml')
     publish_with_assets_mock = mocker.patch('app.commands._publish_assets')
