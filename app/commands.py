@@ -43,7 +43,9 @@ def publish():
             current_app.logger.exception(f"Problem preparing publish site, setting flag to run full publish: {e}")
             prepared_ok = False
 
-        publish_task_progress = PublishTaskProgress.create(publish_type="publish-dynamic", publish_origin="cli")
+        publish_task_progress = PublishTaskProgress.create_or_transition(
+            publish_type="publish-dynamic", publish_origin="cli"
+        )
         published_html = _publish_html(publish_task_progress, publish_destination)
         published_cap = _publish_cap_xml(publish_task_progress, publish_destination)
         published_assets = None
@@ -78,7 +80,9 @@ def publish_with_assets(startup):
             current_app.logger.exception(f"Problem preparing publish site, overwriting with full publish: {e}")
 
         origin = "startup" if startup else "cli"
-        publish_task_progress = PublishTaskProgress.create(publish_type="publish-all", publish_origin=origin)
+        publish_task_progress = PublishTaskProgress.create_or_transition(
+            publish_type="publish-all", publish_origin=origin
+        )
         published_html = _publish_html(publish_task_progress, publish_destination)
         published_cap = _publish_cap_xml(publish_task_progress, publish_destination)
         published_assets = _publish_assets(publish_task_progress, publish_destination)
