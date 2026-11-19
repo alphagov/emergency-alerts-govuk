@@ -139,6 +139,7 @@ dist
 
 # Mac
 environment.sh
+.envrc
 
 # Local celery control files
 control/
